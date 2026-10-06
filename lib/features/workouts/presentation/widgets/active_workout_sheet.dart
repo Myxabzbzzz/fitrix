@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -9,90 +12,204 @@ import 'package:fitrix/features/workouts/presentation/widgets/elapsed_time_text.
 /// The active workout, shown above the tab bar on every tab.
 ///
 /// Collapsed it's the "Chest and biceps · 1h 43m 22s" mini bar from the
-/// design; tapping or dragging it up expands it into the full sets table.
-class ActiveWorkoutSheet extends ConsumerWidget {
+/// design; tapping the header toggles it, and dragging the header moves the
+/// sheet with the finger and snaps open or closed on release (by position,
+/// or by direction for a quick fling).
+class ActiveWorkoutSheet extends ConsumerStatefulWidget {
   const ActiveWorkoutSheet({super.key});
 
   static const double collapsedHeight = 64;
 
+  /// Release speed (px/s) above which the drag direction decides the snap,
+  /// regardless of how far the sheet was dragged.
+  static const double flingVelocity = 300;
+
+  /// Key of the sheet's surface (for tests).
+  static const surfaceKey = ValueKey('activeWorkoutSheetSurface');
+
+  /// Key of the draggable header (for tests).
+  static const headerKey = ValueKey('activeWorkoutSheetHeader');
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ActiveWorkoutSheet> createState() => _ActiveWorkoutSheetState();
+}
+
+class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
+    with SingleTickerProviderStateMixin {
+  /// 0 = collapsed mini bar, 1 = fully expanded.
+  late final AnimationController _position;
+
+  /// Pixels between the collapsed and expanded heights (from the last
+  /// layout); converts finger movement into [_position] units.
+  double _range = 1;
+
+  /// Whether the sheet was on screen at the last build. A sheet that is
+  /// just appearing (workout started) jumps straight to its rest position.
+  bool _visible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _position = AnimationController(
+      vsync: this,
+      duration: Motion.medium,
+      value: ref.read(activeWorkoutExpandedProvider) ? 1 : 0,
+    );
+  }
+
+  @override
+  void dispose() {
+    _position.dispose();
+    super.dispose();
+  }
+
+  /// Animates to the open or closed rest position.
+  void _settle(bool expanded) {
+    final target = expanded ? 1.0 : 0.0;
+    if (!_visible || Motion.reduced(context)) {
+      _position.value = target;
+    } else {
+      // 180–300 ms depending on how far is left to travel, so a short
+      // snap-back after a small drag doesn't look abrupt.
+      final distance = (target - _position.value).abs();
+      _position.animateTo(
+        target,
+        duration: Duration(milliseconds: (180 + 120 * distance).round()),
+        curve: Motion.curve,
+      );
+    }
+  }
+
+  void _setExpanded(bool value) {
+    final notifier = ref.read(activeWorkoutExpandedProvider.notifier);
+    if (notifier.state == value) {
+      _settle(value); // e.g. dragged partway and released: snap back.
+    } else {
+      notifier.state = value; // the listener in build() settles.
+    }
+  }
+
+  void _onDragStart(DragStartDetails details) => _position.stop();
+
+  void _onDragUpdate(DragUpdateDetails details) {
+    _position.value -= (details.primaryDelta ?? 0) / _range;
+  }
+
+  void _onDragEnd(DragEndDetails details) {
+    final velocity = details.primaryVelocity ?? 0; // + is downward
+    final open = velocity.abs() > ActiveWorkoutSheet.flingVelocity
+        ? velocity < 0
+        : _position.value >= 0.5;
+    _setExpanded(open);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen(activeWorkoutExpandedProvider, (_, expanded) {
+      _settle(expanded);
+    });
+
     final workout = ref.watch(activeWorkoutProvider);
+    _visible = workout != null;
     if (workout == null) return const SizedBox.shrink();
 
-    final expanded = ref.watch(activeWorkoutExpandedProvider);
     final palette = AppPalette.of(context);
     final topInset = MediaQuery.of(context).padding.top;
-
-    void setExpanded(bool value) =>
-        ref.read(activeWorkoutExpandedProvider.notifier).state = value;
+    // Built once per data change and reused on every animation frame.
+    final table = _SetsTable(workout: workout);
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final expandedHeight = constraints.maxHeight - topInset - 12;
+        _range =
+            math.max(1, expandedHeight - ActiveWorkoutSheet.collapsedHeight);
 
-        return Stack(
-          children: [
-            if (expanded)
-              Positioned.fill(
-                child: GestureDetector(
-                  onTap: () => setExpanded(false),
-                  child: const ColoredBox(color: Color(0x33000000)),
-                ),
-              ),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic,
-              left: 14,
-              right: 14,
-              bottom: 0,
-              height: expanded ? expandedHeight : collapsedHeight,
-              child: Container(
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  color: palette.sheet,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(25)),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x26000000),
-                      blurRadius: 15,
-                      offset: Offset(0, -2),
-                    ),
-                  ],
-                ),
-                // A Stack (not a Column) so the header can't overflow while
-                // the sheet animates between collapsed and expanded heights.
-                child: Stack(
-                  children: [
-                    if (expanded)
-                      Positioned.fill(
-                        top: _SheetHeader.expandedHeight,
-                        child: _SetsTable(workout: workout),
+        return AnimatedBuilder(
+          animation: _position,
+          builder: (context, _) {
+            final t = _position.value.clamp(0.0, 1.0);
+            // Build the table as soon as opening starts (not a frame later).
+            final isOpen = t > 0 || _position.status == AnimationStatus.forward;
+
+            // Children are keyed: the barrier and table come and go, and the
+            // header must keep its element (and its in-progress drag).
+            return Stack(
+              children: [
+                if (isOpen)
+                  Positioned.fill(
+                    key: const ValueKey('barrier'),
+                    child: GestureDetector(
+                      onTap: () => _setExpanded(false),
+                      child: ColoredBox(
+                        color: Color.fromRGBO(0, 0, 0, 0.2 * t),
                       ),
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => setExpanded(!expanded),
-                        onVerticalDragEnd: (details) {
-                          final velocity = details.primaryVelocity ?? 0;
-                          if (velocity < -200) setExpanded(true);
-                          if (velocity > 200) setExpanded(false);
-                        },
-                        child: _SheetHeader(
-                          workout: workout,
-                          expanded: expanded,
+                    ),
+                  ),
+                Positioned(
+                  key: const ValueKey('sheet'),
+                  left: 14,
+                  right: 14,
+                  bottom: 0,
+                  height: ui.lerpDouble(
+                    ActiveWorkoutSheet.collapsedHeight,
+                    expandedHeight,
+                    t,
+                  ),
+                  child: Container(
+                    key: ActiveWorkoutSheet.surfaceKey,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      color: palette.sheet,
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(25)),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x26000000),
+                          blurRadius: 15,
+                          offset: Offset(0, -2),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                    // A Stack (not a Column) so the header can't overflow
+                    // while the sheet moves between its two heights.
+                    child: Stack(
+                      children: [
+                        if (isOpen)
+                          Positioned.fill(
+                            key: const ValueKey('table'),
+                            top: _SheetHeader.heightAt(t),
+                            child: Opacity(
+                              opacity: (t * 2).clamp(0.0, 1.0),
+                              child: table,
+                            ),
+                          ),
+                        Positioned(
+                          key: const ValueKey('header'),
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            key: ActiveWorkoutSheet.headerKey,
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => _setExpanded(
+                              !ref.read(activeWorkoutExpandedProvider),
+                            ),
+                            onVerticalDragStart: _onDragStart,
+                            onVerticalDragUpdate: _onDragUpdate,
+                            onVerticalDragEnd: _onDragEnd,
+                            onVerticalDragCancel: () => _settle(
+                              ref.read(activeWorkoutExpandedProvider),
+                            ),
+                            child: _SheetHeader(workout: workout, t: t),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         );
       },
     );
@@ -101,19 +218,25 @@ class ActiveWorkoutSheet extends ConsumerWidget {
 
 class _SheetHeader extends StatelessWidget {
   final ActiveWorkout workout;
-  final bool expanded;
 
-  const _SheetHeader({required this.workout, required this.expanded});
+  /// 0 = collapsed, 1 = expanded; sizes interpolate in between.
+  final double t;
+
+  const _SheetHeader({required this.workout, required this.t});
 
   static const double expandedHeight = 96;
+
+  static double heightAt(double t) =>
+      ui.lerpDouble(ActiveWorkoutSheet.collapsedHeight, expandedHeight, t)!;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    double lerp(double a, double b) => ui.lerpDouble(a, b, t)!;
 
     return SizedBox(
       width: double.infinity,
-      height: expanded ? expandedHeight : ActiveWorkoutSheet.collapsedHeight,
+      height: heightAt(t),
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Column(
@@ -124,11 +247,11 @@ class _SheetHeader extends StatelessWidget {
               height: 2,
               color: palette.textPrimary,
             ),
-            SizedBox(height: expanded ? 14 : 8),
+            SizedBox(height: lerp(8, 14)),
             Text(
               workout.template.name,
               style: TextStyle(
-                fontSize: expanded ? 24 : 16,
+                fontSize: lerp(16, 24),
                 fontWeight: FontWeight.w600,
                 color: palette.textPrimary,
               ),
@@ -137,7 +260,7 @@ class _SheetHeader extends StatelessWidget {
             ElapsedTimeText(
               startedAt: workout.startedAt,
               style: TextStyle(
-                fontSize: expanded ? 14 : 10,
+                fontSize: lerp(10, 14),
                 fontWeight: FontWeight.w500,
                 color: palette.textPrimary,
               ),
@@ -401,21 +524,106 @@ class _SetRow extends StatelessWidget {
           SizedBox(
             width: _colStatus,
             child: Center(
-              child: GestureDetector(
-                onTap: onToggle,
-                child: cell(
-                  width: 29,
-                  color: set.done ? palette.accent : null,
-                  child: Icon(
-                    Icons.check,
-                    size: 18,
-                    color: set.done ? Colors.white : palette.textPrimary,
-                  ),
-                ),
-              ),
+              child: _CheckButton(done: set.done, onToggle: onToggle),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The "Status" cell: fills with the accent colour and pops when a set is
+/// checked off or unchecked, with a light haptic tap.
+class _CheckButton extends StatefulWidget {
+  final bool done;
+  final VoidCallback onToggle;
+
+  const _CheckButton({required this.done, required this.onToggle});
+
+  @override
+  State<_CheckButton> createState() => _CheckButtonState();
+}
+
+class _CheckButtonState extends State<_CheckButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pop = AnimationController(
+    vsync: this,
+    duration: Motion.medium,
+    value: 1,
+  );
+
+  late final Animation<double> _scale = TweenSequence<double>([
+    TweenSequenceItem(
+      tween:
+          Tween(begin: 1.0, end: 0.82).chain(CurveTween(curve: Curves.easeOut)),
+      weight: 30,
+    ),
+    TweenSequenceItem(
+      tween: Tween(begin: 0.82, end: 1.12)
+          .chain(CurveTween(curve: Curves.easeOut)),
+      weight: 40,
+    ),
+    TweenSequenceItem(
+      tween: Tween(begin: 1.12, end: 1.0)
+          .chain(CurveTween(curve: Curves.easeInOut)),
+      weight: 30,
+    ),
+  ]).animate(_pop);
+
+  @override
+  void didUpdateWidget(_CheckButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.done != widget.done && !Motion.reduced(context)) {
+      _pop.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pop.dispose();
+    super.dispose();
+  }
+
+  void _onTap() {
+    HapticFeedback.lightImpact();
+    widget.onToggle();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final duration = Motion.of(context, Motion.fast);
+    final done = widget.done;
+
+    return Semantics(
+      button: true,
+      checked: done,
+      label: 'Set done',
+      child: GestureDetector(
+        onTap: _onTap,
+        child: ScaleTransition(
+          scale: _scale,
+          child: AnimatedContainer(
+            duration: duration,
+            curve: Motion.curve,
+            width: 29,
+            height: 29,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: done ? palette.accent : palette.tableCell,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: TweenAnimationBuilder<Color?>(
+              tween: ColorTween(
+                end: done ? Colors.white : palette.textPrimary,
+              ),
+              duration: duration,
+              builder: (context, color, _) =>
+                  Icon(Icons.check, size: 18, color: color),
+            ),
+          ),
+        ),
       ),
     );
   }

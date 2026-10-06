@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 
-/// "My Nutrition": today's calories ring and macro progress.
-class NutritionScreen extends StatelessWidget {
+/// "My Nutrition": today's calories ring and macro progress. The ring and
+/// bars fill from zero when the screen opens.
+class NutritionScreen extends StatefulWidget {
   const NutritionScreen({super.key});
 
   static const int _consumed = 1700;
@@ -16,7 +18,56 @@ class NutritionScreen extends StatelessWidget {
   ];
 
   @override
+  State<NutritionScreen> createState() => _NutritionScreenState();
+}
+
+class _NutritionScreenState extends State<NutritionScreen>
+    with SingleTickerProviderStateMixin {
+  static const _consumed = NutritionScreen._consumed;
+  static const _goal = NutritionScreen._goal;
+  static const _macros = NutritionScreen._macros;
+
+  late final AnimationController _fill = AnimationController(
+    vsync: this,
+    duration: Motion.slow,
+  );
+  VoidCallback? _cancelPending;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (Motion.reduced(context)) {
+      _cancelPending?.call();
+      _fill.value = 1;
+    } else if (_cancelPending == null && _fill.isDismissed) {
+      // Fill once the page transition has revealed the screen.
+      _cancelPending = afterRouteEntrance(context, () {
+        if (mounted) _fill.forward();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _cancelPending?.call();
+    _fill.dispose();
+    super.dispose();
+  }
+
+  /// Fill progress for item [index], slightly staggered.
+  double _progress(int index) => Curves.easeOutCubic.transform(
+        Interval(0.1 * index, 0.7 + 0.1 * index).transform(_fill.value),
+      );
+
+  @override
   Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _fill,
+      builder: (context, _) => _build(context),
+    );
+  }
+
+  Widget _build(BuildContext context) {
     final palette = AppPalette.of(context);
     final labelStyle = TextStyle(
       fontSize: 13,
@@ -51,7 +102,7 @@ class NutritionScreen extends StatelessWidget {
                             fit: StackFit.expand,
                             children: [
                               CircularProgressIndicator(
-                                value: _consumed / _goal,
+                                value: _consumed / _goal * _progress(0),
                                 strokeWidth: 10,
                                 strokeCap: StrokeCap.round,
                                 color: palette.accent,
@@ -88,7 +139,7 @@ class NutritionScreen extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: LinearProgressIndicator(
-                              value: _consumed / _goal,
+                              value: _consumed / _goal * _progress(0),
                               minHeight: 8,
                               color: palette.accent,
                               backgroundColor: palette.border,
@@ -107,7 +158,7 @@ class NutritionScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  for (final macro in _macros) ...[
+                  for (final (i, macro) in _macros.indexed) ...[
                     Row(
                       children: [
                         Expanded(child: Text(macro.label, style: labelStyle)),
@@ -123,7 +174,7 @@ class NutritionScreen extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: LinearProgressIndicator(
-                        value: macro.grams / macro.goal,
+                        value: macro.grams / macro.goal * _progress(i + 1),
                         minHeight: 8,
                         color: palette.accent,
                         backgroundColor: palette.tile,

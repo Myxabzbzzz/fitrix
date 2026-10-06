@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/core/widgets/coming_soon_screen.dart';
 import 'package:fitrix/features/intro/presentation/screens/intro_screen.dart';
@@ -11,6 +12,7 @@ import 'package:fitrix/features/chat/presentation/screens/chat_screen.dart';
 import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
 import 'package:fitrix/features/transition/presentation/screens/chat_transition_screen.dart';
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
+import 'package:fitrix/features/shell/presentation/fading_branch_container.dart';
 import 'package:fitrix/features/shell/presentation/main_shell.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/screens/my_workouts_screen.dart';
@@ -114,9 +116,15 @@ class AppRouter {
               child: ChatTransitionScreen(),
             ),
           ),
-          StatefulShellRoute.indexedStack(
+          StatefulShellRoute(
             builder: (context, state, navigationShell) =>
                 MainShell(navigationShell: navigationShell),
+            // Tabs keep their state like an IndexedStack but cross-fade.
+            navigatorContainerBuilder: (context, navigationShell, children) =>
+                FadingBranchContainer(
+              currentIndex: navigationShell.currentIndex,
+              children: children,
+            ),
             branches: [
               StatefulShellBranch(
                 routes: [
@@ -151,18 +159,27 @@ class AppRouter {
                     pageBuilder: (context, state) => const NoTransitionPage(
                       child: HomeScreen(),
                     ),
+                    // Sections open with a circle reveal from the tapped tile.
                     routes: [
                       GoRoute(
                         path: 'workouts',
                         name: 'workouts',
-                        builder: (context, state) => const MyWorkoutsScreen(),
+                        pageBuilder: (context, state) => circleRevealPage(
+                          context,
+                          state,
+                          const MyWorkoutsScreen(),
+                        ),
                         routes: [
                           GoRoute(
                             path: ':sport',
                             name: 'sportWorkouts',
-                            builder: (context, state) => SportWorkoutsScreen(
-                              sport: Sport.fromName(
-                                  state.pathParameters['sport']!),
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              SportWorkoutsScreen(
+                                sport: Sport.fromName(
+                                    state.pathParameters['sport']!),
+                              ),
                             ),
                           ),
                         ],
@@ -170,20 +187,32 @@ class AppRouter {
                       GoRoute(
                         path: 'progress',
                         name: 'progress',
-                        builder: (context, state) => const ProgressScreen(),
+                        pageBuilder: (context, state) => circleRevealPage(
+                          context,
+                          state,
+                          const ProgressScreen(),
+                        ),
                       ),
                       GoRoute(
                         path: 'nutrition',
                         name: 'nutrition',
-                        builder: (context, state) => const NutritionScreen(),
+                        pageBuilder: (context, state) => circleRevealPage(
+                          context,
+                          state,
+                          const NutritionScreen(),
+                        ),
                       ),
                       GoRoute(
                         path: 'map',
                         name: 'fitrixMap',
-                        builder: (context, state) => const ComingSoonScreen(
-                          title: 'Fitrix map',
-                          icon: Icons.map_outlined,
-                          imageAsset: 'assets/images/tile_map.png',
+                        pageBuilder: (context, state) => circleRevealPage(
+                          context,
+                          state,
+                          const ComingSoonScreen(
+                            title: 'Fitrix map',
+                            icon: Icons.map_outlined,
+                            imageAsset: 'assets/images/tile_map.png',
+                          ),
                         ),
                       ),
                     ],

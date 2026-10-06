@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/feature_tile.dart';
@@ -31,13 +31,19 @@ class MyWorkoutsScreen extends StatelessWidget {
                 childAspectRatio: 148 / 96,
                 children: [
                   for (final sport in Sport.values)
-                    FeatureTile(
-                      label: sport.tileLabel,
-                      imageAsset: sport.imageAsset,
-                      imageWidthFactor: 0.6,
-                      labelAlignment: Alignment.topLeft,
-                      imageAlignment: Alignment.bottomRight,
-                      onTap: () => context.go(AppRouter.sportWorkouts(sport)),
+                    Builder(
+                      // The tile's own context, so the reveal starts there.
+                      builder: (tileContext) => FeatureTile(
+                        label: sport.tileLabel,
+                        imageAsset: sport.imageAsset,
+                        imageWidthFactor: 0.6,
+                        labelAlignment: Alignment.topLeft,
+                        imageAlignment: Alignment.bottomRight,
+                        onTap: () => openWithReveal(
+                          tileContext,
+                          AppRouter.sportWorkouts(sport),
+                        ),
+                      ),
                     ),
                 ],
               ),

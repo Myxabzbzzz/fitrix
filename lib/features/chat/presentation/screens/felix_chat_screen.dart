@@ -7,6 +7,7 @@ import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
+import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
 import 'package:fitrix/features/chat/presentation/widgets/typing_indicator.dart';
 
 /// Chat currently open on the Felix tab.
@@ -25,6 +26,7 @@ class FelixChatScreen extends ConsumerStatefulWidget {
 class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ChatEntranceTracker _entrance = ChatEntranceTracker();
 
   @override
   void dispose() {
@@ -72,25 +74,34 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
             _Header(topic: topic),
             Expanded(
               child: messages.when(
-                data: (list) => ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    final message = list[index];
-                    final next =
-                        index + 1 < list.length ? list[index + 1] : null;
-                    final lastInGroup =
-                        next == null || next.sender != message.sender;
-                    return _MessageBubble(
-                      message: message,
-                      showAvatar: lastInGroup,
-                      onRetry: () => ref
-                          .read(chatMessagesProviderFor(topic).notifier)
-                          .retry(),
-                    );
-                  },
-                ),
+                data: (list) {
+                  // Each topic's loaded history shows without animation.
+                  _entrance.sync(list, scope: topic);
+                  return ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      final message = list[index];
+                      final next =
+                          index + 1 < list.length ? list[index + 1] : null;
+                      final lastInGroup =
+                          next == null || next.sender != message.sender;
+                      return ChatEntrance(
+                        key: ValueKey(message.id),
+                        message: message,
+                        delay: _entrance.take(message),
+                        child: _MessageBubble(
+                          message: message,
+                          showAvatar: lastInGroup,
+                          onRetry: () => ref
+                              .read(chatMessagesProviderFor(topic).notifier)
+                              .retry(),
+                        ),
+                      );
+                    },
+                  );
+                },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Center(child: Text('Error: $error')),
               ),

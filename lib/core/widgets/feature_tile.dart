@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 
 /// Grey rounded tile with a bold uppercase label and a 3D illustration,
-/// used on the Home and My workouts screens.
-class FeatureTile extends StatelessWidget {
+/// used on the Home and My workouts screens. Shrinks slightly while pressed.
+class FeatureTile extends StatefulWidget {
   final String label;
   final double labelSize;
   final String? imageAsset;
@@ -25,46 +26,67 @@ class FeatureTile extends StatelessWidget {
     this.onTap,
   });
 
+  static const double pressedScale = 0.97;
+
+  @override
+  State<FeatureTile> createState() => _FeatureTileState();
+}
+
+class _FeatureTileState extends State<FeatureTile> {
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed != value) setState(() => _pressed = value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final imageAsset = widget.imageAsset;
 
-    return Material(
-      color: palette.tile,
-      borderRadius: BorderRadius.circular(8),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Stack(
-          children: [
-            if (imageAsset != null)
-              Positioned.fill(
+    return AnimatedScale(
+      scale: _pressed ? FeatureTile.pressedScale : 1,
+      duration: Motion.of(context, Motion.press),
+      curve: Motion.curve,
+      child: Material(
+        color: palette.tile,
+        borderRadius: BorderRadius.circular(8),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: widget.onTap,
+          onHighlightChanged: widget.onTap == null ? null : _setPressed,
+          child: Stack(
+            children: [
+              if (imageAsset != null)
+                Positioned.fill(
+                  child: Align(
+                    alignment: widget.imageAlignment,
+                    child: FractionallySizedBox(
+                      widthFactor: widget.imageWidthFactor,
+                      heightFactor: 1,
+                      child: Image.asset(imageAsset, fit: BoxFit.contain),
+                    ),
+                  ),
+                ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Align(
-                  alignment: imageAlignment,
-                  child: FractionallySizedBox(
-                    widthFactor: imageWidthFactor,
-                    heightFactor: 1,
-                    child: Image.asset(imageAsset!, fit: BoxFit.contain),
+                  alignment: widget.labelAlignment,
+                  child: Text(
+                    widget.label,
+                    style: TextStyle(
+                      fontSize: widget.labelSize,
+                      fontWeight: FontWeight.w800,
+                      height: 0.95,
+                      letterSpacing: 0.2,
+                      color: palette.textPrimary,
+                    ),
                   ),
                 ),
               ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Align(
-                alignment: labelAlignment,
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: labelSize,
-                    fontWeight: FontWeight.w800,
-                    height: 0.95,
-                    letterSpacing: 0.2,
-                    color: palette.textPrimary,
-                  ),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
