@@ -270,6 +270,28 @@ breaks signing. Once the account is paid ($99/year):
 Apple shares the user's name only on the very first sign-in; the app saves
 it to the account's metadata (`full_name`).
 
+## Cloud project (current)
+
+The app's cloud Supabase project is `fitrix` (ref `<project-ref>`,
+region eu-central-1). Its public settings (URL, publishable key, Google
+client IDs — none of them secret) live in `env/cloud.json`:
+
+```bash
+flutter run --release \
+  --dart-define-from-file=env/cloud.json \
+  --dart-define=API_BASE_URL=http://<mac-name>.local:3000
+```
+
+iOS also needs `ios/Flutter/GoogleSignIn.local.xcconfig` (see "Google and
+Apple sign-in"). Start the chat backend against the cloud project with
+`SUPABASE_URL=https://<project-ref>.supabase.co npm start`.
+
+Email-code sign-in on the cloud project needs a custom SMTP server: on the
+free plan Supabase only allows changing the email templates (to show the
+6-digit code) once custom SMTP is configured. Google sign-in works without it.
+The database password is in the macOS keychain item
+`fitrix-supabase-db-password`.
+
 ## Deploy to Supabase cloud
 
 1. **Create a project** at https://supabase.com/dashboard (pick a region
