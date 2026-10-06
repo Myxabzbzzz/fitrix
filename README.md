@@ -9,8 +9,10 @@ Platforms in this repo: iOS, Android, macOS and web.
 
 **Onboarding** (shown once; later launches open Home)
 - Intro → language → sign-in → profile → chat with Felix → "Felix is ready"
-- Sign-in is a local mock: any email works, Google/Apple buttons don't
-  call real providers
+- Sign-in with a 6-digit email code (Supabase Auth). "Continue with Google"
+  and "Continue with Apple" sign in natively once configured (see
+  [Google and Apple sign-in](#google-and-apple-sign-in)); until then they
+  say "coming soon"
 
 **Main app** (5-tab bar: Discover · Shop · Home · Felix · Profile)
 - **Home** — tiles for My progress, My nutrition, Felix, My workouts, Shop,
@@ -124,6 +126,150 @@ and the local publishable key. The backend needs
 re-creates the local database from the migrations (deletes local users and
 data).
 
+## Google and Apple sign-in
+
+Both buttons sign in **natively**: Google's account picker / Apple's sheet
+returns an ID token, the app hands it to Supabase (`signInWithIdToken`), and
+from there it's the same as an email code (account switch handling, profile
+row → onboarding or Home). Cancelling the sheet does nothing; errors are
+shown under the email field ("isn't set up on the server yet", "No
+connection", …).
+
+Everything is **off by default**, so the app builds and runs without any
+of it. Three switches, all outside git:
+
+| Where | What | Enables |
+|-------|------|---------|
+| `--dart-define=GOOGLE_WEB_CLIENT_ID=…` | Web client id (the token's audience) | Google button (Android, iOS) |
+| `--dart-define=GOOGLE_IOS_CLIENT_ID=…` | iOS client id | Google button on iOS (needs the web id too) |
+| `ios/Flutter/GoogleSignIn.local.xcconfig` | `GOOGLE_IOS_CLIENT_ID_PREFIX` | iOS URL scheme + `GIDClientID` in Info.plist |
+| `--dart-define=APPLE_SIGN_IN=true` | — | Apple button (iOS/macOS; paid Apple account) |
+| `supabase/.env` (local) / dashboard (cloud) | provider on + client ids | Supabase accepting the tokens |
+
+Without the dart-defines the buttons say "coming soon"; the Apple button is
+only shown on iPhone/iPad/Mac. Client ids are not secrets (they ship inside
+the app), but they're kept out of git so each machine/project can use its
+own. The Google **client secret is not needed** for this flow; never commit
+it.
+
+### Google: what you do in Google Cloud Console (once, by hand)
+
+1. https://console.cloud.google.com → create or pick a project.
+2. **APIs & Services → OAuth consent screen** (Google Auth Platform →
+   Branding / Audience): app name "FITRIX", support email, developer email.
+   User type **External**. While the app is in *Testing*, add every Google
+   account that should be able to sign in under **Test users**. Scopes:
+   the default `openid`, `email`, `profile` are enough.
+3. **Credentials → Create credentials → OAuth client ID → Web
+   application**, name "FITRIX Supabase". No origins/redirects needed for
+   the app (add `https://<project-ref>.supabase.co/auth/v1/callback` only if
+   you ever want browser sign-in). Copy the **client ID** →
+   `GOOGLE_WEB_CLIENT_ID`. (The secret it shows is only for browser
+   sign-in.)
+4. **Create credentials → OAuth client ID → iOS**, bundle ID
+   `com.elibayev.fitrix`. Copy the **client ID** → `GOOGLE_IOS_CLIENT_ID`.
+   Its "iOS URL scheme" is the reversed id
+   (`com.googleusercontent.apps.<prefix>`), built automatically from the
+   prefix below.
+5. **Android** (optional): **Create credentials → OAuth client ID →
+   Android**, package name `com.elibayev.fitrix`, SHA-1 of the signing key.
+   For debug builds:
+
+   ```bash
+   keytool -list -v -alias androiddebugkey -storepass android \
+     -keystore ~/.android/debug.keystore | grep SHA1
+   ```
+
+   Release builds (and Play App Signing) need their own SHA-1 as another
+   Android client. Nothing from the Android client goes into the app:
+   Google matches package name + SHA-1, and the app only passes the web
+   client id.
+
+### Google: wire it into the app
+
+1. iOS URL scheme — create `ios/Flutter/GoogleSignIn.local.xcconfig`
+   (git-ignored) with the iOS client id **without**
+   `.apps.googleusercontent.com`:
+
+   ```
+   GOOGLE_IOS_CLIENT_ID_PREFIX = 1234567890-abcdef
+   ```
+
+   `ios/Flutter/GoogleSignIn.xcconfig` turns it into `GIDClientID`
+   (`1234567890-abcdef.apps.googleusercontent.com`) and the URL scheme
+   (`com.googleusercontent.apps.1234567890-abcdef`) in `Info.plist`.
+   Without the file a placeholder is used and the app still builds.
+   **Don't** pass `GOOGLE_IOS_CLIENT_ID` without this file: Google's SDK
+   crashes the app if the URL scheme is missing.
+2. Run / build with the ids:
+
+   ```bash
+   flutter run \
+     --dart-define=GOOGLE_WEB_CLIENT_ID=<web client id> \
+     --dart-define=GOOGLE_IOS_CLIENT_ID=<iOS client id>
+   ```
+
+   (add the usual `API_BASE_URL` / `SUPABASE_URL` defines on a phone).
+   On Android only `GOOGLE_WEB_CLIENT_ID` is needed.
+
+### Google: tell Supabase which tokens to accept
+
+- **Local stack** — copy `supabase/.env.example` to `supabase/.env` and set
+
+  ```bash
+  SUPABASE_AUTH_EXTERNAL_GOOGLE_ENABLED=true
+  SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=<web client id>,<iOS client id>
+  ```
+
+  then restart the stack (`supabase stop && supabase start -x
+  vector,logflare,edge-runtime`; data is kept). `supabase/config.toml` reads
+  these through `env(...)`; with no `.env` the provider stays off and
+  `supabase start` works as before.
+- **Cloud project** — Dashboard → Authentication → Sign In / Providers →
+  **Google**: enable, **Client IDs** = `<web client id>,<iOS client id>`
+  (web first; this is the "authorized client IDs" list the token's
+  audience is checked against). Leave **Skip nonce checks** off: the app
+  sends a nonce on iOS and Android. The Client Secret field is only used by
+  browser sign-in (paste the web client's secret if the form insists).
+
+### Apple (needs a paid Apple Developer account)
+
+The code is in place but the button stays "coming soon": a free "Personal
+Team" can't sign apps with the Sign in with Apple capability, and adding it
+breaks signing. Once the account is paid ($99/year):
+
+1. developer.apple.com → Certificates, IDs & Profiles → Identifiers →
+   `com.elibayev.fitrix` → enable **Sign In with Apple** (as primary App ID)
+   → Save.
+2. Xcode → Runner target → Signing & Capabilities → pick the paid team →
+   **+ Capability → Sign in with Apple**. This creates
+   `ios/Runner/Runner.entitlements` with
+
+   ```xml
+   <key>com.apple.developer.applesignin</key>
+   <array>
+       <string>Default</string>
+   </array>
+   ```
+
+   and sets `CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements` for the
+   Runner target. Commit both.
+3. Supabase: local — in `supabase/.env`
+
+   ```bash
+   SUPABASE_AUTH_EXTERNAL_APPLE_ENABLED=true
+   SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID=com.elibayev.fitrix
+   ```
+
+   and restart the stack; cloud — Dashboard → Authentication → Sign In /
+   Providers → **Apple**: enable, **Client IDs** = `com.elibayev.fitrix`.
+   No secret key is needed for native sign-in (only for the web flow with a
+   Services ID).
+4. Build with `--dart-define=APPLE_SIGN_IN=true`.
+
+Apple shares the user's name only on the very first sign-in; the app saves
+it to the account's metadata (`full_name`).
+
 ## Deploy to Supabase cloud
 
 1. **Create a project** at https://supabase.com/dashboard (pick a region
@@ -218,5 +364,6 @@ flutter test
 
 Covers chat streaming and retries (against a local fake backend, including
 the `Authorization` header and the 401/429 messages), workout persistence
-and history, progress charts, onboarding redirect and sign-out, and the main
-workout flow. Backend tests: `cd backend && npm test`.
+and history, progress charts, onboarding redirect and sign-out, email-code
+and Google/Apple sign-in (with fakes for Supabase and the native sheets),
+and the main workout flow. Backend tests: `cd backend && npm test`.

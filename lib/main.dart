@@ -22,6 +22,8 @@ import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/core/sync/sync_providers.dart';
 import 'package:fitrix/features/auth/data/account_service.dart';
 import 'package:fitrix/features/auth/data/auth_gateway.dart';
+import 'package:fitrix/features/auth/data/social_sign_in.dart';
+import 'package:fitrix/features/auth/data/social_sign_in_config.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/profile/data/repositories/profile_remote.dart';
 
@@ -103,6 +105,11 @@ class FitrixRoot extends StatelessWidget {
   /// Account ↔ local data glue; null in local-only mode.
   final AccountService? account;
 
+  /// Google / Apple sign-in setup and SDKs; from the build's dart-defines
+  /// unless given (tests).
+  final SocialSignInConfig? socialConfig;
+  final SocialSignIn? socialSignIn;
+
   const FitrixRoot({
     super.key,
     required this.prefs,
@@ -111,6 +118,8 @@ class FitrixRoot extends StatelessWidget {
     this.supabase,
     this.auth,
     this.account,
+    this.socialConfig,
+    this.socialSignIn,
   });
 
   @override
@@ -125,6 +134,10 @@ class FitrixRoot extends StatelessWidget {
           supabaseClientProvider.overrideWithValue(supabase),
           authGatewayProvider.overrideWithValue(auth),
           accountServiceProvider.overrideWithValue(account),
+          if (socialConfig != null)
+            socialSignInConfigProvider.overrideWithValue(socialConfig!),
+          if (socialSignIn != null)
+            socialSignInProvider.overrideWithValue(socialSignIn!),
         ],
         // Syncs workouts and chats in the background while signed in.
         child: SyncBootstrap(child: FitrixApp(router: router)),

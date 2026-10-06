@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthApiException;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show AuthApiException, AuthRetryableFetchException;
 
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/features/auth/data/account_service.dart';
+import 'package:fitrix/features/auth/data/auth_failure.dart';
+import 'package:fitrix/features/auth/data/social_sign_in_config.dart';
 import 'package:fitrix/main.dart';
 
 import 'support/fake_auth.dart';
@@ -17,13 +20,26 @@ void _phoneSize(WidgetTester tester) {
 }
 
 class _Harness {
-  _Harness(this.prefs, this.session, this.auth, this.remote, this.account);
+  _Harness(this.prefs, this.session, this.auth, this.remote, this.account,
+      this.social);
   final SharedPreferences prefs;
   final AppSession session;
   final FakeAuthGateway auth;
   final FakeProfileRemote remote;
   final AccountService account;
+  final FakeSocialSignIn social;
 }
+
+/// An iPhone build with both providers switched on.
+const _iosConfigured = SocialSignInConfig(
+  googleWebClientId: 'web.apps.googleusercontent.com',
+  googleIosClientId: 'ios.apps.googleusercontent.com',
+  appleSignIn: true,
+  platform: TargetPlatform.iOS,
+);
+
+/// An iPhone build without any dart-defines.
+const _iosUnconfigured = SocialSignInConfig(platform: TargetPlatform.iOS);
 
 /// The real app with fake Supabase auth and profile table.
 Future<_Harness> _pumpApp(
@@ -31,6 +47,7 @@ Future<_Harness> _pumpApp(
   Map<String, Object> prefs = const {},
   String? signedInAs,
   void Function(FakeAuthGateway auth, FakeProfileRemote remote)? setUp,
+  SocialSignInConfig? socialConfig,
 }) async {
   _phoneSize(tester);
   SharedPreferences.setMockInitialValues(prefs);
@@ -38,6 +55,7 @@ Future<_Harness> _pumpApp(
   final session = AppSession(storage);
   final auth = FakeAuthGateway(users: {'old@x.com': 'user-old'});
   final remote = FakeProfileRemote();
+  final social = FakeSocialSignIn();
   setUp?.call(auth, remote);
   if (signedInAs != null) auth.signInAs(signedInAs);
   final account = AccountService(
@@ -54,9 +72,11 @@ Future<_Harness> _pumpApp(
     router: AppRouter.create(session, auth: auth),
     auth: auth,
     account: account,
+    socialConfig: socialConfig,
+    socialSignIn: social,
   ));
   await tester.pumpAndSettle();
-  return _Harness(storage, session, auth, remote, account);
+  return _Harness(storage, session, auth, remote, account, social);
 }
 
 Future<void> _enterEmail(WidgetTester tester, String email) async {
@@ -78,7 +98,8 @@ String? _errorText(WidgetTester tester) {
 
 void main() {
   group('local-only mode (no Supabase)', () {
-    Future<void> pumpLocal(WidgetTester tester) async {
+    Future<void> pumpLocal(WidgetTester tester,
+        {SocialSignInConfig? socialConfig}) async {
       _phoneSize(tester);
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
@@ -87,6 +108,7 @@ void main() {
         prefs: prefs,
         session: session,
         router: AppRouter.create(session),
+        socialConfig: socialConfig,
       ));
       AppRouter.router.go(AppRouter.signIn);
       await tester.pumpAndSettle();
@@ -112,6 +134,16 @@ void main() {
       await tester.pump();
       expect(find.textContaining('Google is coming soon'), findsOneWidget);
       expect(find.text('Create an account'), findsOneWidget);
+      // Tests run as Android: no Sign in with Apple there.
+      expect(find.text('Continue with Apple'), findsNothing);
+    });
+
+    testWidgets('even when configured: no accounts without Supabase',
+        (tester) async {
+      await pumpLocal(tester, socialConfig: _iosConfigured);
+      await tester.tap(find.text('Continue with Apple'));
+      await tester.pump();
+      expect(find.textContaining('Apple is coming soon'), findsOneWidget);
     });
   });
 
@@ -224,6 +256,195 @@ void main() {
       await tester.tap(find.widgetWithText(ElevatedButton, 'Try again'));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('profile-name')), findsOneWidget);
+    });
+  });
+
+  group('Google and Apple sign-in', () {
+    Future<_Harness> pumpSignIn(
+      WidgetTester tester, {
+      SocialSignInConfig socialConfig = _iosConfigured,
+      Map<String, Object> prefs = const {},
+      void Function(FakeAuthGateway auth, FakeProfileRemote remote)? setUp,
+    }) async {
+      final h = await _pumpApp(tester,
+          prefs: prefs, socialConfig: socialConfig, setUp: setUp);
+      AppRouter.router.go(AppRouter.signIn);
+      await tester.pumpAndSettle();
+      return h;
+    }
+
+    Future<void> tapSocial(WidgetTester tester, String provider) async {
+      await tester.tap(find.text('Continue with $provider'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('not configured: both say "coming soon"', (tester) async {
+      final h = await pumpSignIn(tester, socialConfig: _iosUnconfigured);
+
+      await tapSocial(tester, 'Google');
+      expect(find.textContaining('Google is coming soon'), findsOneWidget);
+      await tapSocial(tester, 'Apple');
+      expect(find.textContaining('Apple is coming soon'), findsOneWidget);
+
+      expect(h.social.googleCalls + h.social.appleCalls, 0);
+      expect(h.auth.idTokens, isEmpty);
+      expect(find.text('Create an account'), findsOneWidget);
+    });
+
+    testWidgets('Android: Google works with the web client id, no Apple',
+        (tester) async {
+      final h = await pumpSignIn(
+        tester,
+        socialConfig: const SocialSignInConfig(
+          googleWebClientId: 'web.apps.googleusercontent.com',
+          platform: TargetPlatform.android,
+        ),
+      );
+      expect(find.text('Continue with Apple'), findsNothing);
+      h.social.googleAccount = 'droid@x.com';
+      await tapSocial(tester, 'Google');
+      expect(find.byKey(const Key('profile-name')), findsOneWidget);
+    });
+
+    testWidgets('Google, new account: continues to the profile step',
+        (tester) async {
+      final h = await pumpSignIn(tester);
+      h.social.googleAccount = 'new@gmail.com';
+
+      await tapSocial(tester, 'Google');
+      expect(h.social.googleCalls, 1);
+      expect(h.auth.idTokens.single.provider.name, 'google');
+      expect(h.auth.idTokens.single.accessToken, 'access-token');
+      expect(h.auth.idTokens.single.nonce, 'nonce');
+      expect(find.byKey(const Key('profile-name')), findsOneWidget);
+      expect(h.session.accountUserId, h.auth.userId);
+      expect(h.session.onboardingComplete, isFalse);
+    });
+
+    testWidgets('Apple, returning account: straight Home with its profile',
+        (tester) async {
+      final h = await pumpSignIn(tester, setUp: (auth, remote) {
+        auth.users['back@privaterelay.appleid.com'] = 'user-back';
+        remote.rows['user-back'] = {
+          'id': 'user-back',
+          'name': 'Alex',
+          'surname': 'Smith',
+          'age': 30,
+          'weight_kg': 72.5,
+          'height_cm': 180,
+          'language': 'en',
+          'onboarding_complete': true,
+        };
+      });
+      h.social.appleAccount = 'back@privaterelay.appleid.com';
+
+      await tapSocial(tester, 'Apple');
+      expect(h.auth.idTokens.single.provider.name, 'apple');
+      expect(find.text('FELIX'), findsOneWidget);
+      expect(h.session.onboardingComplete, isTrue);
+      expect(h.session.accountUserId, 'user-back');
+      expect(h.prefs.getString('user_name'), 'Alex');
+    });
+
+    testWidgets("a different account clears the previous account's data",
+        (tester) async {
+      final h = await pumpSignIn(tester, prefs: {
+        'onboarding_complete': true,
+        'account_user_id': 'user-old',
+        'user_name': 'Alex',
+        'workout_history': '[]',
+      });
+      expect(find.text('Sign in again'), findsOneWidget);
+      h.social.googleAccount = 'someone-else@gmail.com';
+
+      await tapSocial(tester, 'Google');
+      expect(find.byKey(const Key('profile-name')), findsOneWidget);
+      expect(h.prefs.getString('user_name'), isNull);
+      expect(h.prefs.getString('workout_history'), isNull);
+      expect(h.session.accountUserId, h.auth.userId);
+    });
+
+    testWidgets('same account after the session ended keeps the data',
+        (tester) async {
+      final h = await pumpSignIn(tester, prefs: {
+        'onboarding_complete': true,
+        'account_user_id': 'user-old',
+        'user_name': 'Alex',
+      });
+      h.social.appleAccount = 'old@x.com';
+      await tapSocial(tester, 'Apple');
+      expect(find.text('FELIX'), findsOneWidget);
+      expect(h.prefs.getString('user_name'), 'Alex');
+    });
+
+    testWidgets('cancelling the sheet is silent', (tester) async {
+      final h = await pumpSignIn(tester);
+      // googleAccount / appleAccount stay null: the user cancels.
+      await tapSocial(tester, 'Google');
+      await tapSocial(tester, 'Apple');
+
+      expect(h.social.googleCalls, 1);
+      expect(h.social.appleCalls, 1);
+      expect(h.auth.idTokens, isEmpty);
+      expect(_errorText(tester), isNull);
+      expect(find.byType(SnackBar), findsNothing);
+      expect(find.text('Create an account'), findsOneWidget);
+      // Everything is usable again.
+      final google =
+          find.widgetWithText(OutlinedButton, 'Continue with Google');
+      expect(tester.widget<OutlinedButton>(google).onPressed, isNotNull);
+      await _enterEmail(tester, 'a@x.com');
+      expect(h.auth.codesSentTo, ['a@x.com']);
+    });
+
+    testWidgets('errors: server not set up, offline, SDK failure',
+        (tester) async {
+      final h = await pumpSignIn(tester);
+      h.social.googleAccount = 'a@gmail.com';
+
+      h.auth.idTokenError = const AuthApiException(
+        'Provider (issuer "https://accounts.google.com") is not enabled',
+        statusCode: '400',
+        code: 'provider_disabled',
+      );
+      await tapSocial(tester, 'Google');
+      expect(
+          _errorText(tester),
+          "Sign in with Google isn't set up on the server yet. "
+          'Please use your email for now.');
+
+      h.auth.idTokenError = AuthRetryableFetchException();
+      await tapSocial(tester, 'Google');
+      expect(_errorText(tester), contains('No connection'));
+
+      h.auth.idTokenError = null;
+      h.social.appleError = AuthFailure.socialFailed('Apple');
+      await tapSocial(tester, 'Apple');
+      expect(_errorText(tester), contains("Couldn't sign in with Apple"));
+      expect(h.auth.userId, isNull);
+      expect(find.text('Create an account'), findsOneWidget);
+
+      // Typing an email clears the error.
+      await tester.enterText(find.byKey(const Key('email-input')), 'a');
+      await tester.pump();
+      expect(_errorText(tester), isNull);
+    });
+
+    testWidgets('profile load failure after Google offers a retry',
+        (tester) async {
+      final h = await pumpSignIn(tester);
+      h.social.googleAccount = 'a@gmail.com';
+      h.remote.fetchError = const AuthApiException('offline');
+
+      await tapSocial(tester, 'Google');
+      expect(_errorText(tester), contains("profile couldn't be loaded"));
+      expect(find.widgetWithText(ElevatedButton, 'Continue'), findsNothing);
+
+      h.remote.fetchError = null;
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Try again'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('profile-name')), findsOneWidget);
+      expect(h.auth.idTokens, hasLength(1));
     });
   });
 

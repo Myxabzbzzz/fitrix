@@ -63,7 +63,12 @@ flutter run                 # pick the iOS simulator, Android emulator, macOS or
 ```
 
 Sign in with any email; the 6-digit code arrives in Mailpit
-(http://127.0.0.1:55324).
+(http://127.0.0.1:55324). "Continue with Google / Apple" say "coming soon"
+until you set them up: see
+[README.md → Google and Apple sign-in](README.md#google-and-apple-sign-in)
+(Google client ids as `--dart-define`s plus
+`ios/Flutter/GoogleSignIn.local.xcconfig` and `supabase/.env`; Apple needs a
+paid Apple Developer account).
 
 - **iOS simulator / macOS / web** — works as is (`http://localhost:3000`).
 - **Android emulator** — works as is: on Android the app defaults to

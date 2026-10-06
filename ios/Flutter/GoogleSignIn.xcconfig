@@ -1,0 +1,16 @@
+// Google Sign-In on iOS: the iOS OAuth client id (GIDClientID in Info.plist)
+// and its reversed form, the URL scheme Google's sign-in returns to.
+//
+// Without real values the app still builds; "Continue with Google" stays
+// "coming soon" unless the build also passes the GOOGLE_* dart-defines.
+// To set up, create Flutter/GoogleSignIn.local.xcconfig (git-ignored) with
+// the part of the iOS client id before ".apps.googleusercontent.com":
+//
+//   GOOGLE_IOS_CLIENT_ID_PREFIX = 1234567890-abcdef
+//
+// See README.md, "Google and Apple sign-in".
+GOOGLE_IOS_CLIENT_ID_PREFIX = not-configured
+#include? "GoogleSignIn.local.xcconfig"
+
+GOOGLE_IOS_CLIENT_ID = $(GOOGLE_IOS_CLIENT_ID_PREFIX).apps.googleusercontent.com
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.$(GOOGLE_IOS_CLIENT_ID_PREFIX)

@@ -16,6 +16,7 @@ import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/features/auth/data/account_service.dart';
 import 'package:fitrix/features/auth/data/auth_failure.dart';
 import 'package:fitrix/features/auth/data/auth_gateway.dart';
+import 'package:fitrix/features/auth/data/social_sign_in.dart';
 import 'package:fitrix/features/profile/data/models/user_profile.dart';
 import 'package:fitrix/features/profile/data/repositories/profile_remote.dart';
 import 'package:fitrix/features/profile/data/repositories/profile_repository.dart';
@@ -197,4 +198,45 @@ void main() {
   },
       skip: enabled ? false : 'Set FITRIX_SUPABASE_IT=1 to run',
       timeout: const Timeout(Duration(minutes: 2)));
+
+  // With the default config.toml (no supabase/.env) Google and Apple are
+  // off; the app must say so rather than show a generic error. Skipped when
+  // FITRIX_SOCIAL_ENABLED=1 says the stack has them switched on.
+  test('Google / Apple ID tokens while the providers are disabled', () async {
+    final client = SupabaseClient(_url, _key);
+    final auth = SupabaseAuthGateway(client);
+    addTearDown(() async {
+      auth.dispose();
+      await client.dispose();
+    });
+    // Unsigned tokens with each provider's issuer: the server checks that
+    // the provider is enabled before the signature.
+    const tokens = {
+      SocialProvider.google: 'eyJhbGciOiJSUzI1NiJ9'
+          '.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20ifQ.x',
+      SocialProvider.apple: 'eyJhbGciOiJSUzI1NiJ9'
+          '.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIn0.x',
+    };
+
+    for (final provider in SocialProvider.values) {
+      try {
+        await auth.signInWithIdToken(SocialCredential(
+          provider: provider,
+          idToken: tokens[provider]!,
+          nonce: 'nonce',
+        ));
+        fail('$provider token accepted');
+      } catch (e) {
+        final failure = AuthFailure.fromSocial(e, provider: provider.label);
+        print('$provider → $e → ${failure.message}');
+        expect(failure.kind, AuthFailureKind.providerDisabled);
+      }
+    }
+    expect(auth.userId, isNull);
+  },
+      skip: !enabled
+          ? 'Set FITRIX_SUPABASE_IT=1 to run'
+          : _env['FITRIX_SOCIAL_ENABLED'] == '1'
+              ? 'Providers are enabled on this stack'
+              : false);
 }

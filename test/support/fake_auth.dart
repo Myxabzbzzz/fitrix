@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fitrix/features/auth/data/auth_gateway.dart';
+import 'package:fitrix/features/auth/data/social_sign_in.dart';
 import 'package:fitrix/features/profile/data/models/profile_row.dart';
 import 'package:fitrix/features/profile/data/repositories/profile_remote.dart';
 
@@ -12,9 +13,15 @@ class FakeAuthGateway extends ChangeNotifier implements AuthGateway {
   final Map<String, String> users;
   String validCode = '123456';
 
-  /// Thrown by the next [sendCode] / [verifyCode] calls while set.
+  /// Thrown by the next [sendCode] / [verifyCode] / [signInWithIdToken]
+  /// calls while set.
   Object? sendError;
   Object? verifyError;
+  Object? idTokenError;
+
+  /// ID tokens handed to [signInWithIdToken]. A token is the account's
+  /// email in these tests.
+  final List<SocialCredential> idTokens = [];
 
   final List<String> codesSentTo = [];
   int signOutCalls = 0;
@@ -66,9 +73,59 @@ class FakeAuthGateway extends ChangeNotifier implements AuthGateway {
   }
 
   @override
+  Future<String> signInWithIdToken(SocialCredential credential) async {
+    idTokens.add(credential);
+    if (idTokenError != null) throw idTokenError!;
+    signInAs(credential.idToken);
+    return _userId!;
+  }
+
+  @override
   Future<void> signOut() async {
     signOutCalls++;
     revoke();
+  }
+}
+
+/// Google / Apple sheets that answer as told: an account (by email), a
+/// cancel (null) or an error.
+class FakeSocialSignIn implements SocialSignIn {
+  /// Email of the account picked in the sheet; null = the user cancels.
+  String? googleAccount;
+  String? appleAccount;
+  Object? googleError;
+  Object? appleError;
+  int googleCalls = 0;
+  int appleCalls = 0;
+
+  @override
+  Future<SocialCredential?> google() async {
+    googleCalls++;
+    if (googleError != null) throw googleError!;
+    final email = googleAccount;
+    return email == null
+        ? null
+        : SocialCredential(
+            provider: SocialProvider.google,
+            idToken: email,
+            accessToken: 'access-token',
+            nonce: 'nonce',
+          );
+  }
+
+  @override
+  Future<SocialCredential?> apple() async {
+    appleCalls++;
+    if (appleError != null) throw appleError!;
+    final email = appleAccount;
+    return email == null
+        ? null
+        : SocialCredential(
+            provider: SocialProvider.apple,
+            idToken: email,
+            nonce: 'nonce',
+            givenName: 'Alex',
+          );
   }
 }
 

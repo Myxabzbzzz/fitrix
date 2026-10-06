@@ -2,7 +2,22 @@ import 'dart:async';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-enum AuthFailureKind { invalidCode, rateLimited, network, invalidEmail, unknown }
+enum AuthFailureKind {
+  invalidCode,
+  rateLimited,
+  network,
+  invalidEmail,
+  unknown,
+
+  /// Google/Apple: the Supabase server doesn't accept this provider yet.
+  providerDisabled,
+
+  /// Google/Apple: not set up in this build or not supported on this device.
+  providerUnavailable,
+
+  /// Google/Apple: the provider's sign-in failed for another reason.
+  socialFailed,
+}
 
 /// A sign-in error turned into something the user can act on.
 class AuthFailure implements Exception {
@@ -31,6 +46,47 @@ class AuthFailure implements Exception {
     AuthFailureKind.unknown,
     'Something went wrong. Please try again.',
   );
+
+  /// The server has no (or a different) client id for [provider].
+  factory AuthFailure.providerDisabled(String provider) => AuthFailure(
+        AuthFailureKind.providerDisabled,
+        "Sign in with $provider isn't set up on the server yet. "
+        'Please use your email for now.',
+      );
+
+  /// This build or device can't sign in with [provider].
+  factory AuthFailure.providerUnavailable(String provider) => AuthFailure(
+        AuthFailureKind.providerUnavailable,
+        "Sign in with $provider isn't available on this device. "
+        'Please use your email instead.',
+      );
+
+  factory AuthFailure.socialFailed(String provider) => AuthFailure(
+        AuthFailureKind.socialFailed,
+        "Couldn't sign in with $provider. Please try again or use your email.",
+      );
+
+  /// Maps errors from signing in with [provider] ("Google", "Apple"): from
+  /// the provider's SDK (already an [AuthFailure]) or from Supabase checking
+  /// the ID token.
+  static AuthFailure fromSocial(Object error, {required String provider}) {
+    if (error is AuthFailure) return error;
+    if (error is AuthException) {
+      final message = error.message.toLowerCase();
+      // "Provider (issuer ...) is not enabled", or the token was issued for
+      // a client id the server doesn't list ("Unacceptable audience").
+      if (error.code == 'provider_disabled' ||
+          message.contains('not enabled') ||
+          message.contains('audience')) {
+        return AuthFailure.providerDisabled(provider);
+      }
+    }
+    final failure = from(error);
+    return switch (failure.kind) {
+      AuthFailureKind.network || AuthFailureKind.rateLimited => failure,
+      _ => AuthFailure.socialFailed(provider),
+    };
+  }
 
   /// Maps errors from Supabase (or the network) to a failure. [verifying]
   /// is true for code checks, where the server answers a wrong code and an

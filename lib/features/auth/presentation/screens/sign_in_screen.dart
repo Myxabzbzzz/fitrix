@@ -10,11 +10,14 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/features/auth/data/account_service.dart';
 import 'package:fitrix/features/auth/data/auth_failure.dart';
+import 'package:fitrix/features/auth/data/social_sign_in.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/auth/presentation/widgets/code_input.dart';
 
 /// Sign in with email: enter the address, then the 6-digit code from the
-/// email. New addresses get an account automatically.
+/// email. New addresses get an account automatically. "Continue with
+/// Google / Apple" sign in natively when the build enables them (see
+/// SocialSignInConfig) and say "coming soon" otherwise.
 ///
 /// In local-only mode (no Supabase) the email is only remembered and
 /// onboarding continues, as before accounts existed.
@@ -43,6 +46,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   String _email = '';
   bool _busy = false;
   String? _error;
+
+  /// The Google / Apple sign-in in progress, for its button's spinner.
+  SocialProvider? _socialBusy;
 
   /// Set when the code was accepted but the profile couldn't be loaded.
   String? _verifiedUserId;
@@ -165,6 +171,62 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     await _finishSignIn(userId, router, account);
   }
 
+  /// Google or Apple: the provider's own sheet, then Supabase, then the same
+  /// steps as after an email code. Cancelling the sheet changes nothing.
+  Future<void> _continueWith(SocialProvider provider) async {
+    if (_busy) return;
+    final auth = ref.read(authGatewayProvider);
+    final config = ref.read(socialSignInConfigProvider);
+    final enabled = switch (provider) {
+      SocialProvider.google => config.googleEnabled,
+      SocialProvider.apple => config.appleEnabled,
+    };
+    if (auth == null || !enabled) {
+      _comingSoon(provider.label);
+      return;
+    }
+
+    final social = ref.read(socialSignInProvider);
+    final router = GoRouter.of(context);
+    final account = ref.read(accountServiceProvider);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    setState(() {
+      _busy = true;
+      _socialBusy = provider;
+      _error = null;
+    });
+
+    final String userId;
+    try {
+      final credential = switch (provider) {
+        SocialProvider.google => await social.google(),
+        SocialProvider.apple => await social.apple(),
+      };
+      if (credential == null) {
+        // Cancelled by the user: back to where they were, no message.
+        if (mounted) {
+          setState(() {
+            _busy = false;
+            _socialBusy = null;
+          });
+        }
+        return;
+      }
+      userId =
+          await auth.signInWithIdToken(credential).timeout(_requestTimeout);
+    } catch (e) {
+      debugPrint('${provider.label} sign-in failed: $e');
+      if (!mounted) return;
+      setState(() {
+        _busy = false;
+        _socialBusy = null;
+        _error = AuthFailure.fromSocial(e, provider: provider.label).message;
+      });
+      return;
+    }
+    await _finishSignIn(userId, router, account);
+  }
+
   /// Loads the account's profile and continues to Home or onboarding.
   /// [router] and [account] are read up front: finishing sign-in may
   /// rebuild the provider scope (and this screen with it).
@@ -189,6 +251,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         if (!mounted) return;
         setState(() {
           _busy = false;
+          _socialBusy = null;
           _verifiedUserId = userId;
           _error = AuthFailure.from(e).kind == AuthFailureKind.network
               ? "You're signed in, but your profile couldn't be loaded. "
@@ -308,7 +371,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         height: 54,
         child: ElevatedButton(
           onPressed: _busy ? null : onPressed,
-          child: _busy
+          // Google / Apple show their progress on their own button.
+          child: _busy && _socialBusy == null
               ? const SizedBox(
                   width: 22,
                   height: 22,
@@ -323,6 +387,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     // Onboarded but the session ended (signed out elsewhere, revoked).
     final signingBackIn = ref.read(appSessionProvider).onboardingComplete &&
         ref.read(authGatewayProvider) != null;
+    final social = ref.watch(socialSignInConfigProvider);
+    // Signed in with Google / Apple, but the profile didn't load.
+    final profileLoadFailed = _verifiedUserId != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -337,7 +404,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           child: TextField(
             key: const Key('email-input'),
             controller: _emailController,
-            enabled: !_busy,
+            enabled: !_busy && !profileLoadFailed,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.go,
             autofillHints: const [AutofillHints.email],
@@ -352,7 +419,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         ),
         _errorText(_error),
         const SizedBox(height: 20),
-        _primaryButton('Continue', _continueWithEmail),
+        if (profileLoadFailed)
+          _primaryButton(
+            'Try again',
+            () => _finishSignIn(
+              _verifiedUserId!,
+              GoRouter.of(context),
+              ref.read(accountServiceProvider),
+            ),
+          )
+        else
+          _primaryButton('Continue', _continueWithEmail),
         const SizedBox(height: 24),
         Row(
           children: [
@@ -370,17 +447,22 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         const SizedBox(height: 24),
         _socialButton(
           palette,
+          key: const Key('google-sign-in'),
+          provider: SocialProvider.google,
           icon: Icons.g_mobiledata,
-          label: 'Continue with Google',
-          onPressed: () => _comingSoon('Google'),
+          enabled: !profileLoadFailed,
         ),
-        const SizedBox(height: 12),
-        _socialButton(
-          palette,
-          icon: Icons.apple,
-          label: 'Continue with Apple',
-          onPressed: () => _comingSoon('Apple'),
-        ),
+        // Sign in with Apple only exists on Apple devices.
+        if (social.showAppleButton) ...[
+          const SizedBox(height: 12),
+          _socialButton(
+            palette,
+            key: const Key('apple-sign-in'),
+            provider: SocialProvider.apple,
+            icon: Icons.apple,
+            enabled: !profileLoadFailed,
+          ),
+        ],
         const SizedBox(height: 24),
         Text.rich(
           textAlign: TextAlign.center,
@@ -406,23 +488,32 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   Widget _socialButton(
     AppPalette palette, {
+    required Key key,
+    required SocialProvider provider,
     required IconData icon,
-    required String label,
-    required VoidCallback onPressed,
+    required bool enabled,
   }) =>
       SizedBox(
+        key: key,
         height: 54,
         child: OutlinedButton.icon(
-          onPressed: _busy ? null : onPressed,
+          onPressed:
+              _busy || !enabled ? null : () => _continueWith(provider),
           style: OutlinedButton.styleFrom(
             side: BorderSide(color: palette.border),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          icon: Icon(icon, size: 24, color: palette.textPrimary),
+          icon: _socialBusy == provider
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                )
+              : Icon(icon, size: 24, color: palette.textPrimary),
           label: Text(
-            label,
+            'Continue with ${provider.label}',
             style: TextStyle(
               color: palette.textPrimary,
               fontSize: 16,
