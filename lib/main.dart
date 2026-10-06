@@ -19,6 +19,7 @@ import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/supabase/supabase_config.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
+import 'package:fitrix/core/sync/sync_providers.dart';
 
 /// Application entry point
 /// Initializes Flutter bindings and loads local storage before launching the app
@@ -96,7 +97,8 @@ class FitrixRoot extends StatelessWidget {
           appSessionProvider.overrideWithValue(session),
           supabaseClientProvider.overrideWithValue(supabase),
         ],
-        child: FitrixApp(router: router),
+        // Syncs workouts and chats in the background while signed in.
+        child: SyncBootstrap(child: FitrixApp(router: router)),
       ),
     );
   }

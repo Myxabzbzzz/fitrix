@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/data/workout_storage.dart';
@@ -9,9 +10,14 @@ final workoutStorageProvider = Provider<WorkoutStorage>(
   (ref) => WorkoutStorage(ref.watch(sharedPreferencesProvider)),
 );
 
+/// The user's plans (deleted ones excluded). Changes are synced when signed
+/// in, see `SyncEngine`.
 final workoutTemplatesProvider =
     StateNotifierProvider<WorkoutTemplatesNotifier, List<WorkoutTemplate>>(
-  (ref) => WorkoutTemplatesNotifier(ref.watch(workoutStorageProvider)),
+  (ref) => WorkoutTemplatesNotifier(
+    ref.watch(workoutStorageProvider),
+    onChanged: ref.read(localChangesProvider).notify,
+  ),
 );
 
 final workoutsForSportProvider =
@@ -25,7 +31,10 @@ final workoutsForSportProvider =
 /// Finished workouts, newest first.
 final workoutHistoryProvider =
     StateNotifierProvider<WorkoutHistoryNotifier, List<CompletedWorkout>>(
-  (ref) => WorkoutHistoryNotifier(ref.watch(workoutStorageProvider)),
+  (ref) => WorkoutHistoryNotifier(
+    ref.watch(workoutStorageProvider),
+    onChanged: ref.read(localChangesProvider).notify,
+  ),
 );
 
 final activeWorkoutProvider =
@@ -42,15 +51,19 @@ final activeWorkoutExpandedProvider = StateProvider<bool>((ref) => false);
 
 class WorkoutTemplatesNotifier extends StateNotifier<List<WorkoutTemplate>> {
   final WorkoutStorage _storage;
+  final void Function()? _onChanged;
   final Uuid _uuid = const Uuid();
 
-  WorkoutTemplatesNotifier(this._storage)
-      : super(_storage.loadTemplates() ?? WorkoutCatalog.defaults);
+  WorkoutTemplatesNotifier(this._storage, {void Function()? onChanged})
+      : _onChanged = onChanged,
+        super(_storage.loadTemplates() ?? WorkoutCatalog.defaults);
 
+  /// User changes: saved and reported for sync.
   @override
   set state(List<WorkoutTemplate> value) {
     super.state = value;
     _storage.saveTemplates(value);
+    _onChanged?.call();
   }
 
   void add(Sport sport, String name) {
@@ -63,33 +76,66 @@ class WorkoutTemplatesNotifier extends StateNotifier<List<WorkoutTemplate>> {
         focus: sport.label,
         estimatedDuration: const Duration(hours: 1),
         exercises: const [],
+        updatedAt: DateTime.now(),
       ),
     ];
   }
 
   void update(WorkoutTemplate template) {
+    final edited = template.copyWith(updatedAt: DateTime.now());
     state = [
-      for (final w in state) w.id == template.id ? template : w,
+      for (final w in state) w.id == template.id ? edited : w,
     ];
   }
 
+  /// Deletes the plan, keeping a tombstone until the deletion is synced.
   void remove(String id) {
+    final now = DateTime.now();
+    final removed = state.where((w) => w.id == id).toList();
+    if (removed.isNotEmpty) {
+      _storage.saveDeletedTemplates([
+        ..._storage.loadDeletedTemplates().where((t) => t.id != id),
+        removed.first.copyWith(updatedAt: now, deletedAt: now),
+      ]);
+    }
     state = state.where((w) => w.id != id).toList();
+  }
+
+  /// Replaces plans and pending deletions with the result of a sync
+  /// (not reported back as a local change).
+  void applySynced(
+    List<WorkoutTemplate> plans,
+    List<WorkoutTemplate> tombstones,
+  ) {
+    super.state = plans;
+    _storage.saveTemplates(plans);
+    _storage.saveDeletedTemplates(tombstones);
   }
 }
 
 class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
   final WorkoutStorage _storage;
+  final void Function()? _onChanged;
 
-  WorkoutHistoryNotifier(this._storage) : super(_storage.loadHistory());
+  WorkoutHistoryNotifier(this._storage, {void Function()? onChanged})
+      : _onChanged = onChanged,
+        super(_storage.loadHistory());
 
   @override
   set state(List<CompletedWorkout> value) {
     super.state = value;
     _storage.saveHistory(value);
+    _onChanged?.call();
   }
 
   void add(CompletedWorkout workout) => state = [workout, ...state];
+
+  /// Replaces history with the result of a sync (newest first; not
+  /// reported back as a local change).
+  void applySynced(List<CompletedWorkout> history) {
+    super.state = history;
+    _storage.saveHistory(history);
+  }
 
   /// Most recent session of the given plan, if any.
   CompletedWorkout? lastFor(String templateId) {
