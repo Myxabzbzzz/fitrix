@@ -429,7 +429,12 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             ),
           )
         else
-          _primaryButton('Continue', _continueWithEmail),
+          // "Get code" when a code is actually emailed, so it can't be
+          // mistaken for "Continue with Google" below.
+          _primaryButton(
+            ref.watch(authGatewayProvider) == null ? 'Continue' : 'Get code',
+            _continueWithEmail,
+          ),
         const SizedBox(height: 24),
         Row(
           children: [

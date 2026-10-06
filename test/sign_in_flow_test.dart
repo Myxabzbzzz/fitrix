@@ -81,7 +81,11 @@ Future<_Harness> _pumpApp(
 
 Future<void> _enterEmail(WidgetTester tester, String email) async {
   await tester.enterText(find.byKey(const Key('email-input')), email);
-  await tester.tap(find.widgetWithText(ElevatedButton, 'Continue'));
+  // "Get code" with an auth server, "Continue" in local-only mode.
+  final getCode = find.widgetWithText(ElevatedButton, 'Get code');
+  await tester.tap(getCode.evaluate().isNotEmpty
+      ? getCode
+      : find.widgetWithText(ElevatedButton, 'Continue'));
   await tester.pumpAndSettle();
 }
 
@@ -438,7 +442,7 @@ void main() {
 
       await tapSocial(tester, 'Google');
       expect(_errorText(tester), contains("profile couldn't be loaded"));
-      expect(find.widgetWithText(ElevatedButton, 'Continue'), findsNothing);
+      expect(find.widgetWithText(ElevatedButton, 'Get code'), findsNothing);
 
       h.remote.fetchError = null;
       await tester.tap(find.widgetWithText(ElevatedButton, 'Try again'));
