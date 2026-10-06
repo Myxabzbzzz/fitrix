@@ -6,6 +6,7 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_colors.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 
 /// Profile tab: the data entered during onboarding.
@@ -13,13 +14,17 @@ class AboutMeScreen extends ConsumerWidget {
   const AboutMeScreen({super.key});
 
   Future<void> _signOut(BuildContext context, WidgetRef ref) async {
+    final account = ref.read(accountServiceProvider);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Sign out?'),
-        content: const Text(
-          'Your profile, chats and workouts are stored only on this device '
-          'and will be deleted.',
+        content: Text(
+          account == null
+              ? 'Your profile, chats and workouts are stored only on this '
+                  'device and will be deleted.'
+              : 'Your data will be removed from this device. Sign in with '
+                  'the same email to get your profile back.',
         ),
         actions: [
           TextButton(
@@ -39,7 +44,12 @@ class AboutMeScreen extends ConsumerWidget {
     // Grab these before signing out: it recreates the provider scope.
     final router = GoRouter.of(context);
     final session = ref.read(appSessionProvider);
-    await session.signOut();
+    if (account != null) {
+      // Ends the Supabase session (works offline), then clears local data.
+      await account.signOut();
+    } else {
+      await session.signOut();
+    }
     router.go(AppRouter.intro);
   }
 
@@ -47,6 +57,7 @@ class AboutMeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final profile = ref.watch(profileProvider).valueOrNull;
+    final email = ref.watch(accountEmailProvider).valueOrNull;
 
     final fullName = [profile?.name, profile?.surname]
         .where((s) => s != null && s.isNotEmpty)
@@ -106,6 +117,16 @@ class AboutMeScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            if (email != null && email.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Center(
+                child: Text(
+                  email,
+                  key: const Key('account-email'),
+                  style: TextStyle(fontSize: 14, color: palette.textSecondary),
+                ),
+              ),
+            ],
             const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28),

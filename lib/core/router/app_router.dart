@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/core/widgets/coming_soon_screen.dart';
+import 'package:fitrix/features/auth/data/auth_gateway.dart';
 import 'package:fitrix/features/intro/presentation/screens/intro_screen.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
 import 'package:fitrix/features/auth/presentation/screens/sign_in_screen.dart';
@@ -53,21 +54,53 @@ class AppRouter {
     transition,
   };
 
+  /// Onboarding steps that need an account when Supabase is available.
+  static const _signedInOnboardingRoutes = {profile, chat, transition};
+
+  /// Where navigation to [location] should go instead, or null to allow it.
+  ///
+  /// [authEnabled] is false in local-only mode (no Supabase): then only
+  /// "onboarded users skip onboarding" applies, as before accounts existed.
+  /// [signedIn] means a session exists for the account whose data is on
+  /// this device.
+  static String? redirectFor({
+    required String location,
+    required bool onboardingComplete,
+    required bool authEnabled,
+    required bool signedIn,
+  }) {
+    if (authEnabled && !signedIn) {
+      // Signed out elsewhere or session revoked: sign in again. The local
+      // data stays if the same account comes back.
+      if (onboardingComplete) return location == signIn ? null : signIn;
+      if (_signedInOnboardingRoutes.contains(location)) return signIn;
+      return null;
+    }
+    // Once onboarding is done, every launch (and any stray link back into
+    // onboarding) lands on Home instead.
+    if (onboardingComplete && _onboardingRoutes.contains(location)) {
+      return home;
+    }
+    return null;
+  }
+
   /// The app's router; created once in `main()` via [create].
   static late GoRouter router;
 
-  static GoRouter create(AppSession session) => router = GoRouter(
+  /// [auth] is null in local-only mode.
+  static GoRouter create(AppSession session, {AuthGateway? auth}) =>
+      router = GoRouter(
         initialLocation: intro,
-        refreshListenable: session,
-        // Once onboarding is done, every launch (and any stray link back into
-        // onboarding) lands on Home instead.
-        redirect: (context, state) {
-          if (session.onboardingComplete &&
-              _onboardingRoutes.contains(state.matchedLocation)) {
-            return home;
-          }
-          return null;
-        },
+        refreshListenable:
+            auth == null ? session : Listenable.merge([session, auth]),
+        redirect: (context, state) => redirectFor(
+          location: state.matchedLocation,
+          onboardingComplete: session.onboardingComplete,
+          authEnabled: auth != null,
+          signedIn: auth != null &&
+              auth.userId != null &&
+              auth.userId == session.accountUserId,
+        ),
         routes: [
           GoRoute(
             path: intro,

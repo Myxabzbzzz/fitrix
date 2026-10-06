@@ -19,6 +19,10 @@ import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/supabase/supabase_config.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
+import 'package:fitrix/features/auth/data/account_service.dart';
+import 'package:fitrix/features/auth/data/auth_gateway.dart';
+import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
+import 'package:fitrix/features/profile/data/repositories/profile_remote.dart';
 
 /// Application entry point
 /// Initializes Flutter bindings and loads local storage before launching the app
@@ -40,12 +44,26 @@ void main() async {
   final session = AppSession(prefs);
   final supabase = await _initSupabase();
 
+  // Sign-in and the account's profile; without Supabase the app runs
+  // local-only, exactly as before accounts existed.
+  final auth = supabase == null ? null : SupabaseAuthGateway(supabase);
+  final account = auth == null
+      ? null
+      : (AccountService(
+          prefs: prefs,
+          session: session,
+          auth: auth,
+          remote: SupabaseProfileRemote(supabase!),
+        )..start());
+
   runApp(
     FitrixRoot(
       prefs: prefs,
       session: session,
-      router: AppRouter.create(session),
+      router: AppRouter.create(session, auth: auth),
       supabase: supabase,
+      auth: auth,
+      account: account,
     ),
   );
 }
@@ -77,12 +95,21 @@ class FitrixRoot extends StatelessWidget {
   /// Null when Supabase isn't available (e.g. in tests): local-only mode.
   final SupabaseClient? supabase;
 
+  /// Email-code sign-in; null in local-only mode. Must be the same instance
+  /// the [router] was created with.
+  final AuthGateway? auth;
+
+  /// Account ↔ local data glue; null in local-only mode.
+  final AccountService? account;
+
   const FitrixRoot({
     super.key,
     required this.prefs,
     required this.session,
     required this.router,
     this.supabase,
+    this.auth,
+    this.account,
   });
 
   @override
@@ -95,6 +122,8 @@ class FitrixRoot extends StatelessWidget {
           sharedPreferencesProvider.overrideWithValue(prefs),
           appSessionProvider.overrideWithValue(session),
           supabaseClientProvider.overrideWithValue(supabase),
+          authGatewayProvider.overrideWithValue(auth),
+          accountServiceProvider.overrideWithValue(account),
         ],
         child: FitrixApp(router: router),
       ),

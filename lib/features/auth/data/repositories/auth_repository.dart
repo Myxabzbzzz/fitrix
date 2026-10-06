@@ -1,6 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 
+/// Local-only mode (no Supabase): the email typed on the sign-in screen is
+/// just remembered on the device. With Supabase the account comes from
+/// `AuthGateway` instead.
 class AuthRepository {
   Future<void> saveEmail(String email) async {
     final prefs = await SharedPreferences.getInstance();
@@ -11,15 +14,5 @@ class AuthRepository {
   Future<String?> getEmail() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(AppConstants.keyUserEmail);
-  }
-
-  Future<bool> isAuthenticated() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(AppConstants.keyIsAuthenticated) ?? false;
-  }
-
-  Future<void> signOut() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
   }
 }

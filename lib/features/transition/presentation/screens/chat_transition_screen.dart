@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 
 class ChatTransitionScreen extends ConsumerStatefulWidget {
   const ChatTransitionScreen({super.key});
@@ -62,8 +64,13 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
     );
     _whiteCircleController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
+        // Read before completing: that redirects away from this screen.
+        final account = ref.read(accountServiceProvider);
         // From now on the app opens straight to Home.
         await ref.read(appSessionProvider).completeOnboarding();
+        // Mark the account as onboarded too (in the background; retried
+        // until it lands, so a new device skips onboarding).
+        unawaited(account?.profileChanged());
         if (mounted) context.go(AppRouter.home);
       }
     });
