@@ -33,12 +33,32 @@ class ChatApiService {
   /// falls back to a canned offline reply so onboarding still works. Errors
   /// from a reachable backend (Ollama down, model missing, stream cut off)
   /// throw [ChatException] so the chat can offer a retry.
-  Stream<String> streamMessage(String message, String conversationId) async* {
+  ///
+  /// Optional context for the backend:
+  /// - [topic]: which Felix persona answers ("app", "gym", "running", ...).
+  /// - [profile]: what Felix knows about the user (name, age, weightKg,
+  ///   heightCm); omitted when empty.
+  /// - [history]: recent `{role, content}` turns, oldest first, without
+  ///   [message]. When sent, the backend uses it instead of its own memory,
+  ///   so the chat stored on the device is the source of truth.
+  Stream<String> streamMessage(
+    String message,
+    String conversationId, {
+    String? topic,
+    Map<String, Object>? profile,
+    List<Map<String, String>>? history,
+  }) async* {
     final Response<ResponseBody> response;
     try {
       response = await _dio.post<ResponseBody>(
         AppConstants.chatStreamEndpoint,
-        data: {'message': message, 'conversationId': conversationId},
+        data: {
+          'message': message,
+          'conversationId': conversationId,
+          if (topic != null) 'topic': topic,
+          if (profile != null && profile.isNotEmpty) 'profile': profile,
+          if (history != null) 'history': history,
+        },
         options: Options(
           responseType: ResponseType.stream,
           validateStatus: (_) => true,

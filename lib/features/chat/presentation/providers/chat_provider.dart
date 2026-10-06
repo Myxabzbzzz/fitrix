@@ -4,13 +4,18 @@ import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
+import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 
 final chatApiServiceProvider = Provider<ChatApiService>((ref) {
   return ChatApiService();
 });
 
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
-  return ChatRepository(ref.read(chatApiServiceProvider));
+  return ChatRepository(
+    ref.read(chatApiServiceProvider),
+    profileRepository: ref.read(profileRepositoryProvider),
+    topic: AssistantTopic.app.apiTopic,
+  );
 });
 
 final chatMessagesProvider =
@@ -25,6 +30,8 @@ final topicChatMessagesProvider = StateNotifierProvider.family<ChatNotifier,
   return ChatNotifier(
     ChatRepository(
       ref.read(chatApiServiceProvider),
+      profileRepository: ref.read(profileRepositoryProvider),
+      topic: topic.apiTopic,
       historyKey: topic.historyKey,
       conversationKey: topic.conversationKey,
       greeting: topic.greeting,
@@ -72,10 +79,8 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       isQuickReply: isQuickReply,
     );
 
-    await _reply(
-      [...messages.where((m) => !m.isFailed), userMessage],
-      content,
-    );
+    final history = [...messages.where((m) => !m.isFailed), userMessage];
+    await _reply(history, history.length - 1);
   }
 
   /// Re-asks Felix for the last user message after a failed reply.
@@ -89,10 +94,14 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
     );
     if (lastUser == -1) return;
 
-    await _reply(history, history[lastUser].content);
+    await _reply(history, lastUser);
   }
 
-  Future<void> _reply(List<ChatMessage> history, String prompt) async {
+  /// Shows [history] plus a streaming reply to the user message at
+  /// [promptIndex]. Everything before that message is sent as context.
+  Future<void> _reply(List<ChatMessage> history, int promptIndex) async {
+    final prompt = history[promptIndex].content;
+    final context = history.sublist(0, promptIndex);
     _isReplying = true;
     final reply = ChatMessage(
       id: _uuid.v4(),
@@ -106,7 +115,8 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
     final text = StringBuffer();
     try {
-      await for (final delta in _repository.streamMessage(prompt)) {
+      await for (final delta
+          in _repository.streamMessage(prompt, context: context)) {
         if (!mounted) return;
         text.write(delta);
         _updateReply(reply.id, (m) => m.copyWith(content: text.toString()));

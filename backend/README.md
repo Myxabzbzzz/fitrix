@@ -5,7 +5,8 @@ Node.js/Express backend that connects the FITRIX Flutter app to Ollama LLM.
 ## Features
 
 - ✅ REST API for chat functionality
-- ✅ Conversation history management
+- ✅ Topic-specific Felix personas (app assistant + a trainer per sport)
+- ✅ Conversation history sent by the app, or kept in server memory
 - ✅ Ollama integration with context preservation
 - ✅ CORS enabled for Flutter app
 - ✅ Error handling and health checks
@@ -80,15 +81,55 @@ POST /chat
 
 Request:
 {
-  "message": "I want to build muscle",
-  "conversationId": "uuid-here"
+  "message": "What should my protein intake be?",   // required, 1-4000 chars
+  "conversationId": "uuid-here",                   // required, <= 200 chars
+  "topic": "gym",                                  // optional, see below
+  "profile": {                                     // optional
+    "name": "Misha",
+    "age": 27,
+    "weightKg": 82,
+    "heightCm": 181
+  },
+  "history": [                                     // optional, oldest first
+    { "role": "assistant", "content": "Hey! I'm Felix, your gym trainer." },
+    { "role": "user", "content": "I want to bulk" },
+    { "role": "assistant", "content": "Eat in a small surplus..." }
+  ]
 }
 
 Response:
 {
-  "reply": "Great choice! Building muscle requires..."
+  "reply": "Based on your weight of 82 kg, aim for 131-180 g of protein a day..."
 }
 ```
+
+Fields:
+
+- `topic`: which Felix answers. `"app"` (default) is the general app
+  assistant; `"gym"`, `"fitness"`, `"cycling"`, `"running"`, `"football"`
+  and `"winterSports"` (the app's `Sport.name` values) are trainers focused
+  on that sport. Unknown values fall back to `"app"`.
+- `profile`: what Felix knows about the user, added to the system prompt.
+  Known fields: `name`, `age` (years), `weightKg`, `heightCm`, plus optional
+  `sex`, `goal`, `experience`. Numbers may be numbers or numeric strings;
+  implausible values (e.g. `heightCm: 9999`) and unknown fields are dropped.
+- `history`: the recent conversation as the app shows it, **not** including
+  `message`. Entries need `role` `"user"` or `"assistant"` and a non-empty
+  string `content` (cut to 4000 chars); anything else is skipped and only
+  the last 20 entries are used. When `history` is present (even `[]`) it is
+  the whole context and the server's memory for `conversationId` is neither
+  read nor written, so a backend restart doesn't make Felix forget the chat.
+  Without `history` the server keeps the last 20 turns per `conversationId`
+  in memory, as before.
+
+The system prompt is built per request from `topic` and `profile`: Felix
+replies in the user's language, in plain text, and politely declines
+anything unrelated to fitness, health, nutrition or the app in one short
+sentence. Markdown the model emits anyway (`**bold**`, `#` headings, `* `
+bullets) is stripped from the reply.
+
+Invalid requests (malformed JSON, missing or oversized `message` or
+`conversationId`) get `400 {"error": "...", "message": "..."}`.
 
 ### 3. Reset Conversation
 ```bash
@@ -172,7 +213,9 @@ Or edit the PORT constant in `server.js`.
 
 ### Customize Felix's Personality
 
-Edit the system prompt in `server.js` (lines 41-57) to change how Felix responds.
+Edit `prompt.js`: `TOPICS` holds the persona for each chat topic and
+`BASE_RULES` the style, language and scope rules shared by all of them.
+Run `npm test` after changing it.
 
 ## Connecting to Flutter App
 
@@ -217,7 +260,10 @@ PORT=3001 npm start
 ### File Structure
 ```
 backend/
-├── server.js          # Main server file
+├── server.js          # Express app and Ollama calls
+├── prompt.js          # System prompt per topic/profile, input validation
+├── plainText.js       # Strips markdown from (streamed) replies
+├── *.test.js          # Unit tests: npm test
 ├── package.json       # Dependencies
 └── README.md         # This file
 ```

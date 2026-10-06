@@ -29,6 +29,12 @@ class AssistantTopic {
   String get subtitle =>
       isApp ? AppConstants.assistantSubtitle : 'Your personal trainer';
 
+  /// Sent to the backend as `topic` to pick Felix's persona: "app" for the
+  /// general assistant, otherwise the sport's name (e.g. "gym", "running").
+  String get apiTopic => isApp ? appApiTopic : sport!.name;
+
+  static const appApiTopic = 'app';
+
   String get historyKey => isApp
       ? AppConstants.keyChatHistory
       : '${AppConstants.keyChatHistory}_${sport!.name}';

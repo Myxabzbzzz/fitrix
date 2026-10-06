@@ -2,6 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const axios = require('axios');
+const {
+  MAX_MESSAGE_LENGTH,
+  MAX_CONVERSATION_ID_LENGTH,
+  MAX_HISTORY_TURNS,
+  sanitizeTopic,
+  sanitizeProfile,
+  sanitizeHistory,
+  buildSystemPrompt,
+} = require('./prompt');
+const { createPlainTextFilter, toPlainText } = require('./plainText');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,27 +24,14 @@ const OLLAMA_THINK = process.env.OLLAMA_THINK === 'true';
 // to the next reply. Keep it in memory longer.
 const OLLAMA_KEEP_ALIVE = process.env.OLLAMA_KEEP_ALIVE || '30m';
 
-const SYSTEM_PROMPT = `You are Felix, a personal AI fitness coach in the FITRIX app. You help users:
-- Set and achieve fitness goals
-- Create personalized workout plans
-- Track progress and stay motivated
-- Make healthy lifestyle choices
-
-Be friendly, encouraging, and concise. Ask follow-up questions to understand the user's:
-- Fitness goals (muscle building, weight loss, endurance, etc.)
-- Current activity level and preferences
-- Experience level
-- Available time and equipment
-
-Keep responses short and actionable. Use a conversational tone.
-Write plain text only: no markdown (no **bold**, # headings or tables).
-For lists use simple lines like "1. Bench press - 3x10".`;
-
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
+// History can carry 20 turns of non-ASCII text, so allow more than
+// body-parser's 100kb default.
+app.use(bodyParser.json({ limit: '1mb' }));
 
-// Store conversation history per conversationId
+// Conversation turns per conversationId, for clients that don't send
+// `history`. Requests that do send `history` neither read nor write this.
 const conversations = new Map();
 
 // Health check endpoint
@@ -44,34 +41,25 @@ app.get('/health', (req, res) => {
 
 // Chat endpoint
 app.post('/chat', async (req, res) => {
+  const turn = prepareTurn(req.body);
+  if (turn.error) {
+    return res.status(400).json({ error: turn.error, message: turn.error });
+  }
+
   try {
-    const { message, conversationId } = req.body;
-
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
-    }
-
-    if (!conversationId) {
-      return res.status(400).json({ error: 'conversationId is required' });
-    }
-
-    console.log(`\n[${conversationId}] User: ${message}`);
-
-    const history = startTurn(conversationId, message);
-
-    // Call Ollama API
     const ollamaResponse = await axios.post(
       `${OLLAMA_URL}/api/chat`,
-      ollamaRequest(history, false)
+      ollamaRequest(turn.messages, false)
     );
 
-    const assistantMessage = ollamaResponse.data.message.content;
-    finishTurn(conversationId, assistantMessage);
+    const assistantMessage = toPlainText(
+      ollamaResponse.data?.message?.content || ''
+    );
+    turn.finish(assistantMessage);
 
     res.json({ reply: assistantMessage });
-
   } catch (error) {
-    abortTurn(req.body.conversationId);
+    turn.abort();
     const { status, body } = describeOllamaError(error);
     console.error('Error calling Ollama:', body.message);
     res.status(status).json(body);
@@ -84,17 +72,11 @@ app.post('/chat', async (req, res) => {
 //   {"error":"…"}     if Ollama fails mid-stream
 // Errors before the first token are returned as a normal JSON error status.
 app.post('/chat/stream', async (req, res) => {
-  const { message, conversationId } = req.body;
-
-  if (!message) {
-    return res.status(400).json({ error: 'Message is required' });
+  const turn = prepareTurn(req.body);
+  if (turn.error) {
+    return res.status(400).json({ error: turn.error, message: turn.error });
   }
-  if (!conversationId) {
-    return res.status(400).json({ error: 'conversationId is required' });
-  }
-
-  console.log(`\n[${conversationId}] User: ${message}`);
-  const history = startTurn(conversationId, message);
+  const { conversationId } = turn;
 
   // Stop generating if the app goes away mid-reply.
   const controller = new AbortController();
@@ -114,10 +96,11 @@ app.post('/chat/stream', async (req, res) => {
   };
 
   let reply = '';
+  const plain = createPlainTextFilter();
   try {
     const ollamaResponse = await axios.post(
       `${OLLAMA_URL}/api/chat`,
-      ollamaRequest(history, true),
+      ollamaRequest(turn.messages, true),
       { responseType: 'stream', signal: controller.signal }
     );
 
@@ -130,22 +113,32 @@ app.post('/chat/stream', async (req, res) => {
         buffer = buffer.slice(newline + 1);
         if (!line) continue;
 
-        const data = JSON.parse(line);
+        let data;
+        try {
+          data = JSON.parse(line);
+        } catch {
+          continue; // skip a malformed line rather than failing the reply
+        }
         if (data.error) throw new Error(data.error);
 
-        const delta = data.message?.content || '';
+        const delta = plain.push(data.message?.content || '');
         if (delta) {
           reply += delta;
           send({ delta });
         }
       }
     }
+    const tail = plain.flush();
+    if (tail) {
+      reply += tail;
+      send({ delta: tail });
+    }
 
-    finishTurn(conversationId, reply);
+    turn.finish(reply);
     send({ done: true });
     res.end();
   } catch (error) {
-    abortTurn(conversationId);
+    turn.abort();
     if (controller.signal.aborted) {
       console.log(`[${conversationId}] Client disconnected, generation stopped`);
       return;
@@ -175,35 +168,92 @@ function ollamaRequest(messages, stream) {
   };
 }
 
-// Adds the user message to the conversation and returns its history.
-function startTurn(conversationId, message) {
-  if (!conversations.has(conversationId)) {
-    conversations.set(conversationId, [
-      { role: 'system', content: SYSTEM_PROMPT },
-    ]);
+/**
+ * Validates a chat request body and returns what one turn needs:
+ *   { conversationId, messages, finish(reply), abort() }  or  { error }.
+ *
+ * Body: { message, conversationId, topic?, profile?, history? }.
+ * The system prompt is built per request from `topic` and `profile`.
+ * With `history` (an array, even an empty one) the app is the source of
+ * truth: the context is exactly what it sent and server memory is untouched.
+ * Without it, the per-conversationId memory below is used as before.
+ */
+function prepareTurn(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return { error: 'Request body must be a JSON object' };
   }
-  const history = conversations.get(conversationId);
-  history.push({ role: 'user', content: message });
-  return history;
+  const { message, conversationId } = body;
+  if (typeof message !== 'string' || !message.trim()) {
+    return { error: 'Message is required' };
+  }
+  if (message.length > MAX_MESSAGE_LENGTH) {
+    return {
+      error: `Message is too long (max ${MAX_MESSAGE_LENGTH} characters)`,
+    };
+  }
+  if (typeof conversationId !== 'string' || !conversationId.trim()) {
+    return { error: 'conversationId is required' };
+  }
+  if (conversationId.length > MAX_CONVERSATION_ID_LENGTH) {
+    return { error: 'conversationId is too long' };
+  }
+
+  const topic = sanitizeTopic(body.topic);
+  const profile = sanitizeProfile(body.profile);
+  const history = sanitizeHistory(body.history);
+  const system = { role: 'system', content: buildSystemPrompt(topic, profile) };
+  const user = { role: 'user', content: message.trim() };
+  const tag = `[${conversationId} ${topic}` +
+    (history ? ` history:${history.length}` : '') + ']';
+
+  console.log(`\n${tag} User: ${user.content}`);
+
+  if (history) {
+    return {
+      conversationId,
+      messages: [system, ...history, user],
+      finish: (reply) => console.log(`${tag} Felix: ${reply}`),
+      abort: () => {},
+    };
+  }
+
+  const turns = startTurn(conversationId, user.content);
+  return {
+    conversationId,
+    messages: [system, ...turns],
+    finish: (reply) => finishTurn(conversationId, reply, tag),
+    abort: () => abortTurn(conversationId),
+  };
 }
 
-function finishTurn(conversationId, reply) {
-  const history = conversations.get(conversationId);
-  history.push({ role: 'assistant', content: reply });
+// Adds the user message to the in-memory conversation and returns its turns.
+function startTurn(conversationId, message) {
+  if (!conversations.has(conversationId)) {
+    conversations.set(conversationId, []);
+  }
+  const turns = conversations.get(conversationId);
+  turns.push({ role: 'user', content: message });
+  return turns;
+}
 
-  // Keep only last 20 messages to avoid context overflow
-  if (history.length > 21) { // 20 messages + system prompt
-    history.splice(1, history.length - 21);
+function finishTurn(conversationId, reply, tag) {
+  const turns = conversations.get(conversationId);
+  if (!turns) return;
+  turns.push({ role: 'assistant', content: reply });
+
+  // Keep only the last turns to avoid context overflow
+  if (turns.length > MAX_HISTORY_TURNS) {
+    turns.splice(0, turns.length - MAX_HISTORY_TURNS);
   }
 
-  console.log(`[${conversationId}] Felix: ${reply}`);
+  console.log(`${tag} Felix: ${reply}`);
 }
 
 // Drops the unanswered user message so a retry doesn't duplicate it.
 function abortTurn(conversationId) {
-  const history = conversations.get(conversationId);
-  if (history && history[history.length - 1]?.role === 'user') {
-    history.pop();
+  const turns = conversations.get(conversationId);
+  if (turns && turns[turns.length - 1]?.role === 'user') {
+    turns.pop();
   }
 }
 
@@ -234,9 +284,9 @@ function describeOllamaError(error) {
 
 // Reset conversation endpoint (optional)
 app.post('/chat/reset', (req, res) => {
-  const { conversationId } = req.body;
+  const conversationId = req.body?.conversationId;
 
-  if (conversationId && conversations.has(conversationId)) {
+  if (typeof conversationId === 'string' && conversations.has(conversationId)) {
     conversations.delete(conversationId);
     res.json({ message: 'Conversation reset successfully' });
   } else {
@@ -252,6 +302,15 @@ app.get('/models', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch models' });
   }
+});
+
+// Malformed JSON, oversized bodies, etc.: answer with JSON instead of HTML.
+app.use((err, req, res, next) => {
+  if (res.headersSent) return next(err);
+  const status = err.status || err.statusCode || 500;
+  const message = status < 500 ? err.message : 'Internal server error';
+  if (status >= 500) console.error('Unhandled error:', err);
+  res.status(status).json({ error: message, message });
 });
 
 app.listen(PORT, () => {
