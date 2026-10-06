@@ -74,6 +74,28 @@ class ChatMessage {
     );
   }
 
+  /// The conversation context sent to the backend as `history`: the last
+  /// [limit] completed messages of [messages] (oldest first) as
+  /// `{role, content}`. Failed, still-streaming and empty messages are left
+  /// out, since Felix never really said them.
+  static List<Map<String, String>> toApiHistory(
+    Iterable<ChatMessage> messages, {
+    int limit = maxApiHistory,
+  }) {
+    final turns = [
+      for (final m in messages)
+        if (!m.isFailed && !m.isStreaming && m.content.trim().isNotEmpty)
+          {
+            'role': m.sender == MessageSender.user ? 'user' : 'assistant',
+            'content': m.content.trim(),
+          },
+    ];
+    return turns.length > limit ? turns.sublist(turns.length - limit) : turns;
+  }
+
+  /// Matches the backend's cap on history turns.
+  static const maxApiHistory = 20;
+
   static List<ChatMessage> decodeMessages(String messagesJson) {
     final List<dynamic> decoded = jsonDecode(messagesJson);
     return decoded.map((m) => ChatMessage.fromJson(m)).toList();
