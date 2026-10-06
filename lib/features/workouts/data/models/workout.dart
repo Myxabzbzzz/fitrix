@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 /// Sports shown on "My workouts" and as pills on the sport / progress screens.
 enum Sport {
   gym('Gym', 'GYM', 'assets/images/sport_gym.png'),
@@ -97,6 +99,16 @@ class WorkoutTemplate {
   final Duration estimatedDuration;
   final List<Exercise> exercises;
 
+  /// When the plan was last changed: by the user on this device, or the
+  /// server's time for a version that came from sync. Null for built-in
+  /// plans nobody edited and for plans saved before sync existed; those
+  /// lose to any synced version.
+  final DateTime? updatedAt;
+
+  /// Set only on deleted plans, kept as tombstones until the deletion has
+  /// reached the server (see `WorkoutStorage.loadDeletedTemplates`).
+  final DateTime? deletedAt;
+
   const WorkoutTemplate({
     required this.id,
     required this.sport,
@@ -104,9 +116,16 @@ class WorkoutTemplate {
     required this.focus,
     required this.estimatedDuration,
     required this.exercises,
+    this.updatedAt,
+    this.deletedAt,
   });
 
-  WorkoutTemplate copyWith({String? name, List<Exercise>? exercises}) =>
+  WorkoutTemplate copyWith({
+    String? name,
+    List<Exercise>? exercises,
+    DateTime? updatedAt,
+    DateTime? deletedAt,
+  }) =>
       WorkoutTemplate(
         id: id,
         sport: sport,
@@ -114,6 +133,8 @@ class WorkoutTemplate {
         focus: focus,
         estimatedDuration: estimatedDuration,
         exercises: exercises ?? this.exercises,
+        updatedAt: updatedAt ?? this.updatedAt,
+        deletedAt: deletedAt ?? this.deletedAt,
       );
 
   Map<String, dynamic> toJson() => {
@@ -123,8 +144,11 @@ class WorkoutTemplate {
         'focus': focus,
         'estimatedMinutes': estimatedDuration.inMinutes,
         'exercises': [for (final e in exercises) e.toJson()],
+        if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
+        if (deletedAt != null) 'deletedAt': deletedAt!.toIso8601String(),
       };
 
+  /// Reads plans saved by any app version; older ones have no timestamps.
   factory WorkoutTemplate.fromJson(Map<String, dynamic> json) =>
       WorkoutTemplate(
         id: json['id'] as String,
@@ -136,8 +160,13 @@ class WorkoutTemplate {
           for (final e in json['exercises'] as List)
             Exercise.fromJson(e as Map<String, dynamic>),
         ],
+        updatedAt: _parseDate(json['updatedAt']),
+        deletedAt: _parseDate(json['deletedAt']),
       );
 }
+
+DateTime? _parseDate(Object? value) =>
+    value is String ? DateTime.tryParse(value) : null;
 
 /// A workout in progress, started from a [WorkoutTemplate].
 class ActiveWorkout {
@@ -182,6 +211,8 @@ class ActiveWorkout {
 
 /// A finished workout kept in history. Only completed sets are stored.
 class CompletedWorkout {
+  /// Unique id (a UUID), used to sync history between devices.
+  final String id;
   final String templateId;
   final String name;
   final Sport sport;
@@ -189,17 +220,35 @@ class CompletedWorkout {
   final DateTime finishedAt;
   final List<Exercise> exercises;
 
-  const CompletedWorkout({
+  /// Without an [id] (history saved before sync existed) one is derived
+  /// from the workout itself, so it's the same every time it's loaded.
+  CompletedWorkout({
+    String? id,
     required this.templateId,
     required this.name,
     required this.sport,
     required this.startedAt,
     required this.finishedAt,
     required this.exercises,
-  });
+  }) : id = id ?? legacyId(templateId, startedAt, finishedAt);
+
+  /// Deterministic UUID (v5) for a workout stored without an id.
+  static String legacyId(
+    String templateId,
+    DateTime startedAt,
+    DateTime finishedAt,
+  ) =>
+      const Uuid().v5(
+        _legacyNamespace,
+        '$templateId|${startedAt.toIso8601String()}|'
+        '${finishedAt.toIso8601String()}',
+      );
+
+  static const _legacyNamespace = '0c3a8f1e-5d0b-4c47-9a57-3f2b9d1c6e21';
 
   factory CompletedWorkout.from(ActiveWorkout workout, DateTime finishedAt) {
     return CompletedWorkout(
+      id: const Uuid().v4(),
       templateId: workout.template.id,
       name: workout.template.name,
       sport: workout.template.sport,
@@ -218,6 +267,7 @@ class CompletedWorkout {
   int get setCount => exercises.fold(0, (sum, e) => sum + e.sets.length);
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'templateId': templateId,
         'name': name,
         'sport': sport.name,
@@ -228,6 +278,7 @@ class CompletedWorkout {
 
   factory CompletedWorkout.fromJson(Map<String, dynamic> json) =>
       CompletedWorkout(
+        id: json['id'] as String?,
         templateId: json['templateId'] as String,
         name: json['name'] as String,
         sport: Sport.fromName(json['sport'] as String),

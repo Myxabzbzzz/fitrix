@@ -23,6 +23,21 @@ class WorkoutStorage {
         [for (final t in templates) t.toJson()],
       );
 
+  /// Deleted plans (with `deletedAt` set) whose deletion hasn't been synced
+  /// yet, so other devices can learn about it.
+  List<WorkoutTemplate> loadDeletedTemplates() =>
+      _readList(keyDeletedTemplates, WorkoutTemplate.fromJson) ?? const [];
+
+  void saveDeletedTemplates(List<WorkoutTemplate> tombstones) {
+    if (tombstones.isEmpty) {
+      _prefs.remove(keyDeletedTemplates);
+    } else {
+      _write(keyDeletedTemplates, [for (final t in tombstones) t.toJson()]);
+    }
+  }
+
+  static const keyDeletedTemplates = 'workout_templates_deleted';
+
   ActiveWorkout? loadActive() {
     final raw = _prefs.getString(AppConstants.keyActiveWorkout);
     if (raw == null) return null;

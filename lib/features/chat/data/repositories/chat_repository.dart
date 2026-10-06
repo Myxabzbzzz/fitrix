@@ -35,10 +35,23 @@ class ChatRepository {
       AppConstants.assistantIntro,
       AppConstants.assistantQuestion,
     ],
-  }) : _profileRepository = profileRepository;
+    SharedPreferences? prefs,
+    void Function()? onSaved,
+  })  : _profileRepository = profileRepository,
+        _preloadedPrefs = prefs,
+        _onSaved = onSaved;
+
+  /// The app's preloaded storage; falls back to the shared instance.
+  final SharedPreferences? _preloadedPrefs;
+
+  /// Called after the history was saved (used to trigger sync).
+  final void Function()? _onSaved;
+
+  Future<SharedPreferences> _prefs() async =>
+      _preloadedPrefs ?? await SharedPreferences.getInstance();
 
   Future<List<ChatMessage>> getMessages() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _prefs();
     final messagesJson = prefs.getString(historyKey);
 
     if (messagesJson == null || messagesJson.isEmpty) {
@@ -53,13 +66,14 @@ class ChatRepository {
   }
 
   Future<void> saveMessages(List<ChatMessage> messages) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _prefs();
     final messagesJson = ChatMessage.encodeMessages(messages);
     await prefs.setString(historyKey, messagesJson);
+    _onSaved?.call();
   }
 
   Future<String> getOrCreateConversationId() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _prefs();
     String? conversationId = prefs.getString(conversationKey);
 
     if (conversationId == null) {
@@ -129,12 +143,14 @@ class ChatRepository {
   List<ChatMessage> _getInitialMessages() {
     final now = DateTime.now();
     return [
+      // In order and all in the past, so a reply sent right away sorts
+      // after them when chats from several devices are merged.
       for (var i = 0; i < greeting.length; i++)
         ChatMessage(
           id: _uuid.v4(),
           content: greeting[i],
           sender: MessageSender.assistant,
-          timestamp: now.add(Duration(seconds: i)),
+          timestamp: now.subtract(Duration(milliseconds: greeting.length - i)),
         ),
     ];
   }

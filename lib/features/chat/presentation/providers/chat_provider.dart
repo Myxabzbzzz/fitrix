@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
@@ -15,6 +17,8 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
     ref.read(chatApiServiceProvider),
     profileRepository: ref.read(profileRepositoryProvider),
     topic: AssistantTopic.app.apiTopic,
+    prefs: ref.read(sharedPreferencesProvider),
+    onSaved: ref.read(localChangesProvider).notify,
   );
 });
 
@@ -35,6 +39,8 @@ final topicChatMessagesProvider = StateNotifierProvider.family<ChatNotifier,
       historyKey: topic.historyKey,
       conversationKey: topic.conversationKey,
       greeting: topic.greeting,
+      prefs: ref.read(sharedPreferencesProvider),
+      onSaved: ref.read(localChangesProvider).notify,
     ),
   );
 });
@@ -50,6 +56,21 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
   ChatNotifier(this._repository) : super(const AsyncValue.loading()) {
     _loadMessages();
+  }
+
+  /// Sync has just stored [stored] (all completed messages, oldest first)
+  /// as this chat's history. Shows it, keeping a reply that is still
+  /// streaming or has failed at the end; an empty history reloads the
+  /// greeting.
+  void applySynced(List<ChatMessage> stored) {
+    if (!mounted) return;
+    if (stored.isEmpty) {
+      _loadMessages();
+      return;
+    }
+    final inFlight = (state.valueOrNull ?? const <ChatMessage>[])
+        .where((m) => m.isStreaming || m.isFailed);
+    state = AsyncValue.data([...stored, ...inFlight]);
   }
 
   Future<void> _loadMessages() async {
