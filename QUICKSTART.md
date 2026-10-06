@@ -34,10 +34,20 @@ Ollama itself must be running (the menu-bar app, or `ollama serve`).
 From the project root:
 
 ```bash
-flutter run                 # pick the iOS simulator, macOS or Chrome
+flutter run                 # pick the iOS simulator, Android emulator, macOS or Chrome
 ```
 
 - **iOS simulator / macOS / web** — works as is (`http://localhost:3000`).
+- **Android emulator** — works as is: on Android the app defaults to
+  `http://10.0.2.2:3000`, which the emulator routes to your Mac, so keep the
+  backend running on the Mac. Android needs Android Studio (SDK + an emulator
+  from Device Manager); check with `flutter doctor`. Start an emulator, then:
+
+  ```bash
+  flutter emulators --launch <emulator-id>   # or start it from Android Studio
+  flutter run -d emulator-5554               # id from `flutter devices`
+  ```
+
 - **Physical iPhone** — the phone can't reach your Mac's `localhost`; use the
   Mac's Wi-Fi address (System Settings → Wi-Fi → Details):
 
@@ -45,7 +55,18 @@ flutter run                 # pick the iOS simulator, macOS or Chrome
   flutter run --dart-define=API_BASE_URL=http://<mac-ip>:3000
   ```
 
-There is no `android/` folder in this repo yet, so Android isn't buildable.
+- **Physical Android phone** — same `--dart-define` with the Mac's Wi-Fi
+  address, phone on the same network. Android 9+ blocks plain `http://`
+  by default; the app's cleartext allow-list lives in
+  `android/app/src/main/res/xml/network_security_config.xml` (only
+  `10.0.2.2`, `localhost`, `127.0.0.1`), so add
+  `<domain includeSubdomains="false"><mac-ip></domain>` there too (the
+  file's comment explains). Alternative over USB, no config change:
+
+  ```bash
+  adb reverse tcp:3000 tcp:3000
+  flutter run --dart-define=API_BASE_URL=http://localhost:3000
+  ```
 
 ## Check the backend
 
@@ -67,6 +88,8 @@ Ollama failed; the message says why (e.g. model not installed → run the
 **Felix answers with canned onboarding lines.** The app couldn't reach the
 backend at all, so it fell back to offline replies. Check that `npm start`
 is running and, on a physical phone, that `API_BASE_URL` points at your Mac.
+The phone must be on the same Wi-Fi as the Mac, and the macOS firewall must
+allow incoming connections to `node`.
 
 **Replies are slow.** The first reply after starting Ollama loads the model
 (several seconds); the backend preloads it on startup and keeps it in memory

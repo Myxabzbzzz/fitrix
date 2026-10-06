@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 9+ blocks plain http:// by default. The FITRIX backend runs over
+  plain HTTP during development, so cleartext is allowed ONLY for the hosts
+  below; every other host (including a production backend) must use HTTPS.
+
+  - 10.0.2.2              the host Mac as seen from the Android emulator
+                          (the app's default API URL on Android is
+                          http://10.0.2.2:3000)
+  - localhost, 127.0.0.1  e.g. a USB-connected phone after
+                          `adb reverse tcp:3000 tcp:3000`
+
+  Physical phone on the same Wi-Fi as the Mac: pass the Mac's LAN IP to
+  `flutter run` as the dart-define API_BASE_URL=http://192.168.0.103:3000
+  (see README.md for the exact command), and add that IP as another
+  <domain> entry below (see the commented example) so it is on the
+  cleartext allow-list. Prefer not to commit personal LAN IPs;
+  `adb reverse` + localhost needs no change here.
+
+  Note: this policy is enforced by Android's own networking (WebViews,
+  OkHttp/HttpURLConnection, native HTTP plugins). Dart's HttpClient, which
+  dio uses today, does not consult it, so it is the declared policy rather
+  than the thing to debug first if the chat can't reach a LAN IP (check
+  same Wi-Fi network and the macOS firewall instead).
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <!-- <domain includeSubdomains="false">192.168.0.103</domain> -->
+    </domain-config>
+</network-security-config>

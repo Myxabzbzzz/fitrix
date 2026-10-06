@@ -12,6 +12,8 @@
 /// throughout the codebase for easier maintenance and consistency.
 library;
 
+import 'package:flutter/foundation.dart';
+
 class AppConstants {
   // Private constructor prevents instantiation
   AppConstants._();
@@ -20,15 +22,34 @@ class AppConstants {
   // API CONFIGURATION
   // ==========================================================================
 
-  /// Base URL for the backend API server
+  /// `--dart-define=API_BASE_URL=...` value, or '' when none was given.
+  static const String _apiBaseUrlDefine = String.fromEnvironment('API_BASE_URL');
+
+  /// Base URL for the backend API server (see [resolveApiBaseUrl]).
   ///
-  /// Defaults to localhost, which works for the iOS simulator, macOS and web.
   /// For a physical phone pass your Mac's LAN IP at build time:
   ///   flutter run --dart-define=API_BASE_URL=http://192.168.0.103:3000
-  static const String apiBaseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://localhost:3000',
-  );
+  static String get apiBaseUrl => resolveApiBaseUrl(
+        define: _apiBaseUrlDefine,
+        platform: defaultTargetPlatform,
+        isWeb: kIsWeb,
+      );
+
+  /// Picks the backend URL: a non-empty [define] (from `--dart-define`) always
+  /// wins. Otherwise the Android emulator reaches the host Mac at 10.0.2.2,
+  /// while the iOS simulator, macOS, desktop and web use localhost.
+  /// ([platform] on web is the browser's OS, so [isWeb] is checked first.)
+  static String resolveApiBaseUrl({
+    required String define,
+    required TargetPlatform platform,
+    required bool isWeb,
+  }) {
+    if (define.isNotEmpty) return define;
+    if (!isWeb && platform == TargetPlatform.android) {
+      return 'http://10.0.2.2:3000';
+    }
+    return 'http://localhost:3000';
+  }
 
   /// Chat endpoint path (appended to apiBaseUrl), replies in one response
   static const String chatEndpoint = '/chat';

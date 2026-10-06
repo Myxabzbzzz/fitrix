@@ -3,7 +3,7 @@
 Flutter app with an AI fitness coach, **Felix**, powered by a local
 [Ollama](https://ollama.com) model through a small Node.js backend.
 
-Platforms in this repo: iOS, macOS and web (there is no `android/` folder yet).
+Platforms in this repo: iOS, Android, macOS and web.
 
 ## What's in the app
 
@@ -40,12 +40,21 @@ cd backend && npm install && npm start
 flutter run                          # from the project root
 ```
 
-The app talks to `http://localhost:3000` by default, which works for the iOS
-simulator, macOS and web. On a physical phone pass your Mac's LAN address:
+With no `--dart-define`, the app talks to `http://localhost:3000` on the iOS
+simulator, macOS and web, and to `http://10.0.2.2:3000` on Android (the
+emulator's alias for the host Mac). On a physical phone pass your Mac's LAN
+address:
 
 ```bash
 flutter run --dart-define=API_BASE_URL=http://192.168.0.103:3000
 ```
+
+On a physical **Android** phone also add that IP to the cleartext allow-list
+in
+`android/app/src/main/res/xml/network_security_config.xml` (cleartext is
+only permitted for `10.0.2.2`, `localhost` and `127.0.0.1` by default).
+Over USB you can skip that with `adb reverse tcp:3000 tcp:3000` and
+`--dart-define=API_BASE_URL=http://localhost:3000`.
 
 If the backend isn't reachable at all, the onboarding chat falls back to
 canned replies so the flow can still be completed. If the backend is up but

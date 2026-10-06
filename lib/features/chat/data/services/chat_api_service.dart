@@ -16,11 +16,11 @@ class ChatException implements Exception {
 class ChatApiService {
   final Dio _dio;
 
-  ChatApiService({String baseUrl = AppConstants.apiBaseUrl, Dio? dio})
+  ChatApiService({String? baseUrl, Dio? dio})
       : _dio = dio ??
             Dio(
               BaseOptions(
-                baseUrl: baseUrl,
+                baseUrl: baseUrl ?? AppConstants.apiBaseUrl,
                 connectTimeout: AppConstants.apiConnectTimeout,
                 receiveTimeout: AppConstants.apiReceiveTimeout,
                 contentType: Headers.jsonContentType,
