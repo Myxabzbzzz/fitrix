@@ -279,4 +279,14 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Shoulders'), findsOneWidget);
   });
+
+  testWidgets('My progress lays out without overflow', (tester) async {
+    _phoneSize(tester);
+    await tester.pumpWidget(await _app());
+    AppRouter.router.go(AppRouter.progress);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('My progress'), findsOneWidget);
+  });
 }

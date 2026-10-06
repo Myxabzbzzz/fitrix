@@ -130,8 +130,22 @@ class _ProgressChartState extends State<ProgressChart>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(footerLeft ?? '', style: footerStyle),
-                Text(footerRight ?? '', style: footerStyle),
+                Flexible(
+                  child: Text(
+                    footerLeft ?? '',
+                    style: footerStyle,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    footerRight ?? '',
+                    style: footerStyle,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.end,
+                  ),
+                ),
               ],
             ),
           ],
