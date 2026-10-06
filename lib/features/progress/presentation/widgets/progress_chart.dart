@@ -1,10 +1,14 @@
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 
 /// Line chart card from the "My progress" design: grid, Y/X labels,
-/// a gradient-filled line and a highlighted last point.
-class ProgressChart extends StatelessWidget {
+/// a gradient-filled line and a highlighted last point. The line and area
+/// draw in from the left when the chart first appears (and when its data
+/// changes).
+class ProgressChart extends StatefulWidget {
   final String title;
   final List<double> values;
   final List<String> xLabels;
@@ -27,8 +31,59 @@ class ProgressChart extends StatelessWidget {
   });
 
   @override
+  State<ProgressChart> createState() => _ProgressChartState();
+}
+
+class _ProgressChartState extends State<ProgressChart>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _drawIn = AnimationController(
+    vsync: this,
+    duration: Motion.slow,
+  );
+  late final Animation<double> _progress =
+      CurvedAnimation(parent: _drawIn, curve: Motion.curve);
+
+  VoidCallback? _cancelPending;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (Motion.reduced(context)) {
+      _cancelPending?.call();
+      _drawIn.value = 1;
+    } else if (_cancelPending == null && _drawIn.isDismissed) {
+      // First appearance: draw in once the page transition is done.
+      _cancelPending = afterRouteEntrance(context, _start);
+    }
+  }
+
+  @override
+  void didUpdateWidget(ProgressChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!listEquals(oldWidget.values, widget.values)) _start();
+  }
+
+  void _start() {
+    if (!mounted) return;
+    if (Motion.reduced(context)) {
+      _drawIn.value = 1;
+    } else {
+      _drawIn.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _cancelPending?.call();
+    _drawIn.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final footerLeft = widget.footerLeft;
+    final footerRight = widget.footerRight;
     final footerStyle = TextStyle(
       fontSize: 11,
       fontWeight: FontWeight.w500,
@@ -45,7 +100,7 @@ class ProgressChart extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            widget.title,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -58,11 +113,12 @@ class ProgressChart extends StatelessWidget {
             width: double.infinity,
             child: CustomPaint(
               painter: _ChartPainter(
-                values: values,
-                xLabels: xLabels,
-                minY: minY,
-                maxY: maxY,
-                yDivisions: yDivisions,
+                progress: _progress,
+                values: widget.values,
+                xLabels: widget.xLabels,
+                minY: widget.minY,
+                maxY: widget.maxY,
+                yDivisions: widget.yDivisions,
                 lineColor: palette.accent,
                 gridColor: palette.border,
                 labelColor: palette.chartLabel,
@@ -86,6 +142,9 @@ class ProgressChart extends StatelessWidget {
 }
 
 class _ChartPainter extends CustomPainter {
+  /// 0..1: how much of the line/area is drawn (left to right). Repaints
+  /// without rebuilding the card.
+  final Animation<double> progress;
   final List<double> values;
   final List<String> xLabels;
   final double minY;
@@ -96,6 +155,7 @@ class _ChartPainter extends CustomPainter {
   final Color labelColor;
 
   _ChartPainter({
+    required this.progress,
     required this.values,
     required this.xLabels,
     required this.minY,
@@ -104,7 +164,7 @@ class _ChartPainter extends CustomPainter {
     required this.lineColor,
     required this.gridColor,
     required this.labelColor,
-  });
+  }) : super(repaint: progress);
 
   static const double _leftAxis = 26;
   static const double _bottomAxis = 16;
@@ -173,6 +233,16 @@ class _ChartPainter extends CustomPainter {
       line.lineTo(p.dx, p.dy);
     }
 
+    // Draw-in: reveal the line and area left to right.
+    final t = progress.value;
+    canvas.save();
+    canvas.clipRect(Rect.fromLTRB(
+      0,
+      0,
+      chart.left + (chart.width + 8) * t,
+      size.height,
+    ));
+
     final area = Path.from(line)
       ..lineTo(points.last.dx, chart.bottom)
       ..lineTo(points.first.dx, chart.bottom)
@@ -200,14 +270,25 @@ class _ChartPainter extends CustomPainter {
         ..strokeCap = StrokeCap.round,
     );
 
-    // Highlighted last point with a soft glow
-    final last = points.last;
-    canvas.drawCircle(last, 8, Paint()..color = lineColor.withValues(alpha: 0.15));
-    canvas.drawCircle(last, 3, Paint()..color = lineColor);
+    canvas.restore();
+
+    // Highlighted last point with a soft glow, popping in as the line
+    // reaches it.
+    final dot = ((t - 0.85) / 0.15).clamp(0.0, 1.0);
+    if (dot > 0) {
+      final last = points.last;
+      canvas.drawCircle(
+        last,
+        8 * dot,
+        Paint()..color = lineColor.withValues(alpha: 0.15),
+      );
+      canvas.drawCircle(last, 3 * dot, Paint()..color = lineColor);
+    }
   }
 
   @override
   bool shouldRepaint(covariant _ChartPainter old) =>
+      old.progress != progress ||
       old.values != values ||
       old.lineColor != lineColor ||
       old.minY != minY ||

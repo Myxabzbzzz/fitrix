@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/feature_tile.dart';
@@ -58,23 +59,23 @@ class HomeScreen extends StatelessWidget {
                             SizedBox(
                               width: half,
                               height: half,
-                              child: Column(
+                              child: const Column(
                                 children: [
                                   Expanded(
-                                    child: FeatureTile(
+                                    child: _SectionTile(
+                                      location: AppRouter.progress,
                                       label: 'MY\nPROG\nRESS',
                                       imageAsset: 'assets/images/tile_progress.png',
                                       imageWidthFactor: 0.5,
-                                      onTap: () => context.go(AppRouter.progress),
                                     ),
                                   ),
-                                  const SizedBox(height: _gap),
+                                  SizedBox(height: _gap),
                                   Expanded(
-                                    child: FeatureTile(
+                                    child: _SectionTile(
+                                      location: AppRouter.nutrition,
                                       label: 'MY\nNUTRI\nTION',
                                       imageAsset: 'assets/images/tile_nutrition.png',
                                       imageWidthFactor: 0.55,
-                                      onTap: () => context.go(AppRouter.nutrition),
                                     ),
                                   ),
                                 ],
@@ -99,12 +100,12 @@ class HomeScreen extends StatelessWidget {
                         const SizedBox(height: _gap),
                         SizedBox(
                           height: half,
-                          child: FeatureTile(
+                          child: const _SectionTile(
+                            location: AppRouter.workouts,
                             label: 'MY\nWORKOUTS',
                             labelSize: 28,
                             imageAsset: 'assets/images/tile_workouts.png',
                             imageWidthFactor: 0.55,
-                            onTap: () => context.go(AppRouter.workouts),
                           ),
                         ),
                         const SizedBox(height: _gap),
@@ -125,12 +126,12 @@ class HomeScreen extends StatelessWidget {
                             SizedBox(
                               width: half,
                               height: small,
-                              child: FeatureTile(
+                              child: const _SectionTile(
+                                location: AppRouter.fitrixMap,
                                 label: 'FITRIX\nMAP',
                                 labelSize: 18,
                                 imageAsset: 'assets/images/tile_map.png',
                                 imageWidthFactor: 0.45,
-                                onTap: () => context.go(AppRouter.fitrixMap),
                               ),
                             ),
                           ],
@@ -144,6 +145,35 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// A Home tile that opens one of Home's sections with a circle reveal
+/// expanding from the tile.
+class _SectionTile extends StatelessWidget {
+  final String location;
+  final String label;
+  final double labelSize;
+  final String imageAsset;
+  final double imageWidthFactor;
+
+  const _SectionTile({
+    required this.location,
+    required this.label,
+    this.labelSize = 16,
+    required this.imageAsset,
+    required this.imageWidthFactor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FeatureTile(
+      label: label,
+      labelSize: labelSize,
+      imageAsset: imageAsset,
+      imageWidthFactor: imageWidthFactor,
+      onTap: () => openWithReveal(context, location),
     );
   }
 }
@@ -167,6 +197,8 @@ class _HomeDrawer extends StatelessWidget {
           ),
           onTap: () {
             Navigator.of(context).pop();
+            // Not opened from a tile: no circle origin, plain fade instead.
+            RevealOrigins.clear(location);
             context.go(location);
           },
         );

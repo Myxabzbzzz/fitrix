@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
+import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
 import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -24,6 +26,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   final ScrollController _scrollController = ScrollController();
   List<String> _quickReplies = AppConstants.fitnessGoals;
   bool _showQuickReplies = true;
+  final ChatEntranceTracker _entrance = ChatEntranceTracker();
 
   final GlobalKey _startButtonKey = GlobalKey();
   late AnimationController _circleController;
@@ -176,6 +179,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               Expanded(
                 child: messagesAsync.when(
                   data: (messages) {
+                    _entrance.sync(messages);
                     return ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(
@@ -189,29 +193,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                                     .inMinutes >
                                 5;
 
-                        return Column(
-                          children: [
-                            if (showTimestamp)
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                child: Text(
-                                  DateFormat('MMM dd, yyyy, h:mm a')
-                                      .format(message.timestamp),
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: palette.textSecondary,
+                        return ChatEntrance(
+                          key: ValueKey(message.id),
+                          message: message,
+                          delay: _entrance.take(message),
+                          child: Column(
+                            children: [
+                              if (showTimestamp)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  child: Text(
+                                    DateFormat('MMM dd, yyyy, h:mm a')
+                                        .format(message.timestamp),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: palette.textSecondary,
+                                    ),
                                   ),
                                 ),
+                              ChatBubble(
+                                message: message,
+                                onRetry: () => ref
+                                    .read(chatMessagesProvider.notifier)
+                                    .retry(),
                               ),
-                            ChatBubble(
-                              message: message,
-                              onRetry: () => ref
-                                  .read(chatMessagesProvider.notifier)
-                                  .retry(),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
+                              const SizedBox(height: 8),
+                            ],
+                          ),
                         );
                       },
                     );
@@ -224,58 +233,26 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                 ),
               ),
 
-              // Quick Replies
-              if (_showQuickReplies && _quickReplies.isNotEmpty)
-                AnimatedOpacity(
-                  opacity: isReplying ? 0.4 : 1,
-                  duration: const Duration(milliseconds: 200),
-                  child: IgnorePointer(
-                    ignoring: isReplying,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: _quickReplies.map((reply) {
-                          return QuickReplyChip(
-                            label: reply,
-                            onTap: () =>
-                                _sendMessage(reply, isQuickReply: true),
-                          );
-                        }).toList(),
-                      ),
-                    ),
+              // Quick replies, then the Start button once the conversation
+              // is complete. Each new set of options animates in.
+              AnimatedSize(
+                duration: Motion.of(context, Motion.medium),
+                curve: Motion.curve,
+                alignment: Alignment.bottomCenter,
+                child: AnimatedSwitcher(
+                  duration: Motion.of(context, Motion.fast),
+                  switchInCurve: Motion.curve,
+                  switchOutCurve: Curves.easeIn,
+                  transitionBuilder: _optionsTransition,
+                  // Old and new options share the bottom edge (next to the
+                  // composer) while they cross-fade.
+                  layoutBuilder: (current, previous) => Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [...previous, if (current != null) current],
                   ),
+                  child: _buildOptions(isReplying: isReplying),
                 ),
-
-              // Start button (shown when chat conversation is complete)
-              if (!_showQuickReplies)
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: SizedBox(
-                    width: 160,
-                    height: 44,
-                    child: ElevatedButton(
-                      key: _startButtonKey,
-                      onPressed: _animating ? null : _onStartPressed,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Start',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              ),
 
               // Message Input
               _buildMessageInput(isReplying: isReplying),
@@ -302,6 +279,88 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
         ],
       ),
     );
+  }
+
+  /// Fades the outgoing options away; the incoming ones stagger in chip by
+  /// chip. Outgoing options can't be tapped.
+  static Widget _optionsTransition(Widget child, Animation<double> animation) {
+    return FadeTransition(
+      opacity: animation,
+      child: AnimatedBuilder(
+        animation: animation,
+        child: child,
+        builder: (context, child) => IgnorePointer(
+          ignoring: animation.status == AnimationStatus.reverse ||
+              animation.status == AnimationStatus.dismissed,
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptions({required bool isReplying}) {
+    if (_showQuickReplies && _quickReplies.isNotEmpty) {
+      return AnimatedOpacity(
+        key: ValueKey(_quickReplies.join('|')),
+        opacity: isReplying ? 0.4 : 1,
+        duration: const Duration(milliseconds: 200),
+        child: IgnorePointer(
+          ignoring: isReplying,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (var i = 0; i < _quickReplies.length; i++)
+                  FadeSlideIn(
+                    delay: Duration(milliseconds: 30 * i.clamp(0, 6)),
+                    duration: Motion.fast,
+                    offset: const Offset(0, 10),
+                    scale: 0.9,
+                    child: QuickReplyChip(
+                      label: _quickReplies[i],
+                      onTap: () =>
+                          _sendMessage(_quickReplies[i], isQuickReply: true),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (!_showQuickReplies) {
+      // Start button (shown when chat conversation is complete)
+      return Padding(
+        key: const ValueKey('start'),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: SizedBox(
+          width: 160,
+          height: 44,
+          child: ElevatedButton(
+            key: _startButtonKey,
+            onPressed: _animating ? null : _onStartPressed,
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              'Start',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return const SizedBox.shrink(key: ValueKey('none'));
   }
 
   Widget _buildMessageInput({required bool isReplying}) {
