@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
@@ -7,7 +8,20 @@ import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 
 final chatApiServiceProvider = Provider<ChatApiService>((ref) {
-  return ChatApiService();
+  final supabase = ref.watch(supabaseClientProvider);
+  return ChatApiService(
+    accessToken: supabase == null
+        ? null
+        : () async {
+            // supabase_flutter refreshes the session in the background; if
+            // it has lapsed anyway (app was asleep), refresh before sending.
+            final session = supabase.auth.currentSession;
+            if (session == null) return null;
+            if (!session.isExpired) return session.accessToken;
+            final refreshed = await supabase.auth.refreshSession();
+            return refreshed.session?.accessToken;
+          },
+  );
 });
 
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {

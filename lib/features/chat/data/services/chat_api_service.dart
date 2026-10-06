@@ -16,8 +16,21 @@ class ChatException implements Exception {
 class ChatApiService {
   final Dio _dio;
 
-  ChatApiService({String? baseUrl, Dio? dio})
-      : _dio = dio ??
+  /// Returns the signed-in user's Supabase access token, or null when there
+  /// is none. Sent as `Authorization: Bearer <token>`; the backend rejects
+  /// chat requests without a valid one (unless its auth is turned off).
+  final Future<String?> Function()? _accessToken;
+
+  static const signInAgainMessage = 'Please sign in again to chat with Felix.';
+  static const slowDownMessage =
+      'You\'re sending messages too fast. Please wait a moment and try again.';
+
+  ChatApiService({
+    String? baseUrl,
+    Dio? dio,
+    Future<String?> Function()? accessToken,
+  })  : _accessToken = accessToken,
+        _dio = dio ??
             Dio(
               BaseOptions(
                 baseUrl: baseUrl ?? AppConstants.apiBaseUrl,
@@ -48,6 +61,7 @@ class ChatApiService {
     Map<String, Object>? profile,
     List<Map<String, String>>? history,
   }) async* {
+    final token = await _currentToken();
     final Response<ResponseBody> response;
     try {
       response = await _dio.post<ResponseBody>(
@@ -60,6 +74,9 @@ class ChatApiService {
           if (history != null) 'history': history,
         },
         options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+          },
           responseType: ResponseType.stream,
           validateStatus: (_) => true,
         ),
@@ -84,6 +101,12 @@ class ChatApiService {
 
     if (response.statusCode != 200) {
       final body = await lines.join('\n');
+      switch (response.statusCode) {
+        case 401:
+          throw ChatException(signInAgainMessage);
+        case 429:
+          throw ChatException(slowDownMessage);
+      }
       throw ChatException(_serverError(body));
     }
 
@@ -109,6 +132,20 @@ class ChatApiService {
 
     if (!done) {
       throw ChatException('Connection lost while Felix was replying.');
+    }
+  }
+
+  Future<String?> _currentToken() async {
+    final accessToken = _accessToken;
+    if (accessToken == null) return null;
+    try {
+      final token = await accessToken();
+      return (token == null || token.isEmpty) ? null : token;
+    } catch (e) {
+      // No token (e.g. a refresh failed offline): send the request anyway;
+      // the backend answers 401 if it needs one.
+      debugPrint('Could not get an access token for the chat: $e');
+      return null;
     }
   }
 
