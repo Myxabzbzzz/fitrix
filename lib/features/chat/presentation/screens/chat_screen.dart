@@ -7,6 +7,7 @@ import 'package:fitrix/core/theme/app_colors.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
+import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
 
@@ -56,28 +57,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     super.dispose();
   }
 
-  void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
-
   void _sendMessage(String content, {bool isQuickReply = false}) {
-    if (content.trim().isEmpty) return;
+    final notifier = ref.read(chatMessagesProvider.notifier);
+    if (content.trim().isEmpty || notifier.isReplying) return;
 
-    ref.read(chatMessagesProvider.notifier).sendMessage(
-          content,
-          isQuickReply: isQuickReply,
-        );
+    notifier.sendMessage(content, isQuickReply: isQuickReply);
 
     _messageController.clear();
-    _scrollToBottom();
 
     // Update quick replies based on message content
     _updateQuickReplies(content);
@@ -86,12 +72,26 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   void _updateQuickReplies(String message) {
     setState(() {
       if (message.contains('muscle') || message.contains('strength')) {
-        _quickReplies = ['Gym', 'Fitness', 'Cycling', 'Skiing', 'Snowboarding', 'Football', 'Running'];
+        _quickReplies = [
+          'Gym',
+          'Fitness',
+          'Cycling',
+          'Skiing',
+          'Snowboarding',
+          'Football',
+          'Running'
+        ];
       } else if (_quickReplies.contains('Gym')) {
-        _quickReplies = ['Once a week or less', 'Almost every day', 'A few times a week', 'Just starting out'];
+        _quickReplies = [
+          'Once a week or less',
+          'Almost every day',
+          'A few times a week',
+          'Just starting out'
+        ];
       } else if (message.contains('week')) {
         _quickReplies = ['Beginner', 'Intermediate', 'Advanced'];
-      } else if (message.contains('Intermediate') || message.contains('Beginner')) {
+      } else if (message.contains('Intermediate') ||
+          message.contains('Beginner')) {
         _quickReplies = [];
         _showQuickReplies = false;
       }
@@ -115,6 +115,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   @override
   Widget build(BuildContext context) {
     final messagesAsync = ref.watch(chatMessagesProvider);
+    final isReplying =
+        messagesAsync.valueOrNull?.any((m) => m.isStreaming) ?? false;
+
+    ref.listen(chatMessagesProvider, (previous, next) {
+      final messages = next.valueOrNull;
+      if (messages != null) {
+        followChatBottom(_scrollController, previous?.valueOrNull, messages);
+      }
+    });
     final size = MediaQuery.of(context).size;
     final diagonal = sqrt(size.width * size.width + size.height * size.height);
 
@@ -166,40 +175,48 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               Expanded(
                 child: messagesAsync.when(
                   data: (messages) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      _scrollToBottom();
-                    });
-
                     return ListView.builder(
                       controller: _scrollController,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
                         final message = messages[index];
                         final showTimestamp = index == 0 ||
-                            message.timestamp.difference(messages[index - 1].timestamp).inMinutes > 5;
+                            message.timestamp
+                                    .difference(messages[index - 1].timestamp)
+                                    .inMinutes >
+                                5;
 
                         return Column(
                           children: [
                             if (showTimestamp)
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                                 child: Text(
-                                  DateFormat('MMM dd, yyyy, h:mm a').format(message.timestamp),
+                                  DateFormat('MMM dd, yyyy, h:mm a')
+                                      .format(message.timestamp),
                                   style: const TextStyle(
                                     fontSize: 11,
                                     color: AppColors.textSecondary,
                                   ),
                                 ),
                               ),
-                            ChatBubble(message: message),
+                            ChatBubble(
+                              message: message,
+                              onRetry: () => ref
+                                  .read(chatMessagesProvider.notifier)
+                                  .retry(),
+                            ),
                             const SizedBox(height: 8),
                           ],
                         );
                       },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (error, stack) => Center(
                     child: Text('Error: $error'),
                   ),
@@ -208,24 +225,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
 
               // Quick Replies
               if (_showQuickReplies && _quickReplies.isNotEmpty)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _quickReplies.map((reply) {
-                      return QuickReplyChip(
-                        label: reply,
-                        onTap: () => _sendMessage(reply, isQuickReply: true),
-                      );
-                    }).toList(),
+                AnimatedOpacity(
+                  opacity: isReplying ? 0.4 : 1,
+                  duration: const Duration(milliseconds: 200),
+                  child: IgnorePointer(
+                    ignoring: isReplying,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _quickReplies.map((reply) {
+                          return QuickReplyChip(
+                            label: reply,
+                            onTap: () =>
+                                _sendMessage(reply, isQuickReply: true),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ),
                 ),
 
               // Start button (shown when chat conversation is complete)
               if (!_showQuickReplies)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: SizedBox(
                     width: 160,
                     height: 44,
@@ -252,7 +279,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                 ),
 
               // Message Input
-              _buildMessageInput(),
+              _buildMessageInput(isReplying: isReplying),
             ],
           ),
 
@@ -278,7 +305,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     );
   }
 
-  Widget _buildMessageInput() {
+  Widget _buildMessageInput({required bool isReplying}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -344,16 +371,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
             const SizedBox(width: 8),
 
             // Send button
-            Container(
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
               width: 40,
               height: 40,
-              decoration: const BoxDecoration(
-                color: AppColors.secondary,
+              decoration: BoxDecoration(
+                color: isReplying ? AppColors.divider : AppColors.secondary,
                 shape: BoxShape.circle,
               ),
               child: IconButton(
                 icon: const Icon(Icons.arrow_upward, size: 20),
-                onPressed: () => _sendMessage(_messageController.text),
+                onPressed: isReplying
+                    ? null
+                    : () => _sendMessage(_messageController.text),
                 color: AppColors.textOnDark,
                 padding: EdgeInsets.zero,
               ),

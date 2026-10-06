@@ -21,19 +21,26 @@ class AppConstants {
 
   /// Base URL for the backend API server
   ///
-  /// Production: Update this to your deployed backend URL
-  /// Development: Use your computer's local IP (e.g., http://192.168.1.100:3000)
-  /// Note: localhost won't work on physical devices - use IP address
-  static const String apiBaseUrl = 'http://192.168.0.102:3000';
+  /// Defaults to localhost, which works for the iOS simulator, macOS and web.
+  /// For a physical phone pass your Mac's LAN IP at build time:
+  ///   flutter run --dart-define=API_BASE_URL=http://192.168.0.103:3000
+  static const String apiBaseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:3000',
+  );
 
-  /// Chat endpoint path (appended to apiBaseUrl)
-  /// Complete URL: apiBaseUrl + chatEndpoint
-  /// Example: http://192.168.0.102:3000/chat
+  /// Chat endpoint path (appended to apiBaseUrl), replies in one response
   static const String chatEndpoint = '/chat';
 
-  /// API request timeout in milliseconds (30 seconds)
-  /// Prevents hanging requests if backend is slow or unresponsive
-  static const int apiTimeout = 30000;
+  /// Streaming chat endpoint: NDJSON lines of {"delta"} / {"done"} / {"error"}
+  static const String chatStreamEndpoint = '/chat/stream';
+
+  /// How long to wait for the backend to accept the connection.
+  /// Kept short so an unreachable backend fails fast instead of hanging.
+  static const Duration apiConnectTimeout = Duration(seconds: 3);
+
+  /// Max silence between streamed chunks before giving up.
+  static const Duration apiReceiveTimeout = Duration(seconds: 60);
 
   // ==========================================================================
   // LOCAL STORAGE KEYS (SharedPreferences)

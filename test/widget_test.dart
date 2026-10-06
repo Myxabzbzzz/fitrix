@@ -102,4 +102,25 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Biceps curl'), findsNothing);
   });
+
+  testWidgets('adding a workout via the + tile', (tester) async {
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(_app());
+    AppRouter.router.go(AppRouter.sportWorkouts(Sport.gym));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.add).last);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Shoulders');
+    await tester.tap(find.text('Add'));
+    // Let the dialog's closing animation run to completion: the text
+    // controller must outlive it.
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Shoulders'), findsOneWidget);
+  });
 }

@@ -1,45 +1,109 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 
+/// A reply that couldn't be produced; [message] is shown in the chat.
+class ChatException implements Exception {
+  final String message;
+
+  ChatException(this.message);
+
+  @override
+  String toString() => message;
+}
+
 class ChatApiService {
-  final String baseUrl;
+  final Dio _dio;
 
-  ChatApiService({
-    this.baseUrl = AppConstants.apiBaseUrl,
-  });
+  ChatApiService({String baseUrl = AppConstants.apiBaseUrl, Dio? dio})
+      : _dio = dio ??
+            Dio(
+              BaseOptions(
+                baseUrl: baseUrl,
+                connectTimeout: AppConstants.apiConnectTimeout,
+                receiveTimeout: AppConstants.apiReceiveTimeout,
+                contentType: Headers.jsonContentType,
+              ),
+            );
 
-  Future<String> sendMessage(String message, String conversationId) async {
+  /// Streams Felix's reply as text chunks as soon as the model produces them.
+  ///
+  /// If the backend can't be reached at all (not running, wrong address) this
+  /// falls back to a canned offline reply so onboarding still works. Errors
+  /// from a reachable backend (Ollama down, model missing, stream cut off)
+  /// throw [ChatException] so the chat can offer a retry.
+  Stream<String> streamMessage(String message, String conversationId) async* {
+    final Response<ResponseBody> response;
     try {
-      final url = Uri.parse('$baseUrl${AppConstants.chatEndpoint}');
-
-      final response = await http
-          .post(
-            url,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({
-              'message': message,
-              'conversationId': conversationId,
-            }),
-          )
-          .timeout(Duration(milliseconds: AppConstants.apiTimeout));
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['reply'] ?? 'Sorry, I could not process your request.';
-      } else {
-        throw Exception('Failed to send message: ${response.statusCode}');
+      response = await _dio.post<ResponseBody>(
+        AppConstants.chatStreamEndpoint,
+        data: {'message': message, 'conversationId': conversationId},
+        options: Options(
+          responseType: ResponseType.stream,
+          validateStatus: (_) => true,
+        ),
+      );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout) {
+        debugPrint(
+          'FITRIX backend unreachable at ${_dio.options.baseUrl} '
+          '(${e.type.name}); using offline reply.',
+        );
+        yield _getMockResponse(message);
+        return;
       }
-    } catch (e) {
-      // Fallback for when backend is not available
-      return _getMockResponse(message);
+      throw ChatException('Felix is unavailable right now.');
+    }
+
+    final lines = response.data!.stream
+        .cast<List<int>>()
+        .transform(utf8.decoder)
+        .transform(const LineSplitter());
+
+    if (response.statusCode != 200) {
+      final body = await lines.join('\n');
+      throw ChatException(_serverError(body));
+    }
+
+    var done = false;
+    try {
+      await for (final line in lines) {
+        if (line.trim().isEmpty) continue;
+        final data = jsonDecode(line) as Map<String, dynamic>;
+        final error = data['error'];
+        if (error != null) throw ChatException(error.toString());
+        final delta = data['delta'];
+        if (delta is String && delta.isNotEmpty) yield delta;
+        if (data['done'] == true) {
+          done = true;
+          break;
+        }
+      }
+    } on DioException {
+      throw ChatException('Connection lost while Felix was replying.');
+    } on FormatException {
+      throw ChatException('Felix sent an unreadable reply.');
+    }
+
+    if (!done) {
+      throw ChatException('Connection lost while Felix was replying.');
+    }
+  }
+
+  String _serverError(String body) {
+    try {
+      final data = jsonDecode(body) as Map<String, dynamic>;
+      return (data['message'] ?? data['error'] ?? 'Felix is unavailable.')
+          .toString();
+    } on FormatException {
+      return 'Felix is unavailable right now.';
     }
   }
 
   String _getMockResponse(String message) {
-    // Mock responses for testing without backend
+    // Offline replies so the onboarding flow works without the backend
     final lowerMessage = message.toLowerCase();
 
     if (lowerMessage.contains('muscle') || lowerMessage.contains('strength')) {

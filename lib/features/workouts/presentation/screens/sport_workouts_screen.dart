@@ -53,30 +53,10 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
   }
 
   Future<void> _addWorkout() async {
-    final controller = TextEditingController();
     final name = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('New workout'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: const InputDecoration(hintText: 'e.g. Shoulders'),
-          onSubmitted: (value) => Navigator.pop(context, value),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text('Add'),
-          ),
-        ],
-      ),
+      builder: (context) => const _NewWorkoutDialog(),
     );
-    controller.dispose();
     if (name != null && name.trim().isNotEmpty) {
       ref.read(workoutTemplatesProvider.notifier).add(_sport, name.trim());
     }
@@ -144,6 +124,48 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Asks for a new workout's name. Owns its text controller so it is only
+/// disposed after the dialog's closing animation has finished.
+class _NewWorkoutDialog extends StatefulWidget {
+  const _NewWorkoutDialog();
+
+  @override
+  State<_NewWorkoutDialog> createState() => _NewWorkoutDialogState();
+}
+
+class _NewWorkoutDialogState extends State<_NewWorkoutDialog> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('New workout'),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        decoration: const InputDecoration(hintText: 'e.g. Shoulders'),
+        onSubmitted: (value) => Navigator.pop(context, value),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, _controller.text),
+          child: const Text('Add'),
+        ),
+      ],
     );
   }
 }

@@ -13,7 +13,8 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
   return ChatRepository(ref.read(chatApiServiceProvider));
 });
 
-final chatMessagesProvider = StateNotifierProvider<ChatNotifier, AsyncValue<List<ChatMessage>>>((ref) {
+final chatMessagesProvider =
+    StateNotifierProvider<ChatNotifier, AsyncValue<List<ChatMessage>>>((ref) {
   return ChatNotifier(ref.read(chatRepositoryProvider));
 });
 
@@ -36,8 +37,6 @@ StateNotifierProvider<ChatNotifier, AsyncValue<List<ChatMessage>>>
     chatMessagesProviderFor(AssistantTopic topic) =>
         topic.isApp ? chatMessagesProvider : topicChatMessagesProvider(topic);
 
-final isTypingProvider = StateProvider<bool>((ref) => false);
-
 class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   final ChatRepository _repository;
   final Uuid _uuid = const Uuid();
@@ -56,41 +55,89 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
     }
   }
 
+  bool _isReplying = false;
+
+  /// True while Felix's reply is streaming in; new sends are ignored.
+  bool get isReplying => _isReplying;
+
   Future<void> sendMessage(String content, {bool isQuickReply = false}) async {
-    state.whenData((messages) async {
-      // Add user message
-      final userMessage = ChatMessage(
-        id: _uuid.v4(),
-        content: content,
-        sender: MessageSender.user,
-        timestamp: DateTime.now(),
-        isQuickReply: isQuickReply,
-      );
+    final messages = state.valueOrNull;
+    if (messages == null || _isReplying || content.trim().isEmpty) return;
 
-      final updatedMessages = [...messages, userMessage];
-      state = AsyncValue.data(updatedMessages);
-      await _repository.saveMessages(updatedMessages);
+    final userMessage = ChatMessage(
+      id: _uuid.v4(),
+      content: content,
+      sender: MessageSender.user,
+      timestamp: DateTime.now(),
+      isQuickReply: isQuickReply,
+    );
 
-      try {
-        // Get AI response
-        final response = await _repository.sendMessage(content);
+    await _reply(
+      [...messages.where((m) => !m.isFailed), userMessage],
+      content,
+    );
+  }
 
-        // Add assistant message
-        final assistantMessage = ChatMessage(
-          id: _uuid.v4(),
-          content: response,
-          sender: MessageSender.assistant,
-          timestamp: DateTime.now(),
-        );
+  /// Re-asks Felix for the last user message after a failed reply.
+  Future<void> retry() async {
+    final messages = state.valueOrNull;
+    if (messages == null || _isReplying) return;
 
-        final finalMessages = [...updatedMessages, assistantMessage];
-        state = AsyncValue.data(finalMessages);
-        await _repository.saveMessages(finalMessages);
-      } catch (e) {
-        // Handle error but keep user message
-        state = AsyncValue.error(e, StackTrace.current);
+    final history = messages.where((m) => !m.isFailed).toList();
+    final lastUser = history.lastIndexWhere(
+      (m) => m.sender == MessageSender.user,
+    );
+    if (lastUser == -1) return;
+
+    await _reply(history, history[lastUser].content);
+  }
+
+  Future<void> _reply(List<ChatMessage> history, String prompt) async {
+    _isReplying = true;
+    final reply = ChatMessage(
+      id: _uuid.v4(),
+      content: '',
+      sender: MessageSender.assistant,
+      timestamp: DateTime.now(),
+      isStreaming: true,
+    );
+    state = AsyncValue.data([...history, reply]);
+    await _repository.saveMessages(history);
+
+    final text = StringBuffer();
+    try {
+      await for (final delta in _repository.streamMessage(prompt)) {
+        if (!mounted) return;
+        text.write(delta);
+        _updateReply(reply.id, (m) => m.copyWith(content: text.toString()));
       }
-    });
+      if (!mounted) return;
+      _updateReply(
+        reply.id,
+        (m) => m.copyWith(content: text.toString().trim(), isStreaming: false),
+      );
+      await _repository.saveMessages(state.requireValue);
+    } catch (e) {
+      if (!mounted) return;
+      _updateReply(
+        reply.id,
+        (m) => m.copyWith(
+          content: e is ChatException ? e.message : 'Something went wrong.',
+          isStreaming: false,
+          isFailed: true,
+        ),
+      );
+    } finally {
+      _isReplying = false;
+    }
+  }
+
+  void _updateReply(String id, ChatMessage Function(ChatMessage) update) {
+    final messages = state.valueOrNull;
+    if (messages == null) return;
+    state = AsyncValue.data([
+      for (final m in messages) m.id == id ? update(m) : m,
+    ]);
   }
 
   Future<void> clearMessages() async {

@@ -22,8 +22,8 @@ Node.js/Express backend that connects the FITRIX Flutter app to Ollama LLM.
    # Install Ollama: https://ollama.ai
    ollama --version
 
-   # Pull a model (recommended: llama3.2)
-   ollama pull llama3.2
+   # Pull a model (default: qwen3:8b)
+   ollama pull qwen3:8b
 
    # Start Ollama server
    ollama serve
@@ -42,6 +42,9 @@ Node.js/Express backend that connects the FITRIX Flutter app to Ollama LLM.
    # Create .env file if you want to customize
    PORT=3000
    OLLAMA_URL=http://localhost:11434
+   OLLAMA_MODEL=qwen3:8b      # any model from `ollama list`
+   OLLAMA_THINK=false         # true re-enables reasoning (~10x slower replies)
+   OLLAMA_KEEP_ALIVE=30m      # keep the model loaded between messages
    ```
 
 ## Running the Server
@@ -138,10 +141,25 @@ curl -X POST http://localhost:3000/chat \
 
 ### Change Ollama Model
 
-Edit `server.js` line 69:
-```javascript
-model: 'llama3.2', // Change to: llama2, mistral, etc.
+```bash
+OLLAMA_MODEL=llama3.2 npm start
 ```
+
+The model is preloaded at startup so the first reply isn't delayed.
+
+### Streaming
+
+`POST /chat/stream` takes the same body as `/chat` and answers with
+newline-delimited JSON as tokens are generated:
+
+```
+{"delta":"Bench"}
+{"delta":" press"}
+{"done":true}
+```
+
+If the model fails mid-reply the last line is `{"error":"..."}`. The Flutter
+app uses this endpoint so replies appear word by word.
 
 ### Change Port
 
@@ -184,8 +202,8 @@ ollama serve
 
 ### Error: "Model not found"
 ```bash
-# Pull the model first
-ollama pull llama3.2
+# Pull the configured model first (or set OLLAMA_MODEL to one you have)
+ollama pull qwen3:8b
 ```
 
 ### Port already in use

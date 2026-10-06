@@ -60,9 +60,10 @@ class ChatRepository {
     return conversationId;
   }
 
-  Future<String> sendMessage(String message) async {
+  /// Streams Felix's reply to [message] chunk by chunk.
+  Stream<String> streamMessage(String message) async* {
     final conversationId = await getOrCreateConversationId();
-    return await _apiService.sendMessage(message, conversationId);
+    yield* _apiService.streamMessage(message, conversationId);
   }
 
   List<ChatMessage> _getInitialMessages() {

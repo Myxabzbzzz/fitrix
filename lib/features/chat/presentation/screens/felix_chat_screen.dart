@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/theme/app_colors.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
+import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
+import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
+import 'package:fitrix/features/chat/presentation/widgets/typing_indicator.dart';
 
 /// Chat currently open on the Felix tab.
 final selectedAssistantTopicProvider =
@@ -29,22 +33,11 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
     super.dispose();
   }
 
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
-
   void _send(AssistantTopic topic) {
+    final notifier = ref.read(chatMessagesProviderFor(topic).notifier);
     final text = _controller.text.trim();
-    if (text.isEmpty) return;
-    ref.read(chatMessagesProviderFor(topic).notifier).sendMessage(text);
+    if (text.isEmpty || notifier.isReplying) return;
+    notifier.sendMessage(text);
     _controller.clear();
   }
 
@@ -54,7 +47,14 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
     final topic = ref.watch(selectedAssistantTopicProvider);
     final messages = ref.watch(chatMessagesProviderFor(topic));
 
-    ref.listen(chatMessagesProviderFor(topic), (_, __) => _scrollToBottom());
+    final isReplying = messages.valueOrNull?.any((m) => m.isStreaming) ?? false;
+
+    ref.listen(chatMessagesProviderFor(topic), (previous, next) {
+      final list = next.valueOrNull;
+      if (list != null) {
+        followChatBottom(_scrollController, previous?.valueOrNull, list);
+      }
+    });
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -63,7 +63,6 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
         onSelected: (t) {
           ref.read(selectedAssistantTopicProvider.notifier).state = t;
           Navigator.of(context).pop();
-          _scrollToBottom();
         },
       ),
       body: SafeArea(
@@ -79,11 +78,16 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                   itemCount: list.length,
                   itemBuilder: (context, index) {
                     final message = list[index];
-                    final next = index + 1 < list.length ? list[index + 1] : null;
-                    final lastInGroup = next == null || next.sender != message.sender;
+                    final next =
+                        index + 1 < list.length ? list[index + 1] : null;
+                    final lastInGroup =
+                        next == null || next.sender != message.sender;
                     return _MessageBubble(
                       message: message,
                       showAvatar: lastInGroup,
+                      onRetry: () => ref
+                          .read(chatMessagesProviderFor(topic).notifier)
+                          .retry(),
                     );
                   },
                 ),
@@ -91,7 +95,11 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                 error: (error, _) => Center(child: Text('Error: $error')),
               ),
             ),
-            _Composer(controller: _controller, onSend: () => _send(topic)),
+            _Composer(
+              controller: _controller,
+              enabled: !isReplying,
+              onSend: () => _send(topic),
+            ),
             const SizedBox(height: 8),
           ],
         ),
@@ -158,8 +166,13 @@ class _Header extends StatelessWidget {
 class _MessageBubble extends StatelessWidget {
   final ChatMessage message;
   final bool showAvatar;
+  final VoidCallback onRetry;
 
-  const _MessageBubble({required this.message, required this.showAvatar});
+  const _MessageBubble({
+    required this.message,
+    required this.showAvatar,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -169,21 +182,37 @@ class _MessageBubble extends StatelessWidget {
     final userBubble = isDark ? Colors.white : Colors.black;
     final userText = isDark ? Colors.black : Colors.white;
 
-    final bubble = Container(
-      constraints: const BoxConstraints(maxWidth: 247),
-      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
-      decoration: BoxDecoration(
-        color: isUser ? userBubble : palette.bubble,
-        borderRadius: BorderRadius.circular(isUser ? 18 : 24),
-      ),
-      child: Text(
+    final textColor = isUser ? userText : palette.textPrimary;
+    final Widget content;
+    if (message.isStreaming && message.content.isEmpty) {
+      content = TypingIndicator(color: textColor);
+    } else if (message.isFailed) {
+      content = ChatFailedContent(message: message.content, color: textColor);
+    } else {
+      content = Text(
         message.content,
         style: TextStyle(
           fontSize: 14,
           fontWeight: isUser ? FontWeight.w500 : FontWeight.w400,
           height: 1.3,
-          color: isUser ? userText : palette.textPrimary,
+          color: textColor,
         ),
+      );
+    }
+
+    final bubble = GestureDetector(
+      onTap: message.isFailed ? onRetry : null,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 247),
+        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+        decoration: BoxDecoration(
+          color: isUser ? userBubble : palette.bubble,
+          borderRadius: BorderRadius.circular(isUser ? 18 : 24),
+          border: message.isFailed
+              ? Border.all(color: AppColors.error.withValues(alpha: 0.6))
+              : null,
+        ),
+        child: content,
       ),
     );
 
@@ -216,9 +245,14 @@ class _MessageBubble extends StatelessWidget {
 
 class _Composer extends StatelessWidget {
   final TextEditingController controller;
+  final bool enabled;
   final VoidCallback onSend;
 
-  const _Composer({required this.controller, required this.onSend});
+  const _Composer({
+    required this.controller,
+    required this.enabled,
+    required this.onSend,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -248,8 +282,11 @@ class _Composer extends StatelessWidget {
                     child: TextField(
                       controller: controller,
                       textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => onSend(),
-                      style: TextStyle(fontSize: 14, color: palette.textPrimary),
+                      onSubmitted: (_) {
+                        if (enabled) onSend();
+                      },
+                      style:
+                          TextStyle(fontSize: 14, color: palette.textPrimary),
                       decoration: InputDecoration.collapsed(
                         hintText: 'Message...',
                         filled: false,
@@ -266,7 +303,8 @@ class _Composer extends StatelessWidget {
                     constraints: const BoxConstraints(minWidth: 32),
                     icon: const Icon(Icons.arrow_circle_up, size: 28),
                     color: palette.textPrimary,
-                    onPressed: onSend,
+                    disabledColor: palette.border,
+                    onPressed: enabled ? onSend : null,
                   ),
                 ],
               ),
