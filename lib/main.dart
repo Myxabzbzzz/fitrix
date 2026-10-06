@@ -12,10 +12,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/supabase/supabase_config.dart';
+import 'package:fitrix/core/supabase/supabase_providers.dart';
 
 /// Application entry point
 /// Initializes Flutter bindings and loads local storage before launching the app
@@ -35,14 +38,32 @@ void main() async {
   // done and saved workouts are available on the first frame.
   final prefs = await SharedPreferences.getInstance();
   final session = AppSession(prefs);
+  final supabase = await _initSupabase();
 
   runApp(
     FitrixRoot(
       prefs: prefs,
       session: session,
       router: AppRouter.create(session),
+      supabase: supabase,
     ),
   );
+}
+
+/// Connects to Supabase (auth + sync). Initialization only reads config and
+/// any saved session, so it works offline; if it still fails the app runs
+/// local-only rather than not starting.
+Future<SupabaseClient?> _initSupabase() async {
+  try {
+    await Supabase.initialize(
+      url: SupabaseConfig.url,
+      publishableKey: SupabaseConfig.publishableKey,
+    );
+    return Supabase.instance.client;
+  } catch (e) {
+    debugPrint('Supabase unavailable, running local-only: $e');
+    return null;
+  }
 }
 
 /// Owns the Riverpod scope. Signing out bumps [AppSession.generation], which
@@ -53,11 +74,15 @@ class FitrixRoot extends StatelessWidget {
   final AppSession session;
   final GoRouter router;
 
+  /// Null when Supabase isn't available (e.g. in tests): local-only mode.
+  final SupabaseClient? supabase;
+
   const FitrixRoot({
     super.key,
     required this.prefs,
     required this.session,
     required this.router,
+    this.supabase,
   });
 
   @override
@@ -69,6 +94,7 @@ class FitrixRoot extends StatelessWidget {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
           appSessionProvider.overrideWithValue(session),
+          supabaseClientProvider.overrideWithValue(supabase),
         ],
         child: FitrixApp(router: router),
       ),
