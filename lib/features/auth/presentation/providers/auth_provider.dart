@@ -1,43 +1,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/features/auth/data/account_service.dart';
+import 'package:fitrix/features/auth/data/auth_gateway.dart';
 import 'package:fitrix/features/auth/data/repositories/auth_repository.dart';
 
+/// Email-code sign-in. Null in local-only mode (no Supabase, e.g. tests);
+/// overridden in the root ProviderScope.
+final authGatewayProvider = Provider<AuthGateway?>((ref) => null);
+
+/// Account ↔ local data glue (sign-in outcome, profile upload, sign-out).
+/// Null in local-only mode; overridden in the root ProviderScope.
+final accountServiceProvider = Provider<AccountService?>((ref) => null);
+
+/// Local-only mode: remembers the email typed on the sign-in screen.
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository();
 });
 
-final authProvider = StateNotifierProvider<AuthNotifier, AsyncValue<bool>>((ref) {
-  return AuthNotifier(ref.read(authRepositoryProvider));
+/// Email shown on the About me screen: the signed-in account's, or in
+/// local-only mode the one typed during onboarding.
+final accountEmailProvider = FutureProvider<String?>((ref) async {
+  final account = ref.watch(accountServiceProvider);
+  if (account != null) return account.email;
+  return ref.read(authRepositoryProvider).getEmail();
 });
-
-class AuthNotifier extends StateNotifier<AsyncValue<bool>> {
-  final AuthRepository _repository;
-
-  AuthNotifier(this._repository) : super(const AsyncValue.loading()) {
-    _checkAuth();
-  }
-
-  Future<void> _checkAuth() async {
-    state = const AsyncValue.loading();
-    try {
-      final isAuth = await _repository.isAuthenticated();
-      state = AsyncValue.data(isAuth);
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
-
-  Future<void> signInWithEmail(String email) async {
-    state = const AsyncValue.loading();
-    try {
-      await _repository.saveEmail(email);
-      state = const AsyncValue.data(true);
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
-
-  Future<void> signOut() async {
-    await _repository.signOut();
-    state = const AsyncValue.data(false);
-  }
-}

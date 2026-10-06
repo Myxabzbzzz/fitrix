@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
+import 'package:fitrix/features/profile/data/models/profile_row.dart';
 import 'package:fitrix/features/profile/data/models/user_profile.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 
@@ -20,6 +24,65 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _ageController = TextEditingController();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
+
+  /// Field → error, shown after the first Continue tap.
+  Map<String, String> _errors = const {};
+  bool _submitted = false;
+
+  List<TextEditingController> get _controllers => [
+        _nameController,
+        _surnameController,
+        _ageController,
+        _weightController,
+        _heightController,
+      ];
+
+  @override
+  void initState() {
+    super.initState();
+    _prefill();
+  }
+
+  /// Fills in what's already known: a profile restored from the account,
+  /// or one typed earlier on this device.
+  Future<void> _prefill() async {
+    final profile = await ref.read(profileRepositoryProvider).getProfile();
+    if (profile == null || !mounted) return;
+    if (_controllers.any((c) => c.text.isNotEmpty)) return;
+    _nameController.text = profile.name;
+    _surnameController.text = profile.surname;
+    _ageController.text = profile.age;
+    _weightController.text = profile.weight;
+    _heightController.text = profile.height;
+  }
+
+  UserProfile _currentProfile() => UserProfile(
+        name: _nameController.text,
+        surname: _surnameController.text,
+        age: _ageController.text,
+        weight: _weightController.text,
+        height: _heightController.text,
+      );
+
+  Future<void> _continue() async {
+    final errors = ProfileValidator.validate(_currentProfile());
+    setState(() {
+      _submitted = true;
+      _errors = errors;
+    });
+    if (errors.isNotEmpty) return;
+
+    final profile = ProfileValidator.normalize(_currentProfile());
+    await ref.read(profileProvider.notifier).saveProfile(profile);
+    // Uploaded in the background; retried later if offline.
+    unawaited(ref.read(accountServiceProvider)?.profileChanged());
+    if (mounted) context.go(AppRouter.chat);
+  }
+
+  void _revalidate() {
+    if (!_submitted) return;
+    setState(() => _errors = ProfileValidator.validate(_currentProfile()));
+  }
 
   @override
   void dispose() {
@@ -81,6 +144,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               _buildInputField(
                 controller: _nameController,
                 label: 'Name',
+                field: 'name',
               ),
 
               const SizedBox(height: 16),
@@ -88,7 +152,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // Surname Input
               _buildInputField(
                 controller: _surnameController,
-                label: 'Surename',
+                label: 'Surname',
+                field: 'surname',
               ),
 
               const SizedBox(height: 16),
@@ -97,6 +162,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               _buildInputField(
                 controller: _ageController,
                 label: 'Age',
+                field: 'age',
                 keyboardType: TextInputType.number,
               ),
 
@@ -105,8 +171,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // Weight Input
               _buildInputField(
                 controller: _weightController,
-                label: 'Weight',
-                keyboardType: TextInputType.number,
+                label: 'Weight, kg',
+                field: 'weight',
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
 
               const SizedBox(height: 16),
@@ -114,8 +181,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // Height Input
               _buildInputField(
                 controller: _heightController,
-                label: 'Height',
-                keyboardType: TextInputType.number,
+                label: 'Height, cm',
+                field: 'height',
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
 
               const SizedBox(height: 40),
@@ -125,17 +193,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 width: double.infinity,
                 height: 54,
                 child: ElevatedButton(
-                  onPressed: () {
-                    final profile = UserProfile(
-                      name: _nameController.text,
-                      surname: _surnameController.text,
-                      age: _ageController.text,
-                      weight: _weightController.text,
-                      height: _heightController.text,
-                    );
-                    ref.read(profileProvider.notifier).saveProfile(profile);
-                    context.go(AppRouter.chat);
-                  },
+                  onPressed: _continue,
                   child: const Text('Continue'),
                 ),
               ),
@@ -151,14 +209,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
+    required String field,
     TextInputType? keyboardType,
   }) {
     return TextField(
+      key: Key('profile-$field'),
       controller: controller,
       keyboardType: keyboardType,
       textAlign: TextAlign.center,
+      textInputAction: TextInputAction.next,
+      onChanged: (_) => _revalidate(),
       decoration: InputDecoration(
         hintText: label,
+        errorText: _errors[field],
+        errorMaxLines: 2,
         hintStyle: TextStyle(
           color: AppPalette.of(context).textSecondary,
           fontSize: 16,
