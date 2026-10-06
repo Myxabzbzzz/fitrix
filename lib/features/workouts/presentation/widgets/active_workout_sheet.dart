@@ -160,7 +160,10 @@ class _SetsTable extends ConsumerWidget {
       builder: (context) => AlertDialog(
         title: const Text('Finish workout?'),
         content: Text(
-          '${workout.completedSets} of ${workout.totalSets} sets completed.',
+          workout.completedSets == 0
+              ? 'No sets are checked off, so this workout won\'t be saved.'
+              : '${workout.completedSets} of ${workout.totalSets} sets '
+                  'completed. The workout will be saved to your history.',
         ),
         actions: [
           TextButton(
@@ -175,8 +178,14 @@ class _SetsTable extends ConsumerWidget {
       ),
     );
     if (confirmed != true || !context.mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
     ref.read(activeWorkoutExpandedProvider.notifier).state = false;
-    ref.read(activeWorkoutProvider.notifier).finish();
+    final saved = ref.read(activeWorkoutProvider.notifier).finish();
+    if (saved) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Workout saved to My progress')),
+      );
+    }
   }
 
   @override

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/core/widgets/fitrix_logo.dart';
 
 class IntroScreen extends StatelessWidget {
   const IntroScreen({super.key});
@@ -18,12 +19,12 @@ class IntroScreen extends StatelessWidget {
               const Spacer(flex: 2),
 
               // FITRIX Logo
-              _buildLogo(),
+              const FitrixLogo(fontSize: 48),
 
               const SizedBox(height: 24),
 
               // Subtitle
-              _buildSubtitle(),
+              _buildSubtitle(context),
 
               const Spacer(flex: 3),
 
@@ -38,80 +39,41 @@ class IntroScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLogo() {
-    return RichText(
-      text: const TextSpan(
-        children: [
-          TextSpan(
-            text: 'FI',
-            style: TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.w700,
-              color: AppColors.secondary,
-              letterSpacing: 2,
-            ),
-          ),
-          TextSpan(
-            text: 'TRIX',
-            style: TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-              letterSpacing: 2,
-            ),
-          ),
-        ],
-      ),
+  Widget _buildSubtitle(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final base = TextStyle(
+      fontSize: 16,
+      color: palette.textPrimary,
+      fontWeight: FontWeight.w400,
     );
-  }
+    final accent = TextStyle(color: palette.accent);
 
-  Widget _buildSubtitle() {
     return Column(
       children: [
-        RichText(
+        Text.rich(
           textAlign: TextAlign.center,
-          text: const TextSpan(
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w400,
-            ),
+          style: base,
+          TextSpan(
             children: [
-              TextSpan(text: 'The '),
-              TextSpan(
-                text: 'F',
-                style: TextStyle(color: AppColors.secondary),
-              ),
-              TextSpan(text: 'itness '),
-              TextSpan(
-                text: 'Ma',
-                style: TextStyle(color: AppColors.secondary),
-              ),
-              TextSpan(text: 'trix'),
+              const TextSpan(text: 'The '),
+              TextSpan(text: 'F', style: accent),
+              const TextSpan(text: 'itness '),
+              TextSpan(text: 'Ma', style: accent),
+              const TextSpan(text: 'trix'),
             ],
           ),
         ),
         const SizedBox(height: 4),
-        RichText(
+        Text.rich(
           textAlign: TextAlign.center,
-          text: const TextSpan(
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w400,
-            ),
+          style: base,
+          TextSpan(
             children: [
-              TextSpan(text: 'Based on '),
-              TextSpan(
-                text: 'Art',
-                style: TextStyle(color: AppColors.secondary),
-              ),
-              TextSpan(text: 'ificial '),
-              TextSpan(
-                text: 'i',
-                style: TextStyle(color: AppColors.secondary),
-              ),
-              TextSpan(text: 'ntelligence'),
+              const TextSpan(text: 'Based on '),
+              TextSpan(text: 'Art', style: accent),
+              const TextSpan(text: 'ificial '),
+              TextSpan(text: 'i', style: accent),
+              const TextSpan(text: 'ntelligence'),
             ],
           ),
         ),

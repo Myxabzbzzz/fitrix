@@ -2,6 +2,12 @@
 
 Complete guide to understanding the FITRIX Flutter application codebase.
 
+> **Note:** this guide was written for the onboarding-only version of the app.
+> The post-onboarding screens (Home, workouts, progress, nutrition, Felix
+> chats), workout storage and chat streaming are summarized in
+> [README.md](README.md); their code lives in `lib/features/{home,shell,
+> workouts,progress,nutrition,chat}` and `lib/core/{session,widgets}`.
+
 ## 📚 Table of Contents
 
 1. [Project Structure](#project-structure)
@@ -68,7 +74,9 @@ themeMode: ThemeMode.system,
 - Fitness goals list
 - Supported languages
 
-**Important:** Update `apiBaseUrl` with your backend IP address!
+**Backend address:** `apiBaseUrl` defaults to `http://localhost:3000`; override
+it at build time with `--dart-define=API_BASE_URL=...` (needed on a physical
+phone).
 
 ### app_colors.dart ✅
 **Purpose:** Color palette definition
@@ -306,9 +314,10 @@ Flutter App → HTTP Request → Backend API → Ollama LLM → Response
 ```
 
 ### Error Handling
-- Network errors → Shows mock response
-- Timeout → Falls back to mock
-- 500 errors → Displays error message
+- Backend unreachable (connection refused / 3s connect timeout) → offline
+  canned reply
+- Backend error or stream cut off → red bubble with the reason and
+  "Tap to retry"; the rest of the chat is kept
 
 ### Mock Responses
 When backend is unavailable, app provides intelligent mock responses:

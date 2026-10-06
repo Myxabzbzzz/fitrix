@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/theme/app_colors.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
@@ -7,6 +11,37 @@ import 'package:fitrix/features/profile/presentation/providers/profile_provider.
 /// Profile tab: the data entered during onboarding.
 class AboutMeScreen extends ConsumerWidget {
   const AboutMeScreen({super.key});
+
+  Future<void> _signOut(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Sign out?'),
+        content: const Text(
+          'Your profile, chats and workouts are stored only on this device '
+          'and will be deleted.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: const Text('Sign out'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    // Grab these before signing out: it recreates the provider scope.
+    final router = GoRouter.of(context);
+    final session = ref.read(appSessionProvider);
+    await session.signOut();
+    router.go(AppRouter.intro);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -82,6 +117,20 @@ class AboutMeScreen extends ConsumerWidget {
                   const SizedBox(width: 12),
                   stat('Height', profile?.height, ' cm'),
                 ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: OutlinedButton.icon(
+                onPressed: () => _signOut(context, ref),
+                icon: const Icon(Icons.logout),
+                label: const Text('Sign out'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.error,
+                  side: BorderSide(color: palette.border),
+                  minimumSize: const Size.fromHeight(48),
+                ),
               ),
             ),
           ],

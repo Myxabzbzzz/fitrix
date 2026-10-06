@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/features/profile/data/models/user_profile.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
@@ -32,6 +33,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -41,7 +44,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               const SizedBox(height: 40),
 
               // FITRIX Logo
-              _buildLogo(),
+              const FitrixLogo(fontSize: 36),
 
               const SizedBox(height: 40),
 
@@ -51,32 +54,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.cardBackground,
+                  color: palette.tile,
                 ),
-                child: ClipOval(
-                  child: Image.network(
-                    'https://i.pravatar.cc/300',
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.person,
-                        size: 60,
-                        color: AppColors.textSecondary,
-                      );
-                    },
-                  ),
+                child: Icon(
+                  Icons.person,
+                  size: 60,
+                  color: palette.textSecondary,
                 ),
               ),
 
               const SizedBox(height: 16),
 
               // Username
-              const Text(
+              Text(
                 '@theboss',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: palette.textPrimary,
                 ),
               ),
 
@@ -153,34 +148,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildLogo() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: const TextSpan(
-        children: [
-          TextSpan(
-            text: 'FI',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: AppColors.secondary,
-              letterSpacing: 2,
-            ),
-          ),
-          TextSpan(
-            text: 'TRIX',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-              letterSpacing: 2,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
@@ -192,8 +159,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       textAlign: TextAlign.center,
       decoration: InputDecoration(
         hintText: label,
-        hintStyle: const TextStyle(
-          color: AppColors.textSecondary,
+        hintStyle: TextStyle(
+          color: AppPalette.of(context).textSecondary,
           fontSize: 16,
         ),
       ),

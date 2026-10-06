@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
@@ -126,20 +126,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     });
     final size = MediaQuery.of(context).size;
     final diagonal = sqrt(size.width * size.width + size.height * size.height);
+    final palette = AppPalette.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: palette.background,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: palette.background,
         elevation: 0,
         title: Row(
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: AppColors.cardBackground,
-              child: const Icon(
+              backgroundColor: palette.tile,
+              child: Icon(
                 Icons.person,
-                color: AppColors.textSecondary,
+                color: palette.textSecondary,
                 size: 24,
               ),
             ),
@@ -149,18 +150,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               children: [
                 Text(
                   AppConstants.assistantName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: palette.textPrimary,
                   ),
                 ),
                 Text(
                   AppConstants.assistantSubtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
-                    color: AppColors.textSecondary,
+                    color: palette.textSecondary,
                   ),
                 ),
               ],
@@ -197,9 +198,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                                 child: Text(
                                   DateFormat('MMM dd, yyyy, h:mm a')
                                       .format(message.timestamp),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 11,
-                                    color: AppColors.textSecondary,
+                                    color: palette.textSecondary,
                                   ),
                                 ),
                               ),
@@ -260,8 +261,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                       key: _startButtonKey,
                       onPressed: _animating ? null : _onStartPressed,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.buttonPrimary,
-                        foregroundColor: AppColors.textOnDark,
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -306,13 +305,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   }
 
   Widget _buildMessageInput({required bool isReplying}) {
+    final palette = AppPalette.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: palette.background,
         border: Border(
           top: BorderSide(
-            color: AppColors.divider.withOpacity(0.3),
+            color: palette.border,
             width: 1,
           ),
         ),
@@ -326,12 +326,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               height: 40,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.divider),
+                border: Border.all(color: palette.border),
               ),
               child: IconButton(
                 icon: const Icon(Icons.add, size: 20),
                 onPressed: () {},
-                color: AppColors.textSecondary,
+                color: palette.textSecondary,
                 padding: EdgeInsets.zero,
               ),
             ),
@@ -363,7 +363,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               child: IconButton(
                 icon: const Icon(Icons.mic, size: 20),
                 onPressed: () {},
-                color: AppColors.textSecondary,
+                color: palette.textSecondary,
                 padding: EdgeInsets.zero,
               ),
             ),
@@ -376,7 +376,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isReplying ? AppColors.divider : AppColors.secondary,
+                color: isReplying ? palette.border : palette.accent,
                 shape: BoxShape.circle,
               ),
               child: IconButton(
@@ -384,7 +384,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                 onPressed: isReplying
                     ? null
                     : () => _sendMessage(_messageController.text),
-                color: AppColors.textOnDark,
+                color: Colors.white,
                 padding: EdgeInsets.zero,
               ),
             ),

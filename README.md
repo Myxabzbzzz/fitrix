@@ -1,242 +1,105 @@
 # FITRIX - AI-Powered Fitness Application
 
-A complete Flutter application for iOS and Android that integrates with an Ollama-based backend for AI fitness coaching.
+Flutter app with an AI fitness coach, **Felix**, powered by a local
+[Ollama](https://ollama.com) model through a small Node.js backend.
 
-## Project Structure
+Platforms in this repo: iOS, macOS and web (there is no `android/` folder yet).
+
+## What's in the app
+
+**Onboarding** (shown once; later launches open Home)
+- Intro → language → sign-in → profile → chat with Felix → "Felix is ready"
+- Sign-in is a local mock: any email works, Google/Apple buttons don't
+  call real providers
+
+**Main app** (5-tab bar: Discover · Shop · Home · Felix · Profile)
+- **Home** — tiles for My progress, My nutrition, Felix, My workouts, Shop,
+  Fitrix map
+- **My workouts** — sports → workout plans (today's workout, Start/Edit, add
+  your own)
+- **Active workout** — sets table (previous / kg / reps / done), live timer,
+  collapses to a mini bar above the tab bar and survives an app restart
+- **My progress** — strength charts and recent sessions from your saved
+  workouts; body weight and calories are sample data for now
+- **My nutrition** — calorie ring and macros (sample data)
+- **Felix chats** — general assistant plus a trainer chat per sport; replies
+  stream in word by word
+- **About me** — profile data and Sign out (clears everything on the device)
+- Discover, Shop and Fitrix map are "Coming soon" placeholders
+
+Light and dark themes follow the system setting. The language picker saves
+your choice, but the UI is English-only for now.
+
+## Running it
+
+See [QUICKSTART.md](QUICKSTART.md). In short:
+
+```bash
+ollama pull qwen3:8b                 # once
+cd backend && npm install && npm start
+flutter run                          # from the project root
+```
+
+The app talks to `http://localhost:3000` by default, which works for the iOS
+simulator, macOS and web. On a physical phone pass your Mac's LAN address:
+
+```bash
+flutter run --dart-define=API_BASE_URL=http://192.168.0.103:3000
+```
+
+If the backend isn't reachable at all, the onboarding chat falls back to
+canned replies so the flow can still be completed. If the backend is up but
+the model fails, the chat shows the error with "Tap to retry".
+
+## Backend
+
+`backend/server.js` (Express) proxies chat to Ollama:
+
+- `POST /chat/stream` — streamed reply as NDJSON (`{"delta"}` … `{"done"}`),
+  used by the app
+- `POST /chat` — same, as a single JSON reply
+- `GET /health`, `GET /models`, `POST /chat/reset`
+
+Conversation history is kept in the server's memory per `conversationId`, so
+it resets when the server restarts. Configuration (model, thinking mode,
+keep-alive) is described in [backend/README.md](backend/README.md).
+
+## Data storage
+
+Everything is stored on the device with `shared_preferences`: language,
+email, profile, onboarding status, chat histories, workout plans, the workout
+in progress and workout history. Sign out deletes all of it.
+
+## Project structure
 
 ```
 lib/
 ├── core/
-│   ├── constants/
-│   │   └── app_constants.dart          # App-wide constants
-│   ├── router/
-│   │   └── app_router.dart             # Navigation configuration
-│   └── theme/
-│       ├── app_colors.dart             # Color palette
-│       └── app_theme.dart              # Material theme
+│   ├── constants/      # API URL, storage keys, copy
+│   ├── router/         # go_router routes, onboarding redirect, tab shell
+│   ├── session/        # onboarding status / sign-out, preloaded prefs
+│   ├── theme/          # Material themes, AppPalette design tokens
+│   └── widgets/        # Logo, tiles, pills, page titles
 ├── features/
-│   ├── intro/
-│   │   └── presentation/
-│   │       └── screens/
-│   │           └── intro_screen.dart   # Welcome screen
-│   ├── language/
-│   │   ├── data/
-│   │   │   └── repositories/
-│   │   │       └── language_repository.dart
-│   │   └── presentation/
-│   │       ├── providers/
-│   │       │   └── language_provider.dart
-│   │       └── screens/
-│   │           └── language_screen.dart  # Language selection
-│   ├── auth/
-│   │   ├── data/
-│   │   │   └── repositories/
-│   │   │       └── auth_repository.dart
-│   │   └── presentation/
-│   │       ├── providers/
-│   │       │   └── auth_provider.dart
-│   │       └── screens/
-│   │           └── sign_in_screen.dart   # Email sign-in (mocked)
-│   ├── profile/
-│   │   ├── data/
-│   │   │   ├── models/
-│   │   │   │   └── user_profile.dart
-│   │   │   └── repositories/
-│   │   │       └── profile_repository.dart
-│   │   └── presentation/
-│   │       ├── providers/
-│   │       │   └── profile_provider.dart
-│   │       └── screens/
-│   │           └── profile_screen.dart   # User profile input
-│   └── chat/
-│       ├── data/
-│       │   ├── models/
-│       │   │   └── chat_message.dart
-│       │   ├── repositories/
-│       │   │   └── chat_repository.dart
-│       │   └── services/
-│       │       └── chat_api_service.dart  # Backend API integration
-│       └── presentation/
-│           ├── providers/
-│           │   └── chat_provider.dart
-│           ├── screens/
-│           │   └── chat_screen.dart       # AI chat with Felix
-│           └── widgets/
-│               ├── chat_bubble.dart
-│               └── quick_reply_chip.dart
-└── main.dart                              # App entry point
+│   ├── intro/ language/ auth/ profile/ transition/   # onboarding
+│   ├── home/ shell/                                    # Home + tab bar
+│   ├── workouts/       # plans, active workout, history, storage
+│   ├── progress/       # charts
+│   ├── nutrition/
+│   └── chat/           # Felix: streaming API client, chats, bubbles
+└── main.dart           # loads storage, then starts the app
 ```
 
-## Features
+## Tech stack
 
-### 1. Intro Screen
-- FITRIX logo with branded colors
-- Subtitle highlighting AI capabilities
-- "Start your journey" call-to-action button
+Flutter · Riverpod · go_router · shared_preferences · dio (streaming HTTP)
 
-### 2. Language Selection
-- Support for 4 languages: English, Russian, Uzbek, Spanish
-- Persistent language selection using shared_preferences
-- Clean, modern UI with globe icon
+## Tests
 
-### 3. Authentication (Mock)
-- Email-based sign-in UI
-- Mock Google and Apple sign-in options
-- No real authentication - always succeeds
-- Terms and Privacy policy acknowledgment
-
-### 4. Profile Setup
-- User avatar display
-- Input fields: Name, Surname, Age, Weight, Height
-- Data persisted locally using shared_preferences
-
-### 5. AI Chat (Felix)
-- Personal AI fitness coach
-- Real-time chat interface
-- Quick reply chips for common responses
-- Backend integration with Ollama LLM
-- Chat history persistence
-- Mock responses when backend unavailable
-
-## Tech Stack
-
-- **Framework**: Flutter (latest stable)
-- **State Management**: Riverpod
-- **Navigation**: go_router
-- **Local Storage**: shared_preferences
-- **HTTP Client**: http package
-- **Architecture**: Clean Architecture
-
-## Backend Integration
-
-### API Contract
-
-The app expects a backend API with the following endpoint:
-
-**Endpoint**: `POST /chat`
-
-**Request**:
-```json
-{
-  "message": "user prompt here",
-  "conversationId": "uuid-here"
-}
-```
-
-**Response**:
-```json
-{
-  "reply": "AI response here"
-}
-```
-
-### Configuration
-
-Update the backend URL in `lib/core/constants/app_constants.dart`:
-
-```dart
-static const String apiBaseUrl = 'http://your-backend-url:port';
-```
-
-### Mock Responses
-
-When the backend is unavailable, the app provides intelligent mock responses to simulate the conversation flow. This allows full testing without a running backend.
-
-## Setup Instructions
-
-### Prerequisites
-
-1. Install Flutter SDK (latest stable): https://flutter.dev/docs/get-started/install
-2. Install Xcode (for iOS) or Android Studio (for Android)
-3. Verify installation: `flutter doctor`
-
-### Installation
-
-1. Navigate to project directory:
 ```bash
-cd ~/fitrix
+flutter test
 ```
 
-2. Get dependencies:
-```bash
-flutter pub get
-```
-
-3. Run the app:
-```bash
-# iOS
-flutter run -d ios
-
-# Android
-flutter run -d android
-
-# Or choose device
-flutter run
-```
-
-## Design Fidelity
-
-The app is built to match the provided design screenshots pixel-for-pixel:
-
-- ✅ Exact color scheme (black primary, blue accents)
-- ✅ Proper typography and spacing
-- ✅ Rounded pill-shaped buttons
-- ✅ Chat bubble styling
-- ✅ Quick reply chips with selection states
-- ✅ Status bar configuration
-- ✅ Bottom navigation and input areas
-
-## State Persistence
-
-All user data is stored locally:
-
-- Selected language
-- User email (mock auth)
-- Profile information (name, surname, age, weight, height)
-- Complete chat history with Felix
-- Conversation ID for backend continuity
-
-## Testing Without Backend
-
-The app includes comprehensive mock responses that simulate a real conversation flow:
-
-1. Initial greeting from Felix
-2. Fitness goal selection
-3. Activity preferences
-4. Frequency questions
-5. Experience level assessment
-
-This allows full UI/UX testing without requiring a running backend server.
-
-## Production Readiness
-
-This is a production-quality implementation with:
-
-- ✅ No placeholders or TODOs
-- ✅ Proper error handling
-- ✅ Loading states
-- ✅ Offline support with mocks
-- ✅ Clean architecture
-- ✅ Type safety
-- ✅ Null safety
-- ✅ Proper state management
-
-## Next Steps
-
-1. **Backend Setup**: Configure your Ollama backend and update the API URL
-2. **Assets**: Add custom icons and images to `assets/` directories
-3. **Internationalization**: Implement i18n for multi-language support
-4. **Analytics**: Add Firebase Analytics or similar
-5. **Testing**: Add unit and widget tests
-6. **CI/CD**: Set up automated builds and deployments
-
-## File Structure Summary
-
-**Total Dart Files**: 23
-**Total Lines of Code**: ~2,500+
-
-All code is production-ready and follows Flutter best practices with Clean Architecture principles.
-
-## License
-
-This project is part of the FITRIX fitness application.
+Covers chat streaming and retries (against a local fake backend), workout
+persistence and history, progress charts, onboarding redirect and sign-out,
+and the main workout flow.

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/core/widgets/coming_soon_screen.dart';
 import 'package:fitrix/features/intro/presentation/screens/intro_screen.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
@@ -41,151 +42,174 @@ class AppRouter {
 
   static String sportWorkouts(Sport sport) => '$workouts/${sport.name}';
 
-  static final GoRouter router = GoRouter(
-    initialLocation: intro,
-    routes: [
-      GoRoute(
-        path: intro,
-        name: 'intro',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: const IntroScreen(),
-        ),
-      ),
-      GoRoute(
-        path: language,
-        name: 'language',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: const LanguageScreen(),
-        ),
-      ),
-      GoRoute(
-        path: signIn,
-        name: 'signIn',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: const SignInScreen(),
-        ),
-      ),
-      GoRoute(
-        path: profile,
-        name: 'profile',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: const ProfileScreen(),
-        ),
-      ),
-      GoRoute(
-        path: chat,
-        name: 'chat',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: const ChatScreen(),
-        ),
-      ),
-      GoRoute(
-        path: transition,
-        name: 'transition',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: ChatTransitionScreen(),
-        ),
-      ),
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) =>
-            MainShell(navigationShell: navigationShell),
-        branches: [
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: discover,
-                name: 'discover',
-                builder: (context, state) => const ComingSoonScreen(
-                  title: 'Discover',
-                  icon: Icons.explore_outlined,
-                ),
-              ),
-            ],
+  static const _onboardingRoutes = {
+    intro,
+    language,
+    signIn,
+    profile,
+    chat,
+    transition,
+  };
+
+  /// The app's router; created once in `main()` via [create].
+  static late GoRouter router;
+
+  static GoRouter create(AppSession session) => router = GoRouter(
+        initialLocation: intro,
+        refreshListenable: session,
+        // Once onboarding is done, every launch (and any stray link back into
+        // onboarding) lands on Home instead.
+        redirect: (context, state) {
+          if (session.onboardingComplete &&
+              _onboardingRoutes.contains(state.matchedLocation)) {
+            return home;
+          }
+          return null;
+        },
+        routes: [
+          GoRoute(
+            path: intro,
+            name: 'intro',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: const IntroScreen(),
+            ),
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: shop,
-                name: 'shop',
-                builder: (context, state) => const ComingSoonScreen(
-                  title: 'Shop',
-                  icon: Icons.shopping_cart_outlined,
-                  imageAsset: 'assets/images/tile_shop.png',
-                ),
-              ),
-            ],
+          GoRoute(
+            path: language,
+            name: 'language',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: const LanguageScreen(),
+            ),
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: home,
-                name: 'home',
-                pageBuilder: (context, state) => const NoTransitionPage(
-                  child: HomeScreen(),
-                ),
+          GoRoute(
+            path: signIn,
+            name: 'signIn',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: const SignInScreen(),
+            ),
+          ),
+          GoRoute(
+            path: profile,
+            name: 'profile',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: const ProfileScreen(),
+            ),
+          ),
+          GoRoute(
+            path: chat,
+            name: 'chat',
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: const ChatScreen(),
+            ),
+          ),
+          GoRoute(
+            path: transition,
+            name: 'transition',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ChatTransitionScreen(),
+            ),
+          ),
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, navigationShell) =>
+                MainShell(navigationShell: navigationShell),
+            branches: [
+              StatefulShellBranch(
                 routes: [
                   GoRoute(
-                    path: 'workouts',
-                    name: 'workouts',
-                    builder: (context, state) => const MyWorkoutsScreen(),
+                    path: discover,
+                    name: 'discover',
+                    builder: (context, state) => const ComingSoonScreen(
+                      title: 'Discover',
+                      icon: Icons.explore_outlined,
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: shop,
+                    name: 'shop',
+                    builder: (context, state) => const ComingSoonScreen(
+                      title: 'Shop',
+                      icon: Icons.shopping_cart_outlined,
+                      imageAsset: 'assets/images/tile_shop.png',
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: home,
+                    name: 'home',
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: HomeScreen(),
+                    ),
                     routes: [
                       GoRoute(
-                        path: ':sport',
-                        name: 'sportWorkouts',
-                        builder: (context, state) => SportWorkoutsScreen(
-                          sport: Sport.fromName(state.pathParameters['sport']!),
+                        path: 'workouts',
+                        name: 'workouts',
+                        builder: (context, state) => const MyWorkoutsScreen(),
+                        routes: [
+                          GoRoute(
+                            path: ':sport',
+                            name: 'sportWorkouts',
+                            builder: (context, state) => SportWorkoutsScreen(
+                              sport: Sport.fromName(
+                                  state.pathParameters['sport']!),
+                            ),
+                          ),
+                        ],
+                      ),
+                      GoRoute(
+                        path: 'progress',
+                        name: 'progress',
+                        builder: (context, state) => const ProgressScreen(),
+                      ),
+                      GoRoute(
+                        path: 'nutrition',
+                        name: 'nutrition',
+                        builder: (context, state) => const NutritionScreen(),
+                      ),
+                      GoRoute(
+                        path: 'map',
+                        name: 'fitrixMap',
+                        builder: (context, state) => const ComingSoonScreen(
+                          title: 'Fitrix map',
+                          icon: Icons.map_outlined,
+                          imageAsset: 'assets/images/tile_map.png',
                         ),
                       ),
                     ],
                   ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
                   GoRoute(
-                    path: 'progress',
-                    name: 'progress',
-                    builder: (context, state) => const ProgressScreen(),
+                    path: felix,
+                    name: 'felix',
+                    builder: (context, state) => const FelixChatScreen(),
                   ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
                   GoRoute(
-                    path: 'nutrition',
-                    name: 'nutrition',
-                    builder: (context, state) => const NutritionScreen(),
-                  ),
-                  GoRoute(
-                    path: 'map',
-                    name: 'fitrixMap',
-                    builder: (context, state) => const ComingSoonScreen(
-                      title: 'Fitrix map',
-                      icon: Icons.map_outlined,
-                      imageAsset: 'assets/images/tile_map.png',
-                    ),
+                    path: me,
+                    name: 'me',
+                    builder: (context, state) => const AboutMeScreen(),
                   ),
                 ],
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: felix,
-                name: 'felix',
-                builder: (context, state) => const FelixChatScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: me,
-                name: 'me',
-                builder: (context, state) => const AboutMeScreen(),
-              ),
-            ],
-          ),
         ],
-      ),
-    ],
-  );
+      );
 }

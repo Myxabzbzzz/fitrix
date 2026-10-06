@@ -10,6 +10,7 @@
 ///
 /// Best Practice: Update these constants instead of hardcoding values
 /// throughout the codebase for easier maintenance and consistency.
+library;
 
 class AppConstants {
   // Private constructor prevents instantiation
@@ -76,6 +77,18 @@ class AppConstants {
   /// Key for storing chat conversation history
   /// Stored as JSON string for persistence between app sessions
   static const String keyChatHistory = 'chat_history';
+
+  /// Set once the user finishes onboarding; later launches open Home.
+  static const String keyOnboardingComplete = 'onboarding_complete';
+
+  /// Saved workout plans (JSON list).
+  static const String keyWorkoutTemplates = 'workout_templates';
+
+  /// Workout in progress, so it survives an app restart (JSON).
+  static const String keyActiveWorkout = 'active_workout';
+
+  /// Finished workouts, newest first (JSON list).
+  static const String keyWorkoutHistory = 'workout_history';
 
   /// Key for storing unique conversation identifier
   /// Used to maintain context across backend API requests

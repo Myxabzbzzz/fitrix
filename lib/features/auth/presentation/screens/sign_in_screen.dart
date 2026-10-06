@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 
@@ -23,6 +24,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -33,17 +36,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               const SizedBox(height: 40),
 
               // FITRIX Logo
-              _buildLogo(),
+              const Center(child: FitrixLogo(fontSize: 36)),
 
               const SizedBox(height: 60),
 
               // Title
-              const Text(
+              Text(
                 'Create an account',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: palette.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -51,12 +54,12 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               const SizedBox(height: 8),
 
               // Subtitle
-              const Text(
+              Text(
                 'Enter your email to sign up for this app',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.textSecondary,
+                  color: palette.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -68,7 +71,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                  hintText: 'myxabzbzisgay@pride.com',
+                  hintText: 'name@example.com',
                 ),
               ),
 
@@ -94,18 +97,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               // Divider
               Row(
                 children: [
-                  const Expanded(child: Divider(color: AppColors.divider)),
+                  Expanded(child: Divider(color: palette.border)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       'or',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.textSecondary,
+                        color: palette.textSecondary,
                       ),
                     ),
                   ),
-                  const Expanded(child: Divider(color: AppColors.divider)),
+                  Expanded(child: Divider(color: palette.border)),
                 ],
               ),
 
@@ -121,16 +124,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     context.go(AppRouter.profile);
                   },
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.divider),
+                    side: BorderSide(color: palette.border),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  icon: const Icon(Icons.g_mobiledata, size: 24, color: AppColors.textPrimary),
-                  label: const Text(
+                  icon: Icon(Icons.g_mobiledata, size: 24, color: palette.textPrimary),
+                  label: Text(
                     'Continue with Google',
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: palette.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
@@ -150,16 +153,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     context.go(AppRouter.profile);
                   },
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.divider),
+                    side: BorderSide(color: palette.border),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  icon: const Icon(Icons.apple, size: 24, color: AppColors.textPrimary),
-                  label: const Text(
+                  icon: Icon(Icons.apple, size: 24, color: palette.textPrimary),
+                  label: Text(
                     'Continue with Apple',
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: palette.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
@@ -170,14 +173,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               const SizedBox(height: 24),
 
               // Terms and Privacy
-              RichText(
+              Text.rich(
                 textAlign: TextAlign.center,
-                text: const TextSpan(
+                TextSpan(
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: palette.textSecondary,
                   ),
-                  children: [
+                  children: const [
                     TextSpan(text: 'By clicking continue, you agree to our '),
                     TextSpan(
                       text: 'Terms of Service',
@@ -198,34 +201,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildLogo() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: const TextSpan(
-        children: [
-          TextSpan(
-            text: 'FI',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: AppColors.secondary,
-              letterSpacing: 2,
-            ),
-          ),
-          TextSpan(
-            text: 'TRIX',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-              letterSpacing: 2,
-            ),
-          ),
-        ],
       ),
     );
   }

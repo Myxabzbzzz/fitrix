@@ -1,20 +1,20 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/core/session/session_providers.dart';
 
-class ChatTransitionScreen extends StatefulWidget {
+class ChatTransitionScreen extends ConsumerStatefulWidget {
   const ChatTransitionScreen({super.key});
 
   @override
-  State<ChatTransitionScreen> createState() => _ChatTransitionScreenState();
+  ConsumerState<ChatTransitionScreen> createState() =>
+      _ChatTransitionScreenState();
 }
 
-class _ChatTransitionScreenState extends State<ChatTransitionScreen>
+class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
     with TickerProviderStateMixin {
-  late AnimationController _blackCircleController;
-  late Animation<double> _blackCircleAnimation;
-
   late AnimationController _typewriterController;
   String _displayedText = '';
   static const String _fullText = 'Felix is ready.\nAre you?';
@@ -24,8 +24,6 @@ class _ChatTransitionScreenState extends State<ChatTransitionScreen>
   late AnimationController _whiteCircleController;
   late Animation<double> _whiteCircleAnimation;
 
-  bool _phase1Done = true;
-
   final GlobalKey _buttonKey = GlobalKey();
   Offset? _buttonCenter;
 
@@ -33,17 +31,8 @@ class _ChatTransitionScreenState extends State<ChatTransitionScreen>
   void initState() {
     super.initState();
 
-    _blackCircleController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-    _blackCircleAnimation = CurvedAnimation(
-      parent: _blackCircleController,
-      curve: Curves.easeInOut,
-    );
-
     _typewriterController = AnimationController(
-      duration: Duration(milliseconds: _fullText.length * 70),
+      duration: const Duration(milliseconds: _fullText.length * 70),
       vsync: this,
     );
     _typewriterController.addListener(() {
@@ -71,9 +60,11 @@ class _ChatTransitionScreenState extends State<ChatTransitionScreen>
       parent: _whiteCircleController,
       curve: Curves.easeInOut,
     );
-    _whiteCircleController.addStatusListener((status) {
+    _whiteCircleController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
-        context.go(AppRouter.home);
+        // From now on the app opens straight to Home.
+        await ref.read(appSessionProvider).completeOnboarding();
+        if (mounted) context.go(AppRouter.home);
       }
     });
 
@@ -84,7 +75,6 @@ class _ChatTransitionScreenState extends State<ChatTransitionScreen>
 
   @override
   void dispose() {
-    _blackCircleController.dispose();
     _typewriterController.dispose();
     _whiteCircleController.dispose();
     super.dispose();
@@ -115,54 +105,53 @@ class _ChatTransitionScreenState extends State<ChatTransitionScreen>
       body: Stack(
         children: [
           // Typewriter text + button
-          if (_phase1Done)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _displayedText,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        height: 1.3,
-                      ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _displayedText,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      height: 1.3,
                     ),
-                    const SizedBox(height: 40),
-                    AnimatedOpacity(
-                      opacity: _showButton ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 400),
-                      child: GestureDetector(
-                        onTap: _showButton ? _onReady : null,
-                        child: Container(
-                          key: _buttonKey,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 32,
-                            vertical: 14,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: const Text(
-                            'I am ready',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
+                  ),
+                  const SizedBox(height: 40),
+                  AnimatedOpacity(
+                    opacity: _showButton ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 400),
+                    child: GestureDetector(
+                      onTap: _showButton ? _onReady : null,
+                      child: Container(
+                        key: _buttonKey,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Text(
+                          'I am ready',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+          ),
 
           // Phase 4: White circle expanding from button
           if (_whiteCircleController.isAnimating ||

@@ -7,6 +7,7 @@
 /// - Light theme: Use `lightXxx` colors
 /// - Dark theme: Use `darkXxx` colors
 /// - Legacy code: Defaults to light colors for backwards compatibility
+library;
 
 import 'package:flutter/material.dart';
 

@@ -1,11 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
+import 'package:fitrix/features/workouts/data/workout_storage.dart';
+
+final workoutStorageProvider = Provider<WorkoutStorage>(
+  (ref) => WorkoutStorage(ref.watch(sharedPreferencesProvider)),
+);
 
 final workoutTemplatesProvider =
     StateNotifierProvider<WorkoutTemplatesNotifier, List<WorkoutTemplate>>(
-  (ref) => WorkoutTemplatesNotifier(),
+  (ref) => WorkoutTemplatesNotifier(ref.watch(workoutStorageProvider)),
 );
 
 final workoutsForSportProvider =
@@ -16,9 +22,18 @@ final workoutsForSportProvider =
       .toList();
 });
 
+/// Finished workouts, newest first.
+final workoutHistoryProvider =
+    StateNotifierProvider<WorkoutHistoryNotifier, List<CompletedWorkout>>(
+  (ref) => WorkoutHistoryNotifier(ref.watch(workoutStorageProvider)),
+);
+
 final activeWorkoutProvider =
     StateNotifierProvider<ActiveWorkoutNotifier, ActiveWorkout?>(
-  (ref) => ActiveWorkoutNotifier(),
+  (ref) => ActiveWorkoutNotifier(
+    ref.watch(workoutStorageProvider),
+    ref.read(workoutHistoryProvider.notifier),
+  ),
 );
 
 /// Whether the active workout sheet is expanded (full table) or collapsed
@@ -26,9 +41,17 @@ final activeWorkoutProvider =
 final activeWorkoutExpandedProvider = StateProvider<bool>((ref) => false);
 
 class WorkoutTemplatesNotifier extends StateNotifier<List<WorkoutTemplate>> {
+  final WorkoutStorage _storage;
   final Uuid _uuid = const Uuid();
 
-  WorkoutTemplatesNotifier() : super(WorkoutCatalog.defaults);
+  WorkoutTemplatesNotifier(this._storage)
+      : super(_storage.loadTemplates() ?? WorkoutCatalog.defaults);
+
+  @override
+  set state(List<WorkoutTemplate> value) {
+    super.state = value;
+    _storage.saveTemplates(value);
+  }
 
   void add(Sport sport, String name) {
     state = [
@@ -55,18 +78,65 @@ class WorkoutTemplatesNotifier extends StateNotifier<List<WorkoutTemplate>> {
   }
 }
 
-class ActiveWorkoutNotifier extends StateNotifier<ActiveWorkout?> {
-  ActiveWorkoutNotifier() : super(null);
+class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
+  final WorkoutStorage _storage;
 
+  WorkoutHistoryNotifier(this._storage) : super(_storage.loadHistory());
+
+  @override
+  set state(List<CompletedWorkout> value) {
+    super.state = value;
+    _storage.saveHistory(value);
+  }
+
+  void add(CompletedWorkout workout) => state = [workout, ...state];
+
+  /// Most recent session of the given plan, if any.
+  CompletedWorkout? lastFor(String templateId) {
+    for (final w in state) {
+      if (w.templateId == templateId) return w;
+    }
+    return null;
+  }
+}
+
+class ActiveWorkoutNotifier extends StateNotifier<ActiveWorkout?> {
+  final WorkoutStorage _storage;
+  final WorkoutHistoryNotifier _history;
+
+  /// Restores a workout that was in progress when the app was closed.
+  ActiveWorkoutNotifier(this._storage, this._history)
+      : super(_storage.loadActive());
+
+  @override
+  set state(ActiveWorkout? value) {
+    super.state = value;
+    _storage.saveActive(value);
+  }
+
+  /// Starts [template], pre-filling "Previous" (and today's targets) from
+  /// the last time this plan was done.
   void start(WorkoutTemplate template) {
+    final last = _history.lastFor(template.id);
     state = ActiveWorkout(
       template: template,
       startedAt: DateTime.now(),
-      exercises: template.exercises,
+      exercises: [
+        for (final e in template.exercises) _withPrevious(e, last),
+      ],
     );
   }
 
-  void finish() => state = null;
+  /// Ends the workout. It's saved to history if at least one set was
+  /// completed; returns whether it was saved.
+  bool finish() {
+    final workout = state;
+    if (workout == null) return false;
+    final saved = workout.completedSets > 0;
+    if (saved) _history.add(CompletedWorkout.from(workout, DateTime.now()));
+    state = null;
+    return saved;
+  }
 
   void toggleSet(int exerciseIndex, int setIndex) {
     _updateSet(exerciseIndex, setIndex, (s) => s.copyWith(done: !s.done));
@@ -94,6 +164,30 @@ class ActiveWorkoutNotifier extends StateNotifier<ActiveWorkout?> {
     _replaceExercise(
       exerciseIndex,
       exercise.copyWith(sets: [...exercise.sets, newSet]),
+    );
+  }
+
+  static Exercise _withPrevious(Exercise exercise, CompletedWorkout? last) {
+    if (last == null) return exercise;
+    Exercise? previous;
+    for (final e in last.exercises) {
+      if (e.name == exercise.name) previous = e;
+    }
+    if (previous == null) return exercise;
+
+    return exercise.copyWith(
+      sets: [
+        for (var i = 0; i < exercise.sets.length; i++)
+          if (i < previous.sets.length)
+            exercise.sets[i].copyWith(
+              previousKg: previous.sets[i].kg,
+              previousReps: previous.sets[i].reps,
+              kg: previous.sets[i].kg,
+              reps: previous.sets[i].reps,
+            )
+          else
+            exercise.sets[i],
+      ],
     );
   }
 

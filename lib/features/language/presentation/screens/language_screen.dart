@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 
 class LanguageScreen extends ConsumerWidget {
@@ -12,6 +13,7 @@ class LanguageScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedLanguage = ref.watch(selectedLanguageProvider);
+    final palette = AppPalette.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -22,7 +24,7 @@ class LanguageScreen extends ConsumerWidget {
               const SizedBox(height: 40),
 
               // FITRIX Logo
-              _buildLogo(),
+              const FitrixLogo(fontSize: 36),
 
               const SizedBox(height: 60),
 
@@ -31,13 +33,13 @@ class LanguageScreen extends ConsumerWidget {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: AppColors.textPrimary,
+                  color: palette.textPrimary,
                   borderRadius: BorderRadius.circular(50),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.language,
                   size: 50,
-                  color: AppColors.textOnDark,
+                  color: palette.background,
                 ),
               ),
 
@@ -47,11 +49,12 @@ class LanguageScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: palette.background,
                   borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: palette.border),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -87,33 +90,6 @@ class LanguageScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLogo() {
-    return RichText(
-      text: const TextSpan(
-        children: [
-          TextSpan(
-            text: 'FI',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: AppColors.secondary,
-              letterSpacing: 2,
-            ),
-          ),
-          TextSpan(
-            text: 'TRIX',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-              letterSpacing: 2,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildLanguageButton(
     BuildContext context,
     WidgetRef ref,
@@ -121,6 +97,8 @@ class LanguageScreen extends ConsumerWidget {
     String label,
     bool isSelected,
   ) {
+    final palette = AppPalette.of(context);
+
     return SizedBox(
       width: double.infinity,
       height: 50,
@@ -129,8 +107,8 @@ class LanguageScreen extends ConsumerWidget {
           ref.read(selectedLanguageProvider.notifier).setLanguage(code);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? AppColors.buttonSelected : AppColors.buttonUnselected,
-          foregroundColor: isSelected ? AppColors.textOnDark : AppColors.textPrimary,
+          backgroundColor: isSelected ? palette.accent : palette.tile,
+          foregroundColor: isSelected ? Colors.white : palette.textPrimary,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),

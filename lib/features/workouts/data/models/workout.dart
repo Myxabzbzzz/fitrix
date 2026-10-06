@@ -33,12 +33,35 @@ class WorkoutSet {
     this.done = false,
   });
 
-  WorkoutSet copyWith({double? kg, int? reps, bool? done}) => WorkoutSet(
-        previousKg: previousKg,
-        previousReps: previousReps,
+  WorkoutSet copyWith({
+    double? previousKg,
+    int? previousReps,
+    double? kg,
+    int? reps,
+    bool? done,
+  }) =>
+      WorkoutSet(
+        previousKg: previousKg ?? this.previousKg,
+        previousReps: previousReps ?? this.previousReps,
         kg: kg ?? this.kg,
         reps: reps ?? this.reps,
         done: done ?? this.done,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'previousKg': previousKg,
+        'previousReps': previousReps,
+        'kg': kg,
+        'reps': reps,
+        'done': done,
+      };
+
+  factory WorkoutSet.fromJson(Map<String, dynamic> json) => WorkoutSet(
+        previousKg: (json['previousKg'] as num).toDouble(),
+        previousReps: json['previousReps'] as int,
+        kg: (json['kg'] as num).toDouble(),
+        reps: json['reps'] as int,
+        done: json['done'] as bool? ?? false,
       );
 }
 
@@ -50,6 +73,19 @@ class Exercise {
 
   Exercise copyWith({String? name, List<WorkoutSet>? sets}) =>
       Exercise(name: name ?? this.name, sets: sets ?? this.sets);
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'sets': [for (final s in sets) s.toJson()],
+      };
+
+  factory Exercise.fromJson(Map<String, dynamic> json) => Exercise(
+        name: json['name'] as String,
+        sets: [
+          for (final s in json['sets'] as List)
+            WorkoutSet.fromJson(s as Map<String, dynamic>),
+        ],
+      );
 }
 
 /// A saved workout plan, e.g. "Chest and Biceps".
@@ -79,6 +115,28 @@ class WorkoutTemplate {
         estimatedDuration: estimatedDuration,
         exercises: exercises ?? this.exercises,
       );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'sport': sport.name,
+        'name': name,
+        'focus': focus,
+        'estimatedMinutes': estimatedDuration.inMinutes,
+        'exercises': [for (final e in exercises) e.toJson()],
+      };
+
+  factory WorkoutTemplate.fromJson(Map<String, dynamic> json) =>
+      WorkoutTemplate(
+        id: json['id'] as String,
+        sport: Sport.fromName(json['sport'] as String),
+        name: json['name'] as String,
+        focus: json['focus'] as String,
+        estimatedDuration: Duration(minutes: json['estimatedMinutes'] as int),
+        exercises: [
+          for (final e in json['exercises'] as List)
+            Exercise.fromJson(e as Map<String, dynamic>),
+        ],
+      );
 }
 
 /// A workout in progress, started from a [WorkoutTemplate].
@@ -102,6 +160,83 @@ class ActiveWorkout {
         template: template,
         startedAt: startedAt,
         exercises: exercises ?? this.exercises,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'template': template.toJson(),
+        'startedAt': startedAt.toIso8601String(),
+        'exercises': [for (final e in exercises) e.toJson()],
+      };
+
+  factory ActiveWorkout.fromJson(Map<String, dynamic> json) => ActiveWorkout(
+        template: WorkoutTemplate.fromJson(
+          json['template'] as Map<String, dynamic>,
+        ),
+        startedAt: DateTime.parse(json['startedAt'] as String),
+        exercises: [
+          for (final e in json['exercises'] as List)
+            Exercise.fromJson(e as Map<String, dynamic>),
+        ],
+      );
+}
+
+/// A finished workout kept in history. Only completed sets are stored.
+class CompletedWorkout {
+  final String templateId;
+  final String name;
+  final Sport sport;
+  final DateTime startedAt;
+  final DateTime finishedAt;
+  final List<Exercise> exercises;
+
+  const CompletedWorkout({
+    required this.templateId,
+    required this.name,
+    required this.sport,
+    required this.startedAt,
+    required this.finishedAt,
+    required this.exercises,
+  });
+
+  factory CompletedWorkout.from(ActiveWorkout workout, DateTime finishedAt) {
+    return CompletedWorkout(
+      templateId: workout.template.id,
+      name: workout.template.name,
+      sport: workout.template.sport,
+      startedAt: workout.startedAt,
+      finishedAt: finishedAt,
+      exercises: [
+        for (final e in workout.exercises)
+          if (e.sets.any((s) => s.done))
+            e.copyWith(sets: e.sets.where((s) => s.done).toList()),
+      ],
+    );
+  }
+
+  Duration get duration => finishedAt.difference(startedAt);
+
+  int get setCount => exercises.fold(0, (sum, e) => sum + e.sets.length);
+
+  Map<String, dynamic> toJson() => {
+        'templateId': templateId,
+        'name': name,
+        'sport': sport.name,
+        'startedAt': startedAt.toIso8601String(),
+        'finishedAt': finishedAt.toIso8601String(),
+        'exercises': [for (final e in exercises) e.toJson()],
+      };
+
+  factory CompletedWorkout.fromJson(Map<String, dynamic> json) =>
+      CompletedWorkout(
+        templateId: json['templateId'] as String,
+        name: json['name'] as String,
+        sport: Sport.fromName(json['sport'] as String),
+        startedAt: DateTime.parse(json['startedAt'] as String),
+        finishedAt: DateTime.parse(json['finishedAt'] as String),
+        exercises: [
+          for (final e in json['exercises'] as List)
+            Exercise.fromJson(e as Map<String, dynamic>),
+        ],
       );
 }
 
