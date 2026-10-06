@@ -27,12 +27,17 @@ class FakeBackend {
   /// JSON bodies of the requests received, in order.
   final bodies = <Map<String, dynamic>>[];
 
+  /// `Authorization` header of each request (null when absent), in order.
+  final authorizations = <String?>[];
+
   String get baseUrl => 'http://${_server.address.host}:${_server.port}';
 
   Future<void> start() async {
     _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     _server.listen((request) async {
       requests++;
+      authorizations
+          .add(request.headers.value(HttpHeaders.authorizationHeader));
       final body = await utf8.decoder.bind(request).join();
       bodies.add(jsonDecode(body) as Map<String, dynamic>);
       await handler(request.response);
@@ -402,6 +407,106 @@ void main() {
       expect(body['history'], [
         {'role': 'assistant', 'content': 'Hi, I am Felix'},
       ]);
+    });
+  });
+
+  group('auth', () {
+    test('sends the access token as a Bearer header', () async {
+      backend.handler = FakeBackend.streaming(['ok']);
+      var calls = 0;
+      final api = ChatApiService(
+        baseUrl: backend.baseUrl,
+        accessToken: () async => 'token-${++calls}',
+      );
+
+      await api.streamMessage('hi', 'c1').toList();
+      await api.streamMessage('hi again', 'c1').toList();
+
+      expect(backend.authorizations, ['Bearer token-1', 'Bearer token-2'],
+          reason: 'the token is read fresh for every request');
+    });
+
+    test('sends no header when signed out or Supabase is off', () async {
+      backend.handler = FakeBackend.streaming(['ok']);
+
+      await ChatApiService(baseUrl: backend.baseUrl)
+          .streamMessage('a', 'c')
+          .toList();
+      await ChatApiService(
+        baseUrl: backend.baseUrl,
+        accessToken: () async => null,
+      ).streamMessage('b', 'c').toList();
+      await ChatApiService(
+        baseUrl: backend.baseUrl,
+        accessToken: () async => throw StateError('refresh failed'),
+      ).streamMessage('c', 'c').toList();
+
+      expect(backend.authorizations, [null, null, null]);
+    });
+
+    test('401 asks the user to sign in again', () async {
+      backend.handler =
+          FakeBackend.error(401, 'Invalid access token (bad signature).');
+      final api = ChatApiService(
+        baseUrl: backend.baseUrl,
+        accessToken: () async => 'stale',
+      );
+
+      expect(
+        api.streamMessage('hi', 'c1').toList(),
+        throwsA(isA<ChatException>().having(
+          (e) => e.message,
+          'message',
+          ChatApiService.signInAgainMessage,
+        )),
+      );
+    });
+
+    test('429 asks the user to slow down', () async {
+      backend.handler = FakeBackend.error(429, 'Too many requests');
+      final api = ChatApiService(baseUrl: backend.baseUrl);
+
+      expect(
+        api.streamMessage('hi', 'c1').toList(),
+        throwsA(isA<ChatException>().having(
+          (e) => e.message,
+          'message',
+          allOf(contains('too fast'), ChatApiService.slowDownMessage),
+        )),
+      );
+    });
+
+    test('a 401 reply fails the message and can be retried', () async {
+      backend.handler = FakeBackend.error(401, 'expired');
+      final notifier = ChatNotifier(
+        ChatRepository(
+          ChatApiService(
+              baseUrl: backend.baseUrl, accessToken: () async => 't'),
+          greeting: const ['Hi, I am Felix'],
+        ),
+      );
+      while (notifier.state.valueOrNull == null) {
+        await Future<void>.delayed(Duration.zero);
+      }
+
+      await notifier.sendMessage('Plan my week');
+
+      final last = notifier.state.requireValue.last;
+      expect(last.isFailed, isTrue);
+      expect(last.content, ChatApiService.signInAgainMessage);
+    });
+
+    test('the offline fallback still works with a token', () async {
+      final port = backend._server.port;
+      await backend.stop();
+      final api = ChatApiService(
+        baseUrl: 'http://127.0.0.1:$port',
+        accessToken: () async => 'token',
+      );
+
+      final chunks = await api.streamMessage('Build muscle', 'c1').toList();
+
+      expect(chunks.join(), contains('Nice choice'));
     });
   });
 }
