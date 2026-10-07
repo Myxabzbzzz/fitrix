@@ -354,6 +354,73 @@ The database password is in the macOS keychain item
    project's public keys. The backend must also reach an Ollama server
    (`OLLAMA_URL`) and should be served over HTTPS.
 
+## Release builds
+
+### Android release signing
+
+Play Store builds are signed with your own **upload key**; it never goes
+into git (`key.properties`, `*.jks`, `*.keystore` are ignored). Without
+`android/key.properties`, `flutter run --release` / `flutter build apk`
+fall back to the debug key, and `flutter build appbundle` stops with an
+error so a debug-signed bundle can't reach the Play Store.
+
+1. **Create the key once** (needs a JDK, e.g. `brew install openjdk`; keep
+   the file and both passwords in a password manager — losing them means
+   asking Google to reset the upload key):
+
+   ```bash
+   mkdir -p ~/keys
+   keytool -genkey -v -keystore ~/keys/fitrix-upload.jks \
+     -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+   ```
+
+2. **Create `android/key.properties`** (git-ignored):
+
+   ```properties
+   storePassword=<keystore password>
+   keyPassword=<key password>
+   keyAlias=upload
+   storeFile=/Users/<you>/keys/fitrix-upload.jks
+   ```
+
+3. **Build** the bundle for the cloud project:
+
+   ```bash
+   flutter build appbundle --release \
+     --dart-define-from-file=env/cloud.json \
+     --dart-define=API_BASE_URL=https://<your-backend-host>
+   ```
+
+   Check the signature: `keytool -printcert -jarfile
+   build/app/outputs/bundle/release/app-release.aab` must show your upload
+   certificate, not "Android Debug".
+
+4. **Play Console:** keep **Play App Signing** on (Google holds the app
+   signing key; yours is only the upload key). Then add the **SHA-1 of
+   Play's app signing key** (Play Console → Setup → App signing) to the
+   Android OAuth client in Google Cloud Console, or Google sign-in fails in
+   builds installed from the Play Store. Add the upload key's SHA-1 too
+   (`keytool -list -v -keystore ~/keys/fitrix-upload.jks -alias upload`)
+   for locally built release APKs.
+
+The version comes from `pubspec.yaml` (`version: 1.0.0+1` → versionName
+`1.0.0`, versionCode `1`); raise the number after `+` for every upload.
+
+### iOS release
+
+Signing is automatic (team `8J66M56MGN`, bundle id `com.elibayev.fitrix`).
+Create the app in App Store Connect with that bundle id, then:
+
+```bash
+flutter build ipa --release \
+  --dart-define-from-file=env/cloud.json \
+  --dart-define=API_BASE_URL=https://<your-backend-host>
+```
+
+and upload `build/ios/ipa/*.ipa` with Transporter (or Xcode → Organizer).
+`Info.plist` declares `ITSAppUsesNonExemptEncryption = false` (the app only
+uses standard HTTPS), so no export-compliance question per build.
+
 ## Data storage
 
 Everything is stored on the device with `shared_preferences`: language,
