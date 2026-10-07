@@ -55,6 +55,8 @@ Node.js/Express backend that connects the FITRIX Flutter app to Ollama LLM.
 | `OLLAMA_MODEL` | `qwen3:8b` | any model from `ollama list` |
 | `OLLAMA_THINK` | `false` | `true` re-enables reasoning (~10x slower replies) |
 | `OLLAMA_KEEP_ALIVE` | `30m` | keep the model loaded between messages |
+| `OLLAMA_TIMEOUT_MS` | `120000` | give up (`504`) after this long without a response or new tokens from Ollama |
+| `LOG_CHAT_CONTENT` | `false` | `true` writes chat messages and replies to the log (personal data: debugging only); off, the log shows only their length |
 | `SUPABASE_URL` | – | Supabase project URL (local: `http://127.0.0.1:55321`, cloud: `https://<ref>.supabase.co`). Turns auth on. |
 | `SUPABASE_JWT_SECRET` | – | legacy HS256 JWT secret; only for projects that still sign tokens with it |
 | `SUPABASE_JWT_ISSUER` | `<SUPABASE_URL>/auth/v1` | expected `iss` claim, if it differs (custom domain) |
@@ -216,7 +218,8 @@ Fields:
   the whole context and the server's memory for `conversationId` is neither
   read nor written, so a backend restart doesn't make Felix forget the chat.
   Without `history` the server keeps the last 20 turns per `conversationId`
-  in memory, as before.
+  in memory, as before. A conversation idle for an hour is forgotten, and at
+  most 1000 are kept (the least recently used goes first).
 
 The system prompt is built per request from `topic` and `profile`: Felix
 replies in the user's language, in plain text, and politely declines
@@ -225,7 +228,10 @@ sentence. Markdown the model emits anyway (`**bold**`, `#` headings, `* `
 bullets) is stripped from the reply.
 
 Invalid requests (malformed JSON, missing or oversized `message` or
-`conversationId`) get `400 {"error": "...", "message": "..."}`.
+`conversationId`) get `400 {"error": "...", "message": "..."}`. If Ollama
+stays silent for `OLLAMA_TIMEOUT_MS` the answer is `504`; other model
+failures are `500` with a generic message (the details go to the server
+log only).
 
 All `/chat` endpoints need `Authorization: Bearer <token>` (see
 [Authentication](#authentication)); without it they answer `401`.

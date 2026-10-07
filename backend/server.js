@@ -35,13 +35,32 @@ const OLLAMA_THINK = process.env.OLLAMA_THINK === 'true';
 // to the next reply. Keep it in memory longer.
 const OLLAMA_KEEP_ALIVE = process.env.OLLAMA_KEEP_ALIVE || '30m';
 // Chat requests per signed-in user per minute; 0 disables the limit.
-const RATE_LIMIT_PER_MINUTE = parseRateLimit(process.env.RATE_LIMIT_PER_MINUTE);
+const RATE_LIMIT_PER_MINUTE = parseWholeNumber(
+  'RATE_LIMIT_PER_MINUTE',
+  process.env.RATE_LIMIT_PER_MINUTE,
+  20
+);
+// Max silence from Ollama (no response / no new tokens) before giving up.
+const OLLAMA_TIMEOUT_MS = parseWholeNumber(
+  'OLLAMA_TIMEOUT_MS',
+  process.env.OLLAMA_TIMEOUT_MS,
+  120000
+);
+// Chat messages and replies are users' personal data (age, weight, health),
+// so logs only carry their length unless this is turned on for debugging.
+const LOG_CHAT_CONTENT = process.env.LOG_CHAT_CONTENT === 'true';
 
-function parseRateLimit(value) {
-  if (value === undefined || value === '') return 20;
+// Server-side conversation memory (clients that don't send `history`):
+// forgotten after an hour without messages, and capped so it can't grow
+// without bound; the least recently used conversation goes first.
+const MEMORY_IDLE_MS = 60 * 60 * 1000;
+const MEMORY_MAX_CONVERSATIONS = 1000;
+
+function parseWholeNumber(name, value, fallback) {
+  if (value === undefined || value === '') return fallback;
   const n = Number(value);
   if (!Number.isInteger(n) || n < 0) {
-    throw new Error(`RATE_LIMIT_PER_MINUTE must be a whole number >= 0, got "${value}"`);
+    throw new Error(`${name} must be a whole number >= 0, got "${value}"`);
   }
   return n;
 }
@@ -51,11 +70,14 @@ function parseRateLimit(value) {
  *   auth:            from authConfigFromEnv(); { enabled: false } = no auth
  *   verifierOptions: test hooks for the token verifier (fetchJwks, now)
  *   rateLimit:       chat requests per user per minute (0 = unlimited)
+ *   memory:          server conversation memory limits
+ *                    { idleMs, maxConversations, now } (now: test clock)
  */
 function createApp({
   auth = { enabled: false },
   verifierOptions = {},
   rateLimit = RATE_LIMIT_PER_MINUTE,
+  memory = {},
 } = {}) {
   const app = express();
 
@@ -68,7 +90,7 @@ function createApp({
   // Conversation turns per user and conversationId, for clients that don't
   // send `history`. Requests that do send `history` neither read nor write
   // this. Keyed by user so nobody can continue someone else's conversation.
-  const conversations = new Map();
+  const conversations = createConversationMemory(memory);
 
   // Every /chat route needs a signed-in user (Supabase access token);
   // /health and /models stay open.
@@ -90,7 +112,8 @@ function createApp({
     try {
       const ollamaResponse = await axios.post(
         `${OLLAMA_URL}/api/chat`,
-        ollamaRequest(turn.messages, false)
+        ollamaRequest(turn.messages, false),
+        { timeout: OLLAMA_TIMEOUT_MS }
       );
 
       const assistantMessage = toPlainText(
@@ -102,7 +125,7 @@ function createApp({
     } catch (error) {
       turn.abort();
       const { status, body } = describeOllamaError(error);
-      console.error('Error calling Ollama:', body.message);
+      console.error('Error calling Ollama:', error.message);
       res.status(status).json(body);
     }
   });
@@ -142,7 +165,11 @@ function createApp({
       const ollamaResponse = await axios.post(
         `${OLLAMA_URL}/api/chat`,
         ollamaRequest(turn.messages, true),
-        { responseType: 'stream', signal: controller.signal }
+        {
+          responseType: 'stream',
+          signal: controller.signal,
+          timeout: OLLAMA_TIMEOUT_MS,
+        }
       );
 
       let buffer = '';
@@ -185,7 +212,7 @@ function createApp({
         return;
       }
       const { status, body } = describeOllamaError(error);
-      console.error('Error calling Ollama:', body.message);
+      console.error('Error calling Ollama:', error.message);
       if (!res.headersSent) {
         res.status(status).json(body);
       } else {
@@ -281,13 +308,13 @@ function prepareTurn(body, userId, conversations) {
   const tag = `[${userId.slice(0, 8)} ${conversationId} ${topic}` +
     (history ? ` history:${history.length}` : '') + ']';
 
-  console.log(`\n${tag} User: ${user.content}`);
+  logChat(`\n${tag}`, 'User', user.content);
 
   if (history) {
     return {
       conversationId,
       messages: [system, ...history, user],
-      finish: (reply) => console.log(`${tag} Felix: ${reply}`),
+      finish: (reply) => logChat(tag, 'Felix', reply),
       abort: () => {},
     };
   }
@@ -311,12 +338,59 @@ function memoryKey(userId, conversationId) {
 
 // Adds the user message to the in-memory conversation and returns its turns.
 function startTurn(conversations, key, message) {
-  if (!conversations.has(key)) {
-    conversations.set(key, []);
-  }
-  const turns = conversations.get(key);
+  const turns = conversations.touch(key);
   turns.push({ role: 'user', content: message });
   return turns;
+}
+
+/**
+ * Conversation turns by key, least recently used first. Conversations idle
+ * for longer than [idleMs] are dropped, and the oldest ones beyond
+ * [maxConversations], so memory stays bounded however many users chat.
+ */
+function createConversationMemory({
+  idleMs = MEMORY_IDLE_MS,
+  maxConversations = MEMORY_MAX_CONVERSATIONS,
+  now = Date.now,
+} = {}) {
+  const entries = new Map(); // key -> { turns, usedAt }
+
+  function prune() {
+    const cutoff = now() - idleMs;
+    // Oldest first: stop at the first entry that is recent enough while
+    // the map is within its cap; everything after it is newer.
+    for (const [key, entry] of entries) {
+      if (entry.usedAt > cutoff && entries.size <= maxConversations) break;
+      entries.delete(key);
+    }
+  }
+
+  return {
+    /** The conversation's turns (created if missing), marked as just used. */
+    touch(key) {
+      prune(); // first, so an expired conversation starts over
+      const entry = entries.get(key) || { turns: [] };
+      entries.delete(key); // re-insert to move it to the newest end
+      entry.usedAt = now();
+      entries.set(key, entry);
+      if (entries.size > maxConversations) prune();
+      return entry.turns;
+    },
+    get(key) {
+      prune();
+      return entries.get(key)?.turns;
+    },
+    has(key) {
+      prune();
+      return entries.has(key);
+    },
+    delete(key) {
+      return entries.delete(key);
+    },
+    get size() {
+      return entries.size;
+    },
+  };
 }
 
 function finishTurn(conversations, key, reply, tag) {
@@ -329,7 +403,13 @@ function finishTurn(conversations, key, reply, tag) {
     turns.splice(0, turns.length - MAX_HISTORY_TURNS);
   }
 
-  console.log(`${tag} Felix: ${reply}`);
+  logChat(tag, 'Felix', reply);
+}
+
+// Message text is personal data: only its length is logged by default.
+function logChat(tag, who, text) {
+  const shown = LOG_CHAT_CONTENT ? text : `<${text.length} chars>`;
+  console.log(`${tag} ${who}: ${shown}`);
 }
 
 // Drops the unanswered user message so a retry doesn't duplicate it.
@@ -350,6 +430,15 @@ function describeOllamaError(error) {
       },
     };
   }
+  if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+    return {
+      status: 504,
+      body: {
+        error: 'Felix took too long to reply',
+        message: 'Felix took too long to reply. Please try again.',
+      },
+    };
+  }
   if (error.response?.status === 404) {
     return {
       status: 502,
@@ -361,7 +450,11 @@ function describeOllamaError(error) {
   }
   return {
     status: 500,
-    body: { error: 'Failed to process message', message: error.message },
+    // The real error is logged; clients get no internal details.
+    body: {
+      error: 'Failed to process message',
+      message: 'Felix could not reply. Please try again.',
+    },
   };
 }
 
@@ -383,6 +476,10 @@ function main() {
         `⚠️  Auth: OFF — anyone who can reach this server can use the model.` +
           ` Set SUPABASE_URL to require sign-in.`
       );
+    }
+    console.log(`⏱️  Ollama timeout: ${OLLAMA_TIMEOUT_MS / 1000}s of silence`);
+    if (LOG_CHAT_CONTENT) {
+      console.warn('📝 LOG_CHAT_CONTENT=true: chat messages are written to the log');
     }
     console.log(`🚦 Rate limit: ${RATE_LIMIT_PER_MINUTE > 0 ? `${RATE_LIMIT_PER_MINUTE} chat requests/min per user` : 'off'}`);
     console.log(`\n✅ Endpoints:`);
@@ -406,7 +503,10 @@ async function warmUpModel() {
     });
     console.log(`🔥 Model ${OLLAMA_MODEL} loaded`);
   } catch (error) {
-    console.warn(`⚠️  Could not preload ${OLLAMA_MODEL}: ${describeOllamaError(error).body.message}`);
+    // Known causes get the friendly hint; anything else the real error.
+    const { status, body } = describeOllamaError(error);
+    const reason = status === 500 ? error.message : body.message;
+    console.warn(`⚠️  Could not preload ${OLLAMA_MODEL}: ${reason}`);
   }
 }
 

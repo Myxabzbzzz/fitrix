@@ -9,6 +9,7 @@ const ALICE = '11111111-1111-4111-8111-111111111111';
 const BOB = '22222222-2222-4222-8222-222222222222';
 
 // Stub Ollama: replies "echo:<last user message>" and records requests.
+// "__hang__" never gets an answer, "__fail__" gets a 500 with internals.
 const ollamaRequests = [];
 const ollama = http.createServer((req, res) => {
   let body = '';
@@ -21,6 +22,11 @@ const ollama = http.createServer((req, res) => {
     }
     ollamaRequests.push(data);
     const last = data.messages[data.messages.length - 1].content;
+    if (last === '__hang__') return;
+    if (last === '__fail__') {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: 'CUDA out of memory at /srv/models' }));
+    }
     if (data.stream) {
       res.writeHead(200, { 'Content-Type': 'application/x-ndjson' });
       res.write(JSON.stringify({ message: { content: 'echo:' } }) + '\n');
@@ -40,10 +46,12 @@ const servers = [];
 test.before(async () => {
   await new Promise((r) => ollama.listen(0, '127.0.0.1', r));
   process.env.OLLAMA_URL = `http://127.0.0.1:${ollama.address().port}`;
+  process.env.OLLAMA_TIMEOUT_MS = '300';
   ({ createApp } = require('./server'));
 });
 
 test.after(() => {
+  ollama.closeAllConnections();
   ollama.close();
   for (const s of servers) s.close();
 });
@@ -160,6 +168,72 @@ test('server memory is per user: same conversationId, separate conversations', a
   assert.equal(bobAgain.status, 404);
   const aliceReset = await post(base, '/chat/reset', { conversationId: conv }, tokenFor(ALICE));
   assert.equal(aliceReset.status, 200);
+});
+
+test('server memory forgets idle conversations', async () => {
+  let now = 0;
+  const base = await authedApp({ memory: { idleMs: 1000, now: () => now } });
+
+  await post(base, '/chat', { message: 'first', conversationId: 'idle' }, tokenFor(ALICE));
+  now = 2000;
+  ollamaRequests.length = 0;
+  await post(base, '/chat', { message: 'later', conversationId: 'idle' }, tokenFor(ALICE));
+  const context = ollamaRequests[0].messages.filter((m) => m.role !== 'system');
+  assert.deepEqual(context, [{ role: 'user', content: 'later' }]);
+});
+
+test('server memory keeps at most N conversations, least recently used out first', async () => {
+  const base = await authedApp({ memory: { maxConversations: 2 } });
+  for (const conversationId of ['c1', 'c2', 'c1', 'c3']) {
+    await post(base, '/chat', { message: 'hi', conversationId }, tokenFor(ALICE));
+  }
+  const reset = (id) => post(base, '/chat/reset', { conversationId: id }, tokenFor(ALICE));
+  assert.equal((await reset('c2')).status, 404); // least recently used: dropped
+  assert.equal((await reset('c1')).status, 200);
+  assert.equal((await reset('c3')).status, 200);
+});
+
+test('a silent Ollama times out with 504 on both chat endpoints', async () => {
+  const base = await authedApp();
+  for (const path of ['/chat', '/chat/stream']) {
+    const res = await post(base, path, { message: '__hang__', conversationId: 't' }, tokenFor(ALICE));
+    assert.equal(res.status, 504, path);
+    assert.match((await res.json()).message, /too long/);
+  }
+});
+
+test('Ollama failures reach the client without internal details', async () => {
+  const base = await authedApp();
+  const errors = [];
+  const originalError = console.error;
+  console.error = (...args) => errors.push(args.join(' '));
+  try {
+    const res = await post(base, '/chat', { message: '__fail__', conversationId: 'f' }, tokenFor(ALICE));
+    assert.equal(res.status, 500);
+    const body = await res.json();
+    assert.equal(body.message, 'Felix could not reply. Please try again.');
+    assert.doesNotMatch(JSON.stringify(body), /status code|CUDA|srv/);
+  } finally {
+    console.error = originalError;
+  }
+  assert.ok(errors.some((e) => e.includes('Error calling Ollama')), 'the real error is logged');
+});
+
+test('logs show message lengths, not what users wrote', async () => {
+  const base = await authedApp();
+  const lines = [];
+  const originalLog = console.log;
+  console.log = (...args) => lines.push(args.join(' '));
+  try {
+    await post(base, '/chat', { message: 'I weigh 92 kg', conversationId: 'p' }, tokenFor(ALICE));
+    await post(base, '/chat/stream', { message: 'my knee hurts', conversationId: 'p' }, tokenFor(ALICE));
+  } finally {
+    console.log = originalLog;
+  }
+  const log = lines.join('\n');
+  assert.doesNotMatch(log, /92 kg|knee/);
+  assert.match(log, /User: <13 chars>/);
+  assert.match(log, /Felix: <18 chars>/); // "echo:I weigh 92 kg"
 });
 
 test('rate limit: N requests per minute per user, then 429', async () => {
