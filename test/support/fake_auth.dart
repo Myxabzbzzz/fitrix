@@ -26,6 +26,16 @@ class FakeAuthGateway extends ChangeNotifier implements AuthGateway {
   final List<String> codesSentTo = [];
   int signOutCalls = 0;
 
+  /// Thrown by [deleteAccount] while set.
+  Object? deleteError;
+
+  /// Apple authorization codes handed to [deleteAccount], one per call
+  /// (null: none sent).
+  final List<String?> deleteCalls = [];
+
+  /// Emails of accounts that were created with Sign in with Apple.
+  final Set<String> appleAccounts = {};
+
   String? _userId;
   String? _email;
 
@@ -76,6 +86,9 @@ class FakeAuthGateway extends ChangeNotifier implements AuthGateway {
   Future<String> signInWithIdToken(SocialCredential credential) async {
     idTokens.add(credential);
     if (idTokenError != null) throw idTokenError!;
+    if (credential.provider == SocialProvider.apple) {
+      appleAccounts.add(credential.idToken);
+    }
     signInAs(credential.idToken);
     return _userId!;
   }
@@ -83,6 +96,19 @@ class FakeAuthGateway extends ChangeNotifier implements AuthGateway {
   @override
   Future<void> signOut() async {
     signOutCalls++;
+    revoke();
+  }
+
+  @override
+  bool get hasAppleSignIn => appleAccounts.contains(_email);
+
+  @override
+  Future<void> deleteAccount({String? appleAuthorizationCode}) async {
+    deleteCalls.add(appleAuthorizationCode);
+    if (deleteError != null) throw deleteError!;
+    // Gone for good: signing in with the same email creates a new account.
+    users.remove(_email);
+    appleAccounts.remove(_email);
     revoke();
   }
 }
@@ -97,6 +123,12 @@ class FakeSocialSignIn implements SocialSignIn {
   Object? appleError;
   int googleCalls = 0;
   int appleCalls = 0;
+
+  /// What Apple's re-authorization sheet answers: a code, a cancel (null)
+  /// or [appleCodeError].
+  String? appleCode = 'apple-auth-code';
+  Object? appleCodeError;
+  int appleCodeCalls = 0;
 
   @override
   Future<SocialCredential?> google() async {
@@ -126,6 +158,13 @@ class FakeSocialSignIn implements SocialSignIn {
             nonce: 'nonce',
             givenName: 'Alex',
           );
+  }
+
+  @override
+  Future<String?> appleAuthorizationCode() async {
+    appleCodeCalls++;
+    if (appleCodeError != null) throw appleCodeError!;
+    return appleCode;
   }
 }
 

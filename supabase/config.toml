@@ -426,6 +426,12 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# Account deletion (App Store / Google Play requirement). The function checks
+# the caller's access token itself, which also works with asymmetric JWT
+# signing keys, so the gateway's legacy JWT check is off.
+[functions.delete-account]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 55327

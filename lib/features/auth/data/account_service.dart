@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/session/app_session.dart';
+import 'package:fitrix/features/auth/data/auth_failure.dart';
 import 'package:fitrix/features/auth/data/auth_gateway.dart';
+import 'package:fitrix/features/auth/data/social_sign_in.dart';
 import 'package:fitrix/features/profile/data/models/profile_row.dart';
 import 'package:fitrix/features/profile/data/models/user_profile.dart';
 import 'package:fitrix/features/profile/data/repositories/profile_remote.dart';
@@ -227,5 +229,40 @@ class AccountService {
           (_) {},
           onError: (Object e) => debugPrint('Remote sign-out failed: $e'),
         ));
+  }
+
+  /// Deletes the account and everything in it on the server, then all data
+  /// on this device. An account that signs in with Apple is confirmed with
+  /// Apple first ([social]) so the server can revoke Apple's tokens.
+  ///
+  /// Returns false when the user cancels Apple's sheet; nothing is deleted
+  /// then. Throws an [AuthFailure] when the server can't be reached or
+  /// refuses; nothing changes then either, so it's safe to try again.
+  Future<bool> deleteAccount({required SocialSignIn social}) async {
+    String? appleCode;
+    if (_auth.hasAppleSignIn) {
+      try {
+        appleCode = await social.appleAuthorizationCode();
+        if (appleCode == null) return false;
+      } on AuthFailure catch (e) {
+        // This build or device can't ask Apple. Deleting the account must
+        // still work; the server logs the tokens it couldn't revoke.
+        debugPrint('No Apple authorization code for revocation: $e');
+      }
+    }
+
+    // No more profile uploads for an account that's going away.
+    _retryTimer?.cancel();
+    _retryTimer = null;
+    _failures = 0;
+
+    try {
+      await _auth.deleteAccount(appleAuthorizationCode: appleCode);
+    } catch (e) {
+      debugPrint('Deleting the account failed: $e');
+      throw AuthFailure.from(e);
+    }
+    await _session.signOut();
+    return true;
   }
 }

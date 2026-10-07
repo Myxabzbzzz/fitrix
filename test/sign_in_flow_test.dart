@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -564,6 +566,93 @@ void main() {
       expect(h.auth.userId, isNull);
       expect(find.text('Start your journey'), findsOneWidget);
       expect(h.prefs.getKeys(), isEmpty);
+    });
+  });
+
+  group('delete account', () {
+    Future<_Harness> openAboutMe(WidgetTester tester) async {
+      final h = await _pumpApp(
+        tester,
+        prefs: {
+          'onboarding_complete': true,
+          'account_user_id': 'user-old',
+          'user_name': 'Alex',
+        },
+        signedInAs: 'old@x.com',
+      );
+      AppRouter.router.go(AppRouter.me);
+      await tester.pumpAndSettle();
+      return h;
+    }
+
+    Future<void> tapKey(WidgetTester tester, String key) async {
+      await tester.ensureVisible(find.byKey(Key(key)));
+      await tester.tap(find.byKey(Key(key)));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('two confirmations, then the account and device data go',
+        (tester) async {
+      final h = await openAboutMe(tester);
+
+      await tapKey(tester, 'delete-account');
+      expect(find.text('Delete account?'), findsOneWidget);
+      await tapKey(tester, 'delete-account-continue');
+      expect(find.text('Delete for good?'), findsOneWidget);
+      expect(h.auth.deleteCalls, isEmpty, reason: 'not before both confirm');
+      await tapKey(tester, 'delete-account-confirm');
+
+      expect(h.auth.deleteCalls, [null]);
+      expect(h.auth.userId, isNull);
+      expect(h.prefs.getKeys(), isEmpty);
+      expect(find.text('Start your journey'), findsOneWidget);
+    });
+
+    testWidgets('cancel at either step deletes nothing', (tester) async {
+      final h = await openAboutMe(tester);
+
+      await tapKey(tester, 'delete-account');
+      await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+      await tester.pumpAndSettle();
+      await tapKey(tester, 'delete-account');
+      await tapKey(tester, 'delete-account-continue');
+      await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(h.auth.deleteCalls, isEmpty);
+      expect(h.auth.userId, 'user-old');
+      expect(find.text('old@x.com'), findsOneWidget);
+    });
+
+    testWidgets('offline: an error, and everything stays', (tester) async {
+      final h = await openAboutMe(tester);
+      h.auth.deleteError = const SocketException('offline');
+
+      await tapKey(tester, 'delete-account');
+      await tapKey(tester, 'delete-account-continue');
+      await tapKey(tester, 'delete-account-confirm');
+
+      expect(find.textContaining("Couldn't delete your account"),
+          findsOneWidget);
+      expect(find.text('Deleting your account…'), findsNothing);
+      expect(h.auth.userId, 'user-old');
+      expect(h.prefs.getString('user_name'), 'Alex');
+      expect(find.text('old@x.com'), findsOneWidget);
+    });
+
+    testWidgets('Apple accounts mention Apple and send its code',
+        (tester) async {
+      final h = await openAboutMe(tester);
+      h.auth.appleAccounts.add('old@x.com');
+
+      await tapKey(tester, 'delete-account');
+      expect(find.textContaining('Apple will ask you to confirm'),
+          findsOneWidget);
+      await tapKey(tester, 'delete-account-continue');
+      await tapKey(tester, 'delete-account-confirm');
+
+      expect(h.social.appleCodeCalls, 1);
+      expect(h.auth.deleteCalls, ['apple-auth-code']);
     });
   });
 }

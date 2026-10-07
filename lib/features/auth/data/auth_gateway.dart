@@ -30,6 +30,16 @@ abstract class AuthGateway implements Listenable {
   /// Ends the session on this device right away; the server call that
   /// revokes the refresh token may finish (or fail offline) later.
   Future<void> signOut();
+
+  /// Whether the signed-in account can sign in with Apple. Its Apple tokens
+  /// have to be revoked when the account is deleted.
+  bool get hasAppleSignIn;
+
+  /// Deletes the signed-in account and all its data on the server for good,
+  /// then ends the session on this device. With [appleAuthorizationCode]
+  /// (a fresh one from Apple) the server also revokes the Apple tokens.
+  /// Throws if the server can't be reached or refuses; nothing changes then.
+  Future<void> deleteAccount({String? appleAuthorizationCode});
 }
 
 class SupabaseAuthGateway extends ChangeNotifier implements AuthGateway {
@@ -125,6 +135,41 @@ class SupabaseAuthGateway extends ChangeNotifier implements AuthGateway {
       // Drops the local session synchronously (listeners hear about it from
       // the auth stream a moment later), then revokes it on the server.
       _client.auth.signOut();
+
+  @override
+  bool get hasAppleSignIn {
+    final user = _client.auth.currentUser;
+    if (user == null) return false;
+    final providers = user.appMetadata['providers'];
+    return (providers is List && providers.contains('apple')) ||
+        (user.identities?.any((i) => i.provider == 'apple') ?? false);
+  }
+
+  @override
+  Future<void> deleteAccount({String? appleAuthorizationCode}) async {
+    var session = _client.auth.currentSession;
+    if (session == null) throw const AuthException('Not signed in');
+    // The function checks the token itself: make sure it's still valid.
+    if (session.isExpired) {
+      session = (await _client.auth.refreshSession()).session ?? session;
+    }
+    // supabase/functions/delete-account; throws FunctionException on errors.
+    await _client.functions.invoke(
+      'delete-account',
+      headers: {'Authorization': 'Bearer ${session.accessToken}'},
+      body: {
+        if (appleAuthorizationCode != null)
+          'appleAuthorizationCode': appleAuthorizationCode,
+      },
+    );
+    // The account is gone: drop the session on this device. Telling the
+    // server fails (no such user), which signOut ignores.
+    try {
+      await _client.auth.signOut(scope: SignOutScope.local);
+    } catch (e) {
+      debugPrint('Sign-out after deleting the account: $e');
+    }
+  }
 
   @override
   void dispose() {

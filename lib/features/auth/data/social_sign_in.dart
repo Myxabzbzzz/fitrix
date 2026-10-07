@@ -57,6 +57,12 @@ abstract class SocialSignIn {
   /// Shows the Sign in with Apple sheet. Null when the user cancels; throws
   /// an [AuthFailure] otherwise.
   Future<SocialCredential?> apple();
+
+  /// Asks Apple again (Face ID / password sheet) for a fresh authorization
+  /// code, which the server needs to revoke Apple's tokens when the account
+  /// is deleted. Null when the user cancels; throws an [AuthFailure] when
+  /// Apple can't be asked on this build or device.
+  Future<String?> appleAuthorizationCode();
 }
 
 /// A random nonce for an ID token request.
@@ -185,6 +191,26 @@ class NativeSocialSignIn implements SocialSignIn {
       rethrow;
     } catch (e) {
       debugPrint('Sign in with Apple failed: $e');
+      throw platformFailure(e, provider);
+    }
+  }
+
+  @override
+  Future<String?> appleAuthorizationCode() async {
+    const provider = SocialProvider.apple;
+    if (!config.appleEnabled) {
+      throw AuthFailure.providerUnavailable(provider.label);
+    }
+    try {
+      final credential =
+          await SignInWithApple.getAppleIDCredential(scopes: const []);
+      return credential.authorizationCode;
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) return null;
+      debugPrint('Apple authorization failed: $e');
+      throw appleFailure(e);
+    } catch (e) {
+      debugPrint('Apple authorization failed: $e');
       throw platformFailure(e, provider);
     }
   }

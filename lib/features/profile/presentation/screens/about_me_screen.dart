@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import 'package:fitrix/core/sync/sync_providers.dart';
 import 'package:fitrix/core/theme/app_colors.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/auth/data/auth_failure.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 
@@ -60,6 +63,104 @@ class AboutMeScreen extends ConsumerWidget {
       await session.signOut();
     }
     router.go(AppRouter.intro);
+  }
+
+  /// Account deletion (App Store / Google Play requirement): two
+  /// confirmations, then the server deletes the account and all its data.
+  Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
+    final account = ref.read(accountServiceProvider);
+    if (account == null) return;
+    final apple = account.auth.hasAppleSignIn;
+
+    Future<bool> confirm({
+      required String title,
+      required String content,
+      required String action,
+      required Key actionKey,
+    }) async {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              key: actionKey,
+              onPressed: () => Navigator.pop(context, true),
+              style: TextButton.styleFrom(foregroundColor: AppColors.error),
+              child: Text(action),
+            ),
+          ],
+        ),
+      );
+      return confirmed == true;
+    }
+
+    if (!await confirm(
+      title: 'Delete account?',
+      content: 'This permanently deletes your FITRIX account and everything '
+          'in it: your profile, workout plans, workout history and chats '
+          'with Felix, on all your devices.'
+          '${apple ? '\n\nApple will ask you to confirm.' : ''}',
+      action: 'Continue',
+      actionKey: const Key('delete-account-continue'),
+    )) {
+      return;
+    }
+    if (!context.mounted) return;
+    if (!await confirm(
+      title: 'Delete for good?',
+      content: "Your account can't be recovered once it's deleted.",
+      action: 'Delete account',
+      actionKey: const Key('delete-account-confirm'),
+    )) {
+      return;
+    }
+    if (!context.mounted) return;
+
+    // Grab these first: a successful deletion recreates the provider scope.
+    final router = GoRouter.of(context);
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final messenger = ScaffoldMessenger.of(context);
+    final social = ref.read(socialSignInProvider);
+
+    unawaited(showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const PopScope(
+        canPop: false,
+        child: AlertDialog(
+          content: Row(
+            children: [
+              SizedBox.square(
+                dimension: 24,
+                child: CircularProgressIndicator(strokeWidth: 3),
+              ),
+              SizedBox(width: 20),
+              Expanded(child: Text('Deleting your account…')),
+            ],
+          ),
+        ),
+      ),
+    ));
+
+    try {
+      final deleted = await account.deleteAccount(social: social);
+      if (deleted) {
+        router.go(AppRouter.intro);
+        return;
+      }
+      navigator.pop(); // Apple's sheet was cancelled: nothing deleted.
+    } on AuthFailure catch (failure) {
+      navigator.pop();
+      messenger.showSnackBar(SnackBar(
+        content: Text("Couldn't delete your account. ${failure.message}"),
+      ));
+    }
   }
 
   @override
@@ -163,6 +264,19 @@ class AboutMeScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            if (ref.watch(accountServiceProvider) != null) ...[
+              const SizedBox(height: 12),
+              Center(
+                child: TextButton(
+                  key: const Key('delete-account'),
+                  onPressed: () => _deleteAccount(context, ref),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                  ),
+                  child: const Text('Delete account'),
+                ),
+              ),
+            ],
           ],
         ),
       ),

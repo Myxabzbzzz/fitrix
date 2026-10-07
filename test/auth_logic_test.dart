@@ -493,5 +493,74 @@ void main() {
       expect(auth.userId, isNull);
       expect(prefs.getKeys(), isEmpty);
     });
+
+    group('deleteAccount', () {
+      late FakeSocialSignIn social;
+
+      Future<void> signedIn({bool apple = false}) async {
+        await setUpWith({
+          'account_user_id': 'user-a',
+          'onboarding_complete': true,
+          'user_name': 'Alex',
+          'language': 'ru',
+          'sb-session': 'token',
+        });
+        social = FakeSocialSignIn();
+        if (apple) auth.appleAccounts.add('a@x.com');
+        auth.signInAs('a@x.com');
+      }
+
+      test('deletes the account on the server, then everything local',
+          () async {
+        await signedIn();
+        final generation = session.generation;
+
+        expect(await account.deleteAccount(social: social), isTrue);
+        expect(auth.deleteCalls, [null]);
+        expect(social.appleCodeCalls, 0, reason: 'not an Apple account');
+        expect(auth.userId, isNull);
+        expect(auth.users.containsKey('a@x.com'), isFalse);
+        expect(prefs.getKeys(), isEmpty, reason: 'session keys too');
+        expect(session.accountUserId, isNull);
+        expect(session.generation, greaterThan(generation));
+      });
+
+      test('Apple accounts send a fresh Apple code for revocation', () async {
+        await signedIn(apple: true);
+        expect(await account.deleteAccount(social: social), isTrue);
+        expect(auth.deleteCalls, ['apple-auth-code']);
+      });
+
+      test("cancelling Apple's sheet deletes nothing", () async {
+        await signedIn(apple: true);
+        social.appleCode = null;
+        expect(await account.deleteAccount(social: social), isFalse);
+        expect(auth.deleteCalls, isEmpty);
+        expect(auth.userId, 'user-a');
+        expect(prefs.getString('user_name'), 'Alex');
+      });
+
+      test('Apple unavailable in this build still deletes, without a code',
+          () async {
+        await signedIn(apple: true);
+        social.appleCodeError = AuthFailure.providerUnavailable('Apple');
+        expect(await account.deleteAccount(social: social), isTrue);
+        expect(auth.deleteCalls, [null]);
+      });
+
+      test('offline: throws "no connection" and changes nothing', () async {
+        await signedIn();
+        auth.deleteError = const SocketException('offline');
+
+        await expectLater(
+          account.deleteAccount(social: social),
+          throwsA(AuthFailure.network),
+        );
+        expect(auth.userId, 'user-a');
+        expect(session.accountUserId, 'user-a');
+        expect(prefs.getString('user_name'), 'Alex');
+        expect(prefs.getString('sb-session'), 'token');
+      });
+    });
   });
 }

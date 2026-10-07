@@ -354,6 +354,53 @@ The database password is in the macOS keychain item
    project's public keys. The backend must also reach an Ollama server
    (`OLLAMA_URL`) and should be served over HTTPS.
 
+7. **Account deletion function** (required by the App Store and Google
+   Play; see [Account deletion](#account-deletion)):
+
+   ```bash
+   supabase functions deploy delete-account   # verify_jwt off via config.toml
+   # Sign in with Apple accounts: lets the function revoke Apple's tokens.
+   # Key: developer.apple.com → Certificates, IDs & Profiles → Keys →
+   # new key with "Sign in with Apple" for com.elibayev.fitrix.
+   supabase secrets set APPLE_TEAM_ID=<team id> APPLE_KEY_ID=<key id>
+   supabase secrets set APPLE_PRIVATE_KEY="$(cat AuthKey_<key id>.p8)"
+   ```
+
+   The function gets the service key from Supabase itself; it never goes
+   into the app or git. Never commit the `.p8` file (`*.p8` is ignored).
+
+## Account deletion
+
+About me → **Delete account** (signed-in accounts only) asks twice, then
+calls `supabase/functions/delete-account`, which deletes the auth user; the
+database cascades that to the profile, workout plans, history and chats.
+The app then clears everything on the device and returns to the intro.
+Offline or on a server error nothing changes and the app says so.
+
+Accounts that sign in with Apple are confirmed with Apple first (Face ID
+sheet); the function exchanges that fresh authorization code for a token
+and revokes it, as App Store guideline 5.1.1(v) requires. If the Apple
+secrets are missing or Apple fails, the account is still deleted and the
+function logs it.
+
+For the stores:
+
+- **App Store review notes:** "Account deletion: About me tab → Delete
+  account."
+- **Google Play** (Data safety → Account deletion) also needs a **web page**
+  explaining how to delete the account, including for people who no longer
+  have the app (e.g. an email address to write to), and what is deleted.
+  Host it next to the privacy policy.
+
+Run the function locally and its tests:
+
+```bash
+supabase functions serve delete-account          # local stack must be up
+deno test supabase/functions/delete-account/     # unit tests, no network
+FITRIX_SUPABASE_IT=1 FITRIX_FUNCTIONS_IT=1 \
+  flutter test test/supabase_auth_integration_test.dart
+```
+
 ## Release builds
 
 ### Android release signing

@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/features/auth/data/account_service.dart';
@@ -199,6 +200,54 @@ void main() {
       skip: enabled ? false : 'Set FITRIX_SUPABASE_IT=1 to run',
       timeout: const Timeout(Duration(minutes: 2)));
 
+  // Needs the function running too: `supabase functions serve delete-account`
+  // (or a stack started with the edge runtime), and FITRIX_FUNCTIONS_IT=1.
+  test('account deletion removes the user and everything in it', () async {
+    final email = 'delete-it-${DateTime.now().millisecondsSinceEpoch}'
+        '@fitrix.test';
+
+    final phone = await _Device.create();
+    addTearDown(phone.dispose);
+    expect(await phone.signIn(email), SignInDestination.profile);
+    final userId = phone.auth.userId!;
+    await ProfileRepository().saveProfile(UserProfile(
+      name: 'Gone',
+      surname: 'Soon',
+      age: '30',
+      weight: '70',
+      height: '175',
+    ));
+    await phone.session.completeOnboarding();
+    expect(await phone.account.profileChanged(), isTrue);
+    await phone.client.from('chat_messages').insert({
+      'id': const Uuid().v4(),
+      'user_id': userId,
+      'topic': 'app',
+      'role': 'user',
+      'content': 'delete me',
+      'sent_at': DateTime.now().toUtc().toIso8601String(),
+    });
+
+    expect(await phone.account.deleteAccount(social: _NoApple()), isTrue);
+    expect(phone.auth.userId, isNull);
+    expect(phone.prefs.getKeys(), isEmpty);
+    print('account $userId deleted');
+
+    // The same email now gets a brand-new account with nothing in it.
+    final tablet = await _Device.create();
+    addTearDown(tablet.dispose);
+    expect(await tablet.signIn(email, emailNumber: 2),
+        SignInDestination.profile);
+    expect(tablet.auth.userId, isNot(userId));
+    expect(await tablet.client.from('chat_messages').select(), isEmpty);
+    expect(await ProfileRepository().getProfile(), isNull);
+    print('same email → new account ${tablet.auth.userId}, no old data');
+  },
+      skip: enabled && _env['FITRIX_FUNCTIONS_IT'] == '1'
+          ? false
+          : 'Set FITRIX_SUPABASE_IT=1 and FITRIX_FUNCTIONS_IT=1 to run',
+      timeout: const Timeout(Duration(minutes: 2)));
+
   // With the default config.toml (no supabase/.env) Google and Apple are
   // off; the app must say so rather than show a generic error. Skipped when
   // FITRIX_SOCIAL_ENABLED=1 says the stack has them switched on.
@@ -239,4 +288,14 @@ void main() {
           : _env['FITRIX_SOCIAL_ENABLED'] == '1'
               ? 'Providers are enabled on this stack'
               : false);
+}
+
+/// Email accounts never ask Apple.
+class _NoApple implements SocialSignIn {
+  @override
+  Future<SocialCredential?> google() => throw UnimplementedError();
+  @override
+  Future<SocialCredential?> apple() => throw UnimplementedError();
+  @override
+  Future<String?> appleAuthorizationCode() => throw UnimplementedError();
 }
