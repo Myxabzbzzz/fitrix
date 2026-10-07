@@ -56,3 +56,6 @@ backend/.env
 
 # Claude Code agent worktrees
 /.claude/worktrees/
+
+# Cloud project settings (template: env/cloud.example.json)
+/env/cloud.json

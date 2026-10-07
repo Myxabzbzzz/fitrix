@@ -272,9 +272,15 @@ it to the account's metadata (`full_name`).
 
 ## Cloud project (current)
 
-The app's cloud Supabase project is `fitrix` (ref `<project-ref>`,
-region eu-central-1). Its public settings (URL, publishable key, Google
-client IDs — none of them secret) live in `env/cloud.json`:
+The app's cloud Supabase project is `fitrix` (region eu-central-1). Its
+settings (URL, publishable key, Google client IDs) live in `env/cloud.json`,
+which is git-ignored; create it from the template:
+
+```bash
+cp env/cloud.example.json env/cloud.json   # then fill in the real values
+```
+
+Build with it:
 
 ```bash
 flutter run --release \
@@ -389,3 +395,9 @@ the `Authorization` header and the 401/429 messages), workout persistence
 and history, progress charts, onboarding redirect and sign-out, email-code
 and Google/Apple sign-in (with fakes for Supabase and the native sheets),
 and the main workout flow. Backend tests: `cd backend && npm test`.
+
+## License
+
+Proprietary — all rights reserved. Using, copying, modifying or distributing
+this code without the author's written permission is prohibited. See
+[LICENSE](LICENSE).
