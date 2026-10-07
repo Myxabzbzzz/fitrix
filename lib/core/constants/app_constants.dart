@@ -181,12 +181,12 @@ class AppConstants {
   ///
   /// To add a new language:
   /// 1. Add entry here (e.g., 'fr': 'Français')
-  /// 2. Implement i18n translations (future feature)
-  /// 3. Update language selection UI if needed
+  /// 2. Add lib/l10n/app_<code>.arb with every key of app_en.arb
+  /// 3. Add the code to CFBundleLocalizations in ios/Runner/Info.plist
   static const Map<String, String> languages = {
     'ru': 'Русский',      // Russian
     'en': 'English',      // English
     'uz': 'O\'zbekcha',   // Uzbek
-    'es': 'Espanol',      // Spanish (note: should be "Español" with tilde)
+    'es': 'Español',      // Spanish
   };
 }

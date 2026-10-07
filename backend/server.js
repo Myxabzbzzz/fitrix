@@ -10,6 +10,7 @@ const {
   sanitizeTopic,
   sanitizeProfile,
   sanitizeHistory,
+  sanitizeLanguage,
   buildSystemPrompt,
 } = require('./prompt');
 const { createPlainTextFilter, toPlainText } = require('./plainText');
@@ -274,7 +275,7 @@ function ollamaRequest(messages, stream) {
  * Validates a chat request body and returns what one turn needs:
  *   { conversationId, messages, finish(reply), abort() }  or  { error }.
  *
- * Body: { message, conversationId, topic?, profile?, history? }.
+ * Body: { message, conversationId, topic?, profile?, history?, language? }.
  * The system prompt is built per request from `topic` and `profile`.
  * With `history` (an array, even an empty one) the app is the source of
  * truth: the context is exactly what it sent and server memory is untouched.
@@ -303,7 +304,11 @@ function prepareTurn(body, userId, conversations) {
   const topic = sanitizeTopic(body.topic);
   const profile = sanitizeProfile(body.profile);
   const history = sanitizeHistory(body.history);
-  const system = { role: 'system', content: buildSystemPrompt(topic, profile) };
+  const language = sanitizeLanguage(body.language);
+  const system = {
+    role: 'system',
+    content: buildSystemPrompt(topic, profile, language),
+  };
   const user = { role: 'user', content: message.trim() };
   const tag = `[${userId.slice(0, 8)} ${conversationId} ${topic}` +
     (history ? ` history:${history.length}` : '') + ']';

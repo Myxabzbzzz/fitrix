@@ -8,6 +8,7 @@ import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
+import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 
 final chatApiServiceProvider = Provider<ChatApiService>((ref) {
   final supabase = ref.watch(supabaseClientProvider);
@@ -33,6 +34,7 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
     topic: AssistantTopic.app.apiTopic,
     prefs: ref.read(sharedPreferencesProvider),
     onSaved: ref.read(localChangesProvider).notify,
+    language: () => ref.read(selectedLanguageProvider),
   );
 });
 
@@ -55,6 +57,7 @@ final topicChatMessagesProvider = StateNotifierProvider.family<ChatNotifier,
       greeting: topic.greeting,
       prefs: ref.read(sharedPreferencesProvider),
       onSaved: ref.read(localChangesProvider).notify,
+      language: () => ref.read(selectedLanguageProvider),
     ),
   );
 });

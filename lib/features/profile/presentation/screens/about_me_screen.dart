@@ -12,6 +12,7 @@ import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/auth/data/auth_failure.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Profile tab: the data entered during onboarding.
 class AboutMeScreen extends ConsumerWidget {
@@ -19,27 +20,23 @@ class AboutMeScreen extends ConsumerWidget {
 
   Future<void> _signOut(BuildContext context, WidgetRef ref) async {
     final account = ref.read(accountServiceProvider);
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Sign out?'),
+        title: Text(l10n.signOutTitle),
         content: Text(
-          account == null
-              ? 'Your profile, chats and workouts are stored only on this '
-                  'device and will be deleted.'
-              : 'Your profile, workouts and chats are saved to your account '
-                  'and will be removed from this device. Sign in with the '
-                  'same email to get them back.',
+          account == null ? l10n.signOutLocalBody : l10n.signOutAccountBody,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Sign out'),
+            child: Text(l10n.signOut),
           ),
         ],
       ),
@@ -71,6 +68,7 @@ class AboutMeScreen extends ConsumerWidget {
     final account = ref.read(accountServiceProvider);
     if (account == null) return;
     final apple = account.auth.hasAppleSignIn;
+    final l10n = AppLocalizations.of(context);
 
     Future<bool> confirm({
       required String title,
@@ -86,7 +84,7 @@ class AboutMeScreen extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               key: actionKey,
@@ -101,21 +99,20 @@ class AboutMeScreen extends ConsumerWidget {
     }
 
     if (!await confirm(
-      title: 'Delete account?',
-      content: 'This permanently deletes your FITRIX account and everything '
-          'in it: your profile, workout plans, workout history and chats '
-          'with Felix, on all your devices.'
-          '${apple ? '\n\nApple will ask you to confirm.' : ''}',
-      action: 'Continue',
+      title: l10n.deleteAccountTitle,
+      content: apple
+          ? '${l10n.deleteAccountBody}\n\n${l10n.deleteAccountAppleNote}'
+          : l10n.deleteAccountBody,
+      action: l10n.continueButton,
       actionKey: const Key('delete-account-continue'),
     )) {
       return;
     }
     if (!context.mounted) return;
     if (!await confirm(
-      title: 'Delete for good?',
-      content: "Your account can't be recovered once it's deleted.",
-      action: 'Delete account',
+      title: l10n.deleteForGoodTitle,
+      content: l10n.deleteForGoodBody,
+      action: l10n.deleteAccount,
       actionKey: const Key('delete-account-confirm'),
     )) {
       return;
@@ -131,17 +128,17 @@ class AboutMeScreen extends ConsumerWidget {
     unawaited(showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const PopScope(
+      builder: (context) => PopScope(
         canPop: false,
         child: AlertDialog(
           content: Row(
             children: [
-              SizedBox.square(
+              const SizedBox.square(
                 dimension: 24,
                 child: CircularProgressIndicator(strokeWidth: 3),
               ),
-              SizedBox(width: 20),
-              Expanded(child: Text('Deleting your account…')),
+              const SizedBox(width: 20),
+              Expanded(child: Text(l10n.deletingAccount)),
             ],
           ),
         ),
@@ -158,7 +155,7 @@ class AboutMeScreen extends ConsumerWidget {
     } on AuthFailure catch (failure) {
       navigator.pop();
       messenger.showSnackBar(SnackBar(
-        content: Text("Couldn't delete your account. ${failure.message}"),
+        content: Text(l10n.deleteAccountFailed(failure.message)),
       ));
     }
   }
@@ -166,6 +163,7 @@ class AboutMeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
     final profile = ref.watch(profileProvider).valueOrNull;
     final email = ref.watch(accountEmailProvider).valueOrNull;
 
@@ -207,7 +205,7 @@ class AboutMeScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.only(bottom: 24),
           children: [
-            const ScreenTitle('About me'),
+            ScreenTitle(l10n.aboutMeTitle),
             const SizedBox(height: 16),
             Center(
               child: CircleAvatar(
@@ -242,11 +240,11 @@ class AboutMeScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 28),
               child: Row(
                 children: [
-                  stat('Age', profile?.age, ''),
+                  stat(l10n.age, profile?.age, ''),
                   const SizedBox(width: 12),
-                  stat('Weight', profile?.weight, ' kg'),
+                  stat(l10n.weight, profile?.weight, ' ${l10n.unitKg}'),
                   const SizedBox(width: 12),
-                  stat('Height', profile?.height, ' cm'),
+                  stat(l10n.height, profile?.height, ' ${l10n.unitCm}'),
                 ],
               ),
             ),
@@ -256,7 +254,7 @@ class AboutMeScreen extends ConsumerWidget {
               child: OutlinedButton.icon(
                 onPressed: () => _signOut(context, ref),
                 icon: const Icon(Icons.logout),
-                label: const Text('Sign out'),
+                label: Text(l10n.signOut),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.error,
                   side: BorderSide(color: palette.border),
@@ -273,7 +271,7 @@ class AboutMeScreen extends ConsumerWidget {
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.error,
                   ),
-                  child: const Text('Delete account'),
+                  child: Text(l10n.deleteAccount),
                 ),
               ),
             ],

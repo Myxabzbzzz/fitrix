@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 class IntroScreen extends StatelessWidget {
   const IntroScreen({super.key});
@@ -89,7 +90,7 @@ class IntroScreen extends StatelessWidget {
         onPressed: () {
           context.go(AppRouter.language);
         },
-        child: const Text('Start your journey'),
+        child: Text(AppLocalizations.of(context).introStart),
       ),
     );
   }

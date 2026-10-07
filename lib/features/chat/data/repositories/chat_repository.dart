@@ -24,6 +24,9 @@ class ChatRepository {
   /// Messages shown when the chat has no history yet.
   final List<String> greeting;
 
+  /// The app's current language code, sent so Felix answers in it.
+  final String Function()? _language;
+
   ChatRepository(
     this._apiService, {
     ProfileRepository? profileRepository,
@@ -37,7 +40,9 @@ class ChatRepository {
     ],
     SharedPreferences? prefs,
     void Function()? onSaved,
+    String Function()? language,
   })  : _profileRepository = profileRepository,
+        _language = language,
         _preloadedPrefs = prefs,
         _onSaved = onSaved;
 
@@ -100,6 +105,7 @@ class ChatRepository {
       topic: topic,
       profile: await _loadProfile(),
       history: ChatMessage.toApiHistory(context),
+      language: _language?.call(),
     );
   }
 

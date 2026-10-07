@@ -170,6 +170,13 @@ test('server memory is per user: same conversationId, separate conversations', a
   assert.equal(aliceReset.status, 200);
 });
 
+test('the app language reaches the system prompt', async () => {
+  const base = await authedApp();
+  ollamaRequests.length = 0;
+  await post(base, '/chat', { message: 'hi', conversationId: 'l', language: 'es' }, tokenFor(ALICE));
+  assert.match(ollamaRequests[0].messages[0].content, /app is set to Spanish/);
+});
+
 test('server memory forgets idle conversations', async () => {
   let now = 0;
   const base = await authedApp({ memory: { idleMs: 1000, now: () => now } });

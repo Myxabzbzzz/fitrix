@@ -54,12 +54,15 @@ class ChatApiService {
   /// - [history]: recent `{role, content}` turns, oldest first, without
   ///   [message]. When sent, the backend uses it instead of its own memory,
   ///   so the chat stored on the device is the source of truth.
+  /// - [language]: the app's language code; Felix uses it when the user's
+  ///   own language isn't clear from the message.
   Stream<String> streamMessage(
     String message,
     String conversationId, {
     String? topic,
     Map<String, Object>? profile,
     List<Map<String, String>>? history,
+    String? language,
   }) async* {
     final token = await _currentToken();
     final Response<ResponseBody> response;
@@ -72,6 +75,7 @@ class ChatApiService {
           if (topic != null) 'topic': topic,
           if (profile != null && profile.isNotEmpty) 'profile': profile,
           if (history != null) 'history': history,
+          if (language != null) 'language': language,
         },
         options: Options(
           headers: {

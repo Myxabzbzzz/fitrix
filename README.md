@@ -468,6 +468,23 @@ and upload `build/ios/ipa/*.ipa` with Transporter (or Xcode → Organizer).
 `Info.plist` declares `ITSAppUsesNonExemptEncryption = false` (the app only
 uses standard HTTPS), so no export-compliance question per build.
 
+## Translations
+
+The app is in English, Russian, Uzbek (Latin) and Spanish. The language
+picked on the language screen (or restored from the account) wins;
+before that the device language is used when the app has it, otherwise
+English. Felix gets the app language with every chat request.
+
+Strings live in `lib/l10n/app_<lang>.arb` (`app_en.arb` is the template);
+code reads them with `AppLocalizations.of(context).<key>`. To add or change
+a string, edit **all four** files, then run `flutter gen-l10n` (or
+`flutter pub get`) to regenerate `lib/l10n/generated/`.
+`test/l10n_test.dart` fails if a language misses a key or a placeholder.
+
+Translated so far: intro, language picker, About me (sign-out and account
+deletion). The other screens are still English and move over screen by
+screen. Uzbek texts need a check by a native speaker.
+
 ## Data storage
 
 Everything is stored on the device with `shared_preferences`: language,

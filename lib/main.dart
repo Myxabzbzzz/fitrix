@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
@@ -25,7 +26,9 @@ import 'package:fitrix/features/auth/data/auth_gateway.dart';
 import 'package:fitrix/features/auth/data/social_sign_in.dart';
 import 'package:fitrix/features/auth/data/social_sign_in_config.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
+import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 import 'package:fitrix/features/profile/data/repositories/profile_remote.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Application entry point
 /// Initializes Flutter bindings and loads local storage before launching the app
@@ -148,13 +151,17 @@ class FitrixRoot extends StatelessWidget {
 
 /// Root widget of the FITRIX application
 /// Configures Material App with theming and routing
-class FitrixApp extends StatelessWidget {
+class FitrixApp extends ConsumerWidget {
   final GoRouter router;
 
   const FitrixApp({super.key, required this.router});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+    // DateFormat and other intl helpers follow the app's language.
+    Intl.defaultLocale = locale.languageCode;
+
     return MaterialApp.router(
       // Application title shown in task switcher
       title: 'FITRIX',
@@ -174,6 +181,11 @@ class FitrixApp extends StatelessWidget {
       // - ThemeMode.light: Always use light theme
       // - ThemeMode.dark: Always use dark theme
       themeMode: ThemeMode.system,
+
+      // The language picked in the app (lib/l10n/*.arb), not the device's.
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
 
       // Router configuration using go_router
       // Handles all navigation and deep linking

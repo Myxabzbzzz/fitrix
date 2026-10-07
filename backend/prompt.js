@@ -68,6 +68,14 @@ const TOPICS = {
 
 const DEFAULT_TOPIC = 'app';
 
+// The app's languages (the user's choice in FITRIX), as named to the model.
+const LANGUAGES = {
+  en: 'English',
+  ru: 'Russian',
+  uz: 'Uzbek (Latin script)',
+  es: 'Spanish',
+};
+
 const BASE_RULES = `Style:
 - Be friendly, encouraging and concise. Keep replies short and actionable, in a conversational tone.
 - Never invent facts about the user or what they said earlier. If something isn't in this conversation or their profile, say you don't know it yet and ask.
@@ -103,6 +111,14 @@ function sanitizeTopic(topic) {
     return topic;
   }
   return DEFAULT_TOPIC;
+}
+
+/** Returns a known app language code, or null. */
+function sanitizeLanguage(language) {
+  if (typeof language === 'string' && Object.prototype.hasOwnProperty.call(LANGUAGES, language)) {
+    return language;
+  }
+  return null;
 }
 
 /**
@@ -168,7 +184,7 @@ function describeProfile(profile) {
 }
 
 /** Felix's system prompt for one request. */
-function buildSystemPrompt(topic, profile) {
+function buildSystemPrompt(topic, profile, language) {
   const config = TOPICS[sanitizeTopic(topic)];
   const parts = [
     `You are Felix, a personal AI fitness coach in the FITRIX app. ${config.persona}`,
@@ -192,6 +208,15 @@ function buildSystemPrompt(topic, profile) {
     );
   }
   parts.push(BASE_RULES);
+  const appLanguage = LANGUAGES[sanitizeLanguage(language)];
+  if (appLanguage) {
+    parts.push(
+      `The user's FITRIX app is set to ${appLanguage}. Use ${appLanguage} ` +
+        'for greetings and whenever the language of their message is unclear ' +
+        '(a number, an emoji, a single word); a message clearly written in ' +
+        'another language still gets a reply in that language.'
+    );
+  }
   return parts.join('\n\n');
 }
 
@@ -203,5 +228,6 @@ module.exports = {
   sanitizeTopic,
   sanitizeProfile,
   sanitizeHistory,
+  sanitizeLanguage,
   buildSystemPrompt,
 };

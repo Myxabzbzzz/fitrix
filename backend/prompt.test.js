@@ -5,6 +5,7 @@ const {
   sanitizeProfile,
   sanitizeHistory,
   buildSystemPrompt,
+  sanitizeLanguage,
 } = require('./prompt');
 
 test('unknown or missing topics fall back to the app assistant', () => {
@@ -75,4 +76,18 @@ test('system prompt is specialised per topic and includes the profile', () => {
   assert.match(app, /app assistant/);
   assert.doesNotMatch(app, /dedicated to/);
   assert.doesNotMatch(app, /FITRIX profile/);
+});
+
+test('the app language guides Felix; unknown values are dropped', () => {
+  assert.equal(sanitizeLanguage('uz'), 'uz');
+  assert.equal(sanitizeLanguage('fr'), null);
+  assert.equal(sanitizeLanguage('__proto__'), null);
+  assert.equal(sanitizeLanguage(42), null);
+
+  const ru = buildSystemPrompt('app', null, 'ru');
+  assert.match(ru, /app is set to Russian/);
+  assert.match(ru, /same language as the user's latest message/);
+  assert.match(buildSystemPrompt('app', null, 'uz'), /Uzbek \(Latin script\)/);
+  assert.doesNotMatch(buildSystemPrompt('app', null, 'fr'), /app is set to/);
+  assert.doesNotMatch(buildSystemPrompt('app', null), /app is set to/);
 });

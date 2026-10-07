@@ -250,6 +250,7 @@ void main() {
           {'role': 'user', 'content': 'I want to bulk'},
           {'role': 'assistant', 'content': 'Eat in a surplus.'},
         ],
+        language: 'ru',
       ).toList();
 
       expect(backend.bodies.single, {
@@ -261,6 +262,7 @@ void main() {
           {'role': 'user', 'content': 'I want to bulk'},
           {'role': 'assistant', 'content': 'Eat in a surplus.'},
         ],
+        'language': 'ru',
       });
     });
 

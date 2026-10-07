@@ -1,0 +1,29 @@
+{
+  "@@locale": "en",
+  "continueButton": "Continue",
+  "cancel": "Cancel",
+  "introStart": "Start your journey",
+  "aboutMeTitle": "About me",
+  "age": "Age",
+  "weight": "Weight",
+  "height": "Height",
+  "unitKg": "kg",
+  "unitCm": "cm",
+  "signOut": "Sign out",
+  "signOutTitle": "Sign out?",
+  "signOutLocalBody": "Your profile, chats and workouts are stored only on this device and will be deleted.",
+  "signOutAccountBody": "Your profile, workouts and chats are saved to your account and will be removed from this device. Sign in with the same email to get them back.",
+  "deleteAccount": "Delete account",
+  "deleteAccountTitle": "Delete account?",
+  "deleteAccountBody": "This permanently deletes your FITRIX account and everything in it: your profile, workout plans, workout history and chats with Felix, on all your devices.",
+  "deleteAccountAppleNote": "Apple will ask you to confirm.",
+  "deleteForGoodTitle": "Delete for good?",
+  "deleteForGoodBody": "Your account can't be recovered once it's deleted.",
+  "deletingAccount": "Deleting your account…",
+  "deleteAccountFailed": "Couldn't delete your account. {reason}",
+  "@deleteAccountFailed": {
+    "placeholders": {
+      "reason": { "type": "String", "example": "No connection." }
+    }
+  }
+}

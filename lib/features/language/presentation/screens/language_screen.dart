@@ -6,6 +6,7 @@ import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 class LanguageScreen extends ConsumerWidget {
   const LanguageScreen({super.key});
@@ -79,8 +80,9 @@ class LanguageScreen extends ConsumerWidget {
 
               const Spacer(),
 
-              // Continue Button
-              _buildContinueButton(context, selectedLanguage != null),
+              // Continue Button: keeps the highlighted language even if
+              // it's the device default nobody tapped.
+              _buildContinueButton(context, ref, selectedLanguage),
 
               const SizedBox(height: 40),
             ],
@@ -125,17 +127,23 @@ class LanguageScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildContinueButton(BuildContext context, bool enabled) {
+  Widget _buildContinueButton(
+    BuildContext context,
+    WidgetRef ref,
+    String selectedLanguage,
+  ) {
     return SizedBox(
       width: double.infinity,
       height: 54,
       child: ElevatedButton(
-        onPressed: enabled
-            ? () {
-                context.go(AppRouter.signIn);
-              }
-            : null,
-        child: const Text('Continue'),
+        onPressed: () async {
+          final router = GoRouter.of(context);
+          await ref
+              .read(selectedLanguageProvider.notifier)
+              .setLanguage(selectedLanguage);
+          router.go(AppRouter.signIn);
+        },
+        child: Text(AppLocalizations.of(context).continueButton),
       ),
     );
   }

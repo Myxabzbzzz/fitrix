@@ -192,7 +192,8 @@ Request:
     { "role": "assistant", "content": "Hey! I'm Felix, your gym trainer." },
     { "role": "user", "content": "I want to bulk" },
     { "role": "assistant", "content": "Eat in a small surplus..." }
-  ]
+  ],
+  "language": "ru"                                 // optional: en, ru, uz, es
 }
 
 Response:
@@ -211,6 +212,9 @@ Fields:
   Known fields: `name`, `age` (years), `weightKg`, `heightCm`, plus optional
   `sex`, `goal`, `experience`. Numbers may be numbers or numeric strings;
   implausible values (e.g. `heightCm: 9999`) and unknown fields are dropped.
+- `language`: the app's language. Felix still replies in the language the
+  user writes in, and uses this one for greetings and messages whose
+  language isn't clear (a number, an emoji). Unknown values are ignored.
 - `history`: the recent conversation as the app shows it, **not** including
   `message`. Entries need `role` `"user"` or `"assistant"` and a non-empty
   string `content` (cut to 4000 chars); anything else is skipped and only
