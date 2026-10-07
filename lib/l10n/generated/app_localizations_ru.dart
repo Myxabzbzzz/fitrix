@@ -75,4 +75,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String deleteAccountFailed(String reason) {
     return 'Не удалось удалить аккаунт. $reason';
   }
+
+  @override
+  String get undo => 'Отменить';
+
+  @override
+  String workoutDeleted(String name) {
+    return '«$name» удалена';
+  }
+
+  @override
+  String get syncFailed =>
+      'Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.';
 }

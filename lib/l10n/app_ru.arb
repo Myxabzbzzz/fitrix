@@ -20,5 +20,8 @@
   "deleteForGoodTitle": "Удалить навсегда?",
   "deleteForGoodBody": "Удалённый аккаунт восстановить нельзя.",
   "deletingAccount": "Удаляем аккаунт…",
-  "deleteAccountFailed": "Не удалось удалить аккаунт. {reason}"
+  "deleteAccountFailed": "Не удалось удалить аккаунт. {reason}",
+  "undo": "Отменить",
+  "workoutDeleted": "«{name}» удалена",
+  "syncFailed": "Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз."
 }

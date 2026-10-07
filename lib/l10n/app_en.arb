@@ -23,7 +23,21 @@
   "deleteAccountFailed": "Couldn't delete your account. {reason}",
   "@deleteAccountFailed": {
     "placeholders": {
-      "reason": { "type": "String", "example": "No connection." }
+      "reason": {
+        "type": "String",
+        "example": "No connection."
+      }
+    }
+  },
+  "undo": "Undo",
+  "workoutDeleted": "“{name}” deleted",
+  "syncFailed": "Couldn't sync. Check your connection and try again.",
+  "@workoutDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Push day"
+      }
     }
   }
 }

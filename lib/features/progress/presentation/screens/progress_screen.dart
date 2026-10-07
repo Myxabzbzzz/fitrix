@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/core/widgets/sync_refresh.dart';
 import 'package:fitrix/features/progress/data/progress_data.dart';
 import 'package:fitrix/features/progress/presentation/widgets/progress_chart.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -64,55 +65,59 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
               onSelected: (s) => setState(() => _sport = s),
             ),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(28, 20, 28, 24),
-                children: [
-                  Text('Strength', style: sectionStyle),
-                  const SizedBox(height: 12),
-                  if (strength.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Text(
-                        'No ${_sport.label.toLowerCase()} workouts yet. '
-                        'Finish one with at least one set checked off and '
-                        'your progress will show up here.',
-                        style: noteStyle,
-                      ),
-                    ),
-                  for (final series in strength) ...[
-                    _chart(
-                      series,
-                      left: 'Latest: ${formatKg(series.values.last)}',
-                      right: series.values.length > 1
-                          ? 'First: ${formatKg(series.values.first)}'
-                          : null,
-                    ),
+              child: SyncRefresh(
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(28, 20, 28, 24),
+                  children: [
+                    Text('Strength', style: sectionStyle),
                     const SizedBox(height: 12),
+                    if (strength.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text(
+                          'No ${_sport.label.toLowerCase()} workouts yet. '
+                          'Finish one with at least one set checked off and '
+                          'your progress will show up here.',
+                          style: noteStyle,
+                        ),
+                      ),
+                    for (final series in strength) ...[
+                      _chart(
+                        series,
+                        left: 'Latest: ${formatKg(series.values.last)}',
+                        right: series.values.length > 1
+                            ? 'First: ${formatKg(series.values.first)}'
+                            : null,
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (history.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text('Recent workouts', style: sectionStyle),
+                      const SizedBox(height: 8),
+                      for (final workout in history.take(10))
+                        _HistoryTile(workout: workout),
+                    ],
+                    const SizedBox(height: 20),
+                    Text('Body', style: sectionStyle),
+                    const SizedBox(height: 4),
+                    Text('Sample data — tracking is coming soon.',
+                        style: noteStyle),
+                    const SizedBox(height: 12),
+                    _chart(
+                      weight,
+                      left: 'Current: ${formatKg(weight.values.last)}',
+                      right: 'One month ago: ${formatKg(weight.values.first)}',
+                    ),
+                    const SizedBox(height: 20),
+                    _chart(
+                      ProgressData.calories,
+                      left: 'Intake: ${ProgressData.caloriesIntake}',
+                      right: 'Burn: ${ProgressData.caloriesBurn}',
+                    ),
                   ],
-                  if (history.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text('Recent workouts', style: sectionStyle),
-                    const SizedBox(height: 8),
-                    for (final workout in history.take(10))
-                      _HistoryTile(workout: workout),
-                  ],
-                  const SizedBox(height: 20),
-                  Text('Body', style: sectionStyle),
-                  const SizedBox(height: 4),
-                  Text('Sample data — tracking is coming soon.', style: noteStyle),
-                  const SizedBox(height: 12),
-                  _chart(
-                    weight,
-                    left: 'Current: ${formatKg(weight.values.last)}',
-                    right: 'One month ago: ${formatKg(weight.values.first)}',
-                  ),
-                  const SizedBox(height: 20),
-                  _chart(
-                    ProgressData.calories,
-                    left: 'Intake: ${ProgressData.caloriesIntake}',
-                    right: 'Burn: ${ProgressData.caloriesBurn}',
-                  ),
-                ],
+                ),
               ),
             ),
           ],

@@ -227,6 +227,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t delete your account. {reason}'**
   String deleteAccountFailed(String reason);
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @workoutDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'“{name}” deleted'**
+  String workoutDeleted(String name);
+
+  /// No description provided for @syncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t sync. Check your connection and try again.'**
+  String get syncFailed;
 }
 
 class _AppLocalizationsDelegate

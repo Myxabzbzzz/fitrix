@@ -20,5 +20,8 @@
   "deleteForGoodTitle": "Butunlay o‘chirilsinmi?",
   "deleteForGoodBody": "O‘chirilgan hisobni tiklab bo‘lmaydi.",
   "deletingAccount": "Hisob o‘chirilmoqda…",
-  "deleteAccountFailed": "Hisobni o‘chirib bo‘lmadi. {reason}"
+  "deleteAccountFailed": "Hisobni o‘chirib bo‘lmadi. {reason}",
+  "undo": "Qaytarish",
+  "workoutDeleted": "“{name}” o‘chirildi",
+  "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring."
 }

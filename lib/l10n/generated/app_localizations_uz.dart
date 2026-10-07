@@ -75,4 +75,16 @@ class AppLocalizationsUz extends AppLocalizations {
   String deleteAccountFailed(String reason) {
     return 'Hisobni o‘chirib bo‘lmadi. $reason';
   }
+
+  @override
+  String get undo => 'Bekor qilish';
+
+  @override
+  String workoutDeleted(String name) {
+    return '“$name” o‘chirildi';
+  }
+
+  @override
+  String get syncFailed =>
+      'Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.';
 }

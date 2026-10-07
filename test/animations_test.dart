@@ -399,6 +399,74 @@ void main() {
       expect(find.text('My Nutrition'), findsNothing);
     });
 
+    group('swipe back from the left edge', () {
+      Future<void> openNutrition(WidgetTester tester) async {
+        _phoneSize(tester);
+        await _pumpHome(tester);
+        await tester.tap(nutritionTile);
+        await tester.pumpAndSettle();
+        expect(find.text('My Nutrition'), findsOneWidget);
+      }
+
+      testWidgets('iOS: the section follows the finger and closes',
+          (tester) async {
+        await openNutrition(tester);
+
+        final drag = await tester.startGesture(const Offset(5, 400));
+        await drag.moveBy(const Offset(40, 0));
+        await drag.moveBy(const Offset(100, 0));
+        await tester.pump();
+        // Home shows underneath while the section slides right.
+        expect(find.text('FELIX'), findsOneWidget);
+        expect(find.text('My Nutrition'), findsOneWidget);
+        expect(tester.getTopLeft(find.text('My Nutrition')).dx,
+            greaterThan(100));
+        await drag.moveBy(const Offset(120, 0));
+        await drag.up();
+        await tester.pumpAndSettle();
+
+        expect(find.text('My Nutrition'), findsNothing);
+        expect(find.text('FELIX'), findsOneWidget);
+        expect(AppRouter.router.routerDelegate.currentConfiguration.uri.path,
+            AppRouter.home);
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+      testWidgets('iOS: a short, slow swipe slides back into place',
+          (tester) async {
+        await openNutrition(tester);
+        await tester.timedDragFrom(const Offset(5, 400), const Offset(80, 0),
+            const Duration(seconds: 1));
+        await tester.pumpAndSettle();
+
+        expect(find.text('My Nutrition'), findsOneWidget);
+        expect(tester.getTopLeft(find.text('My Nutrition')).dx, lessThan(100));
+        expect(AppRouter.router.routerDelegate.currentConfiguration.uri.path,
+            AppRouter.nutrition);
+
+        // And it still works afterwards.
+        await tester.dragFrom(const Offset(5, 400), const Offset(300, 0));
+        await tester.pumpAndSettle();
+        expect(find.text('My Nutrition'), findsNothing);
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+      testWidgets('iOS: a swipe away from the edge does nothing',
+          (tester) async {
+        await openNutrition(tester);
+        await tester.dragFrom(const Offset(120, 400), const Offset(250, 0));
+        await tester.pumpAndSettle();
+        expect(find.text('My Nutrition'), findsOneWidget);
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+      testWidgets('Android keeps its own system back gesture only',
+          (tester) async {
+        await openNutrition(tester);
+        expect(find.byKey(const Key('back-swipe-edge')), findsNothing);
+        await tester.dragFrom(const Offset(5, 400), const Offset(300, 0));
+        await tester.pumpAndSettle();
+        expect(find.text('My Nutrition'), findsOneWidget);
+      }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+    });
+
     testWidgets('reduced motion: sections open without a reveal',
         (tester) async {
       _phoneSize(tester);

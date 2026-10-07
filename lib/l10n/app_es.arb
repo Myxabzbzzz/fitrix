@@ -20,5 +20,8 @@
   "deleteForGoodTitle": "¿Eliminar para siempre?",
   "deleteForGoodBody": "Una cuenta eliminada no se puede recuperar.",
   "deletingAccount": "Eliminando tu cuenta…",
-  "deleteAccountFailed": "No se pudo eliminar tu cuenta. {reason}"
+  "deleteAccountFailed": "No se pudo eliminar tu cuenta. {reason}",
+  "undo": "Deshacer",
+  "workoutDeleted": "«{name}» eliminado",
+  "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo."
 }

@@ -101,6 +101,21 @@ class WorkoutTemplatesNotifier extends StateNotifier<List<WorkoutTemplate>> {
     state = state.where((w) => w.id != id).toList();
   }
 
+  /// Undoes [remove]: puts [template] back at [index] as a fresh change, so
+  /// it also wins over a deletion that already reached the server.
+  void restore(WorkoutTemplate template, int index) {
+    _storage.saveDeletedTemplates(_storage
+        .loadDeletedTemplates()
+        .where((t) => t.id != template.id)
+        .toList());
+    final plans = state.where((w) => w.id != template.id).toList()
+      ..insert(
+        index.clamp(0, state.length),
+        template.copyWith(updatedAt: DateTime.now()),
+      );
+    state = plans;
+  }
+
   /// Replaces plans and pending deletions with the result of a sync
   /// (not reported back as a local change).
   void applySynced(

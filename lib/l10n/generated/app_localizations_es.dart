@@ -75,4 +75,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String deleteAccountFailed(String reason) {
     return 'No se pudo eliminar tu cuenta. $reason';
   }
+
+  @override
+  String get undo => 'Deshacer';
+
+  @override
+  String workoutDeleted(String name) {
+    return '«$name» eliminado';
+  }
+
+  @override
+  String get syncFailed =>
+      'No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.';
 }

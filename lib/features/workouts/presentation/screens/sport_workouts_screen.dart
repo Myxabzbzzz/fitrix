@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
@@ -6,6 +7,8 @@ import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/edit_workout_sheet.dart';
+import 'package:fitrix/core/widgets/sync_refresh.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Workouts of one sport ("Gym"): today's workout card plus the other plans.
 class SportWorkoutsScreen extends ConsumerStatefulWidget {
@@ -62,6 +65,27 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
     }
   }
 
+  /// Swiped away: deleted at once, with a few seconds to undo.
+  void _delete(WorkoutTemplate template) {
+    final notifier = ref.read(workoutTemplatesProvider.notifier);
+    final index = ref
+        .read(workoutTemplatesProvider)
+        .indexWhere((w) => w.id == template.id);
+    notifier.remove(template.id);
+
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text(l10n.workoutDeleted(template.name)),
+        duration: const Duration(seconds: 4),
+        action: SnackBarAction(
+          label: l10n.undo,
+          onPressed: () => notifier.restore(template, index),
+        ),
+      ));
+  }
+
   void _edit(WorkoutTemplate template) {
     showModalBottomSheet<void>(
       context: context,
@@ -91,34 +115,45 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
               onSelected: (s) => setState(() => _sport = s),
             ),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(31, 24, 31, 24),
-                children: [
-                  if (workouts.isNotEmpty)
-                    _TodayWorkoutCard(
-                      workout: workouts.first,
-                      onStart: () => _start(workouts.first),
-                      onEdit: () => _edit(workouts.first),
-                    ),
-                  const SizedBox(height: 17),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 17,
-                    crossAxisSpacing: 17,
-                    childAspectRatio: 148 / 96,
-                    children: [
-                      for (final workout in workouts.skip(1))
-                        _WorkoutTile(
-                          workout: workout,
-                          onStart: () => _start(workout),
-                          onEdit: () => _edit(workout),
+              child: SyncRefresh(
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(31, 24, 31, 24),
+                  children: [
+                    if (workouts.isNotEmpty)
+                      _SwipeToDelete(
+                        key: ValueKey('swipe-${workouts.first.id}'),
+                        onDelete: () => _delete(workouts.first),
+                        child: _TodayWorkoutCard(
+                          workout: workouts.first,
+                          onStart: () => _start(workouts.first),
+                          onEdit: () => _edit(workouts.first),
                         ),
-                      _AddWorkoutTile(onTap: _addWorkout),
-                    ],
-                  ),
-                ],
+                      ),
+                    const SizedBox(height: 17),
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 17,
+                      crossAxisSpacing: 17,
+                      childAspectRatio: 148 / 96,
+                      children: [
+                        for (final workout in workouts.skip(1))
+                          _SwipeToDelete(
+                            key: ValueKey('swipe-${workout.id}'),
+                            onDelete: () => _delete(workout),
+                            child: _WorkoutTile(
+                              workout: workout,
+                              onStart: () => _start(workout),
+                              onEdit: () => _edit(workout),
+                            ),
+                          ),
+                        _AddWorkoutTile(onTap: _addWorkout),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -325,6 +360,47 @@ class _WorkoutTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Swipe left to delete: a red strip with a bin follows the finger, with a
+/// tap of haptics once the swipe is far enough to delete.
+class _SwipeToDelete extends StatelessWidget {
+  final VoidCallback onDelete;
+  final Widget child;
+
+  const _SwipeToDelete({
+    required super.key,
+    required this.onDelete,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: key!,
+      direction: DismissDirection.endToStart,
+      onUpdate: (details) {
+        if (details.reached != details.previousReached) {
+          HapticFeedback.mediumImpact();
+        }
+      },
+      onDismissed: (_) => onDelete(),
+      background: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.error,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: EdgeInsets.only(right: 20),
+            child: Icon(Icons.delete_outline, color: Colors.white),
+          ),
+        ),
+      ),
+      child: child,
     );
   }
 }

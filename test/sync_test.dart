@@ -497,6 +497,44 @@ void main() {
       expect(b.planNames, isNot(contains('Chest and Biceps')));
     });
 
+    test('undo brings a plan back, even after its deletion was synced',
+        () async {
+      final remote = InMemoryRemoteStore();
+      final a = await newDevice(remote);
+      final b = await newDevice(remote);
+      await a.sync();
+      await b.sync();
+      final plans = a.read(workoutTemplatesProvider.notifier);
+      final plan = a
+          .read(workoutTemplatesProvider)
+          .firstWhere((p) => p.id == 'gym-chest-biceps');
+      final index = a.read(workoutTemplatesProvider).indexOf(plan);
+
+      // Undo before any sync: the tombstone just goes away.
+      plans.remove(plan.id);
+      plans.restore(plan, index);
+      expect(WorkoutStorage(a.prefs).loadDeletedTemplates(), isEmpty);
+      expect(a.read(workoutTemplatesProvider).indexWhere((p) => p.id == plan.id),
+          index);
+
+      // Undo after the deletion reached the server and another device.
+      plans.remove(plan.id);
+      await a.sync();
+      await b.sync();
+      expect(b.planNames, isNot(contains('Chest and Biceps')));
+
+      plans.restore(plan, index);
+      await a.sync();
+      expect(
+        remote.plansOf('u1').firstWhere((p) => p.id == plan.id).isDeleted,
+        isFalse,
+      );
+      await b.sync();
+      expect(b.planNames, contains('Chest and Biceps'));
+      expect(a.read(workoutTemplatesProvider).indexWhere((p) => p.id == plan.id),
+          index);
+    });
+
     test('another account sees nothing; switching accounts drops local data',
         () async {
       final remote = InMemoryRemoteStore();
