@@ -37,24 +37,35 @@ class WorkoutCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Align(
-                alignment: Alignment.centerLeft,
-                child: DayBadge(label: dayLabel, today: today)),
-            const SizedBox(height: AppSpacing.xxs),
-            Text(title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: AppText.displaySmall
-                    .copyWith(height: 1.25, color: palette.textPrimary)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DayBadge(label: dayLabel, today: today),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppText.headingS
+                        .copyWith(height: 1.25, color: palette.textPrimary)),
+              ],
+            ),
             const SizedBox(height: AppSpacing.xs),
             if (done)
-              Text(doneLabel,
-                  style: AppText.captionStrong
-                      .copyWith(color: palette.textSecondary))
+              AppButton(
+                label: doneLabel,
+                icon: Icons.check,
+                style: AppButtonStyle.secondary,
+                size: AppButtonSize.small,
+                expand: true,
+              )
             else
               AppButton(
                 label: startLabel,
+                style:
+                    today ? AppButtonStyle.primary : AppButtonStyle.secondary,
                 size: AppButtonSize.small,
                 expand: true,
                 onPressed: onStart,

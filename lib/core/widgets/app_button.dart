@@ -7,9 +7,6 @@ enum AppButtonStyle { primary, secondary }
 
 enum AppButtonSize { small, medium, large }
 
-/// Text on the accent fill; white in both themes.
-const Color _onAccent = Color(0xFFFFFFFF);
-
 class AppButton extends StatefulWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -47,7 +44,7 @@ class _AppButtonState extends State<AppButton> {
     final enabled = widget.onPressed != null;
     final primary = widget.style == AppButtonStyle.primary;
     final bg = primary ? palette.accent : palette.buttonMuted;
-    final fg = primary ? _onAccent : palette.textPrimary;
+    final fg = primary ? palette.onAccent : palette.textPrimary;
 
     final (double height, double hPad, TextStyle base, BorderRadius radius) =
         switch (widget.size) {
@@ -90,32 +87,39 @@ class _AppButtonState extends State<AppButton> {
       ],
     );
 
-    return Opacity(
-      opacity: enabled ? 1 : 0.4,
-      child: AnimatedScale(
-        scale: _pressed ? AppButton.pressedScale : 1,
-        duration: Motion.of(context, Motion.press),
-        curve: Motion.curve,
-        child: DecoratedBox(
-          decoration: BoxDecoration(color: bg, borderRadius: radius),
-          child: Material(
-            type: MaterialType.transparency,
-            borderRadius: radius,
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: widget.onPressed,
-              onHighlightChanged: enabled ? _setPressed : null,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: height),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: hPad),
-                  child: Center(widthFactor: 1, child: content),
+    return Semantics(
+        button: true,
+        enabled: enabled,
+        container: true,
+        label: widget.label,
+        excludeSemantics: true,
+        onTap: widget.onPressed,
+        child: Opacity(
+          opacity: enabled ? 1 : 0.4,
+          child: AnimatedScale(
+            scale: _pressed ? AppButton.pressedScale : 1,
+            duration: Motion.of(context, Motion.press),
+            curve: Motion.curve,
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: bg, borderRadius: radius),
+              child: Material(
+                type: MaterialType.transparency,
+                borderRadius: radius,
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: widget.onPressed,
+                  onHighlightChanged: enabled ? _setPressed : null,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: height),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: hPad),
+                      child: Center(widthFactor: 1, child: content),
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

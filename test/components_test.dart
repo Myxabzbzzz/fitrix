@@ -65,6 +65,22 @@ void main() {
         title: 'Legs', dayLabel: 'Tue', done: true, onStart: () {})));
     expect(find.text('Done'), findsOneWidget);
     expect(find.text('Start'), findsNothing);
+    expect(find.byIcon(Icons.check), findsOneWidget);
+    final b = t.widget<AppButton>(find.byType(AppButton));
+    expect(b.style, AppButtonStyle.secondary);
+    expect(b.onPressed, isNull);
+  });
+
+  testWidgets('WorkoutCard Start style follows today', (t) async {
+    await t.pumpWidget(
+        host(WorkoutCard(title: 'Legs', dayLabel: 'Tue', onStart: () {})));
+    expect(t.widget<AppButton>(find.byType(AppButton)).style,
+        AppButtonStyle.secondary);
+    await t.pumpWidget(host(WorkoutCard(
+        title: 'Legs', dayLabel: 'Tue', today: true, onStart: () {})));
+    expect(t.widget<AppButton>(find.byType(AppButton)).style,
+        AppButtonStyle.primary);
+    expect(t.widget<Text>(find.text('Legs')).style!.fontFamily, 'Inter');
   });
 
   testWidgets('CoachCard hides buttons with null label', (t) async {
@@ -72,6 +88,25 @@ void main() {
         eyebrow: 'Coach', title: 'Hi', message: 'Msg', primaryLabel: 'Yes')));
     expect(find.text('Yes'), findsOneWidget);
     expect(find.byType(AppButton), findsOneWidget);
+    final eyebrow = t.widget<Text>(find.text('COACH'));
+    expect(eyebrow.style!.color, AppPalette.light.accent);
+  });
+
+  testWidgets('primary AppButton text uses onAccent', (t) async {
+    await t.pumpWidget(host(AppButton(label: 'Go', onPressed: () {})));
+    expect(t.widget<Text>(find.text('Go')).style!.color,
+        AppPalette.light.onAccent);
+    expect(AppPalette.dark.onAccent, const Color(0xFFFFFFFF));
+  });
+
+  testWidgets('CoachCard image size is configurable', (t) async {
+    await t.pumpWidget(host(const CoachCard(
+        eyebrow: 'c',
+        title: 't',
+        message: 'm',
+        imageWidth: 64,
+        imageHeight: 84)));
+    expect(find.byType(CoachCard), findsOneWidget);
   });
 
   testWidgets('PillSelector selected pill uses pillSelected', (t) async {
@@ -94,7 +129,7 @@ void main() {
           AppButton(label: 'Continue now', onPressed: () {}, expand: true),
           const DayBadge(label: 'Today', today: true),
           SizedBox(
-            height: 120,
+            height: 140,
             child: Row(children: [
               Expanded(
                   child: WorkoutCard(

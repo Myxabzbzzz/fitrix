@@ -8,6 +8,8 @@ class CoachCard extends StatelessWidget {
   final String title;
   final String message;
   final String? imageAsset;
+  final double imageWidth;
+  final double imageHeight;
   final String? primaryLabel;
   final VoidCallback? onPrimary;
   final String? secondaryLabel;
@@ -19,6 +21,8 @@ class CoachCard extends StatelessWidget {
     required this.title,
     required this.message,
     this.imageAsset,
+    this.imageWidth = 84,
+    this.imageHeight = 120,
     this.primaryLabel,
     this.onPrimary,
     this.secondaryLabel,
@@ -39,8 +43,8 @@ class CoachCard extends StatelessWidget {
         children: [
           if (image != null) ...[
             SizedBox(
-              width: 84,
-              height: 120,
+              width: imageWidth,
+              height: imageHeight,
               child: Image.asset(image, fit: BoxFit.contain),
             ),
             const SizedBox(width: AppSpacing.sm),
@@ -51,16 +55,16 @@ class CoachCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(eyebrow.toUpperCase(),
-                    style: AppText.microStrong
-                        .copyWith(color: palette.textSecondary)),
+                    style:
+                        AppText.captionStrong.copyWith(color: palette.accent)),
                 const SizedBox(height: AppSpacing.xs),
                 Text(title,
                     style:
                         AppText.headingS.copyWith(color: palette.textPrimary)),
                 const SizedBox(height: AppSpacing.xs),
                 Text(message,
-                    style: AppText.bodyRegular
-                        .copyWith(color: palette.textSecondary)),
+                    style:
+                        AppText.caption.copyWith(color: palette.textPrimary)),
                 if (primaryLabel != null || secondaryLabel != null) ...[
                   const SizedBox(height: AppSpacing.xs),
                   Row(
