@@ -26,7 +26,7 @@ create table public.orders (
   user_id uuid not null references auth.users (id) on delete cascade,
   status text not null default 'placed' check (status in ('placed', 'cancelled', 'fulfilled')),
   total_cents integer not null check (total_cents >= 0),
-  currency text not null,
+  currency text not null check (currency in ('USD', 'UZS')),
   created_at timestamptz not null default now()
 );
 create index orders_user_id_idx on public.orders (user_id, created_at desc);
@@ -112,6 +112,7 @@ declare
   v_total integer := 0;
   v_currency text;
   v_item_currency text;
+  v_price integer;
   r record;
 begin
   if auth.uid() is null then
@@ -132,7 +133,7 @@ begin
     select (e->>'product_id') as pid, (e->>'quantity')::int as qty
     from jsonb_array_elements(p_items) e
   loop
-    select p.currency into v_item_currency
+    select p.price_cents, p.currency into v_price, v_item_currency
     from public.products p
     where p.id = r.pid and p.active;
     if not found then
@@ -145,9 +146,7 @@ begin
     end if;
 
     insert into public.order_items (order_id, product_id, quantity, price_cents)
-    select v_order, p.id, r.qty, p.price_cents
-    from public.products p
-    where p.id = r.pid and p.active;
+    values (v_order, r.pid, r.qty, v_price);
   end loop;
 
   select sum(quantity * price_cents) into v_total
