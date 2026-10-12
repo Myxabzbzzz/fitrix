@@ -245,6 +245,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t sync. Check your connection and try again.'**
   String get syncFailed;
+
+  /// No description provided for @homeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get homeToday;
+
+  /// No description provided for @homeTodayMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} exercises · about {minutes} min'**
+  String homeTodayMeta(int count, int minutes);
+
+  /// No description provided for @homeStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get homeStart;
+
+  /// No description provided for @homeContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get homeContinue;
 }
 
 class _AppLocalizationsDelegate
