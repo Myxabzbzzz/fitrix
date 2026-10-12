@@ -1,7 +1,10 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/day_badge.dart';
@@ -66,9 +69,20 @@ void main() {
     expect(find.text('Done'), findsOneWidget);
     expect(find.text('Start'), findsNothing);
     expect(find.byIcon(Icons.check), findsOneWidget);
-    final b = t.widget<AppButton>(find.byType(AppButton));
-    expect(b.style, AppButtonStyle.secondary);
-    expect(b.onPressed, isNull);
+    expect(find.byType(AppButton), findsNothing);
+    final chip = t.widget<Container>(find
+        .ancestor(of: find.text('Done'), matching: find.byType(Container))
+        .first);
+    expect(
+        (chip.decoration as BoxDecoration).color, AppPalette.light.buttonMuted);
+    // only the card's own 0.55 fade, no second opacity layer
+    expect(
+        find.descendant(
+            of: find.byType(WorkoutCard), matching: find.byType(Opacity)),
+        findsOneWidget);
+    final sem = t.getSemantics(find.text('Done'));
+    expect(sem.label, 'Done');
+    expect(sem.flagsCollection.isButton, isFalse);
   });
 
   testWidgets('WorkoutCard Start style follows today', (t) async {
@@ -104,9 +118,55 @@ void main() {
         eyebrow: 'c',
         title: 't',
         message: 'm',
+        imageAsset: 'assets/images/felix_avatar.png',
         imageWidth: 64,
         imageHeight: 84)));
-    expect(find.byType(CoachCard), findsOneWidget);
+    final box = find
+        .ancestor(of: find.byType(Image), matching: find.byType(SizedBox))
+        .first;
+    expect(t.getSize(box), const Size(64, 84));
+  });
+
+  testWidgets('CoachCard message uses caption in textPrimary', (t) async {
+    await t.pumpWidget(
+        host(const CoachCard(eyebrow: 'c', title: 't', message: 'Hello msg')));
+    final st = t.widget<Text>(find.text('Hello msg')).style!;
+    expect(st.fontSize, AppText.caption.fontSize);
+    expect(st.fontWeight, AppText.caption.fontWeight);
+    expect(st.color, AppPalette.light.textPrimary);
+  });
+
+  testWidgets('SectionHeader style and action semantics', (t) async {
+    final h = t.ensureSemantics();
+    await t.pumpWidget(
+        host(SectionHeader('Week', actionLabel: 'All', onAction: () {})));
+    final st = t.widget<Text>(find.text('Week')).style!;
+    expect(st.fontSize, 16);
+    expect(st.fontWeight, FontWeight.w600);
+    expect(
+        t
+            .getSize(find
+                .ancestor(
+                    of: find.text('All'), matching: find.byType(ConstrainedBox))
+                .first)
+            .height,
+        greaterThanOrEqualTo(44));
+    final sem = t.getSemantics(find.text('All'));
+    expect(sem.flagsCollection.isButton, isTrue);
+    h.dispose();
+  });
+
+  testWidgets('AppButton button semantics reflect enabled', (t) async {
+    final h = t.ensureSemantics();
+    await t.pumpWidget(host(AppButton(label: 'Go', onPressed: () {})));
+    var s = t.getSemantics(find.text('Go'));
+    expect(s.flagsCollection.isButton, isTrue);
+    expect(s.flagsCollection.isEnabled, Tristate.isTrue);
+    await t.pumpWidget(host(const AppButton(label: 'Go')));
+    s = t.getSemantics(find.text('Go'));
+    expect(s.flagsCollection.isButton, isTrue);
+    expect(s.flagsCollection.isEnabled, Tristate.isFalse);
+    h.dispose();
   });
 
   testWidgets('PillSelector selected pill uses pillSelected', (t) async {

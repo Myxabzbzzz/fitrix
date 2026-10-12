@@ -54,12 +54,35 @@ class WorkoutCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             if (done)
-              AppButton(
+              Semantics(
                 label: doneLabel,
-                icon: Icons.check,
-                style: AppButtonStyle.secondary,
-                size: AppButtonSize.small,
-                expand: true,
+                container: true,
+                excludeSemantics: true,
+                child: Container(
+                  height: 24,
+                  alignment: Alignment.center,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                  decoration: BoxDecoration(
+                      color: palette.buttonMuted,
+                      borderRadius: AppRadius.smAll),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.check,
+                          size: AppText.captionStrong.fontSize,
+                          color: palette.textPrimary),
+                      const SizedBox(width: AppSpacing.xxs),
+                      Flexible(
+                        child: Text(doneLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppText.captionStrong
+                                .copyWith(color: palette.textPrimary)),
+                      ),
+                    ],
+                  ),
+                ),
               )
             else
               AppButton(
