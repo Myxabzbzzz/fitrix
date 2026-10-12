@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 
 /// Horizontally scrolling row of pills (Gym / Fitness / Cycling / ...).
 class PillSelector<T> extends StatelessWidget {
@@ -24,29 +26,28 @@ class PillSelector<T> extends StatelessWidget {
       height: 32,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 6),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.xs),
         itemBuilder: (context, index) {
           final item = items[index];
           final isSelected = item == selected;
           return GestureDetector(
             onTap: () => onSelected(item),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              duration: Motion.of(context, Motion.fast),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: isSelected ? palette.pillSelected : palette.background,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: AppRadius.fullAll,
                 border: isSelected ? null : Border.all(color: palette.border),
               ),
               child: Text(
                 labelOf(item),
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected ? palette.onPillSelected : palette.textPrimary,
+                style: AppText.body14.copyWith(
+                  color:
+                      isSelected ? palette.onPillSelected : palette.textPrimary,
                 ),
               ),
             ),

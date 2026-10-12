@@ -1,0 +1,124 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_theme.dart';
+import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/core/widgets/coach_card.dart';
+import 'package:fitrix/core/widgets/day_badge.dart';
+import 'package:fitrix/core/widgets/pill_selector.dart';
+import 'package:fitrix/core/widgets/section_header.dart';
+import 'package:fitrix/core/widgets/workout_card.dart';
+
+Widget host(Widget child, {double width = 360, double scale = 1}) =>
+    MaterialApp(
+      theme: AppTheme.lightTheme,
+      home: MediaQuery(
+        data: MediaQueryData(textScaler: TextScaler.linear(scale)),
+        child: Scaffold(
+          body: Center(child: SizedBox(width: width, child: child)),
+        ),
+      ),
+    );
+
+void main() {
+  testWidgets('AppButton calls onPressed', (t) async {
+    var n = 0;
+    await t.pumpWidget(host(AppButton(label: 'Go', onPressed: () => n++)));
+    await t.tap(find.text('Go'));
+    expect(n, 1);
+  });
+
+  testWidgets('AppButton is disabled when onPressed is null', (t) async {
+    await t.pumpWidget(host(const AppButton(label: 'Go')));
+    final op = t.widget<Opacity>(find.descendant(
+        of: find.byType(AppButton), matching: find.byType(Opacity)));
+    expect(op.opacity, 0.4);
+    await t.tap(find.text('Go')); // must not throw
+  });
+
+  testWidgets('primary AppButton uses palette.accent', (t) async {
+    await t.pumpWidget(host(AppButton(label: 'Go', onPressed: () {})));
+    final box = t.widget<DecoratedBox>(find
+        .descendant(
+            of: find.byType(AppButton), matching: find.byType(DecoratedBox))
+        .first);
+    expect((box.decoration as BoxDecoration).color, AppPalette.light.accent);
+  });
+
+  testWidgets('DayBadge uppercases its label', (t) async {
+    await t.pumpWidget(host(const DayBadge(label: 'Mon')));
+    expect(find.text('MON'), findsOneWidget);
+  });
+
+  testWidgets('WorkoutCard shows title/day and calls onStart', (t) async {
+    var n = 0;
+    await t.pumpWidget(
+        host(WorkoutCard(title: 'Legs', dayLabel: 'Tue', onStart: () => n++)));
+    expect(find.text('Legs'), findsOneWidget);
+    expect(find.text('TUE'), findsOneWidget);
+    await t.tap(find.text('Start'));
+    expect(n, 1);
+  });
+
+  testWidgets('WorkoutCard done shows Done and no Start', (t) async {
+    await t.pumpWidget(host(WorkoutCard(
+        title: 'Legs', dayLabel: 'Tue', done: true, onStart: () {})));
+    expect(find.text('Done'), findsOneWidget);
+    expect(find.text('Start'), findsNothing);
+  });
+
+  testWidgets('CoachCard hides buttons with null label', (t) async {
+    await t.pumpWidget(host(const CoachCard(
+        eyebrow: 'Coach', title: 'Hi', message: 'Msg', primaryLabel: 'Yes')));
+    expect(find.text('Yes'), findsOneWidget);
+    expect(find.byType(AppButton), findsOneWidget);
+  });
+
+  testWidgets('PillSelector selected pill uses pillSelected', (t) async {
+    await t.pumpWidget(host(PillSelector<String>(
+      items: const ['a', 'b'],
+      selected: 'a',
+      labelOf: (s) => s,
+      onSelected: (_) {},
+    )));
+    final c = t.widget<AnimatedContainer>(find.ancestor(
+        of: find.text('a'), matching: find.byType(AnimatedContainer)));
+    expect(
+        (c.decoration as BoxDecoration).color, AppPalette.light.pillSelected);
+  });
+
+  testWidgets('components do not overflow at 320px and 1.3x text', (t) async {
+    await t.pumpWidget(host(
+      SingleChildScrollView(
+        child: Column(children: [
+          AppButton(label: 'Continue now', onPressed: () {}, expand: true),
+          const DayBadge(label: 'Today', today: true),
+          SizedBox(
+            height: 120,
+            child: Row(children: [
+              Expanded(
+                  child: WorkoutCard(
+                      title: 'Upper body strength',
+                      dayLabel: 'Mon',
+                      today: true,
+                      onStart: () {})),
+              Expanded(child: AddWorkoutCard(onTap: () {})),
+            ]),
+          ),
+          CoachCard(
+              eyebrow: 'Coach',
+              title: 'Ready for today?',
+              message: 'Your next workout is waiting for you.',
+              primaryLabel: 'Start',
+              onPrimary: () {},
+              secondaryLabel: 'Later',
+              onSecondary: () {}),
+          SectionHeader('This week', actionLabel: 'See all', onAction: () {}),
+        ]),
+      ),
+      width: 320,
+      scale: 1.3,
+    ));
+    expect(t.takeException(), isNull);
+  });
+}

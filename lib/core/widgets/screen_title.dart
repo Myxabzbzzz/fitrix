@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 
 /// Large left-aligned page title ("My workouts", "Gym", "My progress").
 /// Shows a back button when the current route can be popped.
@@ -15,7 +16,8 @@ class ScreenTitle extends StatelessWidget {
     final canPop = Navigator.of(context).canPop();
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(canPop ? 4 : 16, 12, 16, 12),
+      padding: EdgeInsets.fromLTRB(canPop ? AppSpacing.xxs : AppSpacing.md,
+          AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
       child: Row(
         children: [
           if (canPop)
@@ -27,11 +29,7 @@ class ScreenTitle extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.w600,
-                color: palette.textPrimary,
-              ),
+              style: AppText.headingXL.copyWith(color: palette.textPrimary),
             ),
           ),
           if (trailing != null) trailing!,
