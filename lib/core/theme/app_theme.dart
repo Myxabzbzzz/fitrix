@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/theme/app_colors.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 
 class AppTheme {
   AppTheme._();
@@ -8,15 +9,13 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       scaffoldBackgroundColor: AppColors.background,
-      fontFamily: 'SF Pro Display',
-
+      fontFamily: AppText.body,
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
         surface: AppColors.background,
         error: AppColors.error,
       ),
-
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -27,7 +26,6 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
-
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.buttonPrimary,
@@ -43,7 +41,6 @@ class AppTheme {
           ),
         ),
       ),
-
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.inputBackground,
@@ -59,60 +56,38 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.secondary, width: 1),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         hintStyle: const TextStyle(
           color: AppColors.textHint,
           fontSize: 15,
           fontWeight: FontWeight.w400,
         ),
       ),
-
-      textTheme: const TextTheme(
-        displayLarge: TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
-        displayMedium: TextStyle(
+      textTheme: TextTheme(
+        displayLarge: AppText.headingXL.copyWith(color: AppColors.textPrimary),
+        displayMedium: const TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
-        displaySmall: TextStyle(
+        displaySmall: const TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
-        headlineMedium: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
-        titleLarge: TextStyle(
+        headlineMedium: AppText.headingM.copyWith(color: AppColors.textPrimary),
+        titleLarge: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
-        titleMedium: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: AppColors.textPrimary,
-        ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: AppColors.textPrimary,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: AppColors.textPrimary,
-        ),
-        bodySmall: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          color: AppColors.textSecondary,
-        ),
+        titleMedium: AppText.headingS.copyWith(color: AppColors.textPrimary),
+        bodyLarge: AppText.bodyRegular
+            .copyWith(fontSize: 16, color: AppColors.textPrimary),
+        bodyMedium: AppText.bodyRegular.copyWith(color: AppColors.textPrimary),
+        bodySmall: AppText.caption.copyWith(color: AppColors.textSecondary),
+        labelSmall: AppText.micro.copyWith(color: AppColors.textSecondary),
       ),
     );
   }
@@ -121,16 +96,14 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       scaffoldBackgroundColor: AppColors.darkBackground,
-      fontFamily: 'SF Pro Display',
+      fontFamily: AppText.body,
       brightness: Brightness.dark,
-
       colorScheme: const ColorScheme.dark(
         primary: AppColors.darkPrimary,
         secondary: AppColors.darkSecondary,
         surface: AppColors.darkBackground,
         error: AppColors.error,
       ),
-
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.darkBackground,
         elevation: 0,
@@ -141,7 +114,6 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
-
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.darkButtonPrimary,
@@ -157,7 +129,6 @@ class AppTheme {
           ),
         ),
       ),
-
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.darkInputBackground,
@@ -171,62 +142,45 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.darkSecondary, width: 1),
+          borderSide:
+              const BorderSide(color: AppColors.darkSecondary, width: 1),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         hintStyle: const TextStyle(
           color: AppColors.darkTextHint,
           fontSize: 15,
           fontWeight: FontWeight.w400,
         ),
       ),
-
-      textTheme: const TextTheme(
-        displayLarge: TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.w700,
-          color: AppColors.darkTextPrimary,
-        ),
-        displayMedium: TextStyle(
+      textTheme: TextTheme(
+        displayLarge:
+            AppText.headingXL.copyWith(color: AppColors.darkTextPrimary),
+        displayMedium: const TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.w600,
           color: AppColors.darkTextPrimary,
         ),
-        displaySmall: TextStyle(
+        displaySmall: const TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w600,
           color: AppColors.darkTextPrimary,
         ),
-        headlineMedium: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: AppColors.darkTextPrimary,
-        ),
-        titleLarge: TextStyle(
+        headlineMedium:
+            AppText.headingM.copyWith(color: AppColors.darkTextPrimary),
+        titleLarge: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: AppColors.darkTextPrimary,
         ),
-        titleMedium: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: AppColors.darkTextPrimary,
-        ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: AppColors.darkTextPrimary,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: AppColors.darkTextPrimary,
-        ),
-        bodySmall: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          color: AppColors.darkTextSecondary,
-        ),
+        titleMedium:
+            AppText.headingS.copyWith(color: AppColors.darkTextPrimary),
+        bodyLarge: AppText.bodyRegular
+            .copyWith(fontSize: 16, color: AppColors.darkTextPrimary),
+        bodyMedium:
+            AppText.bodyRegular.copyWith(color: AppColors.darkTextPrimary),
+        bodySmall: AppText.caption.copyWith(color: AppColors.darkTextSecondary),
+        labelSmall: AppText.micro.copyWith(color: AppColors.darkTextSecondary),
       ),
     );
   }

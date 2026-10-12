@@ -44,6 +44,19 @@ class AppPalette {
   final Color tabBar;
   final Color tabInactive;
 
+  /// User chat bubbles
+  final Color bubbleUser;
+  final Color onBubbleUser;
+
+  /// Small badges / chips (grey @ 32% light, white @ 12% dark)
+  final Color badge;
+
+  /// Soft accent wash (accent @ 14% light, @ 22% dark)
+  final Color accentSoft;
+
+  /// Destructive actions and errors
+  final Color danger;
+
   const AppPalette._({
     required this.background,
     required this.textPrimary,
@@ -61,6 +74,11 @@ class AppPalette {
     required this.chartLabel,
     required this.tabBar,
     required this.tabInactive,
+    required this.bubbleUser,
+    required this.onBubbleUser,
+    required this.badge,
+    required this.accentSoft,
+    required this.danger,
   });
 
   static const light = AppPalette._(
@@ -80,6 +98,11 @@ class AppPalette {
     chartLabel: Color(0xFF828282),
     tabBar: Color(0xFFFFFFFF),
     tabInactive: Color(0xFF000000),
+    bubbleUser: Color(0xFF000000),
+    onBubbleUser: Color(0xFFFFFFFF),
+    badge: Color(0x52C5C5C5),
+    accentSoft: Color(0x24009ED8),
+    danger: Color(0xFFD93A3F),
   );
 
   static const dark = AppPalette._(
@@ -99,6 +122,11 @@ class AppPalette {
     chartLabel: Color(0xFF8E8E93),
     tabBar: Color(0xFF0D0D0D),
     tabInactive: Color(0xFFFFFFFF),
+    bubbleUser: Color(0xFFFFFFFF),
+    onBubbleUser: Color(0xFF000000),
+    badge: Color(0x1FFFFFFF),
+    accentSoft: Color(0x38009ED8),
+    danger: Color(0xFFFF6B6F),
   );
 
   static AppPalette of(BuildContext context) =>
