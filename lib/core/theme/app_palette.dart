@@ -12,6 +12,9 @@ class AppPalette {
   final Color textSecondary;
   final Color accent;
 
+  /// Text and icons on top of [accent] fills
+  final Color onAccent;
+
   /// Home / workout tiles and cards (#EEEEEE in the design)
   final Color tile;
 
@@ -62,6 +65,7 @@ class AppPalette {
     required this.textPrimary,
     required this.textSecondary,
     required this.accent,
+    required this.onAccent,
     required this.tile,
     required this.chartCard,
     required this.sheet,
@@ -86,6 +90,7 @@ class AppPalette {
     textPrimary: Color(0xFF000000),
     textSecondary: Color(0x6E000000),
     accent: AppColors.lightSecondary,
+    onAccent: Color(0xFFFFFFFF),
     tile: Color(0xFFEEEEEE),
     chartCard: Color(0xFFEDEDED),
     sheet: Color(0xFFF1F1F1),
@@ -110,6 +115,7 @@ class AppPalette {
     textPrimary: Color(0xFFFFFFFF),
     textSecondary: Color(0x8CFFFFFF),
     accent: AppColors.darkSecondary,
+    onAccent: Color(0xFFFFFFFF),
     tile: Color(0xFF1C1C1E),
     chartCard: Color(0xFF1C1C1E),
     sheet: Color(0xFF1C1C1E),

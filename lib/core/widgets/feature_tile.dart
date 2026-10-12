@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 
 /// Grey rounded tile with a bold uppercase label and a 3D illustration,
 /// used on the Home and My workouts screens. Shrinks slightly while pressed.
@@ -50,7 +51,7 @@ class _FeatureTileState extends State<FeatureTile> {
       curve: Motion.curve,
       child: Material(
         color: palette.tile,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.smAll,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: widget.onTap,
@@ -69,15 +70,14 @@ class _FeatureTileState extends State<FeatureTile> {
                   ),
                 ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                 child: Align(
                   alignment: widget.labelAlignment,
                   child: Text(
                     widget.label,
-                    style: TextStyle(
+                    style: AppText.displayMedium.copyWith(
                       fontSize: widget.labelSize,
-                      fontWeight: FontWeight.w800,
                       height: 0.95,
                       letterSpacing: 0.2,
                       color: palette.textPrimary,
