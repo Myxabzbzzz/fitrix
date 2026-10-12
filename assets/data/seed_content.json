@@ -148,11 +148,11 @@
     {
       "id": "steps-7",
       "title": "7-day steps challenge",
-      "description": "Walk 10,000 steps every day for seven days. Join in and keep the streak going.",
+      "description": "Walk 10,000 steps a day for 7 days in a row, starting the day you join.",
       "days": 7,
       "daily_target": "10,000 steps a day",
       "starts_on": "2026-10-12",
-      "ends_on": "2026-10-18"
+      "ends_on": "2027-12-31"
     }
   ],
   "places": [

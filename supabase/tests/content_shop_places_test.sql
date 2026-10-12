@@ -1,7 +1,7 @@
 -- pgTAP tests for the shop / content / places schema.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(36);
+select plan(41);
 
 -- Fixtures (as the table owner) ---------------------------------------------
 insert into auth.users (id, aud, role) values
@@ -10,6 +10,8 @@ insert into auth.users (id, aud, role) values
 
 insert into public.products (id, name, category, price_cents, active)
 values ('test-inactive', 'Retired item', 'apparel', 100, false);
+insert into public.products (id, name, category, price_cents, currency)
+values ('test-uzs', 'Local item', 'apparel', 500000, 'UZS');
 
 insert into public.orders (id, user_id, total_cents, currency)
 values ('cccccccc-0000-0000-0000-00000000000c', 'bbbbbbbb-0000-0000-0000-00000000000b', 5900, 'USD');
@@ -28,7 +30,7 @@ select is(
 
 -- Anonymous visitor ---------------------------------------------------------
 set local role anon;
-select is((select count(*)::int from public.products), 8, 'anon reads only active products');
+select is((select count(*)::int from public.products), 9, 'anon reads only active products (8 seeded + 1 fixture, inactive hidden)');
 select is((select count(*)::int from public.places), 22, 'anon reads places');
 select is((select count(*)::int from public.programs), 3, 'anon reads programs');
 select is((select count(*)::int from public.articles), 3, 'anon reads articles');
@@ -71,16 +73,28 @@ select throws_ok($$select public.place_order('[{"product_id":"fitrix-tee","quant
   '23505', null, 'duplicate lines are rejected');
 select is((select count(*)::int from public.orders), 0, 'failed attempts leave no order behind');
 
+select throws_ok($$select public.place_order('[{"product_id":"fitrix-tee","quantity":1},{"product_id":"test-uzs","quantity":1}]'::jsonb)$$,
+  '22023', null, 'mixed-currency cart is rejected');
+select throws_ok($$select public.place_order((select jsonb_agg(jsonb_build_object('product_id','fitrix-tee','quantity',1)) from generate_series(1,31)))$$,
+  '22023', null, '31 items are rejected');
+
 -- A valid order: prices come from the catalog even if the payload lies.
 select lives_ok($$select public.place_order(
   '[{"product_id":"home-training-set","quantity":2,"price_cents":1},{"product_id":"resistance-bands","quantity":1,"price_cents":1}]'::jsonb)$$,
   'valid order is placed');
-select is((select total_cents from public.orders), 5900 * 2 + 1600,
+select is((select total_cents from public.orders where currency = 'USD'), 5900 * 2 + 1600,
   'total is the catalog price x quantity, not the client price');
 select is((select count(*)::int from public.order_items where price_cents = 1), 0,
   'client-supplied price_cents is ignored');
 
+select lives_ok($$select public.place_order('[{"product_id":"test-uzs","quantity":2}]'::jsonb)$$,
+  'single-currency UZS order is placed');
+select is((select currency from public.orders where total_cents = 1000000), 'UZS',
+  'order currency follows the products');
+
 -- Challenges
+select throws_ok($$insert into public.challenge_participants (challenge_id, user_id, joined_at) values ('steps-7', 'aaaaaaaa-0000-0000-0000-00000000000a', '2020-01-01')$$,
+  '42501', null, 'clients cannot set joined_at');
 select lives_ok($$insert into public.challenge_participants (challenge_id, user_id) values ('steps-7', 'aaaaaaaa-0000-0000-0000-00000000000a')$$,
   'A can join a challenge');
 select throws_ok($$insert into public.challenge_participants (challenge_id, user_id) values ('steps-7', 'bbbbbbbb-0000-0000-0000-00000000000b')$$,

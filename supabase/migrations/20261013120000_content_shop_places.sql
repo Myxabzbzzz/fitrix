@@ -105,11 +105,13 @@ create function public.place_order(p_items jsonb)
 returns uuid
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 declare
   v_order uuid;
   v_total integer := 0;
+  v_currency text;
+  v_item_currency text;
   r record;
 begin
   if auth.uid() is null then
@@ -121,7 +123,8 @@ begin
     raise exception 'invalid items' using errcode = '22023';
   end if;
 
-  insert into orders (user_id, total_cents, currency)
+  -- The currency is fixed below, once the first catalog row is known.
+  insert into public.orders (user_id, total_cents, currency)
   values (auth.uid(), 0, 'USD')
   returning id into v_order;
 
@@ -129,18 +132,29 @@ begin
     select (e->>'product_id') as pid, (e->>'quantity')::int as qty
     from jsonb_array_elements(p_items) e
   loop
-    insert into order_items (order_id, product_id, quantity, price_cents)
-    select v_order, p.id, r.qty, p.price_cents
-    from products p
+    select p.currency into v_item_currency
+    from public.products p
     where p.id = r.pid and p.active;
     if not found then
       raise exception 'unknown product %', r.pid using errcode = '22023';
     end if;
+    if v_currency is null then
+      v_currency := v_item_currency;
+    elsif v_currency <> v_item_currency then
+      raise exception 'mixed currencies' using errcode = '22023';
+    end if;
+
+    insert into public.order_items (order_id, product_id, quantity, price_cents)
+    select v_order, p.id, r.qty, p.price_cents
+    from public.products p
+    where p.id = r.pid and p.active;
   end loop;
 
   select sum(quantity * price_cents) into v_total
-  from order_items where order_id = v_order;
-  update orders set total_cents = v_total where id = v_order;
+  from public.order_items where order_id = v_order;
+  update public.orders
+  set total_cents = v_total, currency = v_currency
+  where id = v_order;
   return v_order;
 end
 $$;
@@ -169,7 +183,9 @@ revoke all on public.products, public.orders, public.order_items,
 grant select on public.products, public.programs, public.articles,
   public.challenges, public.places to anon, authenticated;
 grant select on public.orders, public.order_items to authenticated;
-grant select, insert, delete on public.challenge_participants to authenticated;
+grant select, delete on public.challenge_participants to authenticated;
+-- Column-level insert so clients cannot set joined_at.
+grant insert (challenge_id, user_id) on public.challenge_participants to authenticated;
 
 create policy "Catalog: read active"
   on public.products for select to anon, authenticated using (active);
@@ -250,7 +266,7 @@ Fourth, adding weight too fast. Increase in small steps and keep every rep clean
 on conflict (id) do nothing;
 
 insert into public.challenges (id, title, description, days, daily_target, starts_on, ends_on) values
-  ('steps-7', '7-day steps challenge', 'Walk 10,000 steps every day for seven days. Join in and keep the streak going.', 7, '10,000 steps a day', '2026-10-12', '2026-10-18')
+  ('steps-7', '7-day steps challenge', 'Walk 10,000 steps a day for 7 days in a row, starting the day you join.', 7, '10,000 steps a day', '2026-10-12', '2027-12-31')
 on conflict (id) do nothing;
 
 insert into public.places (id, name, kind, type, lat, lon, hours, note, osm_ref) values
