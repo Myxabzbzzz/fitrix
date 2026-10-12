@@ -1,0 +1,402 @@
+{
+  "products": [
+    {
+      "id": "home-training-set",
+      "name": "Home training set",
+      "category": "equipment",
+      "price_cents": 5900,
+      "currency": "USD",
+      "image": "tile_workouts",
+      "word": null,
+      "position": 1,
+      "active": true
+    },
+    {
+      "id": "shaker-meal-planner",
+      "name": "Shaker & meal planner",
+      "category": "equipment",
+      "price_cents": 1800,
+      "currency": "USD",
+      "image": "tile_nutrition",
+      "word": null,
+      "position": 2,
+      "active": true
+    },
+    {
+      "id": "whey-protein-2-kg",
+      "name": "Whey protein, 2 kg",
+      "category": "supplements",
+      "price_cents": 5400,
+      "currency": "USD",
+      "image": null,
+      "word": "WHEY",
+      "position": 3,
+      "active": true
+    },
+    {
+      "id": "creatine-300-g",
+      "name": "Creatine, 300 g",
+      "category": "supplements",
+      "price_cents": 2200,
+      "currency": "USD",
+      "image": null,
+      "word": "CREA",
+      "position": 4,
+      "active": true
+    },
+    {
+      "id": "starter-box",
+      "name": "Starter box",
+      "category": "equipment",
+      "price_cents": 3500,
+      "currency": "USD",
+      "image": "tile_shop",
+      "word": null,
+      "position": 5,
+      "active": true
+    },
+    {
+      "id": "fitrix-tee",
+      "name": "FITRIX tee",
+      "category": "apparel",
+      "price_cents": 2500,
+      "currency": "USD",
+      "image": null,
+      "word": "TEE",
+      "position": 6,
+      "active": true
+    },
+    {
+      "id": "resistance-bands",
+      "name": "Resistance bands",
+      "category": "equipment",
+      "price_cents": 1600,
+      "currency": "USD",
+      "image": null,
+      "word": "BANDS",
+      "position": 7,
+      "active": true
+    },
+    {
+      "id": "training-shorts",
+      "name": "Training shorts",
+      "category": "apparel",
+      "price_cents": 2900,
+      "currency": "USD",
+      "image": null,
+      "word": "SHORTS",
+      "position": 8,
+      "active": true
+    }
+  ],
+  "programs": [
+    {
+      "id": "strength-base",
+      "title": "Strength base",
+      "meta": "8 weeks · 3× a week",
+      "level": "beginner",
+      "sport": "gym",
+      "image": "sport_gym",
+      "position": 1
+    },
+    {
+      "id": "fat-burn",
+      "title": "Fat burn",
+      "meta": "6 weeks · 4× a week",
+      "level": "medium",
+      "sport": "fitness",
+      "image": "sport_fitness",
+      "position": 2
+    },
+    {
+      "id": "ride-100-km",
+      "title": "Ride 100 km",
+      "meta": "4 weeks · 3 rides",
+      "level": "medium",
+      "sport": "cycling",
+      "image": "sport_cycling",
+      "position": 3
+    }
+  ],
+  "articles": [
+    {
+      "id": "why-rest-days-make-you-stronger",
+      "tag": "Recovery",
+      "title": "Why rest days make you stronger",
+      "minutes": 4,
+      "body": "Training is the stimulus, but the adaptation happens afterwards. When you lift or run hard, you create small amounts of fatigue and muscle stress. Your body repairs that during rest and comes back slightly more capable.\n\nMost people do well with at least one or two easier days a week. If you train hard four or five days, spread the rest days out rather than stacking them at the end of the week.\n\nRest does not have to mean sitting still. A short walk, light stretching or an easy ride keeps you moving without adding real load.\n\nSleep is the biggest recovery tool you have. Aim for a regular bedtime and seven to nine hours when you can.\n\nWatch for signs you need more rest: workouts feeling much harder than usual, poor sleep, or a lack of motivation lasting several days. Take an easy day, then reassess.",
+      "position": 1
+    },
+    {
+      "id": "how-much-protein-you-actually-need",
+      "tag": "Nutrition",
+      "title": "How much protein you actually need",
+      "minutes": 6,
+      "body": "Protein helps your body repair and build muscle. Most active adults do well with roughly 1.4 to 2.0 grams per kilogram of body weight per day.\n\nFor a 70 kg person that is about 100 to 140 grams a day. If you are just starting out, the lower end is plenty.\n\nSpread it across the day. Three or four meals with 25 to 40 grams each is easier than one huge serving at dinner.\n\nFood first: eggs, chicken, fish, dairy, beans, lentils and tofu all work. A powder is a convenience, not a requirement.\n\nIf you have a kidney condition or any health concern, check with a doctor before raising your protein intake.",
+      "position": 2
+    },
+    {
+      "id": "bench-press-5-mistakes-that-stall-progress",
+      "tag": "Technique",
+      "title": "Bench press: 5 mistakes that stall progress",
+      "minutes": 5,
+      "body": "The bench press looks simple, but small errors cost strength and put stress on your shoulders. Here are five to fix.\n\nFirst, a loose setup. Pull your shoulder blades back and down, keep your feet planted and keep your upper back tight against the bench.\n\nSecond, flaring your elbows straight out. Aim for roughly 45 to 70 degrees from your torso, so the bar travels over your lower chest.\n\nThird, bouncing the bar off your chest. Lower it under control, touch lightly and press back up.\n\nFourth, adding weight too fast. Increase in small steps and keep every rep clean. Fifth, skipping warm-up sets: do two or three lighter sets before your working weight.",
+      "position": 3
+    }
+  ],
+  "challenges": [
+    {
+      "id": "steps-7",
+      "title": "7-day steps challenge",
+      "description": "Walk 10,000 steps every day for seven days. Join in and keep the streak going.",
+      "days": 7,
+      "daily_target": "10,000 steps a day",
+      "starts_on": "2026-10-12",
+      "ends_on": "2026-10-18"
+    }
+  ],
+  "places": [
+    {
+      "id": "proform-gym",
+      "name": "Proform Gym",
+      "kind": "gyms",
+      "type": "Gym",
+      "lat": 41.31158,
+      "lon": 69.27419,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "centris",
+      "name": "Centris",
+      "kind": "gyms",
+      "type": "Fitness club",
+      "lat": 41.3109,
+      "lon": 69.27682,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "inside-fit",
+      "name": "Inside Fit",
+      "kind": "gyms",
+      "type": "Fitness club",
+      "lat": 41.2986,
+      "lon": 69.28749,
+      "hours": "Mon–Fri 07:00–23:00, Sat 08:00–21:00",
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "world-gym",
+      "name": "World Gym",
+      "kind": "gyms",
+      "type": "Gym",
+      "lat": 41.29531,
+      "lon": 69.28177,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "chekhov-light-sport-club",
+      "name": "Chekhov Light Sport Club",
+      "kind": "gyms",
+      "type": "Fitness club",
+      "lat": 41.29912,
+      "lon": 69.2764,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "chekhov-yulduz",
+      "name": "Chekhov “Yulduz”",
+      "kind": "gyms",
+      "type": "Fitness club",
+      "lat": 41.32326,
+      "lon": 69.28286,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "befit",
+      "name": "BEFIT",
+      "kind": "gyms",
+      "type": "Fitness club",
+      "lat": 41.32427,
+      "lon": 69.29595,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "amir-timur-square",
+      "name": "Amir Timur Square",
+      "kind": "parks",
+      "type": "Park",
+      "lat": 41.31143,
+      "lon": 69.27966,
+      "hours": "Open 24/7",
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "central-park",
+      "name": "Central Park",
+      "kind": "parks",
+      "type": "Park",
+      "lat": 41.31233,
+      "lon": 69.29872,
+      "hours": "Daily 10:00–22:00",
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "babur-eco-park",
+      "name": "Babur Eco Park",
+      "kind": "parks",
+      "type": "Park",
+      "lat": 41.30982,
+      "lon": 69.29562,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "outdoor-workout-area",
+      "name": "Outdoor workout area",
+      "kind": "parks",
+      "type": "Workout bars",
+      "lat": 41.30898,
+      "lon": 69.29535,
+      "hours": "Daily 06:00–23:00",
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "gogol-alley",
+      "name": "Gogol Alley",
+      "kind": "parks",
+      "type": "Alley",
+      "lat": 41.31604,
+      "lon": 69.28675,
+      "hours": "Open 24/7",
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "navruz-park",
+      "name": "Navruz Park",
+      "kind": "parks",
+      "type": "Park",
+      "lat": 41.32581,
+      "lon": 69.26698,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "yakub-kolas-park",
+      "name": "Yakub Kolas Park",
+      "kind": "parks",
+      "type": "Park",
+      "lat": 41.3022,
+      "lon": 69.27703,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "anhor-canal-run",
+      "name": "Anhor canal run",
+      "kind": "tracks",
+      "type": "Running route",
+      "lat": 41.31642,
+      "lon": 69.2653,
+      "hours": null,
+      "note": "Route follows the Anhor canal embankment",
+      "osm_ref": null
+    },
+    {
+      "id": "pakhtakor-central-stadium",
+      "name": "Pakhtakor Central Stadium",
+      "kind": "tracks",
+      "type": "Stadium",
+      "lat": 41.31549,
+      "lon": 69.26028,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "athletics-federation-track",
+      "name": "Athletics Federation track",
+      "kind": "tracks",
+      "type": "Running track",
+      "lat": 41.3144,
+      "lon": 69.26255,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "running-track",
+      "name": "Running track",
+      "kind": "tracks",
+      "type": "Running track",
+      "lat": 41.29991,
+      "lon": 69.28065,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "yoshlik-sports-complex",
+      "name": "Yoshlik Sports Complex",
+      "kind": "pools",
+      "type": "Sports complex",
+      "lat": 41.31711,
+      "lon": 69.25789,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "volna-uz",
+      "name": "Volna.uz",
+      "kind": "pools",
+      "type": "Sports club",
+      "lat": 41.31988,
+      "lon": 69.29869,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "olympic-reserve-aquatics-school",
+      "name": "Olympic Reserve Aquatics School",
+      "kind": "pools",
+      "type": "Swimming school",
+      "lat": 41.29869,
+      "lon": 69.25744,
+      "hours": null,
+      "note": null,
+      "osm_ref": null
+    },
+    {
+      "id": "more-water-park",
+      "name": "More water park",
+      "kind": "pools",
+      "type": "Water park",
+      "lat": 41.31123,
+      "lon": 69.30026,
+      "hours": "Daily 09:00–22:00",
+      "note": null,
+      "osm_ref": null
+    }
+  ]
+}
