@@ -82,12 +82,15 @@ class _TabBar extends StatelessWidget {
                 width: 2,
               ),
             ),
-            child: ClipOval(
-              child: Image.asset(
-                'assets/images/felix_avatar.png',
-                width: 28,
-                height: 28,
-                fit: BoxFit.cover,
+            child: Padding(
+              padding: const EdgeInsets.all(2),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/felix_avatar.png',
+                  width: 24,
+                  height: 24,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),

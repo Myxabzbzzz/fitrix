@@ -79,6 +79,13 @@ void main() {
       return (d.border as Border?)?.top.color;
     }
 
+    final avatar = find.byWidgetPredicate((w) =>
+        w is Image &&
+        w.image is AssetImage &&
+        (w.image as AssetImage).assetName == 'assets/images/felix_avatar.png');
+    // 28 px outer circle, 24 px image inside the 2 px ring, both states.
+    expect(tester.getSize(ring), const Size(28, 28));
+    expect(tester.getSize(avatar), const Size(24, 24));
     expect(ringColor(), Colors.transparent);
     await tester.tap(find.bySemanticsLabel('Felix').first);
     await tester.pumpAndSettle();
@@ -86,5 +93,7 @@ void main() {
         AppPalette.of(tester.element(find.byKey(const ValueKey('felix-ring'))))
             .accent;
     expect(ringColor(), accent);
+    expect(tester.getSize(ring), const Size(28, 28));
+    expect(tester.getSize(avatar), const Size(24, 24));
   });
 }
