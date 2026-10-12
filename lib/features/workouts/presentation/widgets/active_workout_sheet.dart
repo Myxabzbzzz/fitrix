@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/elapsed_time_text.dart';
@@ -29,6 +31,14 @@ class ActiveWorkoutSheet extends ConsumerStatefulWidget {
 
   /// Key of the draggable header (for tests).
   static const headerKey = ValueKey('activeWorkoutSheetHeader');
+
+  /// Keys of the restyled parts (for tests).
+  static const handleKey = ValueKey('activeWorkoutHandle');
+  static const timerKey = ValueKey('activeWorkoutTimer');
+  static const captionKey = ValueKey('activeWorkoutSetsCaption');
+  static const progressTrackKey = ValueKey('activeWorkoutProgressTrack');
+  static const progressFillKey = ValueKey('activeWorkoutProgressFill');
+  static const checkKey = ValueKey('activeWorkoutCheck');
 
   @override
   ConsumerState<ActiveWorkoutSheet> createState() => _ActiveWorkoutSheetState();
@@ -159,14 +169,17 @@ class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
                     key: ActiveWorkoutSheet.surfaceKey,
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
-                      color: palette.sheet,
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(25)),
+                      // The sheet colour when collapsed; the page background
+                      // when open so the exercise cards (sheet colour) read.
+                      color: Color.lerp(palette.sheet, palette.background, t),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(AppRadius.lg),
+                      ),
                       boxShadow: const [
                         BoxShadow(
-                          color: Color(0x26000000),
-                          blurRadius: 15,
-                          offset: Offset(0, -2),
+                          color: Color.fromRGBO(0, 0, 0, 0.12),
+                          blurRadius: 24,
+                          offset: Offset(0, -6),
                         ),
                       ],
                     ),
@@ -224,7 +237,7 @@ class _SheetHeader extends StatelessWidget {
 
   const _SheetHeader({required this.workout, required this.t});
 
-  static const double expandedHeight = 96;
+  static const double expandedHeight = 120;
 
   static double heightAt(double t) =>
       ui.lerpDouble(ActiveWorkoutSheet.collapsedHeight, expandedHeight, t)!;
@@ -232,7 +245,7 @@ class _SheetHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    double lerp(double a, double b) => ui.lerpDouble(a, b, t)!;
+    final timerSize = ui.lerpDouble(AppText.micro.fontSize!, 44, t)!;
 
     return SizedBox(
       width: double.infinity,
@@ -243,26 +256,28 @@ class _SheetHeader extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 56,
+              key: ActiveWorkoutSheet.handleKey,
+              width: 69,
               height: 2,
-              color: palette.textPrimary,
-            ),
-            SizedBox(height: lerp(8, 14)),
-            Text(
-              workout.template.name,
-              style: TextStyle(
-                fontSize: lerp(16, 24),
-                fontWeight: FontWeight.w600,
+              decoration: BoxDecoration(
                 color: palette.textPrimary,
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              workout.template.name,
+              style: AppText.headingS.copyWith(color: palette.textPrimary),
+            ),
             ElapsedTimeText(
+              key: ActiveWorkoutSheet.timerKey,
               startedAt: workout.startedAt,
-              style: TextStyle(
-                fontSize: lerp(10, 14),
-                fontWeight: FontWeight.w500,
+              style: AppText.micro.copyWith(
+                fontSize: timerSize,
+                fontWeight: t > 0.5 ? FontWeight.w600 : FontWeight.w500,
+                height: t > 0.5 ? 1.1 : 1.4,
                 color: palette.textPrimary,
+                fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
           ],
@@ -315,75 +330,142 @@ class _SetsTable extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final notifier = ref.read(activeWorkoutProvider.notifier);
+    final total = workout.totalSets;
+    final done = workout.completedSets;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 24),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, 0, AppSpacing.md, AppSpacing.lg),
       children: [
+        Center(
+          child: Text(
+            '$done of $total sets',
+            key: ActiveWorkoutSheet.captionKey,
+            style: AppText.caption.copyWith(
+              color: palette.textSecondary,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        _ProgressBar(fraction: total == 0 ? 0 : done / total),
+        const SizedBox(height: AppSpacing.md),
         if (workout.exercises.isEmpty)
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Text(
               'No exercises yet. Add some with "Edit" on the workout card.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: palette.textSecondary),
+              style: AppText.body14.copyWith(color: palette.textSecondary),
             ),
           ),
         for (var e = 0; e < workout.exercises.length; e++) ...[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(9, 12, 9, 6),
-            child: Text(
-              workout.exercises[e].name,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: palette.textPrimary,
-              ),
+          Container(
+            margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: palette.sheet,
+              borderRadius: AppRadius.mdAll,
             ),
-          ),
-          const _TableHeader(),
-          for (var s = 0; s < workout.exercises[e].sets.length; s++)
-            _SetRow(
-              key: ValueKey('set-$e-$s'),
-              index: s,
-              set: workout.exercises[e].sets[s],
-              onToggle: () => notifier.toggleSet(e, s),
-              onKgChanged: (kg) => notifier.setKg(e, s, kg),
-              onRepsChanged: (reps) => notifier.setReps(e, s, reps),
-            ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton.icon(
-              onPressed: () => notifier.addSet(e),
-              icon: const Icon(Icons.add, size: 16),
-              label: const Text('Add set'),
-              style: TextButton.styleFrom(foregroundColor: palette.accent),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        workout.exercises[e].name,
+                        style: AppText.headingS
+                            .copyWith(color: palette.textPrimary),
+                      ),
+                    ),
+                    Text(
+                      '${workout.exercises[e].sets.length} sets',
+                      style: AppText.caption
+                          .copyWith(color: palette.textSecondary),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                const _TableHeader(),
+                for (var s = 0; s < workout.exercises[e].sets.length; s++)
+                  _SetRow(
+                    key: ValueKey('set-$e-$s'),
+                    index: s,
+                    set: workout.exercises[e].sets[s],
+                    onToggle: () => notifier.toggleSet(e, s),
+                    onKgChanged: (kg) => notifier.setKg(e, s, kg),
+                    onRepsChanged: (reps) => notifier.setReps(e, s, reps),
+                  ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: () => notifier.addSet(e),
+                    icon: const Icon(Icons.add, size: 16),
+                    label: const Text('Add set'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: palette.accent,
+                      textStyle: AppText.captionStrong,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
-        const SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 9),
-          child: SizedBox(
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () => _finish(context, ref),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: palette.accent,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Finish workout'),
-            ),
-          ),
+        const SizedBox(height: AppSpacing.xs),
+        AppButton(
+          label: 'Finish workout',
+          size: AppButtonSize.large,
+          expand: true,
+          onPressed: () => _finish(context, ref),
         ),
       ],
     );
   }
 }
 
-/// Column widths follow the design: Set · Previous · Kg · Reps · Status.
-const _colSet = 44.0;
-const _colCell = 64.0;
-const _colStatus = 52.0;
+/// 6 px accent bar whose fill animates to [fraction] over 400 ms.
+class _ProgressBar extends StatelessWidget {
+  final double fraction;
+
+  const _ProgressBar({required this.fraction});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Container(
+      key: ActiveWorkoutSheet.progressTrackKey,
+      height: 6,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: palette.buttonMuted,
+        borderRadius: AppRadius.fullAll,
+      ),
+      alignment: Alignment.centerLeft,
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(end: fraction.clamp(0.0, 1.0)),
+        duration: Motion.of(context, Motion.slow),
+        curve: Motion.curve,
+        builder: (context, value, _) => FractionallySizedBox(
+          widthFactor: value,
+          child: DecoratedBox(
+            key: ActiveWorkoutSheet.progressFillKey,
+            decoration: BoxDecoration(
+              color: palette.accent,
+              borderRadius: AppRadius.fullAll,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Five-column grid: Set · Previous · Kg · Reps · check.
+const _colSet = 28.0;
+const _colCheck = 36.0;
+const _gap = AppSpacing.xs;
 
 class _TableHeader extends StatelessWidget {
   const _TableHeader();
@@ -391,48 +473,23 @@ class _TableHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final style = TextStyle(
-      fontSize: 13,
-      fontWeight: FontWeight.w600,
-      color: palette.textPrimary,
-    );
+    final style = AppText.microStrong.copyWith(color: palette.textSecondary);
+    Widget hd(String text) =>
+        Text(text, style: style, textAlign: TextAlign.center);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
       child: Row(
         children: [
-          SizedBox(
-            width: _colSet,
-            child: Text('Set', style: style, textAlign: TextAlign.center),
-          ),
-          Expanded(
-            child: Text('Previous', style: style, textAlign: TextAlign.center),
-          ),
-          SizedBox(
-            width: _colCell,
-            child: Text.rich(
-              TextSpan(
-                text: 'Kg',
-                children: [
-                  TextSpan(
-                    text: '*',
-                    style: TextStyle(color: palette.accent),
-                  ),
-                ],
-              ),
-              style: style,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(width: 12),
-          SizedBox(
-            width: _colCell,
-            child: Text('Reps', style: style, textAlign: TextAlign.center),
-          ),
-          SizedBox(
-            width: _colStatus,
-            child: Text('Status', style: style, textAlign: TextAlign.center),
-          ),
+          SizedBox(width: _colSet, child: hd('Set')),
+          const SizedBox(width: _gap),
+          Expanded(child: hd('Previous')),
+          const SizedBox(width: _gap),
+          Expanded(child: hd('Kg')),
+          const SizedBox(width: _gap),
+          Expanded(child: hd('Reps')),
+          const SizedBox(width: _gap),
+          const SizedBox(width: _colCheck),
         ],
       ),
     );
@@ -458,73 +515,81 @@ class _SetRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final textStyle = TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w600,
+    final textStyle = AppText.body14.copyWith(
       color: palette.textPrimary,
+      fontFeatures: const [FontFeature.tabularFigures()],
     );
 
-    Widget cell({required double width, required Widget child, Color? color}) =>
-        Container(
-          width: width,
-          height: 29,
+    Widget cell({required Widget child, bool plain = false}) => Container(
+          height: 32,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: color ?? palette.tableCell,
-            borderRadius: BorderRadius.circular(8),
+            color: plain ? Colors.transparent : palette.tableCell,
+            borderRadius: AppRadius.smAll,
           ),
           child: child,
         );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         children: [
           SizedBox(
             width: _colSet,
-            child: Center(
-              child: cell(
-                width: 36,
-                child: Text('${index + 1}', style: textStyle),
+            child: cell(
+              plain: true,
+              child: Text(
+                '${index + 1}',
+                style: textStyle.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
           ),
+          const SizedBox(width: _gap),
           Expanded(
-            child: Text(
-              '${formatKg(set.previousKg)} kg × ${set.previousReps}',
-              textAlign: TextAlign.center,
-              style: textStyle.copyWith(fontSize: 11),
+            child: cell(
+              child: Text(
+                '${formatKg(set.previousKg)}×${set.previousReps}',
+                style: textStyle.copyWith(color: palette.textSecondary),
+              ),
             ),
           ),
-          cell(
-            width: _colCell,
-            child: _NumberField(
-              initialValue: '${formatKg(set.kg)} kg',
-              decimal: true,
-              style: textStyle,
-              onChanged: (value) {
-                final kg = double.tryParse(value.replaceAll(',', '.'));
-                if (kg != null) onKgChanged(kg);
-              },
+          const SizedBox(width: _gap),
+          Expanded(
+            child: cell(
+              child: _NumberField(
+                initialValue: '${formatKg(set.kg)} kg',
+                decimal: true,
+                style: textStyle,
+                onChanged: (value) {
+                  final kg = double.tryParse(value.replaceAll(',', '.'));
+                  if (kg != null) onKgChanged(kg);
+                },
+              ),
             ),
           ),
-          const SizedBox(width: 12),
-          cell(
-            width: _colCell,
-            child: _NumberField(
-              initialValue: '${set.reps}',
-              decimal: false,
-              style: textStyle,
-              onChanged: (value) {
-                final reps = int.tryParse(value);
-                if (reps != null) onRepsChanged(reps);
-              },
+          const SizedBox(width: _gap),
+          Expanded(
+            child: cell(
+              child: _NumberField(
+                initialValue: '${set.reps}',
+                decimal: false,
+                style: textStyle,
+                onChanged: (value) {
+                  final reps = int.tryParse(value);
+                  if (reps != null) onRepsChanged(reps);
+                },
+              ),
             ),
           ),
+          const SizedBox(width: _gap),
           SizedBox(
-            width: _colStatus,
+            width: _colCheck,
             child: Center(
-              child: _CheckButton(done: set.done, onToggle: onToggle),
+              child: _CheckButton(
+                index: index,
+                done: set.done,
+                onToggle: onToggle,
+              ),
             ),
           ),
         ],
@@ -533,13 +598,19 @@ class _SetRow extends StatelessWidget {
   }
 }
 
-/// The "Status" cell: fills with the accent colour and pops when a set is
-/// checked off or unchecked, with a light haptic tap.
+/// The check cell: 32×32, fills with the accent when done. The icon pops
+/// (scale 0.3 → 1 with a spring-like overshoot) only on the set whose
+/// state just changed, with a light haptic tap.
 class _CheckButton extends StatefulWidget {
+  final int index;
   final bool done;
   final VoidCallback onToggle;
 
-  const _CheckButton({required this.done, required this.onToggle});
+  const _CheckButton({
+    required this.index,
+    required this.done,
+    required this.onToggle,
+  });
 
   @override
   State<_CheckButton> createState() => _CheckButtonState();
@@ -553,23 +624,8 @@ class _CheckButtonState extends State<_CheckButton>
     value: 1,
   );
 
-  late final Animation<double> _scale = TweenSequence<double>([
-    TweenSequenceItem(
-      tween:
-          Tween(begin: 1.0, end: 0.82).chain(CurveTween(curve: Curves.easeOut)),
-      weight: 30,
-    ),
-    TweenSequenceItem(
-      tween: Tween(begin: 0.82, end: 1.12)
-          .chain(CurveTween(curve: Curves.easeOut)),
-      weight: 40,
-    ),
-    TweenSequenceItem(
-      tween: Tween(begin: 1.12, end: 1.0)
-          .chain(CurveTween(curve: Curves.easeInOut)),
-      weight: 30,
-    ),
-  ]).animate(_pop);
+  late final Animation<double> _scale = Tween<double>(begin: 0.3, end: 1)
+      .animate(CurvedAnimation(parent: _pop, curve: Curves.easeOutBack));
 
   @override
   void didUpdateWidget(_CheckButton oldWidget) {
@@ -593,34 +649,31 @@ class _CheckButtonState extends State<_CheckButton>
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final duration = Motion.of(context, Motion.fast);
     final done = widget.done;
 
     return Semantics(
       button: true,
       checked: done,
-      label: 'Set done',
+      label: 'Set ${widget.index + 1} done',
       child: GestureDetector(
         onTap: _onTap,
-        child: ScaleTransition(
-          scale: _scale,
-          child: AnimatedContainer(
-            duration: duration,
-            curve: Motion.curve,
-            width: 29,
-            height: 29,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: done ? palette.accent : palette.tableCell,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: TweenAnimationBuilder<Color?>(
-              tween: ColorTween(
-                end: done ? Colors.white : palette.textPrimary,
-              ),
-              duration: duration,
-              builder: (context, color, _) =>
-                  Icon(Icons.check, size: 18, color: color),
+        child: AnimatedContainer(
+          key: ActiveWorkoutSheet.checkKey,
+          duration: Motion.of(context, Motion.fast),
+          curve: Motion.curve,
+          width: 32,
+          height: 32,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: done ? palette.accent : palette.tableCell,
+            borderRadius: AppRadius.smAll,
+          ),
+          child: ScaleTransition(
+            scale: _scale,
+            child: Icon(
+              Icons.check,
+              size: 18,
+              color: done ? palette.onAccent : palette.textSecondary,
             ),
           ),
         ),
