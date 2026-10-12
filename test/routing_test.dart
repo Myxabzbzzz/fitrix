@@ -7,7 +7,7 @@ import 'package:latlong2/latlong.dart';
 
 void main() {
   late RouteGraph graph;
-  late Router router;
+  late RoutePlanner router;
   const me = LatLng(41.3104, 69.2789);
   const pakhtakor = LatLng(41.31549, 69.26028);
 
@@ -15,7 +15,7 @@ void main() {
     final json = jsonDecode(File('assets/data/route-graph.json').readAsStringSync())
         as Map<String, dynamic>;
     graph = RouteGraph.fromJson(json);
-    router = Router(graph);
+    router = RoutePlanner(graph);
   });
 
   test('walk to Gogol Alley', () {
@@ -71,7 +71,7 @@ void main() {
       ],
       'metro': <dynamic>[],
     });
-    final r = Router(g);
+    final r = RoutePlanner(g);
     const a = LatLng(41.0, 69.0);
     const b = LatLng(41.0, 69.001);
     expect(r.plan(TravelMode.car, a, b)!.meters, closeTo(100, 1));
@@ -84,6 +84,12 @@ void main() {
     expect(graph.covers(far), isFalse);
     expect(graph.covers(me), isTrue);
     final all = router.planAll(far, far);
+    expect(all.values.every((v) => v == null), isTrue);
+    expect(all.keys, containsAll(TravelMode.values));
+  });
+
+  test('covered start, destination outside coverage: all null', () {
+    final all = router.planAll(me, const LatLng(40.0, 70.0));
     expect(all.values.every((v) => v == null), isTrue);
     expect(all.keys, containsAll(TravelMode.values));
   });

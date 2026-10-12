@@ -53,8 +53,8 @@ class _Street {
   final List<LatLng> pts;
 }
 
-class Router {
-  Router(this.graph) : _metro = MetroNetwork(graph.lines);
+class RoutePlanner {
+  RoutePlanner(this.graph) : _metro = MetroNetwork(graph.lines);
 
   final RouteGraph graph;
   final MetroNetwork _metro;
@@ -68,6 +68,10 @@ class Router {
 
   RoutePlan? plan(TravelMode mode, LatLng from, LatLng to) {
     if (!graph.covers(from) || !graph.covers(to)) return null;
+    return _plan(mode, from, to);
+  }
+
+  RoutePlan? _plan(TravelMode mode, LatLng from, LatLng to) {
     if (mode == TravelMode.metro) return _metroPlan(from, to);
     final r = _street(mode, from, to);
     if (r == null) return null;
@@ -81,8 +85,9 @@ class Router {
 
   Map<TravelMode, RoutePlan?> planAll(LatLng from, LatLng to) {
     final out = <TravelMode, RoutePlan?>{};
+    final covered = graph.covers(from) && graph.covers(to);
     for (final m in TravelMode.values) {
-      out[m] = plan(m, from, to);
+      out[m] = covered ? _plan(m, from, to) : null;
     }
     final metro = out[TravelMode.metro], walk = out[TravelMode.walk];
     if (metro != null && walk != null && metro.duration >= walk.duration) {
