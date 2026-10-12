@@ -109,9 +109,13 @@ class SupabaseContentSource implements ContentSource {
 
   @override
   Future<void> joinChallenge(String challengeId, String userId) async {
-    await _client
-        .from('challenge_participants')
-        .upsert({'challenge_id': challengeId, 'user_id': userId});
+    try {
+      await _client
+          .from('challenge_participants')
+          .insert({'challenge_id': challengeId, 'user_id': userId});
+    } on PostgrestException catch (e) {
+      if (e.code != '23505') rethrow; // already joined
+    }
   }
 
   @override
