@@ -56,9 +56,8 @@ class _TabBar extends StatelessWidget {
     final palette = AppPalette.of(context);
 
     Widget icon(int index, IconData outlined, IconData filled, String label) {
-      final selected = index == currentIndex;
       return Icon(
-        selected ? filled : outlined,
+        index == currentIndex ? filled : outlined,
         size: 26,
         color: palette.tabInactive,
         semanticLabel: label,
@@ -70,13 +69,28 @@ class _TabBar extends StatelessWidget {
       icon(0, Icons.explore_outlined, Icons.explore, 'Discover'),
       icon(1, Icons.shopping_cart_outlined, Icons.shopping_cart, 'Shop'),
       icon(2, Icons.home_outlined, Icons.home, 'Home'),
-      Text(
-        'FI',
-        semanticsLabel: 'Felix',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: felixSelected ? FontWeight.w800 : FontWeight.w600,
-          color: palette.accent,
+      Semantics(
+        label: 'Felix',
+        image: true,
+        child: ExcludeSemantics(
+          child: DecoratedBox(
+            key: const ValueKey('felix-ring'),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: felixSelected ? palette.accent : Colors.transparent,
+                width: 2,
+              ),
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/felix_avatar.png',
+                width: 28,
+                height: 28,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
         ),
       ),
       icon(4, Icons.person_outline, Icons.person, 'Profile'),
@@ -85,14 +99,12 @@ class _TabBar extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: palette.tabBar,
-        boxShadow: const [
-          BoxShadow(color: Color(0x14000000), blurRadius: 1, offset: Offset(0, -0.5)),
-        ],
+        border: Border(top: BorderSide(color: palette.border, width: 0.5)),
       ),
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 52,
+          height: 48,
           child: Row(
             children: [
               for (var i = 0; i < items.length; i++)
