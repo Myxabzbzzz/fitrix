@@ -1,27 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/widgets/typing_indicator.dart';
 
+/// Felix's avatar, shown beside the last bubble of a Felix group (24) and in
+/// the chat header (32).
+class FelixAvatar extends StatelessWidget {
+  final double size;
+
+  const FelixAvatar({super.key, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipOval(
+      child: Image.asset(
+        'assets/images/felix_avatar.png',
+        key: const ValueKey('felix-avatar'),
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+}
+
 class ChatBubble extends StatelessWidget {
+  static const double maxWidth = 247;
+
   final ChatMessage message;
 
   /// Called when a failed reply is tapped.
   final VoidCallback? onRetry;
 
+  /// True for the last message of one author's run: it gets the Felix avatar
+  /// and the larger gap below. Earlier ones sit 2 px apart.
+  final bool lastInGroup;
+
   const ChatBubble({
     super.key,
     required this.message,
     this.onRetry,
+    this.lastInGroup = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final isUser = message.sender == MessageSender.user;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isUser
-        ? (isDark ? AppColors.darkTextOnDark : AppColors.lightTextOnDark)
-        : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary);
+    final textColor = isUser ? palette.onBubbleUser : palette.textPrimary;
 
     final Widget content;
     if (message.isStreaming && message.content.isEmpty) {
@@ -31,52 +58,41 @@ class ChatBubble extends StatelessWidget {
     } else {
       content = Text(
         message.content,
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w400,
-          color: textColor,
-          height: 1.4,
-        ),
+        style: AppText.bodyRegular.copyWith(color: textColor),
       );
     }
 
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+    final bubble = GestureDetector(
+      onTap: message.isFailed ? onRetry : null,
+      child: Container(
+        key: const ValueKey('chat-bubble'),
+        constraints: const BoxConstraints(maxWidth: maxWidth),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+        decoration: BoxDecoration(
+          color: isUser ? palette.bubbleUser : palette.bubble,
+          borderRadius: AppRadius.mdAll,
+          border: message.isFailed ? Border.all(color: palette.danger) : null,
+        ),
+        child: content,
+      ),
+    );
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: lastInGroup ? AppSpacing.xs : 2),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isUser) ...[
-            CircleAvatar(
-              radius: 16,
-              backgroundColor: isDark ? AppColors.darkCardBackground : AppColors.lightCardBackground,
-              child: Icon(
-                Icons.person,
-                size: 16,
-                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-              ),
+            SizedBox(
+              width: 24,
+              child: lastInGroup ? const FelixAvatar(size: 24) : null,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.xs),
           ],
-          Flexible(
-            child: GestureDetector(
-              onTap: message.isFailed ? onRetry : null,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: isUser
-                      ? (isDark ? AppColors.darkChatBubbleUser : AppColors.lightChatBubbleUser)
-                      : (isDark ? AppColors.darkChatBubbleAssistant : AppColors.lightChatBubbleAssistant),
-                  borderRadius: BorderRadius.circular(20),
-                  border: message.isFailed
-                      ? Border.all(color: AppColors.error.withValues(alpha: 0.6))
-                      : null,
-                ),
-                child: content,
-              ),
-            ),
-          ),
-          if (isUser) const SizedBox(width: 40),
+          Flexible(child: bubble),
         ],
       ),
     );
@@ -96,27 +112,21 @@ class ChatFailedContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final danger = AppPalette.of(context).danger;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          message,
-          style: TextStyle(fontSize: 14, color: color, height: 1.3),
-        ),
-        const SizedBox(height: 6),
-        const Row(
+        Text(message, style: AppText.bodyRegular.copyWith(color: color)),
+        const SizedBox(height: AppSpacing.xxs),
+        Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.refresh, size: 16, color: AppColors.error),
-            SizedBox(width: 4),
+            Icon(Icons.refresh, size: 16, color: danger),
+            const SizedBox(width: AppSpacing.xxs),
             Text(
               'Tap to retry',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: AppColors.error,
-              ),
+              style: AppText.captionStrong.copyWith(color: danger),
             ),
           ],
         ),
