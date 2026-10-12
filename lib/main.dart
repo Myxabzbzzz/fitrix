@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:fitrix/core/settings/theme_mode_provider.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/app_session.dart';
@@ -176,11 +177,11 @@ class FitrixApp extends ConsumerWidget {
       // Provides true black backgrounds and light text for OLED displays
       darkTheme: AppTheme.darkTheme,
 
-      // Theme mode strategy:
+      // Theme mode strategy (see themeModeProvider):
       // - ThemeMode.system: Follows device system settings (default)
       // - ThemeMode.light: Always use light theme
       // - ThemeMode.dark: Always use dark theme
-      themeMode: ThemeMode.system,
+      themeMode: ref.watch(themeModeProvider),
 
       // The language picked in the app (lib/l10n/*.arb), not the device's.
       locale: locale,
