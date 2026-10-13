@@ -49,7 +49,9 @@ class PlaceCard extends StatelessWidget {
   });
 
   final Place place;
-  final double distanceMeters;
+
+  /// Null while the user's position is still being determined.
+  final double? distanceMeters;
   final TravelMode mode;
   final ValueChanged<TravelMode> onMode;
 
@@ -104,7 +106,9 @@ class PlaceCard extends StatelessWidget {
             children: [
               _Meta(
                   icon: Icons.place_outlined,
-                  text: l10n.mapAway(formatLength(l10n, distanceMeters))),
+                  text: l10n.mapAway(distanceMeters == null
+                      ? '…'
+                      : formatLength(l10n, distanceMeters!))),
               _Meta(
                   icon: Icons.schedule,
                   text: place.hours ?? l10n.mapHoursUnknown),
@@ -152,7 +156,7 @@ class PlaceCard extends StatelessWidget {
     final plan = routes?.plans[m];
     final enabled = routes != null && _covered;
     final text = routes == null
-        ? '…'
+        ? (failed ? '—' : '…')
         : plan == null
             ? '—'
             : formatDuration(l10n, plan.duration);
@@ -238,9 +242,7 @@ class PlaceCard extends StatelessWidget {
               ],
             ),
           Text(
-            plan.walkingIsFaster
-                ? '$total · ${l10n.mapWalkingFaster}'
-                : total,
+            plan.walkingIsFaster ? '$total · ${l10n.mapWalkingFaster}' : total,
             style: AppText.caption.copyWith(color: palette.textSecondary),
           ),
         ],

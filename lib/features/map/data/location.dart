@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -26,13 +28,18 @@ class GeolocatorLocationSource implements LocationSource {
           permission == LocationPermission.deniedForever) {
         return null;
       }
-      final p = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.medium,
-          timeLimit: Duration(seconds: 8),
-        ),
-      );
-      return LatLng(p.latitude, p.longitude);
+      try {
+        final p = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            timeLimit: Duration(seconds: 8),
+          ),
+        );
+        return LatLng(p.latitude, p.longitude);
+      } on TimeoutException {
+        final last = await Geolocator.getLastKnownPosition();
+        return last == null ? null : LatLng(last.latitude, last.longitude);
+      }
     } catch (_) {
       return null;
     }
@@ -43,5 +50,5 @@ final locationSourceProvider =
     Provider<LocationSource>((ref) => const GeolocatorLocationSource());
 
 /// The user's position, or null when it is unknown (see [LocationSource]).
-final myLocationProvider = FutureProvider<LatLng?>(
+final myLocationProvider = FutureProvider.autoDispose<LatLng?>(
     (ref) => ref.watch(locationSourceProvider).current());

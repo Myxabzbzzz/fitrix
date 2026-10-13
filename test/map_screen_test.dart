@@ -7,9 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
 
+import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/features/shell/presentation/main_shell.dart';
 import 'package:fitrix/features/content/data/models.dart';
 import 'package:fitrix/features/content/providers.dart';
 import 'package:fitrix/features/map/data/location.dart';
@@ -26,6 +30,13 @@ class BlankTileProvider extends TileProvider {
   @override
   ImageProvider getImage(TileCoordinates coordinates, TileLayer options) =>
       MemoryImage(_blankPng);
+}
+
+class _PendingLocation implements LocationSource {
+  _PendingLocation(this.future);
+  final Future<LatLng?> future;
+  @override
+  Future<LatLng?> current() => future;
 }
 
 class FakeLocation implements LocationSource {
@@ -89,7 +100,8 @@ RoutePlan _plan(TravelMode mode, int minutes,
     );
 
 class FakeRouting implements RoutingService {
-  FakeRouting({this.covered = true, this.gate});
+  FakeRouting({this.covered = true, this.gate, this.fail = false});
+  final bool fail;
   final bool covered;
   Completer<void>? gate;
   final calls = <LatLng>[];
@@ -97,6 +109,7 @@ class FakeRouting implements RoutingService {
   @override
   Future<RouteSet> plan(LatLng from, LatLng to) async {
     calls.add(to);
+    if (fail) throw Exception('boom');
     if (gate != null) await gate!.future;
     if (!covered) {
       return const RouteSet(covered: false, plans: {});
@@ -105,14 +118,16 @@ class FakeRouting implements RoutingService {
       TravelMode.walk: _plan(TravelMode.walk, 26),
       TravelMode.bike: _plan(TravelMode.bike, 11),
       TravelMode.car: null,
-      TravelMode.metro: _plan(TravelMode.metro, 19, rides: const [
-        MetroRide(
-            line: '1',
-            from: 'Amir Timur Square',
-            to: 'Pakhtakor',
-            stops: 2,
-            color: Color(0xFFD62E2E)),
-      ], walkingIsFaster: true),
+      TravelMode.metro: _plan(TravelMode.metro, 19,
+          rides: const [
+            MetroRide(
+                line: '1',
+                from: 'Amir Timur Square',
+                to: 'Pakhtakor',
+                stops: 2,
+                color: Color(0xFFD62E2E)),
+          ],
+          walkingIsFaster: true),
     });
   }
 }
@@ -124,13 +139,15 @@ Future<void> _pump(
   Size size = const Size(390, 844),
   ThemeMode themeMode = ThemeMode.light,
   TileProvider? tiles,
+  List<Place> places = _places,
+  double textScale = 1,
 }) async {
   tester.view.physicalSize = size * 3;
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      placesProvider.overrideWith((ref) async => _places),
+      placesProvider.overrideWith((ref) async => places),
       locationSourceProvider.overrideWithValue(FakeLocation(location)),
       routingServiceProvider.overrideWithValue(routing ?? FakeRouting()),
       mapTileProviderProvider.overrideWithValue(tiles ?? BlankTileProvider()),
@@ -142,6 +159,11 @@ Future<void> _pump(
       darkTheme: ThemeData(brightness: Brightness.dark),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(textScale)),
+        child: child!,
+      ),
       home: const Scaffold(body: MapScreen()),
     ),
   ));
@@ -162,6 +184,27 @@ void main() {
       expect(r.plans[TravelMode.metro]!.rides, isNotEmpty);
     });
 
+    test('IsolateRoutingService plans ME to Pakhtakor in an isolate', () async {
+      final service = IsolateRoutingService(loadJson: () async => json);
+      final r = await service.plan(_me, const LatLng(41.31549, 69.26028));
+      expect(r.covered, isTrue);
+      expect(r.plans[TravelMode.walk]!.meters, closeTo(2588, 30));
+      expect(r.plans[TravelMode.metro]!.rides.first.line, '1');
+    });
+
+    test('a failed graph load is retried next time', () async {
+      var calls = 0;
+      final service = IsolateRoutingService(loadJson: () async {
+        if (++calls == 1) throw Exception('asset');
+        return json;
+      });
+      await expectLater(
+          service.plan(_me, const LatLng(41.31549, 69.26028)), throwsException);
+      final r = await service.plan(_me, const LatLng(41.31549, 69.26028));
+      expect(r.covered, isTrue);
+      expect(calls, 2);
+    });
+
     test('far away is not covered', () {
       final r = planRoutes(json, _me, const LatLng(40.0, 70.0));
       expect(r.covered, isFalse);
@@ -180,13 +223,138 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tiles are requested with the FITRIX user agent',
-      (tester) async {
+  testWidgets('tiles are requested with the FITRIX user agent', (tester) async {
     final provider = BlankTileProvider();
     await _pump(tester, tiles: provider);
     final layer = tester.widget<TileLayer>(find.byType(TileLayer));
     expect(layer.urlTemplate, 'https://tile.openstreetmap.org/{z}/{x}/{y}.png');
     expect(provider.headers['User-Agent'], contains('com.elibayev.fitrix'));
+  });
+
+  testWidgets('a neighbour of the selected pin can still be tapped',
+      (tester) async {
+    const near = Place(
+        id: 'n',
+        name: 'Near Gym',
+        kind: 'gyms',
+        type: 'Gym',
+        lat: 41.3110,
+        lon: 69.2760 + 0.0022);
+    await _pump(tester, places: [..._places, near]);
+    final a = tester.getCenter(find.byKey(const ValueKey('pin-a')));
+    final n = tester.getCenter(find.byKey(const ValueKey('pin-n')));
+    // Next to the selected pin, outside its visible pill, inside its box.
+    expect((n.dx - a.dx).abs(), inInclusiveRange(40, 110));
+    await tester.tap(find.byKey(const ValueKey('pin-n')));
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(_title).data, 'Near Gym');
+  });
+
+  testWidgets('planning failure shows — on the mode buttons and a message',
+      (tester) async {
+    await _pump(tester, routing: FakeRouting(fail: true));
+    for (final m in ['walk', 'bike', 'car', 'metro']) {
+      expect(find.descendant(of: _mode(m), matching: find.text('—')),
+          findsOneWidget);
+    }
+    expect(find.text('Could not work out routes. Try another place.'),
+        findsOneWidget);
+  });
+
+  testWidgets('distance shows … until the location is known', (tester) async {
+    final loc = Completer<LatLng?>();
+    tester.view.physicalSize = const Size(390, 844) * 3;
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        placesProvider.overrideWith((ref) async => _places),
+        locationSourceProvider.overrideWithValue(_PendingLocation(loc.future)),
+        routingServiceProvider.overrideWithValue(FakeRouting()),
+        mapTileProviderProvider.overrideWithValue(BlankTileProvider()),
+      ],
+      child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(body: MapScreen()),
+      ),
+    ));
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('… away'), findsOneWidget);
+    loc.complete(_me);
+    await tester.pumpAndSettle();
+    expect(find.text('… away'), findsNothing);
+    expect(find.textContaining(' away'), findsOneWidget);
+  });
+
+  testWidgets('selecting a pin pans the map to it', (tester) async {
+    await _pump(tester);
+    final before = MapCamera.of(tester.element(find.byType(TileLayer))).center;
+    await tester.tap(find.byKey(const ValueKey('pin-b')));
+    await tester.pumpAndSettle();
+    final after = MapCamera.of(tester.element(find.byType(TileLayer))).center;
+    expect(after.latitude, closeTo(41.3130, 1e-6));
+    expect(after.longitude, closeTo(69.2800, 1e-6));
+    expect(after, isNot(before));
+  });
+
+  testWidgets('SE, 1.3x text, inside the real shell with the tab bar',
+      (tester) async {
+    tester.view.physicalSize = const Size(375, 667) * 3;
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final router = GoRouter(
+      initialLocation: '/t0',
+      routes: [
+        StatefulShellRoute.indexedStack(
+          builder: (_, __, shell) => MainShell(navigationShell: shell),
+          branches: [
+            for (var i = 0; i < 5; i++)
+              StatefulShellBranch(routes: [
+                GoRoute(
+                  path: '/t$i',
+                  builder: (_, __) =>
+                      i == 0 ? const MapScreen() : const SizedBox(),
+                ),
+              ]),
+          ],
+        ),
+      ],
+    );
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        placesProvider.overrideWith((ref) async => _places),
+        locationSourceProvider.overrideWithValue(FakeLocation(_me)),
+        routingServiceProvider.overrideWithValue(FakeRouting()),
+        mapTileProviderProvider.overrideWithValue(BlankTileProvider()),
+      ],
+      child: MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: const TextScaler.linear(1.3)),
+          child: child!,
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(_mode('metro'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    final list = find.ancestor(
+        of: find.byKey(const ValueKey('place-card')),
+        matching: find.byType(ListView));
+    final ringTop =
+        tester.getTopLeft(find.byKey(const ValueKey('felix-ring'))).dy;
+    expect(tester.getBottomLeft(list).dy, lessThanOrEqualTo(ringTop));
+    expect(tester.getSize(find.byType(FlutterMap)).height,
+        greaterThanOrEqualTo(140));
   });
 
   testWidgets('selecting a pin updates the card', (tester) async {
@@ -228,7 +396,8 @@ void main() {
     expect(find.textContaining('Amir Timur Square → Pakhtakor, 2 stops'),
         findsOneWidget);
     expect(find.textContaining('walking is faster here'), findsOneWidget);
-    final dot = tester.widget<Container>(find.byKey(const ValueKey('line-dot-0')));
+    final dot =
+        tester.widget<Container>(find.byKey(const ValueKey('line-dot-0')));
     expect((dot.decoration as BoxDecoration).color, const Color(0xFFD62E2E));
   });
 
@@ -246,8 +415,8 @@ void main() {
       (tester) async {
     await _pump(tester, routing: FakeRouting(covered: false));
     expect(find.text('Routes cover central Tashkent'), findsOneWidget);
-    final gesture = tester.widget<InkWell>(find.descendant(
-        of: _mode('walk'), matching: find.byType(InkWell)));
+    final gesture = tester.widget<InkWell>(
+        find.descendant(of: _mode('walk'), matching: find.byType(InkWell)));
     expect(gesture.onTap, isNull);
     expect(find.text('Show route'), findsOneWidget);
   });
@@ -304,8 +473,7 @@ void main() {
     await _pump(tester, themeMode: ThemeMode.dark);
     expect(
         find.descendant(
-            of: find.byType(FlutterMap),
-            matching: find.byType(ColorFiltered)),
+            of: find.byType(FlutterMap), matching: find.byType(ColorFiltered)),
         findsWidgets);
   });
 
@@ -315,7 +483,8 @@ void main() {
     await tester.tap(_mode('metro'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    final bottom = tester.getBottomLeft(find.byKey(const ValueKey('place-card'))).dy;
+    final bottom =
+        tester.getBottomLeft(find.byKey(const ValueKey('place-card'))).dy;
     expect(bottom, lessThanOrEqualTo(667));
   });
 }

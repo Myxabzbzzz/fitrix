@@ -23,15 +23,22 @@ abstract class RoutingService {
 /// Plans routes off the UI isolate. The graph JSON is bundled with the app.
 class IsolateRoutingService implements RoutingService {
   IsolateRoutingService({Future<String> Function()? loadJson})
-      : _loadJson =
-            loadJson ?? (() => rootBundle.loadString('assets/data/route-graph.json'));
+      : _loadJson = loadJson ??
+            (() => rootBundle.loadString('assets/data/route-graph.json'));
 
   final Future<String> Function() _loadJson;
   Future<String>? _json;
 
   @override
   Future<RouteSet> plan(LatLng from, LatLng to) async {
-    final json = await (_json ??= _loadJson());
+    final loading = _json ??= _loadJson();
+    final String json;
+    try {
+      json = await loading;
+    } catch (_) {
+      _json = null; // retry the load next time
+      rethrow;
+    }
     return Isolate.run(() => planRoutes(json, from, to));
   }
 }
@@ -43,8 +50,7 @@ RouteSet planRoutes(String graphJson, LatLng from, LatLng to) {
   if (!graph.covers(from) || !graph.covers(to)) {
     return const RouteSet(covered: false, plans: {});
   }
-  return RouteSet(
-      covered: true, plans: RoutePlanner(graph).planAll(from, to));
+  return RouteSet(covered: true, plans: RoutePlanner(graph).planAll(from, to));
 }
 
 final routingServiceProvider =

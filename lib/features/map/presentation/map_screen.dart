@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
@@ -34,8 +35,11 @@ class MapScreen extends ConsumerStatefulWidget {
   ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends ConsumerState<MapScreen> {
+class _MapScreenState extends ConsumerState<MapScreen>
+    with SingleTickerProviderStateMixin {
   final _controller = MapController();
+  late final AnimationController _pan;
+  TileProvider? _ownTiles;
   String _filter = 'all';
   String? _selectedId;
   TravelMode _mode = TravelMode.walk;
@@ -45,7 +49,15 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   final _failed = <String>{};
 
   @override
+  void initState() {
+    super.initState();
+    _pan = AnimationController(vsync: this, duration: Motion.medium);
+  }
+
+  @override
   void dispose() {
+    _pan.dispose();
+    _ownTiles?.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -80,7 +92,37 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       _selectedId = p.id;
       _routeFor = null;
     });
+    _panTo(LatLng(p.lat, p.lon));
   }
+
+  /// Centres the map on [target], animated unless reduced motion is on.
+  void _panTo(LatLng target) {
+    try {
+      final camera = _controller.camera;
+      final from = camera.center;
+      final zoom = camera.zoom;
+      _pan.removeListener(_panTick);
+      if (Motion.reduced(context)) {
+        _controller.move(target, zoom);
+        return;
+      }
+      _panTick = () {
+        final t = Motion.curve.transform(_pan.value);
+        _controller.move(
+          LatLng(from.latitude + (target.latitude - from.latitude) * t,
+              from.longitude + (target.longitude - from.longitude) * t),
+          zoom,
+        );
+      };
+      _pan
+        ..addListener(_panTick)
+        ..forward(from: 0);
+    } catch (_) {
+      // The map is not laid out yet.
+    }
+  }
+
+  VoidCallback _panTick = () {};
 
   void _setFilter(String f, List<Place> all) {
     setState(() {
@@ -159,16 +201,22 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   'pools' => l10n.mapFilterPools,
                   _ => l10n.mapFilterAll,
                 },
-                onSelected: (f) => _setFilter(f, places.valueOrNull ?? const []),
+                onSelected: (f) =>
+                    _setFilter(f, places.valueOrNull ?? const []),
               ),
             ),
             Expanded(
-              child: places.when(
-                loading: () => Center(
-                    child: CircularProgressIndicator(color: palette.accent)),
-                error: (_, __) => _content(context, const []),
-                data: (all) => _content(context, all),
-              ),
+              child: LayoutBuilder(builder: (context, box) {
+                // The map keeps at least 140 px; the card scrolls beyond that.
+                final cardMax =
+                    (box.maxHeight - 140).clamp(0.0, double.infinity);
+                return places.when(
+                  loading: () => Center(
+                      child: CircularProgressIndicator(color: palette.accent)),
+                  error: (_, __) => _content(context, const [], cardMax),
+                  data: (all) => _content(context, all, cardMax),
+                );
+              }),
             ),
           ],
         ),
@@ -176,7 +224,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 
-  Widget _content(BuildContext context, List<Place> all) {
+  Widget _content(BuildContext context, List<Place> all, double cardMax) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final visible = _visible(all);
@@ -184,6 +232,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final location = ref.watch(myLocationProvider);
     final me = location.valueOrNull;
     final locationOff = location.hasValue && me == null;
+    final locating = location.isLoading;
 
     if (selected != null && _requested.add(selected.id)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -205,7 +254,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: _map(context, visible, selected, me, routeShown, plan),
+                    child:
+                        _map(context, visible, selected, me, routeShown, plan),
                   ),
                   if (locationOff)
                     Positioned(
@@ -236,21 +286,30 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           ),
         ),
         if (selected != null)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.md),
-            child: PlaceCard(
-              place: selected,
-              distanceMeters: const Distance()
-                  .as(LengthUnit.Meter, from, LatLng(selected.lat, selected.lon))
-                  .toDouble(),
-              mode: _mode,
-              onMode: (m) => _setMode(m, selected),
-              routes: _routes[selected.id],
-              failed: _failed.contains(selected.id),
-              routeShown: routeShown,
-              onToggleRoute: () => _toggleRoute(selected),
-              now: ref.read(routeClockProvider)(),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: cardMax),
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.md),
+              children: [
+                PlaceCard(
+                  place: selected,
+                  distanceMeters: locating
+                      ? null
+                      : const Distance()
+                          .as(LengthUnit.Meter, from,
+                              LatLng(selected.lat, selected.lon))
+                          .toDouble(),
+                  mode: _mode,
+                  onMode: (m) => _setMode(m, selected),
+                  routes: _routes[selected.id],
+                  failed: _failed.contains(selected.id),
+                  routeShown: routeShown,
+                  onToggleRoute: () => _toggleRoute(selected),
+                  now: ref.read(routeClockProvider)(),
+                )
+              ],
             ),
           ),
       ],
@@ -264,7 +323,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final tiles = TileLayer(
       urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
       userAgentPackageName: 'com.elibayev.fitrix',
-      tileProvider: ref.watch(mapTileProviderProvider),
+      tileProvider: ref.watch(mapTileProviderProvider) ??
+          (_ownTiles ??= NetworkTileProvider()),
     );
     final points = [for (final p in visible) LatLng(p.lat, p.lon)];
 
@@ -291,9 +351,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
       ),
       children: [
-        dark
-            ? ColorFiltered(colorFilter: _darkTiles, child: tiles)
-            : tiles,
+        dark ? ColorFiltered(colorFilter: _darkTiles, child: tiles) : tiles,
         if (routeShown && plan != null) ..._routeLayers(palette, plan),
         MarkerLayer(
           markers: [
@@ -357,8 +415,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             points: leg.points,
             strokeWidth: 9,
             color: palette.background.withValues(alpha: 0.9)));
-        lines.add(
-            Polyline(points: leg.points, strokeWidth: 5, color: palette.accent));
+        lines.add(Polyline(
+            points: leg.points, strokeWidth: 5, color: palette.accent));
       }
     }
     return [
@@ -398,16 +456,16 @@ class _Pin extends StatelessWidget {
       selected: selected,
       label: place.name,
       excludeSemantics: true,
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Center(
+      child: Center(
+        child: GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: selected ? palette.accent : palette.background,
               borderRadius: AppRadius.fullAll,
-              border: Border.all(
-                  color: selected ? palette.accent : palette.border),
+              border:
+                  Border.all(color: selected ? palette.accent : palette.border),
             ),
             child: SizedBox(
               height: 30,
@@ -481,7 +539,8 @@ class _Attribution extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: palette.background.withValues(alpha: 0.8),
-          borderRadius: const BorderRadius.only(topLeft: Radius.circular(8)),
+          borderRadius:
+              const BorderRadius.only(topLeft: Radius.circular(AppRadius.sm)),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
