@@ -50,6 +50,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _prefill() async {
     final profile = await ref.read(profileRepositoryProvider).getProfile();
     if (profile == null || !mounted) return;
+    _saved = profile;
     if (_controllers.any((c) => c.text.isNotEmpty)) return;
     _nameController.text = profile.name;
     _surnameController.text = profile.surname;
@@ -58,12 +59,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _heightController.text = profile.height;
   }
 
+  /// What was stored when the form opened; carries the onboarding answers
+  /// (goal, level, sports) through a save.
+  UserProfile? _saved;
+
   UserProfile _currentProfile() => UserProfile(
         name: _nameController.text,
         surname: _surnameController.text,
         age: _ageController.text,
         weight: _weightController.text,
         height: _heightController.text,
+        goal: _saved?.goal ?? '',
+        experience: _saved?.experience ?? '',
+        sports: _saved?.sports ?? const [],
       );
 
   Future<void> _continue() async {

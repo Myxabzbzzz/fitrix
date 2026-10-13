@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +8,9 @@ import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
+import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/features/transition/presentation/screens/chat_transition_screen.dart';
@@ -17,6 +20,8 @@ import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
 import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+
+enum _OnboardingStep { goal, sports, frequency, level, done }
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
@@ -65,44 +70,113 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     super.dispose();
   }
 
-  void _sendMessage(String content, {bool isQuickReply = false}) {
+  /// Which onboarding question the quick replies currently answer.
+  _OnboardingStep _step = _OnboardingStep.goal;
+
+  bool _sending = false;
+
+  Future<void> _sendMessage(String content, {bool isQuickReply = false}) async {
     final notifier = ref.read(chatMessagesProvider.notifier);
-    if (content.trim().isEmpty || notifier.isReplying) return;
-
-    notifier.sendMessage(content, isQuickReply: isQuickReply);
-
-    _messageController.clear();
-
-    // Update quick replies based on message content
-    _updateQuickReplies(content);
+    final text = content.trim();
+    if (text.isEmpty || _sending || !notifier.canSend) return;
+    _sending = true;
+    try {
+      _messageController.clear();
+      // A question isn't an answer: send it, stay on this step.
+      final isAnswer = !text.endsWith('?');
+      final answered = _step;
+      // Saved before sending so Felix gets the answer with this very message.
+      if (isAnswer) await _saveAnswer(answered, text);
+      if (!mounted) return;
+      final accepted = notifier.startSend(content, isQuickReply: isQuickReply);
+      if (accepted && isAnswer) _advance();
+    } finally {
+      _sending = false;
+    }
   }
 
-  void _updateQuickReplies(String message) {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_resumed) {
+      _resumed = true;
+      unawaited(_resume());
+    }
+  }
+
+  bool _resumed = false;
+
+  /// After a restart, continues from what the saved profile already has.
+  Future<void> _resume() async {
+    final saved = await ref.read(profileRepositoryProvider).getProfile();
+    if (saved == null || !mounted || _sending) return;
+    if (_step != _OnboardingStep.goal) return;
+    final _OnboardingStep step;
+    if (saved.experience.isNotEmpty) {
+      step = _OnboardingStep.done;
+    } else if (saved.sports.isNotEmpty) {
+      step = _OnboardingStep.frequency;
+    } else if (saved.goal.isNotEmpty) {
+      step = _OnboardingStep.sports;
+    } else {
+      return;
+    }
     setState(() {
-      if (message.contains('muscle') || message.contains('strength')) {
-        _quickReplies = [
-          'Gym',
-          'Fitness',
-          'Cycling',
-          'Skiing',
-          'Snowboarding',
-          'Football',
-          'Running'
-        ];
-      } else if (_quickReplies.contains('Gym')) {
-        _quickReplies = [
-          'Once a week or less',
-          'Almost every day',
-          'A few times a week',
-          'Just starting out'
-        ];
-      } else if (message.contains('week')) {
-        _quickReplies = ['Beginner', 'Intermediate', 'Advanced'];
-      } else if (message.contains('Intermediate') ||
-          message.contains('Beginner')) {
-        _quickReplies = [];
-        _showQuickReplies = false;
-      }
+      _step = step;
+      _quickReplies = _repliesFor(step);
+      _showQuickReplies = step != _OnboardingStep.done;
+    });
+  }
+
+  static List<String> _repliesFor(_OnboardingStep step) => switch (step) {
+        _OnboardingStep.goal => AppConstants.fitnessGoals,
+        _OnboardingStep.sports => const [
+            'Gym',
+            'Fitness',
+            'Cycling',
+            'Skiing',
+            'Snowboarding',
+            'Football',
+            'Running'
+          ],
+        _OnboardingStep.frequency => const [
+            'Once a week or less',
+            'Almost every day',
+            'A few times a week',
+            'Just starting out'
+          ],
+        _OnboardingStep.level => const ['Beginner', 'Intermediate', 'Advanced'],
+        _OnboardingStep.done => const [],
+      };
+
+  /// Keeps the goal, sport and level in the profile (not just in the chat
+  /// history), so every Felix chat knows them. Quick replies are English
+  /// constants, so those are the stable values; typed answers are kept as
+  /// typed.
+  Future<void> _saveAnswer(_OnboardingStep step, String answer) async {
+    final profile = ref.read(profileProvider.notifier);
+    switch (step) {
+      case _OnboardingStep.goal:
+        await profile.saveAnswers(goal: answer);
+      case _OnboardingStep.sports:
+        await profile.saveAnswers(sports: [answer]);
+      case _OnboardingStep.level:
+        await profile.saveAnswers(experience: answer);
+      case _OnboardingStep.frequency:
+      case _OnboardingStep.done:
+        return;
+    }
+    if (!mounted) return;
+    // Uploaded in the background; retried later if offline.
+    unawaited(ref.read(accountServiceProvider)?.profileChanged());
+  }
+
+  void _advance() {
+    if (_step == _OnboardingStep.done) return;
+    setState(() {
+      _step = _OnboardingStep.values[_step.index + 1];
+      _quickReplies = _repliesFor(_step);
+      _showQuickReplies = _step != _OnboardingStep.done;
     });
   }
 
@@ -178,8 +252,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
                         final message = messages[index];
-                        final showTimestamp = index == 0 ||
-                            _showsTimestamp(messages, index);
+                        final showTimestamp =
+                            index == 0 || _showsTimestamp(messages, index);
 
                         final next = index + 1 < messages.length
                             ? messages[index + 1]
@@ -196,9 +270,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                             children: [
                               if (showTimestamp)
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: AppSpacing.sm),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: AppSpacing.sm),
                                   child: Text(
                                     DateFormat('MMM dd, yyyy, h:mm a')
                                         .format(message.timestamp),
@@ -222,7 +295,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   error: (error, stack) => Center(
-                    child: Text(AppLocalizations.of(context).chatError('$error')),
+                    child:
+                        Text(AppLocalizations.of(context).chatError('$error')),
                   ),
                 ),
               ),
@@ -233,11 +307,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                 key: const ValueKey('chat-composer'),
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AnimatedSize(
-                    duration: Motion.of(context, Motion.medium),
-                    curve: Motion.curve,
-                    alignment: Alignment.bottomCenter,
-                    child: _showQuickReplies
+                  _animatedComposerSlot(
+                    _showQuickReplies
                         ? QuickReplyBar(
                             replies: _quickReplies,
                             hidden: isReplying,
@@ -246,7 +317,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                           )
                         : _buildStartButton(),
                   ),
-                  _buildMessageInput(isReplying: isReplying),
+                  // Onboarding is finished once Start shows; typing there
+                  // would go nowhere.
+                  if (_showQuickReplies)
+                    _buildMessageInput(isReplying: isReplying),
                 ],
               ),
             ],
@@ -276,23 +350,55 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
 
   static bool _showsTimestamp(List<ChatMessage> messages, int index) =>
       index == 0 ||
-      messages[index].timestamp
+      messages[index]
+              .timestamp
               .difference(messages[index - 1].timestamp)
               .inMinutes >
           5;
 
+  /// Animates the size change when the quick replies give way to Start;
+  /// plain swap with reduced motion.
+  Widget _animatedComposerSlot(Widget child) {
+    if (Motion.reduced(context)) return child;
+    return AnimatedSize(
+      duration: Motion.medium,
+      curve: Motion.curve,
+      alignment: Alignment.bottomCenter,
+      child: child,
+    );
+  }
+
   Widget _buildStartButton() {
-    return Padding(
-      key: const ValueKey('start'),
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-      child: Align(
-        alignment: Alignment.centerLeft,
+    final button = SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         child: AppButton(
           key: _startButtonKey,
           label: AppLocalizations.of(context).chatStart,
           size: AppButtonSize.large,
+          icon: Icons.arrow_forward,
+          expand: true,
           onPressed: _animating ? null : _onStartPressed,
+        ),
+      ),
+    );
+    if (Motion.reduced(context)) {
+      return KeyedSubtree(key: const ValueKey('start'), child: button);
+    }
+    // Fades in and slides up as it replaces the quick replies.
+    return TweenAnimationBuilder<double>(
+      key: const ValueKey('start'),
+      tween: Tween(begin: 0, end: 1),
+      duration: Motion.medium,
+      curve: Motion.curve,
+      child: button,
+      builder: (context, t, child) => Opacity(
+        opacity: t,
+        child: Transform.translate(
+          offset: Offset(0, (1 - t) * AppSpacing.md),
+          child: child,
         ),
       ),
     );

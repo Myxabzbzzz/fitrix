@@ -161,13 +161,84 @@ void main() {
       expect(profile.height, '180');
     });
 
+    test('goal, experience and sports round-trip through the row', () {
+      final row = ProfileRow.fromLocal(
+        id: 'u1',
+        profile: _profile().copyWith(
+          goal: 'Lose weight and get toned',
+          experience: 'Intermediate',
+          sports: const ['Gym', 'Running'],
+        ),
+      );
+      final json = row.toUpsert();
+      expect(json['goal'], 'Lose weight and get toned');
+      expect(json['experience'], 'Intermediate');
+      expect(json['sports'], ['Gym', 'Running']);
+
+      final back = ProfileRow.fromJson({'id': 'u1', ...json}).toUserProfile();
+      expect(back.goal, 'Lose weight and get toned');
+      expect(back.experience, 'Intermediate');
+      expect(back.sports, ['Gym', 'Running']);
+    });
+
+    test('blank answers are left out of the upload', () {
+      final json =
+          ProfileRow.fromLocal(id: 'u1', profile: _profile()).toUpsert();
+      expect(json.containsKey('goal'), isFalse);
+      expect(json.containsKey('experience'), isFalse);
+      expect(json.containsKey('sports'), isFalse);
+    });
+
+    test('answers are clipped to the database limits', () {
+      final row = ProfileRow.fromLocal(
+        id: 'u1',
+        profile: _profile().copyWith(
+          goal: 'g' * 200,
+          sports: [for (var i = 0; i < 9; i++) 's$i', ' '],
+        ),
+      );
+      expect(row.goal!.length, 120);
+      expect(row.sports, hasLength(6));
+    });
+
+    test('rows and saved profiles without the new fields still load', () {
+      final profile =
+          ProfileRow.fromJson({'id': 'u1', 'name': 'A'}).toUserProfile();
+      expect(profile.goal, '');
+      expect(profile.experience, '');
+      expect(profile.sports, isEmpty);
+      final old = UserProfile.fromJson({'name': 'A'});
+      expect(old.goal, '');
+      expect(old.sports, isEmpty);
+    });
+
     test('a fresh row with nulls maps to empty fields', () {
-      final profile = ProfileRow.fromJson({'id': 'u1', 'age': null})
-          .toUserProfile();
+      final profile =
+          ProfileRow.fromJson({'id': 'u1', 'age': null}).toUserProfile();
       expect(profile.age, '');
       expect(profile.weight, '');
       expect(profile.height, '');
     });
+  });
+
+  test('saved profile keeps the answers; one saved before them still loads',
+      () async {
+    SharedPreferences.setMockInitialValues({
+      'user_name': 'Old',
+      'user_age': '30',
+    });
+    final repo = ProfileRepository();
+    final old = await repo.getProfile();
+    expect(old!.name, 'Old');
+    expect(old.goal, '');
+    expect(old.sports, isEmpty);
+
+    await repo.saveProfile(old
+        .copyWith(goal: 'Just track my progress', sports: const ['Cycling']));
+    final saved = await repo.getProfile();
+    expect(saved!.goal, 'Just track my progress');
+    expect(saved.sports, ['Cycling']);
+    expect(saved.age, '30');
   });
 
   group('AppRouter.redirectFor', () {
@@ -196,8 +267,8 @@ void main() {
         redirect(AppRouter.signIn, authEnabled: false, onboarded: true),
         AppRouter.home,
       );
-      expect(redirect(AppRouter.me, authEnabled: false, onboarded: true),
-          isNull);
+      expect(
+          redirect(AppRouter.me, authEnabled: false, onboarded: true), isNull);
     });
 
     test('onboarded and signed in: onboarding routes go Home', () {
@@ -362,8 +433,7 @@ void main() {
       expect((await ProfileRepository().getProfile())!.age, '40');
     });
 
-    test('another account signing in clears the previous data first',
-        () async {
+    test('another account signing in clears the previous data first', () async {
       await setUpWith({
         'account_user_id': 'user-a',
         'onboarding_complete': true,
@@ -398,8 +468,7 @@ void main() {
       expect(prefs.getString('user_name'), 'Alex');
     });
 
-    test('data from before accounts existed is adopted and uploaded',
-        () async {
+    test('data from before accounts existed is adopted and uploaded', () async {
       await setUpWith({
         'onboarding_complete': true,
         'user_name': 'Alex',
@@ -413,8 +482,7 @@ void main() {
       expect(account.hasPendingUpload, isFalse);
     });
 
-    test('a failed profile load changes nothing and can be retried',
-        () async {
+    test('a failed profile load changes nothing and can be retried', () async {
       await setUpWith({'account_user_id': 'user-a', 'user_name': 'Alex'});
       remote.fetchError = const SocketException('offline');
       auth.signInAs('b@x.com');
