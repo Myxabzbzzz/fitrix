@@ -77,7 +77,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get undo => 'Bekor qilish';
+  String get undo => 'Qaytarish';
 
   @override
   String workoutDeleted(String name) {
@@ -87,4 +87,131 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get syncFailed =>
       'Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.';
+
+  @override
+  String get mapTitle => 'Fitrix xaritasi';
+
+  @override
+  String get mapFilterAll => 'Hammasi';
+
+  @override
+  String get mapFilterGyms => 'Zallar';
+
+  @override
+  String get mapFilterParks => 'Bog‘lar';
+
+  @override
+  String get mapFilterTracks => 'Yo‘laklar';
+
+  @override
+  String get mapFilterPools => 'Basseynlar';
+
+  @override
+  String get mapLocationOff =>
+      'Joylashuv o‘chiq: Toshkent markazi ko‘rsatilmoqda';
+
+  @override
+  String get mapHoursUnknown => 'Ish vaqti ko‘rsatilmagan';
+
+  @override
+  String mapAway(String distance) {
+    return '$distance uzoqlikda';
+  }
+
+  @override
+  String get mapShowRoute => 'Marshrutni ko‘rsatish';
+
+  @override
+  String get mapHideRoute => 'Marshrutni yashirish';
+
+  @override
+  String get mapModesLabel => 'Qanday borish mumkin';
+
+  @override
+  String get mapModeWalk => 'Piyoda';
+
+  @override
+  String get mapModeBike => 'Velosiped';
+
+  @override
+  String get mapModeCar => 'Avto';
+
+  @override
+  String get mapModeMetro => 'Metro';
+
+  @override
+  String get mapComputing => 'Marshrutlar hisoblanmoqda…';
+
+  @override
+  String get mapCoverage => 'Marshrutlar faqat Toshkent markazini qamrab oladi';
+
+  @override
+  String get mapNoRoute => 'Bu usul uchun marshrut yo‘q';
+
+  @override
+  String get mapMetroNoHelp =>
+      'Bu safarda metro yordam bermaydi: vaqtni tejaydigan bekatlar juftligi yo‘q.';
+
+  @override
+  String get mapPlanFailed =>
+      'Marshrutlarni hisoblab bo‘lmadi. Boshqa joyni tanlang.';
+
+  @override
+  String mapMinutes(int n) {
+    return '$n daq';
+  }
+
+  @override
+  String mapHoursMinutes(int h, int m) {
+    return '$h soat $m daq';
+  }
+
+  @override
+  String mapArrive(String duration, String time) {
+    return '$duration · yetib borish $time';
+  }
+
+  @override
+  String mapRide(String from, String to, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bekat',
+      one: '$count bekat',
+    );
+    return '$from → $to, $_temp0';
+  }
+
+  @override
+  String mapWalkTotal(String distance) {
+    return 'Jami piyoda: $distance';
+  }
+
+  @override
+  String get mapWalkingFaster => 'bu yerda piyoda tezroq';
+
+  @override
+  String mapNoteWalk(String distance) {
+    return '$distance piyoda';
+  }
+
+  @override
+  String mapNoteBike(String distance) {
+    return '$distance velosipedda, yo‘lakchalar bilan';
+  }
+
+  @override
+  String mapNoteCar(String distance) {
+    return '$distance avtoda, tirbandliksiz, to‘xtash uchun 2 daq';
+  }
+
+  @override
+  String mapMeters(int n) {
+    return '$n m';
+  }
+
+  @override
+  String mapKilometers(String n) {
+    return '$n km';
+  }
 }

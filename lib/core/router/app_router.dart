@@ -20,6 +20,7 @@ import 'package:fitrix/features/workouts/presentation/screens/my_workouts_screen
 import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_screen.dart';
 import 'package:fitrix/features/progress/presentation/screens/progress_screen.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.dart';
+import 'package:fitrix/features/map/presentation/map_screen.dart';
 
 class AppRouter {
   // Onboarding
@@ -241,11 +242,7 @@ class AppRouter {
                         pageBuilder: (context, state) => circleRevealPage(
                           context,
                           state,
-                          const ComingSoonScreen(
-                            title: 'Fitrix map',
-                            icon: Icons.map_outlined,
-                            imageAsset: 'assets/images/tile_map.png',
-                          ),
+                          const MapScreen(),
                         ),
                       ),
                     ],
