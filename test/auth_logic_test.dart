@@ -189,6 +189,16 @@ void main() {
       expect(json.containsKey('sports'), isFalse);
     });
 
+    test('edited answers are sent even when blank, so the server clears them',
+        () {
+      final row = ProfileRow.fromLocal(id: 'u1', profile: _profile());
+      final json = row.toUpsert(clearBlankAnswers: true);
+      expect(json.containsKey('goal'), isTrue);
+      expect(json['goal'], isNull);
+      expect(json['experience'], isNull);
+      expect(json['sports'], isEmpty);
+    });
+
     test('answers are clipped to the database limits', () {
       final row = ProfileRow.fromLocal(
         id: 'u1',

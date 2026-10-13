@@ -14,23 +14,28 @@ import 'support/fake_auth.dart';
 
 void main() {
   late SharedPreferences prefs;
+  late GoRouter router;
 
   Future<void> pump(
     WidgetTester tester, {
-    Map<String, Object> values = const {},
+    Map<String, Object?> values = const {},
     Locale? locale,
     double textScale = 1,
   }) async {
     tester.view.physicalSize = const Size(375, 667) * 3;
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
-    SharedPreferences.setMockInitialValues({
+    final initial = <String, Object?>{
       'user_name': 'Alex',
       'user_surname': 'Smith',
       'user_age': '30',
       'user_weight': '72.5',
       'user_height': '180',
       ...values,
+    };
+    SharedPreferences.setMockInitialValues({
+      for (final e in initial.entries)
+        if (e.value != null) e.key: e.value!,
     });
     prefs = await SharedPreferences.getInstance();
     final account = AccountService(
@@ -45,7 +50,7 @@ void main() {
       accountServiceProvider.overrideWithValue(account),
     ]);
     addTearDown(container.dispose);
-    final router = GoRouter(initialLocation: '/me', routes: [
+    router = GoRouter(initialLocation: '/me', routes: [
       GoRoute(
         path: '/me',
         builder: (_, __) => Scaffold(
@@ -57,7 +62,8 @@ void main() {
           ),
         ),
         routes: [
-          GoRoute(path: 'about', builder: (_, __) => const AboutMeScreen()),
+          GoRoute(path: 'about', builder: (_, __) => const AboutMeScreen(),
+              onExit: aboutMeOnExit),
         ],
       ),
     ]);
@@ -216,5 +222,100 @@ void main() {
     await tester.drag(find.byType(ListView), const Offset(0, -1500));
     await tester.pump();
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('partial profile: errors show once the form is dirty',
+      (tester) async {
+    await pump(tester, values: {'user_weight': null});
+    expect(saveEnabled(tester), isFalse);
+    expect(find.text('Enter your weight'), findsNothing);
+    final goal = find.byKey(Key('about-goal-${AppConstants.fitnessGoals[0]}'));
+    await reveal(tester, goal);
+    await tester.tap(goal);
+    await tester.pump();
+    await tester.drag(find.byType(ListView), const Offset(0, 1500));
+    await tester.pump();
+    expect(find.text('Enter your weight'), findsOneWidget);
+    expect(saveEnabled(tester), isFalse);
+    await tester.enterText(find.byKey(const Key('about-weight')), '70');
+    await tester.pump();
+    expect(saveEnabled(tester), isTrue);
+  });
+
+  testWidgets('chat-typed sports match case-insensitively', (tester) async {
+    await pump(tester, values: {
+      'user_sports': ['gym', 'Skiing'],
+    });
+    final skiing = find.byKey(const Key('about-sport-extra-Skiing'));
+    await reveal(tester, skiing);
+    expect(skiing, findsOneWidget);
+    expect(find.byKey(const Key('about-sport-extra-gym')), findsNothing);
+    expect(saveEnabled(tester), isFalse);
+    await tester.tap(find.byKey(const Key('about-sport-fitness')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('about-save')));
+    await tester.pumpAndSettle();
+    expect(prefs.getStringList(AppConstants.keyUserSports),
+        ['Gym', 'Skiing', 'Fitness']);
+  });
+
+  testWidgets('answers edit flag is set only when answers changed',
+      (tester) async {
+    await pump(tester);
+    await tester.enterText(find.byKey(const Key('about-name')), 'Alexey');
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('about-save')));
+    await tester.pumpAndSettle();
+    expect(prefs.getBool(AccountService.keyAnswersEdited), isNull);
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pumpAndSettle();
+
+    final level = find.byKey(const Key('about-level-Advanced'));
+    await reveal(tester, level);
+    await tester.tap(level);
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('about-save')));
+    await tester.pumpAndSettle();
+    expect(prefs.getBool(AccountService.keyAnswersEdited), isTrue);
+  });
+
+  testWidgets('leaving by another route asks to discard', (tester) async {
+    await pump(tester);
+    await tester.enterText(find.byKey(const Key('about-name')), 'Alexey');
+    await tester.pump();
+    await tester.pump();
+    router.go('/me');
+    await tester.pumpAndSettle();
+    expect(find.text('Discard changes?'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('about-keep-editing')));
+    await tester.pumpAndSettle();
+    expect(find.byType(AboutMeScreen), findsOneWidget);
+    router.go('/me');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('about-discard')));
+    await tester.pumpAndSettle();
+    expect(find.byType(AboutMeScreen), findsNothing);
+  });
+
+  testWidgets('legacy formatting does not make the form dirty',
+      (tester) async {
+    await pump(tester, values: {'user_weight': '72,50 ', 'user_name': ' Alex '});
+    expect(saveEnabled(tester), isFalse);
+  });
+
+  testWidgets('odd level shows as a pill; long goal opens under Other',
+      (tester) async {
+    await pump(tester, values: {
+      'user_experience': 'a bit rusty',
+      'user_goal': 'x' * 150,
+    });
+    expect(tester.takeException(), isNull);
+    final other = find.byKey(const Key('about-goal-text'));
+    await reveal(tester, other);
+    expect(tester.widget<TextField>(other).controller!.text.length, 120);
+    final lvl = find.byKey(const Key('about-level-extra-a bit rusty'));
+    await reveal(tester, lvl);
+    expect(lvl, findsOneWidget);
+    expect(saveEnabled(tester), isFalse);
   });
 }

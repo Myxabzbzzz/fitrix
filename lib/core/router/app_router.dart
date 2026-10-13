@@ -276,6 +276,9 @@ class AppRouter {
                         path: 'about',
                         name: 'aboutMe',
                         builder: (context, state) => const AboutMeScreen(),
+                        // Leaving by another route (e.g. re-tapping the
+                        // Profile tab) asks about unsaved edits too.
+                        onExit: aboutMeOnExit,
                       ),
                     ],
                   ),

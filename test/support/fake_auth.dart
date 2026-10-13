@@ -183,7 +183,8 @@ class FakeProfileRemote implements ProfileRemote {
   }
 
   @override
-  Future<void> upsert(ProfileRow row, {bool includeProfile = true}) async {
+  Future<void> upsert(ProfileRow row,
+      {bool includeProfile = true, bool clearBlankAnswers = false}) async {
     if (upsertError != null) throw upsertError!;
     upserts++;
     rows[row.id] = {
@@ -192,7 +193,8 @@ class FakeProfileRemote implements ProfileRemote {
       'language': 'en',
       'onboarding_complete': false,
       ...?rows[row.id],
-      ...row.toUpsert(includeProfile: includeProfile),
+      ...row.toUpsert(
+          includeProfile: includeProfile, clearBlankAnswers: clearBlankAnswers),
     };
   }
 }

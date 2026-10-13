@@ -287,7 +287,11 @@ class ProfileRow {
   /// so an older upload that lands late can't undo a finished onboarding.
   /// Without [includeProfile] only the language (and onboarding flag) are
   /// sent and the stored profile fields stay as they are.
-  Map<String, dynamic> toUpsert({bool includeProfile = true}) => {
+  Map<String, dynamic> toUpsert({
+    bool includeProfile = true,
+    bool clearBlankAnswers = false,
+  }) =>
+      {
         'id': id,
         if (includeProfile) ...{
           'name': name,
@@ -297,9 +301,12 @@ class ProfileRow {
           'height_cm': heightCm,
           // Left out when blank so a device that never answered doesn't
           // wipe answers given on another device.
-          if (goal != null) 'goal': goal,
-          if (experience != null) 'experience': experience,
-          if (sports.isNotEmpty) 'sports': sports,
+          // After an edit on About me they are sent even when blank, so the
+          // server clears them too.
+          if (goal != null || clearBlankAnswers) 'goal': goal,
+          if (experience != null || clearBlankAnswers)
+            'experience': experience,
+          if (sports.isNotEmpty || clearBlankAnswers) 'sports': sports,
         },
         'language': normalizeLanguage(language),
         if (onboardingComplete) 'onboarding_complete': true,

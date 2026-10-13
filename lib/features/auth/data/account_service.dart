@@ -46,6 +46,10 @@ class AccountService {
   /// to be uploaded to the `profiles` table.
   static const String keyProfileSyncPending = 'profile_sync_pending';
 
+  /// Set when the onboarding answers (goal, level, sports) were edited on
+  /// the About me screen: the next upload then also clears blank answers.
+  static const String keyAnswersEdited = 'profile_answers_edited';
+
   final SharedPreferences _prefs;
   final AppSession _session;
   final AuthGateway _auth;
@@ -150,8 +154,9 @@ class AccountService {
   /// Saves the change for upload and tries to upload it right away; if that
   /// fails it's retried with back-off, on the next sign-in and on the next
   /// launch until it lands. Completes with whether the upload succeeded.
-  Future<bool> profileChanged() async {
+  Future<bool> profileChanged({bool answersEdited = false}) async {
     await _prefs.setBool(keyProfileSyncPending, true);
+    if (answersEdited) await _prefs.setBool(keyAnswersEdited, true);
     _revision++;
     return flush();
   }
@@ -171,6 +176,7 @@ class AccountService {
     if (userId == null || userId != _session.accountUserId) return false;
 
     final revision = _revision;
+    final clearAnswers = _prefs.getBool(keyAnswersEdited) ?? false;
     final UserProfile? profile = await _profiles.getProfile();
     final row = ProfileRow.fromLocal(
       id: userId,
@@ -181,7 +187,8 @@ class AccountService {
     );
 
     try {
-      await _remote.upsert(row, includeProfile: profile != null);
+      await _remote.upsert(row,
+          includeProfile: profile != null, clearBlankAnswers: clearAnswers);
     } catch (e) {
       debugPrint('Profile upload failed, will retry: $e');
       _scheduleRetry();
@@ -195,6 +202,7 @@ class AccountService {
     // flush (already queued by profileChanged) sends it.
     if (revision == _revision && _session.accountUserId == userId) {
       await _prefs.remove(keyProfileSyncPending);
+      await _prefs.remove(keyAnswersEdited);
     }
     return true;
   }

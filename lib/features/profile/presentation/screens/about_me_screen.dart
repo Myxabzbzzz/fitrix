@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -17,6 +18,46 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 const _levels = ['Beginner', 'Intermediate', 'Advanced'];
 const _otherGoal = '\u0000other';
+
+/// True while About me has unsaved edits; read by the route's exit guard.
+final aboutMeDirtyProvider = StateProvider<bool>((ref) => false);
+
+/// The "Discard changes?" dialog; true when the user chose to discard.
+Future<bool> confirmDiscardChanges(BuildContext context) async {
+  final l10n = AppLocalizations.of(context);
+  final discard = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.aboutMeDiscardTitle),
+      content: Text(l10n.aboutMeDiscardBody),
+      actions: [
+        TextButton(
+          key: const Key('about-keep-editing'),
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l10n.aboutMeKeepEditing),
+        ),
+        TextButton(
+          key: const Key('about-discard'),
+          onPressed: () => Navigator.pop(context, true),
+          style: TextButton.styleFrom(
+              foregroundColor: AppPalette.of(context).danger),
+          child: Text(l10n.aboutMeDiscard),
+        ),
+      ],
+    ),
+  );
+  return discard == true;
+}
+
+/// [GoRoute.onExit] for About me: asks before unsaved edits are dropped.
+Future<bool> aboutMeOnExit(BuildContext context, GoRouterState state) async {
+  final dirty =
+      ProviderScope.containerOf(context).read(aboutMeDirtyProvider.notifier);
+  if (!dirty.state) return true;
+  final discard = await confirmDiscardChanges(context);
+  if (discard) dirty.state = false;
+  return discard;
+}
 
 /// About me: the profile entered during onboarding, editable
 /// (opened from the Profile tab).
@@ -46,9 +87,12 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
       UserProfile(name: '', surname: '', age: '', weight: '', height: '');
   final Set<String> _touched = {};
 
+  late final StateController<bool> _dirtyFlag;
+
   @override
   void initState() {
     super.initState();
+    _dirtyFlag = ref.read(aboutMeDirtyProvider.notifier);
     for (final c in _controllers) {
       c.addListener(_changed);
     }
@@ -64,7 +108,32 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
     setState(() => _apply(saved ?? _baseline));
   }
 
-  void _apply(UserProfile p) {
+  /// Known sports matched case-insensitively to their canonical label
+  /// ("gym" typed in the chat becomes "Gym"), duplicates dropped.
+  static List<String> _canonicalSports(List<String> sports) {
+    final out = <String>[];
+    for (final raw in sports) {
+      final t = raw.trim();
+      if (t.isEmpty) continue;
+      final match = Sport.values
+          .where((s) => s.label.toLowerCase() == t.toLowerCase())
+          .map((s) => s.label);
+      final value = match.isEmpty ? t : match.first;
+      if (!out.contains(value)) out.add(value);
+    }
+    return out;
+  }
+
+  void _apply(UserProfile saved) {
+    var goal = saved.goal.trim();
+    if (goal.length > ProfileLimits.answerMaxLength) {
+      goal = goal.substring(0, ProfileLimits.answerMaxLength);
+    }
+    final p = ProfileValidator.normalize(saved).copyWith(
+      goal: goal,
+      experience: saved.experience.trim(),
+      sports: _canonicalSports(saved.sports),
+    );
     _baseline = p;
     _name.text = p.name;
     _surname.text = p.surname;
@@ -92,15 +161,20 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
 
   @override
   void dispose() {
+    final dirtyFlag = _dirtyFlag;
+    Future.microtask(() {
+      try {
+        dirtyFlag.state = false;
+      } catch (_) {}
+    });
     for (final c in _controllers) {
       c.dispose();
     }
     super.dispose();
   }
 
-  String get _goalValue => _goalChoice == _otherGoal
-      ? _goalOther.text.trim()
-      : _goalChoice;
+  String get _goalValue =>
+      _goalChoice == _otherGoal ? _goalOther.text.trim() : _goalChoice;
 
   UserProfile _current() => UserProfile(
         name: _name.text,
@@ -136,40 +210,19 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
     final profile = ProfileValidator.normalize(_current());
     await ref.read(profileProvider.notifier).saveProfile(profile);
     // Uploaded in the background; retried later if offline.
-    unawaited(ref.read(accountServiceProvider)?.profileChanged());
+    final answersEdited = profile.goal != _baseline.goal ||
+        profile.experience != _baseline.experience ||
+        profile.sports.join('\u0000') != _baseline.sports.join('\u0000');
+    unawaited(ref
+        .read(accountServiceProvider)
+        ?.profileChanged(answersEdited: answersEdited));
     if (!mounted) return;
     setState(() => _apply(profile));
     messenger.showSnackBar(SnackBar(content: Text(l10n.aboutMeSaved)));
   }
 
-  Future<bool> _confirmDiscard() async {
-    final l10n = AppLocalizations.of(context);
-    final discard = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.aboutMeDiscardTitle),
-        content: Text(l10n.aboutMeDiscardBody),
-        actions: [
-          TextButton(
-            key: const Key('about-keep-editing'),
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.aboutMeKeepEditing),
-          ),
-          TextButton(
-            key: const Key('about-discard'),
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(
-                foregroundColor: AppPalette.of(context).danger),
-            child: Text(l10n.aboutMeDiscard),
-          ),
-        ],
-      ),
-    );
-    return discard == true;
-  }
-
   String? _errorText(String field) {
-    if (!_touched.contains(field)) return null;
+    if (!_touched.contains(field) && !_dirty) return null;
     final e = _errors[field];
     if (e == null) return null;
     final l10n = AppLocalizations.of(context);
@@ -228,6 +281,11 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
     final email = ref.watch(accountEmailProvider).valueOrNull;
     final dirty = _dirty;
     final canSave = dirty && _errors.isEmpty;
+    if (ref.read(aboutMeDirtyProvider) != dirty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) ref.read(aboutMeDirtyProvider.notifier).state = dirty;
+      });
+    }
 
     final fullName = [_baseline.name, _baseline.surname]
         .where((s) => s.isNotEmpty)
@@ -256,7 +314,8 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
               textInputAction:
                   last ? TextInputAction.done : TextInputAction.next,
               onChanged: (_) => _touched.add(id),
-              onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+              onTapOutside: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
               style: AppText.bodyStrong.copyWith(color: palette.textPrimary),
               decoration: InputDecoration(
                 isDense: true,
@@ -350,7 +409,10 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
         final navigator = Navigator.of(context);
-        if (await _confirmDiscard()) navigator.pop();
+        if (await confirmDiscardChanges(context)) {
+          ref.read(aboutMeDirtyProvider.notifier).state = false;
+          navigator.pop();
+        }
       },
       child: Scaffold(
         backgroundColor: palette.background,
@@ -436,8 +498,8 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                                 pill(
                                   l10n.aboutMeGoalOther,
                                   _goalChoice == _otherGoal,
-                                  () => setState(
-                                      () => _goalChoice = _otherGoal),
+                                  () =>
+                                      setState(() => _goalChoice = _otherGoal),
                                   key: const Key('about-goal-other'),
                                 ),
                               ],
@@ -449,9 +511,9 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                                 controller: _goalOther,
                                 maxLength: ProfileLimits.answerMaxLength,
                                 textInputAction: TextInputAction.done,
-                                onTapOutside: (_) =>
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus(),
+                                onTapOutside: (_) => FocusManager
+                                    .instance.primaryFocus
+                                    ?.unfocus(),
                                 decoration: InputDecoration(
                                     hintText: l10n.aboutMeGoalOtherHint),
                               ),
@@ -465,6 +527,13 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                           spacing: AppSpacing.xs,
                           runSpacing: AppSpacing.xs,
                           children: [
+                            if (_level.isNotEmpty && !_levels.contains(_level))
+                              pill(
+                                _level,
+                                true,
+                                () => setState(() => _level = ''),
+                                key: Key('about-level-extra-$_level'),
+                              ),
                             for (final lv in _levels)
                               pill(
                                 _levelLabel(l10n, lv),
@@ -493,7 +562,7 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                                 s,
                                 _sports.contains(s),
                                 () => _toggleSport(s),
-                                key: Key('about-sport-$s'),
+                                key: Key('about-sport-extra-$s'),
                               ),
                           ],
                         ),
@@ -533,8 +602,8 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.md),
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.md,
+                      AppSpacing.sm, AppSpacing.md, AppSpacing.md),
                   child: AppButton(
                     key: const Key('about-save'),
                     label: l10n.aboutMeSave,
