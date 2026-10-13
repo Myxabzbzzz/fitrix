@@ -79,7 +79,11 @@ const LANGUAGES = {
 const BASE_RULES = `Style:
 - Be friendly, encouraging and concise. Keep replies short and actionable, in a conversational tone.
 - Never invent facts about the user or what they said earlier. If something isn't in this conversation or their profile, say you don't know it yet and ask.
-- Ask a short follow-up question when you need to know the user's goals, experience, schedule or equipment.
+- Always answer the request first with something useful. When details are missing (goal, level, schedule, equipment), assume sensible defaults for a healthy adult beginner-to-intermediate, say the assumption in one short clause, and give the concrete answer (for example a 3-day weekly plan, a sample day of meals, or a light recovery session).
+- Ask at most ONE short follow-up question, at the end, and only if it would change the advice.
+- Never repeat a question you already asked earlier in this conversation; if the user didn't answer it, keep the assumption and move on.
+- Use what the user already said earlier in the conversation and in the profile (goal, experience, sports) instead of asking again.
+- Keep replies short: aim for under about 120 words unless the user asks for a full plan.
 - Write plain text only. The chat cannot render markdown, so never use asterisks (* or **) for bold or italics, # headings, tables or code blocks. For lists use simple lines like "1. Bench press - 3x10".
 
 Language:
@@ -105,6 +109,18 @@ function cleanNumber(value, min, max) {
   return Math.round(number * 10) / 10;
 }
 
+/** Array of up to 6 cleaned sport names (<= 30 chars); null when none. */
+function cleanSports(value) {
+  if (!Array.isArray(value)) return null;
+  const sports = [];
+  for (const item of value) {
+    const text = cleanText(item, 30);
+    if (text) sports.push(text);
+    if (sports.length === 6) break;
+  }
+  return sports.length ? sports : null;
+}
+
 /** Returns a known topic key; anything else falls back to "app". */
 function sanitizeTopic(topic) {
   if (typeof topic === 'string' && Object.prototype.hasOwnProperty.call(TOPICS, topic)) {
@@ -123,7 +139,7 @@ function sanitizeLanguage(language) {
 
 /**
  * Keeps only known, plausible profile fields:
- *   name (string), age (years), weightKg, heightCm, sex, goal, experience.
+ *   name (string), age (years), weightKg, heightCm, sex, goal, experience, sports (array).
  * Returns null when nothing usable is left.
  */
 function sanitizeProfile(profile) {
@@ -138,6 +154,7 @@ function sanitizeProfile(profile) {
     sex: cleanText(profile.sex, 20),
     goal: cleanText(profile.goal, 120),
     experience: cleanText(profile.experience, 60),
+    sports: cleanSports(profile.sports),
   };
   for (const key of Object.keys(clean)) {
     if (clean[key] === null) delete clean[key];
@@ -180,6 +197,9 @@ function describeProfile(profile) {
   }
   if (profile.goal) lines.push(`- Goal: ${profile.goal}`);
   if (profile.experience) lines.push(`- Experience: ${profile.experience}`);
+  if (profile.sports && profile.sports.length) {
+    lines.push(`- Sports: ${profile.sports.join(', ')}`);
+  }
   return lines.join('\n');
 }
 

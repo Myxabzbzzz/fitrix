@@ -91,3 +91,27 @@ test('the app language guides Felix; unknown values are dropped', () => {
   assert.doesNotMatch(buildSystemPrompt('app', null, 'fr'), /app is set to/);
   assert.doesNotMatch(buildSystemPrompt('app', null), /app is set to/);
 });
+
+test('system prompt tells Felix to answer first and not repeat questions', () => {
+  const prompt = buildSystemPrompt('app', null, 'ru');
+  assert.match(prompt, /Always answer the request first/);
+  assert.match(prompt, /assume sensible defaults/);
+  assert.match(prompt, /at most ONE short follow-up question/);
+  assert.match(prompt, /Never repeat a question you already asked/);
+  assert.match(prompt, /instead of asking again/);
+  assert.match(prompt, /under about 120 words/);
+  assert.doesNotMatch(prompt, /when you need to know the user's goals/);
+});
+
+test('profile sports are sanitized and described', () => {
+  const profile = sanitizeProfile({
+    sports: [' gym ', 'running\nfast', '', 5, 'x'.repeat(50), 'a', 'b', 'c', 'd'],
+  });
+  assert.equal(profile.sports.length, 6);
+  assert.deepEqual(profile.sports.slice(0, 2), ['gym', 'running fast']);
+  assert.equal(profile.sports[2], 'x'.repeat(30));
+  assert.equal(sanitizeProfile({ sports: 'gym' }), null);
+  assert.equal(sanitizeProfile({ sports: [] }), null);
+  const prompt = buildSystemPrompt('app', { sports: ['gym', 'running'] }, 'en');
+  assert.match(prompt, /- Sports: gym, running/);
+});
