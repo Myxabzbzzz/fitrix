@@ -18,6 +18,7 @@ import 'package:fitrix/features/workouts/presentation/providers/workouts_provide
 import 'package:fitrix/features/workouts/presentation/widgets/edit_workout_sheet.dart';
 import 'package:fitrix/core/widgets/sync_refresh.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 
 /// Workouts of one sport ("Gym"): today's workout card plus the other plans.
 class SportWorkoutsScreen extends ConsumerStatefulWidget {
@@ -45,23 +46,25 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
     if (active != null && active.template.id != template.id) {
       final replace = await showDialog<bool>(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Finish current workout?'),
-          content: Text(
-            '"${active.template.name}" is still in progress. '
-            'Start "${template.name}" instead?',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
+        builder: (context) {
+          final l10n = AppLocalizations.of(context);
+          return AlertDialog(
+            title: Text(l10n.gymFinishCurrentTitle),
+            content: Text(
+              l10n.gymFinishCurrentBody(active.template.name, template.name),
             ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Start'),
-            ),
-          ],
-        ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(l10n.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(l10n.gymStart),
+              ),
+            ],
+          );
+        },
       );
       if (replace != true || !mounted) return;
     }
@@ -132,7 +135,8 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
     // Room for a 2-line title at the user's text size.
     final cellHeight = 128 + MediaQuery.textScalerOf(context).scale(16) * 2 - 32;
     final coach = coachMessage(history, now,
-        todayWorkout: workouts.isEmpty ? null : workouts.first.name);
+        todayWorkout: workouts.isEmpty ? null : workouts.first.name,
+        localeName: localeName);
 
     bool doneToday(WorkoutTemplate t) => history.any((w) =>
         w.templateId == t.id &&
@@ -147,11 +151,11 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ScreenTitle(_sport.label),
+            ScreenTitle(_sport.localizedLabel(l10n)),
             PillSelector<Sport>(
               items: Sport.values,
               selected: _sport,
-              labelOf: (s) => s.label,
+              labelOf: (s) => s.localizedLabel(l10n),
               onSelected: (s) => setState(() => _sport = s),
             ),
             Expanded(
@@ -197,9 +201,19 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                     if (coach != null) ...[
                       const SizedBox(height: AppSpacing.md),
                       CoachCard(
-                        eyebrow: l10n.gymCoachEyebrow(_sport.label),
-                        title: coach.title,
-                        message: coach.message,
+                        eyebrow: l10n.gymCoachEyebrow(_sport.localizedLabel(l10n)),
+                        title: switch (coach.kind) {
+                          CoachMessageKind.firstWorkout =>
+                            l10n.gymCoachFirstTitle,
+                          CoachMessageKind.welcomeBack =>
+                            l10n.gymCoachBackTitle,
+                        },
+                        message: switch (coach.kind) {
+                          CoachMessageKind.firstWorkout =>
+                            l10n.gymCoachFirstMessage(coach.today),
+                          CoachMessageKind.welcomeBack =>
+                            l10n.gymCoachBackMessage(coach.days),
+                        },
                         imageAsset: 'assets/images/felix_avatar.png',
                         primaryLabel:
                             workouts.isEmpty ? null : l10n.gymStart,
@@ -241,22 +255,23 @@ class _NewWorkoutDialogState extends State<_NewWorkoutDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('New workout'),
+      title: Text(l10n.gymNewWorkout),
       content: TextField(
         controller: _controller,
         autofocus: true,
-        decoration: const InputDecoration(hintText: 'e.g. Shoulders'),
+        decoration: InputDecoration(hintText: l10n.gymNewWorkoutHint),
         onSubmitted: (value) => Navigator.pop(context, value),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, _controller.text),
-          child: const Text('Add'),
+          child: Text(l10n.gymAdd),
         ),
       ],
     );

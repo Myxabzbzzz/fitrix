@@ -16,6 +16,7 @@ import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart'
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
 import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
@@ -221,7 +222,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   error: (error, stack) => Center(
-                    child: Text('Error: $error'),
+                    child: Text(AppLocalizations.of(context).chatError('$error')),
                   ),
                 ),
               ),
@@ -289,7 +290,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
         alignment: Alignment.centerLeft,
         child: AppButton(
           key: _startButtonKey,
-          label: 'Start',
+          label: AppLocalizations.of(context).chatStart,
           size: AppButtonSize.large,
           onPressed: _animating ? null : _onStartPressed,
         ),
@@ -331,10 +332,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
             Expanded(
               child: TextField(
                 controller: _messageController,
-                decoration: const InputDecoration(
-                  hintText: 'Message...',
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context).chatMessageHint,
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 0),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                 ),
                 onSubmitted: (value) => _sendMessage(value),
               ),

@@ -22,6 +22,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -66,7 +67,7 @@ class HomeScreen extends StatelessWidget {
                                 Expanded(
                                   child: _SectionTile(
                                     location: AppRouter.progress,
-                                    label: 'MY\nPROGRESS',
+                                    label: l10n.homeTileProgress,
                                     labelSize: AppText.displaySmall.fontSize!,
                                     imageAsset:
                                         'assets/images/tile_progress.png',
@@ -77,7 +78,7 @@ class HomeScreen extends StatelessWidget {
                                 Expanded(
                                   child: _SectionTile(
                                     location: AppRouter.nutrition,
-                                    label: 'MY\nNUTRITION',
+                                    label: l10n.homeTileNutrition,
                                     labelSize: AppText.displaySmall.fontSize!,
                                     imageAsset:
                                         'assets/images/tile_nutrition.png',
@@ -107,7 +108,7 @@ class HomeScreen extends StatelessWidget {
                       height: _large,
                       child: _SectionTile(
                         location: AppRouter.workouts,
-                        label: 'MY\nWORKOUTS',
+                        label: l10n.homeTileWorkouts,
                         labelSize: AppText.displayLarge.fontSize!,
                         imageAsset: 'assets/images/tile_workouts.png',
                         imageWidthFactor: 0.55,
@@ -120,7 +121,7 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: FeatureTile(
-                              label: 'SHOP',
+                              label: l10n.homeTileShop,
                               labelSize: AppText.displayMedium.fontSize!,
                               imageAsset: 'assets/images/tile_shop.png',
                               imageWidthFactor: 0.5,
@@ -131,7 +132,7 @@ class HomeScreen extends StatelessWidget {
                           Expanded(
                             child: _SectionTile(
                               location: AppRouter.fitrixMap,
-                              label: 'FITRIX\nMAP',
+                              label: l10n.homeTileMap,
                               labelSize: AppText.displaySmall.fontSize!,
                               imageAsset: 'assets/images/tile_map.png',
                               imageWidthFactor: 0.45,
@@ -244,6 +245,7 @@ class _HomeDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
 
     Widget item(IconData icon, String label, String location) => ListTile(
           leading: Icon(icon, color: palette.textPrimary),
@@ -272,14 +274,14 @@ class _HomeDrawer extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
               child: FitrixLogo(),
             ),
-            item(Icons.show_chart, 'My progress', AppRouter.progress),
+            item(Icons.show_chart, l10n.progressTitle, AppRouter.progress),
             item(
-                Icons.restaurant_outlined, 'My nutrition', AppRouter.nutrition),
-            item(Icons.fitness_center, 'My workouts', AppRouter.workouts),
+                Icons.restaurant_outlined, l10n.nutritionTitle, AppRouter.nutrition),
+            item(Icons.fitness_center, l10n.gymMyWorkouts, AppRouter.workouts),
             item(Icons.smart_toy_outlined, 'Felix', AppRouter.felix),
-            item(Icons.shopping_cart_outlined, 'Shop', AppRouter.shop),
-            item(Icons.map_outlined, 'Fitrix map', AppRouter.fitrixMap),
-            item(Icons.person_outline, 'About me', AppRouter.me),
+            item(Icons.shopping_cart_outlined, l10n.shopTitle, AppRouter.shop),
+            item(Icons.map_outlined, l10n.homeMenuMap, AppRouter.fitrixMap),
+            item(Icons.person_outline, l10n.aboutMeTitle, AppRouter.me),
           ],
         ),
       ),

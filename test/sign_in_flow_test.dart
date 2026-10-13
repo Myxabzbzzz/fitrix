@@ -475,15 +475,15 @@ void main() {
       await fill('age', '300');
       await fill('weight', 'heavy');
       await fill('height', '180');
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Continue'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Продолжить'));
       await tester.pump();
-      expect(find.text('Age must be between 5 and 120'), findsOneWidget);
-      expect(find.text('Enter your weight as a number'), findsOneWidget);
+      expect(find.text('Возраст должен быть от 5 до 120'), findsOneWidget);
+      expect(find.text('Введите вес числом'), findsOneWidget);
       expect(h.remote.upserts, 0);
 
       await fill('age', '30');
       await fill('weight', '72,5');
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Continue'));
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Продолжить'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 

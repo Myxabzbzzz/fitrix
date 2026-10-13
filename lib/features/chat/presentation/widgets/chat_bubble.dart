@@ -3,6 +3,7 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/widgets/typing_indicator.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Felix's avatar, shown beside the last bubble of a Felix group (24) and in
 /// the chat header (32).
@@ -125,7 +126,7 @@ class ChatFailedContent extends StatelessWidget {
             Icon(Icons.refresh, size: 16, color: danger),
             const SizedBox(width: AppSpacing.xxs),
             Text(
-              'Tap to retry',
+              AppLocalizations.of(context).chatTapToRetry,
               style: AppText.captionStrong.copyWith(color: danger),
             ),
           ],

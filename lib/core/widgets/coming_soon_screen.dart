@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Placeholder for sections that exist as entry points in the design
 /// (Discover, Shop, Fitrix map) but don't have their own screens yet.
@@ -39,7 +40,7 @@ class ComingSoonScreen extends StatelessWidget {
                       Icon(icon, size: 64, color: palette.textSecondary),
                     const SizedBox(height: 16),
                     Text(
-                      'Coming soon',
+                      AppLocalizations.of(context).comingSoon,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,

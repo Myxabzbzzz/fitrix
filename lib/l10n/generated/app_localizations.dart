@@ -1067,6 +1067,630 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{n} km'**
   String mapKilometers(String n);
+
+  /// No description provided for @workoutSetsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{total, plural, one{{done} of {total} set} other{{done} of {total} sets}}'**
+  String workoutSetsProgress(int done, int total);
+
+  /// No description provided for @workoutSetCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, one{{n} set} other{{n} sets}}'**
+  String workoutSetCount(int n);
+
+  /// No description provided for @workoutSetDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Set {n} done'**
+  String workoutSetDone(int n);
+
+  /// No description provided for @workoutFinishTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish workout?'**
+  String get workoutFinishTitle;
+
+  /// No description provided for @workoutFinishNoSets.
+  ///
+  /// In en, this message translates to:
+  /// **'No sets are checked off, so this workout won’t be saved.'**
+  String get workoutFinishNoSets;
+
+  /// No description provided for @workoutFinishSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{total, plural, one{{done} of {total} set completed.} other{{done} of {total} sets completed.}} The workout will be saved to your history.'**
+  String workoutFinishSummary(int done, int total);
+
+  /// No description provided for @workoutKeepGoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep going'**
+  String get workoutKeepGoing;
+
+  /// No description provided for @workoutFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get workoutFinish;
+
+  /// No description provided for @workoutSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout saved to My progress'**
+  String get workoutSaved;
+
+  /// No description provided for @workoutNoExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'No exercises yet. Long-press the workout card to add some.'**
+  String get workoutNoExercises;
+
+  /// No description provided for @workoutAddSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add set'**
+  String get workoutAddSet;
+
+  /// No description provided for @workoutFinishButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish workout'**
+  String get workoutFinishButton;
+
+  /// No description provided for @workoutColSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set'**
+  String get workoutColSet;
+
+  /// No description provided for @workoutColPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get workoutColPrevious;
+
+  /// No description provided for @workoutColKg.
+  ///
+  /// In en, this message translates to:
+  /// **'Kg'**
+  String get workoutColKg;
+
+  /// No description provided for @workoutColReps.
+  ///
+  /// In en, this message translates to:
+  /// **'Reps'**
+  String get workoutColReps;
+
+  /// No description provided for @gymCoachFirstTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready for your first workout?'**
+  String get gymCoachFirstTitle;
+
+  /// No description provided for @gymCoachFirstMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with {workout}. Felix will adjust the plan after it.'**
+  String gymCoachFirstMessage(String workout);
+
+  /// No description provided for @gymCoachBackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get gymCoachBackTitle;
+
+  /// No description provided for @gymCoachBackMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your last workout was {days, plural, one{{days} day} other{{days} days}} ago. A lighter session today gets you back on track.'**
+  String gymCoachBackMessage(int days);
+
+  /// No description provided for @gymFinishCurrentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish current workout?'**
+  String get gymFinishCurrentTitle;
+
+  /// No description provided for @gymFinishCurrentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'“{current}” is still in progress. Start “{next}” instead?'**
+  String gymFinishCurrentBody(String current, String next);
+
+  /// No description provided for @gymMyWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'My workouts'**
+  String get gymMyWorkouts;
+
+  /// No description provided for @gymNewWorkout.
+  ///
+  /// In en, this message translates to:
+  /// **'New workout'**
+  String get gymNewWorkout;
+
+  /// No description provided for @gymNewWorkoutHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Shoulders'**
+  String get gymNewWorkoutHint;
+
+  /// No description provided for @gymAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get gymAdd;
+
+  /// No description provided for @gymEditNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout name'**
+  String get gymEditNameHint;
+
+  /// No description provided for @gymEditDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete workout'**
+  String get gymEditDelete;
+
+  /// No description provided for @gymEditAddExerciseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add exercise'**
+  String get gymEditAddExerciseHint;
+
+  /// No description provided for @gymEditSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get gymEditSave;
+
+  /// No description provided for @sportGym.
+  ///
+  /// In en, this message translates to:
+  /// **'Gym'**
+  String get sportGym;
+
+  /// No description provided for @sportFitness.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitness'**
+  String get sportFitness;
+
+  /// No description provided for @sportCycling.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycling'**
+  String get sportCycling;
+
+  /// No description provided for @sportRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get sportRunning;
+
+  /// No description provided for @sportFootball.
+  ///
+  /// In en, this message translates to:
+  /// **'Football'**
+  String get sportFootball;
+
+  /// No description provided for @sportWinterSports.
+  ///
+  /// In en, this message translates to:
+  /// **'Winter sports'**
+  String get sportWinterSports;
+
+  /// No description provided for @sportWinterSportsTile.
+  ///
+  /// In en, this message translates to:
+  /// **'WINTER\nSPORTS'**
+  String get sportWinterSportsTile;
+
+  /// No description provided for @tabDiscover.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover'**
+  String get tabDiscover;
+
+  /// No description provided for @tabShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop'**
+  String get tabShop;
+
+  /// No description provided for @tabHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get tabHome;
+
+  /// No description provided for @tabFelix.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix'**
+  String get tabFelix;
+
+  /// No description provided for @tabProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get tabProfile;
+
+  /// No description provided for @homeTileProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'MY\nPROGRESS'**
+  String get homeTileProgress;
+
+  /// No description provided for @homeTileNutrition.
+  ///
+  /// In en, this message translates to:
+  /// **'MY\nNUTRITION'**
+  String get homeTileNutrition;
+
+  /// No description provided for @homeTileWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'MY\nWORKOUTS'**
+  String get homeTileWorkouts;
+
+  /// No description provided for @homeTileShop.
+  ///
+  /// In en, this message translates to:
+  /// **'SHOP'**
+  String get homeTileShop;
+
+  /// No description provided for @homeTileMap.
+  ///
+  /// In en, this message translates to:
+  /// **'FITRIX\nMAP'**
+  String get homeTileMap;
+
+  /// No description provided for @homeMenuMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitrix map'**
+  String get homeMenuMap;
+
+  /// No description provided for @chatTyping.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix is typing'**
+  String get chatTyping;
+
+  /// No description provided for @chatError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String chatError(String error);
+
+  /// No description provided for @chatStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get chatStart;
+
+  /// No description provided for @chatMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Message...'**
+  String get chatMessageHint;
+
+  /// No description provided for @chatAllChats.
+  ///
+  /// In en, this message translates to:
+  /// **'All chats'**
+  String get chatAllChats;
+
+  /// No description provided for @chatTapToRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to retry'**
+  String get chatTapToRetry;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @progressWeightTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My weight (kg)'**
+  String get progressWeightTitle;
+
+  /// No description provided for @progressCaloriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calories: intake vs burn'**
+  String get progressCaloriesTitle;
+
+  /// No description provided for @signInCodeResent.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a new code to {email}'**
+  String signInCodeResent(String email);
+
+  /// No description provided for @signInChangeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Change email'**
+  String get signInChangeEmail;
+
+  /// No description provided for @profileFieldName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get profileFieldName;
+
+  /// No description provided for @profileFieldSurname.
+  ///
+  /// In en, this message translates to:
+  /// **'Surname'**
+  String get profileFieldSurname;
+
+  /// No description provided for @profileFieldWeightKg.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight, kg'**
+  String get profileFieldWeightKg;
+
+  /// No description provided for @profileFieldHeightCm.
+  ///
+  /// In en, this message translates to:
+  /// **'Height, cm'**
+  String get profileFieldHeightCm;
+
+  /// No description provided for @signInAgainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in again'**
+  String get signInAgainTitle;
+
+  /// No description provided for @signInAgainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has ended. Enter your email to continue.'**
+  String get signInAgainSubtitle;
+
+  /// No description provided for @signInCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account'**
+  String get signInCreateTitle;
+
+  /// No description provided for @signInCreateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email to sign up for this app'**
+  String get signInCreateSubtitle;
+
+  /// No description provided for @signInGetCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Get code'**
+  String get signInGetCode;
+
+  /// No description provided for @signInTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get signInTryAgain;
+
+  /// No description provided for @signInOr.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get signInOr;
+
+  /// No description provided for @signInTermsPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'By clicking continue, you agree to our '**
+  String get signInTermsPrefix;
+
+  /// No description provided for @signInTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get signInTerms;
+
+  /// No description provided for @signInTermsAnd.
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get signInTermsAnd;
+
+  /// No description provided for @signInPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get signInPrivacy;
+
+  /// No description provided for @signInTermsSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'.'**
+  String get signInTermsSuffix;
+
+  /// No description provided for @signInContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with {provider}'**
+  String signInContinueWith(String provider);
+
+  /// No description provided for @signInCheckEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get signInCheckEmailTitle;
+
+  /// No description provided for @signInCodePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the {length}-digit code we sent to\n{email}'**
+  String signInCodePrompt(String length, String email);
+
+  /// No description provided for @signInResend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get signInResend;
+
+  /// No description provided for @signInResendIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code in {time}'**
+  String signInResendIn(String time);
+
+  /// No description provided for @signInSpamNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t find it? Check your spam folder.'**
+  String get signInSpamNote;
+
+  /// No description provided for @signInComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with {provider} is coming soon. Please use your email for now.'**
+  String signInComingSoon(String provider);
+
+  /// No description provided for @signInProfileLoadOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed in, but your profile couldn\'t be loaded. Check your connection and try again.'**
+  String get signInProfileLoadOffline;
+
+  /// No description provided for @signInProfileLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed in, but your profile couldn\'t be loaded. Please try again.'**
+  String get signInProfileLoadFailed;
+
+  /// No description provided for @signInErrInvalidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'That code is wrong or has expired. Check the latest email or send a new code.'**
+  String get signInErrInvalidCode;
+
+  /// No description provided for @signInErrRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please wait a minute and try again.'**
+  String get signInErrRateLimited;
+
+  /// No description provided for @signInErrNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection. Check your internet and try again.'**
+  String get signInErrNetwork;
+
+  /// No description provided for @signInErrInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get signInErrInvalidEmail;
+
+  /// No description provided for @signInErrUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get signInErrUnknown;
+
+  /// No description provided for @signInErrProviderDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with {provider} isn\'t set up on the server yet. Please use your email for now.'**
+  String signInErrProviderDisabled(String provider);
+
+  /// No description provided for @signInErrProviderUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with {provider} isn\'t available on this device. Please use your email instead.'**
+  String signInErrProviderUnavailable(String provider);
+
+  /// No description provided for @signInErrSocialFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t sign in with {provider}. Please try again or use your email.'**
+  String signInErrSocialFailed(String provider);
+
+  /// No description provided for @profileErrNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get profileErrNameRequired;
+
+  /// No description provided for @profileErrNameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is too long'**
+  String get profileErrNameTooLong;
+
+  /// No description provided for @profileErrSurnameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Surname is too long'**
+  String get profileErrSurnameTooLong;
+
+  /// No description provided for @profileErrAgeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your age'**
+  String get profileErrAgeRequired;
+
+  /// No description provided for @profileErrAgeWhole.
+  ///
+  /// In en, this message translates to:
+  /// **'Age must be a whole number'**
+  String get profileErrAgeWhole;
+
+  /// No description provided for @profileErrAgeRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Age must be between {min} and {max}'**
+  String profileErrAgeRange(String min, String max);
+
+  /// No description provided for @profileErrWeightRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your weight'**
+  String get profileErrWeightRequired;
+
+  /// No description provided for @profileErrWeightNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your weight as a number'**
+  String get profileErrWeightNumber;
+
+  /// No description provided for @profileErrWeightRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight must be between {min} and {max} kg'**
+  String profileErrWeightRange(String min, String max);
+
+  /// No description provided for @profileErrHeightRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your height'**
+  String get profileErrHeightRequired;
+
+  /// No description provided for @profileErrHeightNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your height as a number'**
+  String get profileErrHeightNumber;
+
+  /// No description provided for @profileErrHeightRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Height must be between {min} and {max} cm'**
+  String profileErrHeightRange(String min, String max);
 }
 
 class _AppLocalizationsDelegate

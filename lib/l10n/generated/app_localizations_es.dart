@@ -261,7 +261,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chatQuickEatToday => '¿Qué debería comer hoy?';
 
   @override
-  String get chatQuickTired => 'Hoy me siento cansado';
+  String get chatQuickTired => 'Hoy estoy sin energía';
 
   @override
   String get gymToday => 'Hoy';
@@ -589,5 +589,388 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String mapKilometers(String n) {
     return '$n km';
+  }
+
+  @override
+  String workoutSetsProgress(int done, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$done de $total series',
+      one: '$done de $total serie',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String workoutSetCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n series',
+      one: '$n serie',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String workoutSetDone(int n) {
+    return 'Serie $n hecha';
+  }
+
+  @override
+  String get workoutFinishTitle => '¿Terminar el entrenamiento?';
+
+  @override
+  String get workoutFinishNoSets =>
+      'No hay ninguna serie marcada, así que este entrenamiento no se guardará.';
+
+  @override
+  String workoutFinishSummary(int done, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$done de $total series completadas.',
+      one: '$done de $total serie completada.',
+    );
+    return '$_temp0 El entrenamiento se guardará en tu historial.';
+  }
+
+  @override
+  String get workoutKeepGoing => 'Seguir';
+
+  @override
+  String get workoutFinish => 'Terminar';
+
+  @override
+  String get workoutSaved => 'Entrenamiento guardado en Mi progreso';
+
+  @override
+  String get workoutNoExercises =>
+      'Aún no hay ejercicios. Mantén pulsada la tarjeta del entrenamiento para añadir.';
+
+  @override
+  String get workoutAddSet => 'Añadir serie';
+
+  @override
+  String get workoutFinishButton => 'Terminar entrenamiento';
+
+  @override
+  String get workoutColSet => '#';
+
+  @override
+  String get workoutColPrevious => 'Anterior';
+
+  @override
+  String get workoutColKg => 'Kg';
+
+  @override
+  String get workoutColReps => 'Reps';
+
+  @override
+  String get gymCoachFirstTitle => '¿Todo listo para tu primer entrenamiento?';
+
+  @override
+  String gymCoachFirstMessage(String workout) {
+    return 'Empieza con $workout. Felix ajustará el plan después.';
+  }
+
+  @override
+  String get gymCoachBackTitle => '¡Hola de nuevo!';
+
+  @override
+  String gymCoachBackMessage(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days días',
+      one: '$days día',
+    );
+    return 'Tu último entrenamiento fue hace $_temp0. Una sesión más ligera hoy te devuelve al ritmo.';
+  }
+
+  @override
+  String get gymFinishCurrentTitle => '¿Terminar el entrenamiento actual?';
+
+  @override
+  String gymFinishCurrentBody(String current, String next) {
+    return '«$current» sigue en curso. ¿Empezar «$next» en su lugar?';
+  }
+
+  @override
+  String get gymMyWorkouts => 'Mis entrenamientos';
+
+  @override
+  String get gymNewWorkout => 'Nuevo entrenamiento';
+
+  @override
+  String get gymNewWorkoutHint => 'p. ej., Hombros';
+
+  @override
+  String get gymAdd => 'Añadir';
+
+  @override
+  String get gymEditNameHint => 'Nombre del entrenamiento';
+
+  @override
+  String get gymEditDelete => 'Eliminar entrenamiento';
+
+  @override
+  String get gymEditAddExerciseHint => 'Añadir ejercicio';
+
+  @override
+  String get gymEditSave => 'Guardar';
+
+  @override
+  String get sportGym => 'Gimnasio';
+
+  @override
+  String get sportFitness => 'Fitness';
+
+  @override
+  String get sportCycling => 'Ciclismo';
+
+  @override
+  String get sportRunning => 'Running';
+
+  @override
+  String get sportFootball => 'Fútbol';
+
+  @override
+  String get sportWinterSports => 'Deportes de invierno';
+
+  @override
+  String get sportWinterSportsTile => 'DEPORTES\nDE INVIERNO';
+
+  @override
+  String get tabDiscover => 'Descubrir';
+
+  @override
+  String get tabShop => 'Tienda';
+
+  @override
+  String get tabHome => 'Inicio';
+
+  @override
+  String get tabFelix => 'Felix';
+
+  @override
+  String get tabProfile => 'Perfil';
+
+  @override
+  String get homeTileProgress => 'MI\nPROGRESO';
+
+  @override
+  String get homeTileNutrition => 'MI\nNUTRICIÓN';
+
+  @override
+  String get homeTileWorkouts => 'MIS\nENTRENOS';
+
+  @override
+  String get homeTileShop => 'TIENDA';
+
+  @override
+  String get homeTileMap => 'MAPA\nFITRIX';
+
+  @override
+  String get homeMenuMap => 'Mapa Fitrix';
+
+  @override
+  String get chatTyping => 'Felix está escribiendo';
+
+  @override
+  String chatError(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get chatStart => 'Empezar';
+
+  @override
+  String get chatMessageHint => 'Mensaje...';
+
+  @override
+  String get chatAllChats => 'Todos los chats';
+
+  @override
+  String get chatTapToRetry => 'Toca para reintentar';
+
+  @override
+  String get comingSoon => 'Próximamente';
+
+  @override
+  String get progressWeightTitle => 'Mi peso (kg)';
+
+  @override
+  String get progressCaloriesTitle => 'Calorías: ingesta y gasto';
+
+  @override
+  String signInCodeResent(String email) {
+    return 'Hemos enviado un nuevo código a $email';
+  }
+
+  @override
+  String get signInChangeEmail => 'Cambiar correo';
+
+  @override
+  String get profileFieldName => 'Nombre';
+
+  @override
+  String get profileFieldSurname => 'Apellido';
+
+  @override
+  String get profileFieldWeightKg => 'Peso, kg';
+
+  @override
+  String get profileFieldHeightCm => 'Altura, cm';
+
+  @override
+  String get signInAgainTitle => 'Inicia sesión de nuevo';
+
+  @override
+  String get signInAgainSubtitle =>
+      'Tu sesión ha terminado. Introduce tu correo para continuar.';
+
+  @override
+  String get signInCreateTitle => 'Crea una cuenta';
+
+  @override
+  String get signInCreateSubtitle =>
+      'Introduce tu correo para registrarte en la app';
+
+  @override
+  String get signInGetCode => 'Obtener código';
+
+  @override
+  String get signInTryAgain => 'Reintentar';
+
+  @override
+  String get signInOr => 'o';
+
+  @override
+  String get signInTermsPrefix => 'Al continuar, aceptas los ';
+
+  @override
+  String get signInTerms => 'Términos del servicio';
+
+  @override
+  String get signInTermsAnd => ' y la ';
+
+  @override
+  String get signInPrivacy => 'Política de privacidad';
+
+  @override
+  String get signInTermsSuffix => '.';
+
+  @override
+  String signInContinueWith(String provider) {
+    return 'Continuar con $provider';
+  }
+
+  @override
+  String get signInCheckEmailTitle => 'Revisa tu correo';
+
+  @override
+  String signInCodePrompt(String length, String email) {
+    return 'Introduce el código de $length dígitos que enviamos a\n$email';
+  }
+
+  @override
+  String get signInResend => 'Reenviar código';
+
+  @override
+  String signInResendIn(String time) {
+    return 'Reenviar código en $time';
+  }
+
+  @override
+  String get signInSpamNote => '¿No lo encuentras? Revisa la carpeta de spam.';
+
+  @override
+  String signInComingSoon(String provider) {
+    return 'Iniciar sesión con $provider llegará pronto. Por ahora usa tu correo.';
+  }
+
+  @override
+  String get signInProfileLoadOffline =>
+      'Has iniciado sesión, pero no se pudo cargar tu perfil. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get signInProfileLoadFailed =>
+      'Has iniciado sesión, pero no se pudo cargar tu perfil. Inténtalo de nuevo.';
+
+  @override
+  String get signInErrInvalidCode =>
+      'El código es incorrecto o ha caducado. Revisa el último correo o pide un código nuevo.';
+
+  @override
+  String get signInErrRateLimited =>
+      'Demasiados intentos. Espera un minuto e inténtalo de nuevo.';
+
+  @override
+  String get signInErrNetwork =>
+      'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
+
+  @override
+  String get signInErrInvalidEmail => 'Introduce un correo válido.';
+
+  @override
+  String get signInErrUnknown => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String signInErrProviderDisabled(String provider) {
+    return 'Iniciar sesión con $provider aún no está configurado en el servidor. Por ahora usa tu correo.';
+  }
+
+  @override
+  String signInErrProviderUnavailable(String provider) {
+    return 'Iniciar sesión con $provider no está disponible en este dispositivo. Usa tu correo.';
+  }
+
+  @override
+  String signInErrSocialFailed(String provider) {
+    return 'No se pudo iniciar sesión con $provider. Inténtalo de nuevo o usa tu correo.';
+  }
+
+  @override
+  String get profileErrNameRequired => 'Introduce tu nombre';
+
+  @override
+  String get profileErrNameTooLong => 'El nombre es demasiado largo';
+
+  @override
+  String get profileErrSurnameTooLong => 'El apellido es demasiado largo';
+
+  @override
+  String get profileErrAgeRequired => 'Introduce tu edad';
+
+  @override
+  String get profileErrAgeWhole => 'La edad debe ser un número entero';
+
+  @override
+  String profileErrAgeRange(String min, String max) {
+    return 'La edad debe estar entre $min y $max';
+  }
+
+  @override
+  String get profileErrWeightRequired => 'Introduce tu peso';
+
+  @override
+  String get profileErrWeightNumber => 'Introduce tu peso como número';
+
+  @override
+  String profileErrWeightRange(String min, String max) {
+    return 'El peso debe estar entre $min y $max kg';
+  }
+
+  @override
+  String get profileErrHeightRequired => 'Introduce tu altura';
+
+  @override
+  String get profileErrHeightNumber => 'Introduce tu altura como número';
+
+  @override
+  String profileErrHeightRange(String min, String max) {
+    return 'La altura debe estar entre $min y $max cm';
   }
 }

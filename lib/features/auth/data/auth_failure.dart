@@ -21,10 +21,15 @@ enum AuthFailureKind {
 
 /// A sign-in error turned into something the user can act on.
 class AuthFailure implements Exception {
-  const AuthFailure(this.kind, this.message);
+  const AuthFailure(this.kind, this.message, {this.provider});
 
   final AuthFailureKind kind;
+
+  /// English text, for logs and as a fallback; the UI maps [kind] to l10n.
   final String message;
+
+  /// "Google" / "Apple" for the social kinds.
+  final String? provider;
 
   static const invalidCode = AuthFailure(
     AuthFailureKind.invalidCode,
@@ -52,6 +57,7 @@ class AuthFailure implements Exception {
         AuthFailureKind.providerDisabled,
         "Sign in with $provider isn't set up on the server yet. "
         'Please use your email for now.',
+        provider: provider,
       );
 
   /// This build or device can't sign in with [provider].
@@ -59,11 +65,13 @@ class AuthFailure implements Exception {
         AuthFailureKind.providerUnavailable,
         "Sign in with $provider isn't available on this device. "
         'Please use your email instead.',
+        provider: provider,
       );
 
   factory AuthFailure.socialFailed(String provider) => AuthFailure(
         AuthFailureKind.socialFailed,
         "Couldn't sign in with $provider. Please try again or use your email.",
+        provider: provider,
       );
 
   /// Maps errors from signing in with [provider] ("Google", "Apple"): from

@@ -10,6 +10,7 @@ import 'package:fitrix/features/progress/data/progress_data.dart';
 import 'package:fitrix/features/progress/presentation/widgets/progress_chart.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// "My progress": strength charts and recent sessions from saved workouts,
@@ -26,12 +27,13 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
 
   ProgressChart _chart(
     ProgressSeries s, {
+    String? title,
     String? left,
     String? right,
     String? delta,
   }) =>
       ProgressChart(
-        title: s.title,
+        title: title ?? s.title,
         values: s.values,
         xLabels: s.xLabels,
         minY: s.minY,
@@ -73,7 +75,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             PillSelector<Sport>(
               items: Sport.values,
               selected: _sport,
-              labelOf: (s) => s.label,
+              labelOf: (s) => s.localizedLabel(l10n),
               onSelected: (s) => setState(() => _sport = s),
             ),
             Expanded(
@@ -89,7 +91,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                         child: Text(
-                          l10n.progressNoWorkouts(_sport.label.toLowerCase()),
+                          l10n.progressNoWorkouts(_sport.localizedLabel(l10n).toLowerCase()),
                           style: noteStyle,
                         ),
                       ),
@@ -119,13 +121,15 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                     const SizedBox(height: AppSpacing.sm),
                     _chart(
                       weight,
+                      title: l10n.progressWeightTitle,
                       delta: _delta(weight),
                       left:
                           l10n.progressMonthAgo(formatKg(weight.values.first)),
                       right: l10n.progressCurrent(formatKg(weight.values.last)),
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    _chart(ProgressData.calories),
+                    _chart(ProgressData.calories,
+                        title: l10n.progressCaloriesTitle),
                     const SizedBox(height: AppSpacing.sm),
                     Row(
                       children: [

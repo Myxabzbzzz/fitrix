@@ -255,7 +255,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get chatQuickEatToday => 'Bugun nima yeyishim kerak?';
 
   @override
-  String get chatQuickTired => 'Bugun o\'zimni charchagan his qilyapman';
+  String get chatQuickTired => 'Bugun o‘zimni charchagan his qilyapman';
 
   @override
   String get gymToday => 'Bugun';
@@ -584,5 +584,365 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String mapKilometers(String n) {
     return '$n km';
+  }
+
+  @override
+  String workoutSetsProgress(int done, int total) {
+    return '$done / $total yondashuv';
+  }
+
+  @override
+  String workoutSetCount(int n) {
+    return '$n yondashuv';
+  }
+
+  @override
+  String workoutSetDone(int n) {
+    return '$n-yondashuv bajarildi';
+  }
+
+  @override
+  String get workoutFinishTitle => 'Mashg‘ulotni yakunlaysizmi?';
+
+  @override
+  String get workoutFinishNoSets =>
+      'Birorta yondashuv belgilanmagan, shuning uchun mashg‘ulot saqlanmaydi.';
+
+  @override
+  String workoutFinishSummary(int done, int total) {
+    return '$total yondashuvdan $done tasi bajarildi. Mashg‘ulot tarixingizga saqlanadi.';
+  }
+
+  @override
+  String get workoutKeepGoing => 'Davom etish';
+
+  @override
+  String get workoutFinish => 'Yakunlash';
+
+  @override
+  String get workoutSaved =>
+      'Mashg‘ulot “Mening yutuqlarim” bo‘limiga saqlandi';
+
+  @override
+  String get workoutNoExercises =>
+      'Hozircha mashqlar yo‘q. Qo‘shish uchun mashg‘ulot kartasini bosib turing.';
+
+  @override
+  String get workoutAddSet => 'Yondashuv qo‘shish';
+
+  @override
+  String get workoutFinishButton => 'Mashg‘ulotni yakunlash';
+
+  @override
+  String get workoutColSet => '#';
+
+  @override
+  String get workoutColPrevious => 'Oldingi';
+
+  @override
+  String get workoutColKg => 'Kg';
+
+  @override
+  String get workoutColReps => 'Takror';
+
+  @override
+  String get gymCoachFirstTitle => 'Birinchi mashg‘ulotga tayyormisiz?';
+
+  @override
+  String gymCoachFirstMessage(String workout) {
+    return 'Bugun $workout bilan boshlang. Undan keyin Felix rejani moslashtiradi.';
+  }
+
+  @override
+  String get gymCoachBackTitle => 'Qaytganingiz bilan';
+
+  @override
+  String gymCoachBackMessage(int days) {
+    return 'Oxirgi mashg‘ulotingiz $days kun oldin bo‘lgan. Bugungi yengil mashg‘ulot sizni izga qaytaradi.';
+  }
+
+  @override
+  String get gymFinishCurrentTitle => 'Joriy mashg‘ulotni yakunlaysizmi?';
+
+  @override
+  String gymFinishCurrentBody(String current, String next) {
+    return '“$current” hali davom etmoqda. Uning o‘rniga “$next” ni boshlaysizmi?';
+  }
+
+  @override
+  String get gymMyWorkouts => 'Mening mashg‘ulotlarim';
+
+  @override
+  String get gymNewWorkout => 'Yangi mashg‘ulot';
+
+  @override
+  String get gymNewWorkoutHint => 'masalan, Yelkalar';
+
+  @override
+  String get gymAdd => 'Qo‘shish';
+
+  @override
+  String get gymEditNameHint => 'Mashg‘ulot nomi';
+
+  @override
+  String get gymEditDelete => 'Mashg‘ulotni o‘chirish';
+
+  @override
+  String get gymEditAddExerciseHint => 'Mashq qo‘shish';
+
+  @override
+  String get gymEditSave => 'Saqlash';
+
+  @override
+  String get sportGym => 'Sport zali';
+
+  @override
+  String get sportFitness => 'Fitnes';
+
+  @override
+  String get sportCycling => 'Velosport';
+
+  @override
+  String get sportRunning => 'Yugurish';
+
+  @override
+  String get sportFootball => 'Futbol';
+
+  @override
+  String get sportWinterSports => 'Qishki sport turlari';
+
+  @override
+  String get sportWinterSportsTile => 'QISHKI\nSPORT';
+
+  @override
+  String get tabDiscover => 'Kashf etish';
+
+  @override
+  String get tabShop => 'Do‘kon';
+
+  @override
+  String get tabHome => 'Bosh sahifa';
+
+  @override
+  String get tabFelix => 'Felix';
+
+  @override
+  String get tabProfile => 'Profil';
+
+  @override
+  String get homeTileProgress => 'MENING\nNATIJAM';
+
+  @override
+  String get homeTileNutrition => 'MENING\nOVQATIM';
+
+  @override
+  String get homeTileWorkouts => 'MENING\nMASHG‘ULOT';
+
+  @override
+  String get homeTileShop => 'DO‘KON';
+
+  @override
+  String get homeTileMap => 'FITRIX\nXARITASI';
+
+  @override
+  String get homeMenuMap => 'Fitrix xaritasi';
+
+  @override
+  String get chatTyping => 'Felix yozmoqda';
+
+  @override
+  String chatError(String error) {
+    return 'Xato: $error';
+  }
+
+  @override
+  String get chatStart => 'Boshlash';
+
+  @override
+  String get chatMessageHint => 'Xabar...';
+
+  @override
+  String get chatAllChats => 'Barcha chatlar';
+
+  @override
+  String get chatTapToRetry => 'Qayta urinish uchun bosing';
+
+  @override
+  String get comingSoon => 'Tez orada';
+
+  @override
+  String get progressWeightTitle => 'Mening vaznim (kg)';
+
+  @override
+  String get progressCaloriesTitle => 'Kaloriya: qabul va sarf';
+
+  @override
+  String signInCodeResent(String email) {
+    return 'Yangi kodni $email manziliga yubordik';
+  }
+
+  @override
+  String get signInChangeEmail => 'Emailni o‘zgartirish';
+
+  @override
+  String get profileFieldName => 'Ism';
+
+  @override
+  String get profileFieldSurname => 'Familiya';
+
+  @override
+  String get profileFieldWeightKg => 'Vazn, kg';
+
+  @override
+  String get profileFieldHeightCm => 'Bo‘y, sm';
+
+  @override
+  String get signInAgainTitle => 'Qaytadan kiring';
+
+  @override
+  String get signInAgainSubtitle =>
+      'Seans tugadi. Davom etish uchun emailingizni kiriting.';
+
+  @override
+  String get signInCreateTitle => 'Hisob yarating';
+
+  @override
+  String get signInCreateSubtitle =>
+      'Ilovada ro‘yxatdan o‘tish uchun emailingizni kiriting';
+
+  @override
+  String get signInGetCode => 'Kodni olish';
+
+  @override
+  String get signInTryAgain => 'Qayta urinish';
+
+  @override
+  String get signInOr => 'yoki';
+
+  @override
+  String get signInTermsPrefix => '“Davom etish” tugmasini bosish orqali siz ';
+
+  @override
+  String get signInTerms => 'Foydalanish shartlari';
+
+  @override
+  String get signInTermsAnd => ' va ';
+
+  @override
+  String get signInPrivacy => 'Maxfiylik siyosati';
+
+  @override
+  String get signInTermsSuffix => 'ga rozilik bildirasiz.';
+
+  @override
+  String signInContinueWith(String provider) {
+    return '$provider orqali davom etish';
+  }
+
+  @override
+  String get signInCheckEmailTitle => 'Emailingizni tekshiring';
+
+  @override
+  String signInCodePrompt(String length, String email) {
+    return 'Biz yuborgan $length xonali kodni kiriting:\n$email';
+  }
+
+  @override
+  String get signInResend => 'Kodni qayta yuborish';
+
+  @override
+  String signInResendIn(String time) {
+    return 'Kodni qayta yuborish: $time';
+  }
+
+  @override
+  String get signInSpamNote => 'Topolmadingizmi? Spam jildini tekshiring.';
+
+  @override
+  String signInComingSoon(String provider) {
+    return '$provider orqali kirish tez orada qo‘shiladi. Hozircha email orqali kiring.';
+  }
+
+  @override
+  String get signInProfileLoadOffline =>
+      'Siz kirdingiz, lekin profilni yuklab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.';
+
+  @override
+  String get signInProfileLoadFailed =>
+      'Siz kirdingiz, lekin profilni yuklab bo‘lmadi. Qayta urinib ko‘ring.';
+
+  @override
+  String get signInErrInvalidCode =>
+      'Kod noto‘g‘ri yoki eskirgan. Eng so‘nggi xatni tekshiring yoki yangi kod so‘rang.';
+
+  @override
+  String get signInErrRateLimited =>
+      'Urinishlar juda ko‘p. Bir daqiqa kutib, qayta urinib ko‘ring.';
+
+  @override
+  String get signInErrNetwork =>
+      'Aloqa yo‘q. Internetni tekshirib, qayta urinib ko‘ring.';
+
+  @override
+  String get signInErrInvalidEmail => 'To‘g‘ri email manzilini kiriting.';
+
+  @override
+  String get signInErrUnknown => 'Nimadir xato ketdi. Qayta urinib ko‘ring.';
+
+  @override
+  String signInErrProviderDisabled(String provider) {
+    return '$provider orqali kirish serverda hali sozlanmagan. Hozircha email orqali kiring.';
+  }
+
+  @override
+  String signInErrProviderUnavailable(String provider) {
+    return '$provider orqali kirish bu qurilmada mavjud emas. Email orqali kiring.';
+  }
+
+  @override
+  String signInErrSocialFailed(String provider) {
+    return '$provider orqali kirib bo‘lmadi. Qayta urinib ko‘ring yoki email orqali kiring.';
+  }
+
+  @override
+  String get profileErrNameRequired => 'Ismingizni kiriting';
+
+  @override
+  String get profileErrNameTooLong => 'Ism juda uzun';
+
+  @override
+  String get profileErrSurnameTooLong => 'Familiya juda uzun';
+
+  @override
+  String get profileErrAgeRequired => 'Yoshingizni kiriting';
+
+  @override
+  String get profileErrAgeWhole => 'Yosh butun son bo‘lishi kerak';
+
+  @override
+  String profileErrAgeRange(String min, String max) {
+    return 'Yosh $min dan $max gacha bo‘lishi kerak';
+  }
+
+  @override
+  String get profileErrWeightRequired => 'Vazningizni kiriting';
+
+  @override
+  String get profileErrWeightNumber => 'Vazningizni son bilan kiriting';
+
+  @override
+  String profileErrWeightRange(String min, String max) {
+    return 'Vazn $min dan $max kg gacha bo‘lishi kerak';
+  }
+
+  @override
+  String get profileErrHeightRequired => 'Bo‘yingizni kiriting';
+
+  @override
+  String get profileErrHeightNumber => 'Bo‘yingizni son bilan kiriting';
+
+  @override
+  String profileErrHeightRange(String min, String max) {
+    return 'Bo‘y $min dan $max sm gacha bo‘lishi kerak';
   }
 }

@@ -1,16 +1,21 @@
 import 'package:intl/intl.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
-/// What the Coach card says, or null when the user trained in the last 2 days
-/// (nothing to nudge about). [now] is injectable for tests.
-({String title, String message})? coachMessage(
+enum CoachMessageKind { firstWorkout, welcomeBack }
+
+/// What the Coach card says, as data the screen turns into localized copy:
+/// [kind] picks the text, [days] is the gap since the last workout
+/// (welcomeBack), [today] the workout or weekday to start with (firstWorkout).
+/// Null when the user trained in the last 2 days (nothing to nudge about).
+/// [now] is injectable for tests; [localeName] formats the weekday fallback.
+({CoachMessageKind kind, int days, String today})? coachMessage(
     List<CompletedWorkout> history, DateTime now,
-    {String? todayWorkout}) {
+    {String? todayWorkout, String? localeName}) {
   if (history.isEmpty) {
-    final today = todayWorkout ?? DateFormat('EEEE').format(now);
     return (
-      title: 'Ready for your first workout?',
-      message: 'Start with $today. Felix will adjust the plan after it.',
+      kind: CoachMessageKind.firstWorkout,
+      days: 0,
+      today: todayWorkout ?? DateFormat('EEEE', localeName).format(now),
     );
   }
   final last = history
@@ -21,9 +26,5 @@ import 'package:fitrix/features/workouts/data/models/workout.dart';
       .difference(DateTime.utc(last.year, last.month, last.day))
       .inDays;
   if (days < 3) return null;
-  return (
-    title: 'Welcome back',
-    message: 'Your last workout was $days days ago. '
-        'A lighter session today gets you back on track.',
-  );
+  return (kind: CoachMessageKind.welcomeBack, days: days, today: '');
 }

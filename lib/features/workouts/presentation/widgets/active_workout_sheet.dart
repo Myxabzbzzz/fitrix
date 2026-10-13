@@ -10,6 +10,7 @@ import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/elapsed_time_text.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// The active workout, shown above the tab bar on every tab.
 ///
@@ -295,33 +296,37 @@ class _SetsTable extends ConsumerWidget {
   Future<void> _finish(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Finish workout?'),
-        content: Text(
-          workout.completedSets == 0
-              ? 'No sets are checked off, so this workout won\'t be saved.'
-              : '${workout.completedSets} of ${workout.totalSets} sets '
-                  'completed. The workout will be saved to your history.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Keep going'),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context);
+        return AlertDialog(
+          title: Text(l10n.workoutFinishTitle),
+          content: Text(
+            workout.completedSets == 0
+                ? l10n.workoutFinishNoSets
+                : l10n.workoutFinishSummary(
+                    workout.completedSets, workout.totalSets),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Finish'),
-          ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l10n.workoutKeepGoing),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(l10n.workoutFinish),
+            ),
+          ],
+        );
+      },
     );
     if (confirmed != true || !context.mounted) return;
     final messenger = ScaffoldMessenger.of(context);
+    final savedText = AppLocalizations.of(context).workoutSaved;
     ref.read(activeWorkoutExpandedProvider.notifier).state = false;
     final saved = ref.read(activeWorkoutProvider.notifier).finish();
     if (saved) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Workout saved to My progress')),
+        SnackBar(content: Text(savedText)),
       );
     }
   }
@@ -329,6 +334,7 @@ class _SetsTable extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
     final notifier = ref.read(activeWorkoutProvider.notifier);
     final total = workout.totalSets;
     final done = workout.completedSets;
@@ -339,7 +345,7 @@ class _SetsTable extends ConsumerWidget {
       children: [
         Center(
           child: Text(
-            '$done of $total sets',
+            l10n.workoutSetsProgress(done, total),
             key: ActiveWorkoutSheet.captionKey,
             style: AppText.caption.copyWith(
               color: palette.textSecondary,
@@ -354,7 +360,7 @@ class _SetsTable extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Text(
-              'No exercises yet. Add some with "Edit" on the workout card.',
+              l10n.workoutNoExercises,
               textAlign: TextAlign.center,
               style: AppText.body14.copyWith(color: palette.textSecondary),
             ),
@@ -380,7 +386,7 @@ class _SetsTable extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      '${workout.exercises[e].sets.length} sets',
+                      l10n.workoutSetCount(workout.exercises[e].sets.length),
                       style: AppText.caption
                           .copyWith(color: palette.textSecondary),
                     ),
@@ -402,7 +408,7 @@ class _SetsTable extends ConsumerWidget {
                   child: TextButton.icon(
                     onPressed: () => notifier.addSet(e),
                     icon: const Icon(Icons.add, size: 16),
-                    label: const Text('Add set'),
+                    label: Text(l10n.workoutAddSet),
                     style: TextButton.styleFrom(
                       foregroundColor: palette.accent,
                       textStyle: AppText.captionStrong,
@@ -415,7 +421,7 @@ class _SetsTable extends ConsumerWidget {
         ],
         const SizedBox(height: AppSpacing.xs),
         AppButton(
-          label: 'Finish workout',
+          label: l10n.workoutFinishButton,
           size: AppButtonSize.large,
           expand: true,
           onPressed: () => _finish(context, ref),
@@ -473,6 +479,7 @@ class _TableHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
     final style = AppText.microStrong.copyWith(color: palette.textSecondary);
     Widget hd(String text) =>
         Text(text, style: style, textAlign: TextAlign.center);
@@ -481,13 +488,13 @@ class _TableHeader extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
       child: Row(
         children: [
-          SizedBox(width: _colSet, child: hd('Set')),
+          SizedBox(width: _colSet, child: hd(l10n.workoutColSet)),
           const SizedBox(width: _gap),
-          Expanded(child: hd('Previous')),
+          Expanded(child: hd(l10n.workoutColPrevious)),
           const SizedBox(width: _gap),
-          Expanded(child: hd('Kg')),
+          Expanded(child: hd(l10n.workoutColKg)),
           const SizedBox(width: _gap),
-          Expanded(child: hd('Reps')),
+          Expanded(child: hd(l10n.workoutColReps)),
           const SizedBox(width: _gap),
           const SizedBox(width: _colCheck),
         ],
@@ -515,6 +522,7 @@ class _SetRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final kgSuffix = ' ${AppLocalizations.of(context).unitKg}';
     final textStyle = AppText.body14.copyWith(
       color: palette.textPrimary,
       fontFeatures: const [FontFeature.tabularFigures()],
@@ -557,8 +565,9 @@ class _SetRow extends StatelessWidget {
           Expanded(
             child: cell(
               child: _NumberField(
-                initialValue: '${formatKg(set.kg)} kg',
+                initialValue: '${formatKg(set.kg)}$kgSuffix',
                 decimal: true,
+                suffix: kgSuffix,
                 style: textStyle,
                 onChanged: (value) {
                   final kg = double.tryParse(value.replaceAll(',', '.'));
@@ -650,11 +659,12 @@ class _CheckButtonState extends State<_CheckButton>
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final done = widget.done;
+    final l10n = AppLocalizations.of(context);
 
     return Semantics(
       button: true,
       checked: done,
-      label: 'Set ${widget.index + 1} done',
+      label: l10n.workoutSetDone(widget.index + 1),
       child: GestureDetector(
         onTap: _onTap,
         child: AnimatedContainer(
@@ -687,12 +697,16 @@ class _CheckButtonState extends State<_CheckButton>
 class _NumberField extends StatefulWidget {
   final String initialValue;
   final bool decimal;
+
+  /// Unit shown after the number while the field is not focused (e.g. " kg").
+  final String suffix;
   final TextStyle style;
   final ValueChanged<String> onChanged;
 
   const _NumberField({
     required this.initialValue,
     required this.decimal,
+    this.suffix = '',
     required this.style,
     required this.onChanged,
   });
@@ -712,11 +726,13 @@ class _NumberFieldState extends State<_NumberField> {
     _focusNode.addListener(() {
       final text = _controller.text;
       if (_focusNode.hasFocus) {
-        _controller.text = text.replaceAll(' kg', '');
+        _controller.text = text.replaceAll(widget.suffix, '');
         _controller.selection =
             TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
-      } else if (widget.decimal && text.isNotEmpty && !text.endsWith(' kg')) {
-        _controller.text = '$text kg';
+      } else if (widget.decimal &&
+          text.isNotEmpty &&
+          !text.endsWith(widget.suffix)) {
+        _controller.text = '$text${widget.suffix}';
       }
     });
   }

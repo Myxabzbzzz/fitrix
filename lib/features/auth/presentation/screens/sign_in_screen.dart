@@ -14,6 +14,7 @@ import 'package:fitrix/features/auth/data/auth_failure.dart';
 import 'package:fitrix/features/auth/data/social_sign_in.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/auth/presentation/widgets/code_input.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Sign in with email: enter the address, then the 6-digit code from the
 /// email. New addresses get an account automatically. "Continue with
@@ -46,7 +47,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   _Step _step = _Step.email;
   String _email = '';
   bool _busy = false;
-  String? _error;
+
+  /// An [AuthFailure] or [_ProfileLoadFailed]; shown localized.
+  Object? _error;
 
   /// The Google / Apple sign-in in progress, for its button's spinner.
   SocialProvider? _socialBusy;
@@ -96,7 +99,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     if (_busy) return;
     final email = _emailController.text.trim();
     if (!looksLikeEmail(email)) {
-      setState(() => _error = AuthFailure.invalidEmail.message);
+      setState(() => _error = AuthFailure.invalidEmail);
       return;
     }
 
@@ -131,11 +134,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       _focusCode();
       if (!switchToCodeStep) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('We sent a new code to $email')),
+          SnackBar(
+              content:
+                  Text(AppLocalizations.of(context).signInCodeResent(email))),
         );
       }
     } catch (e) {
-      if (mounted) setState(() => _error = AuthFailure.from(e).message);
+      if (mounted) setState(() => _error = AuthFailure.from(e));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -164,7 +169,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       _codeController.clear();
       setState(() {
         _busy = false;
-        _error = AuthFailure.from(e, verifying: true).message;
+        _error = AuthFailure.from(e, verifying: true);
       });
       _focusCode();
       return;
@@ -221,7 +226,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       setState(() {
         _busy = false;
         _socialBusy = null;
-        _error = AuthFailure.fromSocial(e, provider: provider.label).message;
+        _error = AuthFailure.fromSocial(e, provider: provider.label);
       });
       return;
     }
@@ -254,11 +259,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           _busy = false;
           _socialBusy = null;
           _verifiedUserId = userId;
-          _error = AuthFailure.from(e).kind == AuthFailureKind.network
-              ? "You're signed in, but your profile couldn't be loaded. "
-                  'Check your connection and try again.'
-              : "You're signed in, but your profile couldn't be loaded. "
-                  'Please try again.';
+          _error = _ProfileLoadFailed(
+              network: AuthFailure.from(e).kind == AuthFailureKind.network);
         });
         return;
       }
@@ -290,10 +292,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(
-        content: Text(
-          'Sign in with $provider is coming soon. '
-          'Please use your email for now.',
-        ),
+        content: Text(AppLocalizations.of(context).signInComingSoon(provider)),
       ));
   }
 
@@ -340,14 +339,36 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         ],
       );
 
-  Widget _errorText(String? error) => AnimatedSize(
+  String _errorMessage(AppLocalizations l10n, Object error) {
+    if (error is _ProfileLoadFailed) {
+      return error.network
+          ? l10n.signInProfileLoadOffline
+          : l10n.signInProfileLoadFailed;
+    }
+    if (error is! AuthFailure) return l10n.signInErrUnknown;
+    final provider = error.provider ?? '';
+    return switch (error.kind) {
+      AuthFailureKind.invalidCode => l10n.signInErrInvalidCode,
+      AuthFailureKind.rateLimited => l10n.signInErrRateLimited,
+      AuthFailureKind.network => l10n.signInErrNetwork,
+      AuthFailureKind.invalidEmail => l10n.signInErrInvalidEmail,
+      AuthFailureKind.unknown => l10n.signInErrUnknown,
+      AuthFailureKind.providerDisabled =>
+        l10n.signInErrProviderDisabled(provider),
+      AuthFailureKind.providerUnavailable =>
+        l10n.signInErrProviderUnavailable(provider),
+      AuthFailureKind.socialFailed => l10n.signInErrSocialFailed(provider),
+    };
+  }
+
+  Widget _errorText(Object? error) => AnimatedSize(
         duration: const Duration(milliseconds: 150),
         child: error == null
             ? const SizedBox(width: double.infinity)
             : Padding(
                 padding: const EdgeInsets.only(top: AppSpacing.sm),
                 child: Text(
-                  error,
+                  _errorMessage(AppLocalizations.of(context), error),
                   key: const Key('sign-in-error'),
                   textAlign: TextAlign.center,
                   style: AppText.bodyRegular.copyWith(color: AppColors.error),
@@ -372,6 +393,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   Widget _buildEmailStep(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
     // Onboarded but the session ended (signed out elsewhere, revoked).
     final signingBackIn = ref.read(appSessionProvider).onboardingComplete &&
         ref.read(authGatewayProvider) != null;
@@ -383,10 +405,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         signingBackIn
-            ? _title(palette, 'Sign in again',
-                'Your session has ended. Enter your email to continue.')
-            : _title(palette, 'Create an account',
-                'Enter your email to sign up for this app'),
+            ? _title(palette, l10n.signInAgainTitle, l10n.signInAgainSubtitle)
+            : _title(
+                palette, l10n.signInCreateTitle, l10n.signInCreateSubtitle),
         const SizedBox(height: AppSpacing.xl),
         AutofillGroup(
           child: TextField(
@@ -409,7 +430,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         const SizedBox(height: AppSpacing.lg),
         if (profileLoadFailed)
           _primaryButton(
-            'Try again',
+            l10n.signInTryAgain,
             () => _finishSignIn(
               _verifiedUserId!,
               GoRouter.of(context),
@@ -420,7 +441,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           // "Get code" when a code is actually emailed, so it can't be
           // mistaken for "Continue with Google" below.
           _primaryButton(
-            ref.watch(authGatewayProvider) == null ? 'Continue' : 'Get code',
+            ref.watch(authGatewayProvider) == null
+                ? l10n.continueButton
+                : l10n.signInGetCode,
             _continueWithEmail,
           ),
         const SizedBox(height: AppSpacing.lg),
@@ -430,8 +453,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               child: Text(
-                'or',
-                style: AppText.bodyRegular.copyWith(color: palette.textSecondary),
+                l10n.signInOr,
+                style:
+                    AppText.bodyRegular.copyWith(color: palette.textSecondary),
               ),
             ),
             Expanded(child: Divider(color: palette.border)),
@@ -461,17 +485,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           textAlign: TextAlign.center,
           TextSpan(
             style: AppText.caption.copyWith(color: palette.textSecondary),
-            children: const [
-              TextSpan(text: 'By clicking continue, you agree to our '),
+            children: [
+              TextSpan(text: l10n.signInTermsPrefix),
               TextSpan(
-                text: 'Terms of Service',
-                style: TextStyle(decoration: TextDecoration.underline),
+                text: l10n.signInTerms,
+                style: const TextStyle(decoration: TextDecoration.underline),
               ),
-              TextSpan(text: ' and '),
+              TextSpan(text: l10n.signInTermsAnd),
               TextSpan(
-                text: 'Privacy Policy',
-                style: TextStyle(decoration: TextDecoration.underline),
+                text: l10n.signInPrivacy,
+                style: const TextStyle(decoration: TextDecoration.underline),
               ),
+              TextSpan(text: l10n.signInTermsSuffix),
             ],
           ),
         ),
@@ -490,8 +515,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         key: key,
         height: 54,
         child: OutlinedButton.icon(
-          onPressed:
-              _busy || !enabled ? null : () => _continueWith(provider),
+          onPressed: _busy || !enabled ? null : () => _continueWith(provider),
           style: OutlinedButton.styleFrom(
             side: BorderSide(color: palette.border),
             // Matches the themed button radius, like the controls above.
@@ -507,7 +531,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 )
               : Icon(icon, size: 24, color: palette.textPrimary),
           label: Text(
-            'Continue with ${provider.label}',
+            AppLocalizations.of(context).signInContinueWith(provider.label),
             style: AppText.headingS.copyWith(
               color: palette.textPrimary,
               fontWeight: FontWeight.w500,
@@ -518,6 +542,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   Widget _buildCodeStep(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
     final profileLoadFailed = _verifiedUserId != null;
     final cooldown = _cooldownLeft > 0
         ? '${_cooldownLeft ~/ 60}:${(_cooldownLeft % 60).toString().padLeft(2, '0')}'
@@ -528,8 +553,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       children: [
         _title(
           palette,
-          'Check your email',
-          'Enter the ${SignInScreen.codeLength}-digit code we sent to\n$_email',
+          l10n.signInCheckEmailTitle,
+          l10n.signInCodePrompt('${SignInScreen.codeLength}', _email),
         ),
         const SizedBox(height: AppSpacing.xl),
         CodeInput(
@@ -545,7 +570,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         const SizedBox(height: AppSpacing.lg),
         if (profileLoadFailed)
           _primaryButton(
-            'Try again',
+            l10n.signInTryAgain,
             () => _finishSignIn(
               _verifiedUserId!,
               GoRouter.of(context),
@@ -557,7 +582,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           ListenableBuilder(
             listenable: _codeController,
             builder: (context, _) => _primaryButton(
-              'Continue',
+              l10n.continueButton,
               _codeController.text.length == SignInScreen.codeLength
                   ? () => _verify(_codeController.text)
                   : null,
@@ -570,20 +595,28 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 ? null
                 : () => _sendCode(_email, switchToCodeStep: false),
             child: Text(
-              cooldown == null ? 'Resend code' : 'Resend code in $cooldown',
+              cooldown == null
+                  ? l10n.signInResend
+                  : l10n.signInResendIn(cooldown),
             ),
           ),
         TextButton(
           onPressed: _busy ? null : _changeEmail,
-          child: const Text('Change email'),
+          child: Text(l10n.signInChangeEmail),
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          "Can't find it? Check your spam folder.",
+          l10n.signInSpamNote,
           textAlign: TextAlign.center,
           style: AppText.caption.copyWith(color: palette.textSecondary),
         ),
       ],
     );
   }
+}
+
+/// The account signed in but its profile couldn't be fetched.
+class _ProfileLoadFailed {
+  const _ProfileLoadFailed({required this.network});
+  final bool network;
 }

@@ -408,5 +408,289 @@
         "type": "String"
       }
     }
+  },
+  "workoutSetsProgress": "{total, plural, one{{done} of {total} set} other{{done} of {total} sets}}",
+  "@workoutSetsProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int",
+        "example": "3"
+      },
+      "total": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "workoutSetCount": "{n, plural, one{{n} set} other{{n} sets}}",
+  "@workoutSetCount": {
+    "placeholders": {
+      "n": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "workoutSetDone": "Set {n} done",
+  "@workoutSetDone": {
+    "placeholders": {
+      "n": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "workoutFinishTitle": "Finish workout?",
+  "workoutFinishNoSets": "No sets are checked off, so this workout won’t be saved.",
+  "workoutFinishSummary": "{total, plural, one{{done} of {total} set completed.} other{{done} of {total} sets completed.}} The workout will be saved to your history.",
+  "@workoutFinishSummary": {
+    "placeholders": {
+      "done": {
+        "type": "int",
+        "example": "3"
+      },
+      "total": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "workoutKeepGoing": "Keep going",
+  "workoutFinish": "Finish",
+  "workoutSaved": "Workout saved to My progress",
+  "workoutNoExercises": "No exercises yet. Long-press the workout card to add some.",
+  "workoutAddSet": "Add set",
+  "workoutFinishButton": "Finish workout",
+  "workoutColSet": "Set",
+  "workoutColPrevious": "Previous",
+  "workoutColKg": "Kg",
+  "workoutColReps": "Reps",
+  "gymCoachFirstTitle": "Ready for your first workout?",
+  "gymCoachFirstMessage": "Start with {workout}. Felix will adjust the plan after it.",
+  "@gymCoachFirstMessage": {
+    "placeholders": {
+      "workout": {
+        "type": "String",
+        "example": "Legs"
+      }
+    }
+  },
+  "gymCoachBackTitle": "Welcome back",
+  "gymCoachBackMessage": "Your last workout was {days, plural, one{{days} day} other{{days} days}} ago. A lighter session today gets you back on track.",
+  "@gymCoachBackMessage": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "gymFinishCurrentTitle": "Finish current workout?",
+  "gymFinishCurrentBody": "“{current}” is still in progress. Start “{next}” instead?",
+  "@gymFinishCurrentBody": {
+    "placeholders": {
+      "current": {
+        "type": "String",
+        "example": "Legs"
+      },
+      "next": {
+        "type": "String",
+        "example": "Full body"
+      }
+    }
+  },
+  "gymMyWorkouts": "My workouts",
+  "gymNewWorkout": "New workout",
+  "gymNewWorkoutHint": "e.g. Shoulders",
+  "gymAdd": "Add",
+  "gymEditNameHint": "Workout name",
+  "gymEditDelete": "Delete workout",
+  "gymEditAddExerciseHint": "Add exercise",
+  "gymEditSave": "Save",
+  "sportGym": "Gym",
+  "sportFitness": "Fitness",
+  "sportCycling": "Cycling",
+  "sportRunning": "Running",
+  "sportFootball": "Football",
+  "sportWinterSports": "Winter sports",
+  "sportWinterSportsTile": "WINTER\nSPORTS",
+  "tabDiscover": "Discover",
+  "tabShop": "Shop",
+  "tabHome": "Home",
+  "tabFelix": "Felix",
+  "tabProfile": "Profile",
+  "homeTileProgress": "MY\nPROGRESS",
+  "homeTileNutrition": "MY\nNUTRITION",
+  "homeTileWorkouts": "MY\nWORKOUTS",
+  "homeTileShop": "SHOP",
+  "homeTileMap": "FITRIX\nMAP",
+  "homeMenuMap": "Fitrix map",
+  "chatTyping": "Felix is typing",
+  "chatError": "Error: {error}",
+  "@chatError": {
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "timeout"
+      }
+    }
+  },
+  "chatStart": "Start",
+  "chatMessageHint": "Message...",
+  "chatAllChats": "All chats",
+  "chatTapToRetry": "Tap to retry",
+  "comingSoon": "Coming soon",
+  "progressWeightTitle": "My weight (kg)",
+  "progressCaloriesTitle": "Calories: intake vs burn",
+  "signInCodeResent": "We sent a new code to {email}",
+  "@signInCodeResent": {
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "alex@example.com"
+      }
+    }
+  },
+  "signInChangeEmail": "Change email",
+  "profileFieldName": "Name",
+  "profileFieldSurname": "Surname",
+  "profileFieldWeightKg": "Weight, kg",
+  "profileFieldHeightCm": "Height, cm",
+  "signInAgainTitle": "Sign in again",
+  "signInAgainSubtitle": "Your session has ended. Enter your email to continue.",
+  "signInCreateTitle": "Create an account",
+  "signInCreateSubtitle": "Enter your email to sign up for this app",
+  "signInGetCode": "Get code",
+  "signInTryAgain": "Try again",
+  "signInOr": "or",
+  "signInTermsPrefix": "By clicking continue, you agree to our ",
+  "signInTerms": "Terms of Service",
+  "signInTermsAnd": " and ",
+  "signInPrivacy": "Privacy Policy",
+  "signInTermsSuffix": ".",
+  "signInContinueWith": "Continue with {provider}",
+  "@signInContinueWith": {
+    "placeholders": {
+      "provider": {
+        "type": "String",
+        "example": "Google"
+      }
+    }
+  },
+  "signInCheckEmailTitle": "Check your email",
+  "signInCodePrompt": "Enter the {length}-digit code we sent to\n{email}",
+  "@signInCodePrompt": {
+    "placeholders": {
+      "length": {
+        "type": "String",
+        "example": "6"
+      },
+      "email": {
+        "type": "String",
+        "example": "alex@example.com"
+      }
+    }
+  },
+  "signInResend": "Resend code",
+  "signInResendIn": "Resend code in {time}",
+  "@signInResendIn": {
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "0:45"
+      }
+    }
+  },
+  "signInSpamNote": "Can't find it? Check your spam folder.",
+  "signInComingSoon": "Sign in with {provider} is coming soon. Please use your email for now.",
+  "@signInComingSoon": {
+    "placeholders": {
+      "provider": {
+        "type": "String",
+        "example": "Google"
+      }
+    }
+  },
+  "signInProfileLoadOffline": "You're signed in, but your profile couldn't be loaded. Check your connection and try again.",
+  "signInProfileLoadFailed": "You're signed in, but your profile couldn't be loaded. Please try again.",
+  "signInErrInvalidCode": "That code is wrong or has expired. Check the latest email or send a new code.",
+  "signInErrRateLimited": "Too many attempts. Please wait a minute and try again.",
+  "signInErrNetwork": "No connection. Check your internet and try again.",
+  "signInErrInvalidEmail": "Enter a valid email address.",
+  "signInErrUnknown": "Something went wrong. Please try again.",
+  "signInErrProviderDisabled": "Sign in with {provider} isn't set up on the server yet. Please use your email for now.",
+  "@signInErrProviderDisabled": {
+    "placeholders": {
+      "provider": {
+        "type": "String",
+        "example": "Google"
+      }
+    }
+  },
+  "signInErrProviderUnavailable": "Sign in with {provider} isn't available on this device. Please use your email instead.",
+  "@signInErrProviderUnavailable": {
+    "placeholders": {
+      "provider": {
+        "type": "String",
+        "example": "Apple"
+      }
+    }
+  },
+  "signInErrSocialFailed": "Couldn't sign in with {provider}. Please try again or use your email.",
+  "@signInErrSocialFailed": {
+    "placeholders": {
+      "provider": {
+        "type": "String",
+        "example": "Apple"
+      }
+    }
+  },
+  "profileErrNameRequired": "Enter your name",
+  "profileErrNameTooLong": "Name is too long",
+  "profileErrSurnameTooLong": "Surname is too long",
+  "profileErrAgeRequired": "Enter your age",
+  "profileErrAgeWhole": "Age must be a whole number",
+  "profileErrAgeRange": "Age must be between {min} and {max}",
+  "@profileErrAgeRange": {
+    "placeholders": {
+      "min": {
+        "type": "String",
+        "example": "5"
+      },
+      "max": {
+        "type": "String",
+        "example": "120"
+      }
+    }
+  },
+  "profileErrWeightRequired": "Enter your weight",
+  "profileErrWeightNumber": "Enter your weight as a number",
+  "profileErrWeightRange": "Weight must be between {min} and {max} kg",
+  "@profileErrWeightRange": {
+    "placeholders": {
+      "min": {
+        "type": "String",
+        "example": "20"
+      },
+      "max": {
+        "type": "String",
+        "example": "400"
+      }
+    }
+  },
+  "profileErrHeightRequired": "Enter your height",
+  "profileErrHeightNumber": "Enter your height as a number",
+  "profileErrHeightRange": "Height must be between {min} and {max} cm",
+  "@profileErrHeightRange": {
+    "placeholders": {
+      "min": {
+        "type": "String",
+        "example": "80"
+      },
+      "max": {
+        "type": "String",
+        "example": "260"
+      }
+    }
   }
 }
