@@ -19,6 +19,7 @@ Future<void> showCartSheet(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
+      enableDrag: false, // a drag-down would bypass the in-flight guard
       backgroundColor: AppPalette.of(context).sheet,
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.8,
@@ -33,7 +34,17 @@ class CartSheet extends ConsumerWidget {
   final Future<void> Function() onPlaceOrder;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ValueListenableBuilder<bool>(
+        valueListenable: busy,
+        // No dismissing (barrier, back, close) while an order is in flight.
+        builder: (context, working, _) => PopScope(
+          canPop: !working,
+          child: _content(context, ref, working),
+        ),
+      );
+
+  Widget _content(BuildContext context, WidgetRef ref, bool working) {
     final l10n = AppLocalizations.of(context);
     final palette = AppPalette.of(context);
     final cart = ref.watch(cartProvider);
@@ -67,7 +78,7 @@ class CartSheet extends ConsumerWidget {
                   tooltip: l10n.shopClose,
                   icon: const Icon(Icons.close_rounded),
                   color: palette.textPrimary,
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: working ? null : () => Navigator.of(context).pop(),
                 ),
               ],
             ),
@@ -149,9 +160,13 @@ class CartSheet extends ConsumerWidget {
                         onPressed: working
                             ? null
                             : () async {
-                                final navigator = Navigator.of(context);
                                 await onPlaceOrder();
-                                if (navigator.mounted) navigator.pop();
+                                // Only close our own sheet, never a page
+                                // underneath it.
+                                if (context.mounted &&
+                                    ModalRoute.of(context)?.isCurrent == true) {
+                                  Navigator.of(context).pop();
+                                }
                               },
                       ),
                     ),

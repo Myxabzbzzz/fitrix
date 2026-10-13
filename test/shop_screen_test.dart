@@ -271,24 +271,24 @@ void main() {
     expect(c.read(cartProvider), {'whey': 1});
   });
 
-  testWidgets('stale ids are not counted and get pruned', (tester) async {
+  testWidgets('stale ids are hidden and uncounted but stay stored',
+      (tester) async {
     final c = await _pump(tester, _source(),
         prefsInit: {'cart': '{"whey":1,"gone":3}'});
-    await tester.pumpAndSettle();
     expect(
         find.descendant(
             of: find.byKey(const Key('cart-count')), matching: find.text('1')),
         findsOneWidget);
-    expect(c.read(cartProvider), {'whey': 1});
+    expect(c.read(cartProvider), {'whey': 1, 'gone': 3});
     await _openCart(tester);
     expect(find.byKey(const Key('cart-dec-whey')), findsOneWidget);
+    expect(find.byKey(const Key('cart-dec-gone')), findsNothing);
   });
 
   testWidgets('a cart with only stale ids shows no badge', (tester) async {
     final c = await _pump(tester, _source(), prefsInit: {'cart': '{"gone":2}'});
-    await tester.pumpAndSettle();
     expect(find.byKey(const Key('cart-count')), findsNothing);
-    expect(c.read(cartProvider), isEmpty);
+    expect(c.read(cartProvider), {'gone': 2});
   });
 
   testWidgets('empty catalog says no products yet', (tester) async {
@@ -308,10 +308,18 @@ void main() {
     expect(find.byKey(const Key('order-progress')), findsOneWidget);
     await tester.tap(find.text('Place order'), warnIfMissed: false);
     await tester.pump();
+    // Dismiss attempts while busy are ignored.
+    await tester.tapAt(const Offset(10, 10));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Place order'), findsOneWidget);
+    await tester.tap(find.byTooltip('Close'), warnIfMissed: false);
+    await tester.pump();
+    expect(find.text('Place order'), findsOneWidget);
     c.read(cartProvider.notifier).add('bands'); // added during the request
     source.gate.complete();
     await tester.pumpAndSettle();
     expect(source.calls, 1);
+    expect(find.byType(ShopScreen), findsOneWidget);
     expect(source.lastOrder, {'whey': 1});
     expect(c.read(cartProvider), {'bands': 1});
     expect(find.text('Place order'), findsNothing); // sheet closed

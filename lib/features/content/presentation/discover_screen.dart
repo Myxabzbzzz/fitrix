@@ -276,13 +276,37 @@ class _ChallengeHero extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          AppButton(
-            label: joined ? l10n.discoverJoined : l10n.discoverJoin,
-            style: joined ? AppButtonStyle.secondary : AppButtonStyle.primary,
-            size: AppButtonSize.large,
-            expand: true,
-            onPressed: joined ? null : onJoin,
-          ),
+          if (joined)
+            Semantics(
+              label: l10n.discoverJoined,
+              container: true,
+              excludeSemantics: true,
+              child: Container(
+                key: const Key('joined-chip'),
+                height: 48,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: palette.buttonMuted,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check, size: 16, color: palette.textPrimary),
+                    const SizedBox(width: AppSpacing.xxs),
+                    Text(l10n.discoverJoined,
+                        style: AppText.headingS
+                            .copyWith(color: palette.textPrimary)),
+                  ],
+                ),
+              ),
+            )
+          else
+            AppButton(
+              label: l10n.discoverJoin,
+              size: AppButtonSize.large,
+              expand: true,
+              onPressed: onJoin,
+            ),
         ],
       ),
     );

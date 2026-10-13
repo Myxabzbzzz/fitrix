@@ -108,7 +108,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     } catch (_) {
       if (mounted) _retryBar(l10n);
     } finally {
-      _busy.value = false;
+      if (mounted) _busy.value = false;
     }
   }
 
@@ -159,29 +159,12 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     ref.watch(currentUserProvider); // keep the auth state loaded
     final cart = ref.watch(cartProvider);
     final catalogIds = {for (final p in products) p.id};
-    // Ids no longer in the catalog are neither counted nor kept.
-    final stale = products.isEmpty
-        ? const <String, int>{}
-        : {
-            for (final e in cart.entries)
-              if (!catalogIds.contains(e.key)) e.key: e.value,
-          };
-    if (stale.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        final notifier = ref.read(cartProvider.notifier);
-        for (final e in stale.entries) {
-          for (var i = 0; i < e.value; i++) {
-            notifier.remove(e.key);
-          }
-        }
-      });
-    }
-    final count = products.isEmpty
-        ? cart.values.fold<int>(0, (a, b) => a + b)
-        : cart.entries
-            .where((e) => catalogIds.contains(e.key))
-            .fold<int>(0, (a, e) => a + e.value);
+    // Cart lines for products missing from the catalog stay stored (the
+    // catalog may be the seed fallback) but are hidden, not counted and not
+    // ordered. Until the catalog has loaded there is no badge.
+    final count = cart.entries
+        .where((e) => catalogIds.contains(e.key))
+        .fold<int>(0, (a, e) => a + e.value);
 
     final categories = [
       _all,
