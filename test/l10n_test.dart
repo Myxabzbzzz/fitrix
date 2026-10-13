@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
+import 'package:fitrix/features/profile/presentation/screens/profile_tab_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/constants/app_constants.dart';
@@ -83,6 +85,31 @@ void main() {
       expect(find.text('Обо мне'), findsOneWidget);
       expect(find.text('Выйти'), findsOneWidget);
       expect(find.text('72'), findsOneWidget);
+      expect(find.text('кг сейчас'), findsOneWidget);
+    });
+
+    testWidgets('changing the language from Profile returns to Profile',
+        (tester) async {
+      await _pumpApp(tester, {
+        'onboarding_complete': true,
+        'user_name': 'Alex',
+      });
+      AppRouter.router.go(AppRouter.me);
+      await tester.pumpAndSettle();
+      expect(find.text('Profile'), findsWidgets);
+
+      await tester.tap(find.byKey(const Key('profile-language')));
+      await tester.pumpAndSettle();
+      expect(find.byType(LanguageScreen), findsOneWidget);
+      await tester.tap(find.text('Русский'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Продолжить'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(LanguageScreen), findsNothing);
+      expect(find.byType(ProfileTabScreen), findsOneWidget);
+      expect(find.text('Профиль'), findsWidgets);
+      expect(find.text('Выйти'), findsOneWidget);
     });
 
     testWidgets('picking a language switches the app right away and saves it',

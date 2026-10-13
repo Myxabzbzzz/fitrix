@@ -7,7 +7,6 @@ import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/settings/theme_mode_provider.dart';
 import 'package:fitrix/core/sync/sync_providers.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
@@ -42,7 +41,8 @@ class ProfileTabScreen extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            style: TextButton.styleFrom(
+                foregroundColor: AppPalette.of(context).danger),
             child: Text(l10n.signOut),
           ),
         ],
@@ -96,7 +96,8 @@ class ProfileTabScreen extends ConsumerWidget {
             TextButton(
               key: actionKey,
               onPressed: () => Navigator.pop(context, true),
-              style: TextButton.styleFrom(foregroundColor: AppColors.error),
+              style: TextButton.styleFrom(
+                  foregroundColor: AppPalette.of(context).danger),
               child: Text(action),
             ),
           ],
@@ -261,23 +262,29 @@ class ProfileTabScreen extends ConsumerWidget {
 
     Widget seg(String label, ThemeMode mode) {
       final selected = themeMode == mode;
-      return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => ref.read(themeModeProvider.notifier).set(mode),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 32, minWidth: 44),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? palette.background : Colors.transparent,
-            borderRadius: AppRadius.smAll,
-          ),
-          child: Text(label,
-              style: AppText.captionStrong.copyWith(
-                color: selected ? palette.textPrimary : palette.textSecondary,
-              )),
-        ),
-      );
+      return Semantics(
+          button: true,
+          selected: selected,
+          label: label,
+          excludeSemantics: true,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => ref.read(themeModeProvider.notifier).set(mode),
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 32, minWidth: 44),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: selected ? palette.background : Colors.transparent,
+                borderRadius: AppRadius.smAll,
+              ),
+              child: Text(label,
+                  style: AppText.captionStrong.copyWith(
+                    color:
+                        selected ? palette.textPrimary : palette.textSecondary,
+                  )),
+            ),
+          ));
     }
 
     return Scaffold(
@@ -362,11 +369,15 @@ class ProfileTabScreen extends ConsumerWidget {
                         )),
                     chevron(),
                   ]),
-                  // The picker screen itself, pushed directly: the
-                  // /language route is redirected away once onboarded.
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => const LanguageScreen(),
-                  )),
+                  // The picker screen in settings mode, pushed over the tab bar
+                  // (the /language route is redirected away once onboarded).
+                  onTap: () {
+                    final navigator =
+                        Navigator.of(context, rootNavigator: true);
+                    navigator.push(MaterialPageRoute(
+                      builder: (_) => LanguageScreen(onContinue: navigator.pop),
+                    ));
+                  },
                 ),
                 row(
                   icon: Icons.dark_mode_outlined,
