@@ -13,7 +13,8 @@ const {
   sanitizeLanguage,
   buildSystemPrompt,
 } = require('./prompt');
-const { createActionFilter, parseAction, extractAction } = require('./actions');
+const { createActionFilter, parseAction, extractAction, SPORTS } = require('./actions');
+const { looksLikePlan, extractPlanAction } = require('./fallback');
 const { validateImages } = require('./images');
 const { createPlainTextFilter, toPlainText } = require('./plainText');
 const { authConfigFromEnv, requireUser, rateLimitPerUser } = require('./auth');
@@ -50,6 +51,12 @@ const OLLAMA_TIMEOUT_MS = parseWholeNumber(
   'OLLAMA_TIMEOUT_MS',
   process.env.OLLAMA_TIMEOUT_MS,
   120000
+);
+// Budget for the one structured "convert this plan to JSON" call.
+const FALLBACK_TIMEOUT_MS = parseWholeNumber(
+  'FALLBACK_TIMEOUT_MS',
+  process.env.FALLBACK_TIMEOUT_MS,
+  20000
 );
 // Chat messages and replies are users' personal data (age, weight, health),
 // so logs only carry their length unless this is turned on for debugging.
@@ -88,10 +95,12 @@ function createApp({
 
   // Middleware
   app.use(cors());
-  // History can carry 20 turns of non-ASCII text, and a request may carry
-  // one base64 photo (<= 1.5 MB decoded = 2 MB), so allow more than
-  // body-parser's 100kb default.
-  app.use(bodyParser.json({ limit: '3mb' }));
+  // JSON bodies are parsed per route, AFTER authentication, so unauthenticated
+  // callers can't make the server buffer large bodies. History can carry 20
+  // turns of non-ASCII text (1mb); a chat request may also carry one base64
+  // photo (<= 1.5 MB decoded = 2 MB), so chat routes allow 3mb.
+  const smallJson = bodyParser.json({ limit: '1mb' });
+  const chatJson = bodyParser.json({ limit: '3mb' });
 
   // Conversation turns per user and conversationId, for clients that don't
   // send `history`. Requests that do send `history` neither read nor write
@@ -109,13 +118,18 @@ function createApp({
   });
 
   // Chat endpoint
-  app.post('/chat', user, limit, async (req, res) => {
+  app.post('/chat', user, limit, chatJson, async (req, res) => {
     const turn = prepareTurn(req.body, req.user.id, conversations);
     if (turn.error) {
       return res
         .status(turn.status || 400)
         .json({ error: turn.error, message: turn.error });
     }
+
+    const controller = new AbortController();
+    res.on('close', () => {
+      if (!res.writableEnded) controller.abort();
+    });
 
     try {
       const ollamaResponse = await axios.post(
@@ -125,15 +139,19 @@ function createApp({
       );
 
       const extracted = extractAction(
-        ollamaResponse.data?.message?.content || ''
+        ollamaResponse.data?.message?.content || '',
+        { defaultSport: turn.defaultSport }
       );
       const assistantMessage = toPlainText(extracted.text);
       logAction(turn.tag, extracted.hadBlock, extracted.action);
+      const action =
+        extracted.action ||
+        (await fallbackAction(turn, assistantMessage, controller.signal));
       turn.finish(assistantMessage);
 
       res.json(
-        extracted.action
-          ? { reply: assistantMessage, action: extracted.action }
+        action
+          ? { reply: assistantMessage, action }
           : { reply: assistantMessage }
       );
     } catch (error) {
@@ -150,7 +168,7 @@ function createApp({
   //   {"done":true}     when the reply is complete
   //   {"error":"…"}     if Ollama fails mid-stream
   // Errors before the first token are returned as a normal JSON error status.
-  app.post('/chat/stream', user, limit, async (req, res) => {
+  app.post('/chat/stream', user, limit, chatJson, async (req, res) => {
     const turn = prepareTurn(req.body, req.user.id, conversations);
     if (turn.error) {
       return res
@@ -220,8 +238,13 @@ function createApp({
         send({ delta: tail });
       }
 
-      const action = parseAction(actions.block());
+      let action = parseAction(actions.block(), {
+        defaultSport: turn.defaultSport,
+      });
       logAction(turn.tag, actions.sawBlock(), action);
+      if (!action) {
+        action = await fallbackAction(turn, reply, controller.signal);
+      }
       turn.finish(reply);
       if (action) send({ action });
       send({ done: true });
@@ -244,7 +267,7 @@ function createApp({
   });
 
   // Reset conversation endpoint (optional)
-  app.post('/chat/reset', user, (req, res) => {
+  app.post('/chat/reset', user, smallJson, (req, res) => {
     const key = memoryKey(req.user.id, req.body?.conversationId);
 
     if (key && conversations.has(key)) {
@@ -282,7 +305,10 @@ function ollamaRequest(messages, stream, model = OLLAMA_MODEL) {
     model,
     messages,
     stream,
-    think: OLLAMA_THINK,
+    // The vision model may not support `think`; only the text model gets it.
+    ...(model === OLLAMA_VISION_MODEL && model !== OLLAMA_MODEL
+      ? {}
+      : { think: OLLAMA_THINK }),
     keep_alive: OLLAMA_KEEP_ALIVE,
     options: {
       temperature: 0.7,
@@ -356,6 +382,7 @@ function prepareTurn(body, userId, conversations) {
       messages: [system, ...withImages([...history, user])],
       model,
       tag,
+      defaultSport: SPORTS.includes(topic) ? topic : undefined,
       finish: (reply) => logChat(tag, 'Felix', reply),
       abort: () => {},
     };
@@ -368,6 +395,7 @@ function prepareTurn(body, userId, conversations) {
     messages: [system, ...withImages([...turns])],
     model,
     tag,
+    defaultSport: SPORTS.includes(topic) ? topic : undefined,
     finish: (reply) => finishTurn(conversations, key, reply, tag),
     abort: () => abortTurn(conversations, key),
   };
@@ -462,6 +490,27 @@ function abortTurn(conversations, key) {
   if (turns && turns[turns.length - 1]?.role === 'user') {
     turns.pop();
   }
+}
+
+// When the model wrote a plan but no (valid) block, ask once for the action
+// in structured form. Any failure just means no button.
+async function fallbackAction(turn, visibleText, signal) {
+  const kind = looksLikePlan(visibleText);
+  if (!kind) return null;
+  const action = await extractPlanAction({
+    post: axios.post,
+    url: OLLAMA_URL,
+    model: OLLAMA_MODEL,
+    kind,
+    text: visibleText,
+    defaultSport: turn.defaultSport,
+    timeout: FALLBACK_TIMEOUT_MS,
+    signal,
+  });
+  console.log(
+    `${turn.tag} action fallback: ${action ? `${action.type} (valid)` : 'none'}`
+  );
+  return action;
 }
 
 // Logs only whether an action block appeared and its type, never content.

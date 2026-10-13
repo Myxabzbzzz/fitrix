@@ -180,18 +180,33 @@ test('validateImages: rejects bad input with 400 and oversize with 413', () => {
 // ---- HTTP: stream/non-stream with stub Ollama ----
 
 const ollamaRequests = [];
+const fallbackRequests = [];
+let fallbackMode = 'ok';
+const PLAN_TEXT =
+  'Plan:\nDay 1 - Legs\n- Squat 4x10\n- Lunge 3x12\nDay 2 - Upper\n- Bench 4x8\n- Row 3x10\nTap the button below to add it.';
 const ollama = http.createServer((req, res) => {
   let body = '';
   req.on('data', (c) => (body += c));
   req.on('end', () => {
     const data = JSON.parse(body || '{}');
     if (!data.messages?.length) return res.end('{}');
+    if (data.format) {
+      fallbackRequests.push(data);
+      if (fallbackMode === 'hang') return;
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ message: { content: JSON.stringify({
+        sport: 'gym',
+        templates: [{ name: 'Day A', exercises: [{ name: 'Squat', sets: '4', reps: '8-12' }] }],
+      }) } }));
+    }
     ollamaRequests.push(data);
     const last = data.messages[data.messages.length - 1].content;
     const reply = last.startsWith('weight')
       ? 'Noted, +3 kg.\nTap the button below.\n' + block({ type: 'weight', mode: 'delta', amount: 3, unit: 'kg' })
       : last.startsWith('bad')
         ? 'Sure.\n' + block({ type: 'weight', mode: 'set', amount: 5 })
+        : last.startsWith('plan')
+        ? PLAN_TEXT
         : 'plain reply';
     if (data.stream) {
       res.writeHead(200, { 'Content-Type': 'application/x-ndjson' });
@@ -214,6 +229,7 @@ test.before(async () => {
   process.env.OLLAMA_URL = `http://127.0.0.1:${ollama.address().port}`;
   process.env.OLLAMA_MODEL = 'text-model';
   process.env.OLLAMA_VISION_MODEL = 'vision-model';
+  process.env.FALLBACK_TIMEOUT_MS = '300';
   const { createApp } = require('./server');
   appServer = await new Promise((r) => {
     const s = createApp({ rateLimit: 0 }).listen(0, '127.0.0.1', () => r(s));
@@ -312,4 +328,85 @@ test('text after the block is shown; a second block is dropped', () => {
     assert.equal(r.visible, 'Nice!\nTap below.', `split at ${i}`);
     assert.deepEqual(parseAction(r.block), { type: 'weight', mode: 'set', kg: 80 });
   }
+});
+
+// ---- fallback, coercion, sport default, fences ----
+
+test('looksLikePlan recognises workouts and meals, not chit-chat', () => {
+  const { looksLikePlan } = require('./fallback');
+  assert.equal(looksLikePlan(PLAN_TEXT), 'workout_plan');
+  assert.equal(looksLikePlan('Завтрак: каша - 400 ккал\nОбед: суп - 500 ккал\nУжин: рыба - 450 ккал'), 'meal_plan');
+  assert.equal(looksLikePlan('Day 1 is rest. Squat 3x10 is good.'), null);
+  assert.equal(looksLikePlan('Drink water and sleep 8 hours.'), null);
+});
+
+test('stream: plan without a block triggers the structured fallback', async () => {
+  fallbackRequests.length = 0;
+  fallbackMode = 'ok';
+  const events = await ndjson(await post('/chat/stream', { message: 'plan please', conversationId: 'f1', history: [] }));
+  assert.equal(fallbackRequests.length, 1);
+  assert.equal(fallbackRequests[0].options.temperature, 0);
+  assert.equal(fallbackRequests[0].think, false);
+  assert.ok(fallbackRequests[0].format.properties.templates);
+  const kinds = events.map((e) => Object.keys(e)[0]);
+  assert.deepEqual(kinds.slice(-2), ['action', 'done']);
+  // "4" and "8-12" are coerced
+  assert.deepEqual(events.find((e) => e.action).action, {
+    type: 'workout_plan', sport: 'gym',
+    templates: [{ name: 'Day A', exercises: [{ name: 'Squat', sets: 4, reps: 8 }] }],
+  });
+});
+
+test('non-stream /chat uses the fallback too', async () => {
+  fallbackMode = 'ok';
+  const json = await (await post('/chat', { message: 'plan please', conversationId: 'f2', history: [] })).json();
+  assert.equal(json.action.type, 'workout_plan');
+});
+
+test('fallback timeout: done without action', async () => {
+  fallbackRequests.length = 0;
+  fallbackMode = 'hang';
+  const events = await ndjson(await post('/chat/stream', { message: 'plan please', conversationId: 'f3', history: [] }));
+  assert.equal(fallbackRequests.length, 1);
+  assert.ok(!events.some((e) => e.action));
+  assert.deepEqual(events.at(-1), { done: true });
+  fallbackMode = 'ok';
+});
+
+test('non-plan reply makes no fallback call', async () => {
+  fallbackRequests.length = 0;
+  await (await post('/chat/stream', { message: 'hello', conversationId: 'f4', history: [] })).text();
+  assert.equal(fallbackRequests.length, 0);
+});
+
+test('sport chat: the topic stands in for a missing sport; vision request has no think', async () => {
+  const b = JSON.stringify({ type: 'workout_plan', templates: [{ name: 'A', exercises: [{ name: 'X', sets: '3', reps: '10-12', kg: '20' }] }] });
+  const ok = parseAction(`<fitrix-action>${b}</fitrix-action>`, { defaultSport: 'running' });
+  assert.equal(ok.sport, 'running');
+  assert.deepEqual(ok.templates[0].exercises[0], { name: 'X', sets: 3, reps: 10, kg: 20 });
+  assert.equal(parseAction(`<fitrix-action>${b}</fitrix-action>`), null);
+  assert.equal(parseAction(`<fitrix-action>${b.replace('"10-12"', '"lots"')}</fitrix-action>`, { defaultSport: 'gym' }), null);
+  assert.ok(buildSystemPrompt('running', null, 'en').includes('"sport":"running"'));
+
+  ollamaRequests.length = 0;
+  await (await post('/chat', { message: 'what is this', conversationId: 'v1', history: [], images: [jpeg()] })).text();
+  assert.ok(!('think' in ollamaRequests.at(-1)));
+  await (await post('/chat', { message: 'hello', conversationId: 'v2', history: [] })).text();
+  assert.equal(ollamaRequests.at(-1).think, false);
+});
+
+test('code fences around a block are removed, also when split', () => {
+  const b = block({ type: 'weight', mode: 'set', amount: 80 });
+  const text = 'Noted.\n```json\n' + b + '\n```\nGood luck!';
+  for (let i = 1; i < text.length; i++) {
+    const r = run([text.slice(0, i), text.slice(i)]);
+    assert.equal(r.visible, 'Noted.\nGood luck!', `split at ${i}`);
+  }
+});
+
+test('prompt: placeholders, language copy rule and removed-blocks note', () => {
+  const p = buildSystemPrompt('app', null, 'ru');
+  assert.ok(p.includes('Copy each name/items text exactly'));
+  assert.ok(p.includes('without their blocks'));
+  assert.ok(p.includes('<session 1 name>'));
 });

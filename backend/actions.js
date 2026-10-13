@@ -8,6 +8,7 @@ const CLOSE_TAG = '</fitrix-action>';
 
 const SPORTS = ['gym', 'fitness', 'cycling', 'running', 'football', 'winterSports'];
 const LB_TO_KG = 0.4536;
+const FENCE_TAIL = /[ \t]*`{1,3}[a-zA-Z]*[ \t]*\n?[ \t]*$/;
 
 const round1 = (n) => Math.round(n * 10) / 10;
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
@@ -43,8 +44,9 @@ function createActionFilter() {
         if (openBlock !== null) {
           // Inside a block: swallow until the closing tag; models sometimes
           // put a closing sentence after it, which is shown as normal text.
+          const from = Math.max(0, openBlock.length - (CLOSE_TAG.length - 1));
           openBlock += text;
-          const end = openBlock.indexOf(CLOSE_TAG);
+          const end = openBlock.indexOf(CLOSE_TAG, from);
           if (end < 0) return out;
           text = openBlock.slice(end + CLOSE_TAG.length);
           if (firstBlock === null) firstBlock = openBlock.slice(0, end + CLOSE_TAG.length);
@@ -55,6 +57,11 @@ function createActionFilter() {
         if (afterBlock) {
           // The text before the block was trimmed; separate it from what follows.
           text = text.trimStart();
+          if (/^`{1,2}$/.test(text)) {
+            held = text; // maybe the start of a closing fence
+            return out;
+          }
+          text = text.replace(/^```[a-zA-Z]*[ \t]*\n?/, '').trimStart();
           if (text) {
             afterBlock = false;
             if (emitted) text = '\n' + text;
@@ -62,7 +69,8 @@ function createActionFilter() {
         }
         const at = text.indexOf(OPEN_TAG);
         if (at >= 0) {
-          out += visibleText(text.slice(0, at).trimEnd());
+          // A code fence line right before the block is dropped with it.
+          out += visibleText(text.slice(0, at).replace(FENCE_TAIL, '').trimEnd());
           openBlock = text.slice(at);
           text = '';
           const end = openBlock.indexOf(CLOSE_TAG);
@@ -83,9 +91,15 @@ function createActionFilter() {
         }
         // Trailing whitespace is held too, so a newline before a block never
         // leaks out as a trailing blank line.
-        const safe = text.slice(0, text.length - keep);
+        let safe = text.slice(0, text.length - keep);
+        // A trailing code fence line may belong to a block that follows.
+        const fence = FENCE_TAIL.exec(safe);
+        if (fence) {
+          keep += safe.length - fence.index;
+          safe = safe.slice(0, fence.index);
+        }
         const visible = safe.trimEnd();
-        held = safe.slice(visible.length) + text.slice(text.length - keep);
+        held = text.slice(visible.length);
         return out + visibleText(visible);
       }
     },
@@ -106,7 +120,7 @@ function createActionFilter() {
 }
 
 /** Parses the raw block and returns a validated action, or null. */
-function parseAction(block) {
+function parseAction(block, opts) {
   if (typeof block !== 'string') return null;
   const start = block.indexOf('>');
   const end = block.indexOf(CLOSE_TAG);
@@ -119,27 +133,37 @@ function parseAction(block) {
     // Small models often forget the comma between two adjacent objects
     // ("}{"), which is never valid JSON. That is the only repair we make.
     try {
-      raw = JSON.parse(json.replace(/\}\s*\{/g, '},{'));
+      raw = JSON.parse(json.replace(/\}\s*\{"/g, '},{"'));
     } catch {
       return null;
     }
   }
-  return validateAction(raw);
+  return validateAction(raw, opts);
 }
 
 /** Validates one action object; returns the normalised shape or null. */
-function validateAction(raw) {
+function validateAction(raw, { defaultSport } = {}) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   switch (raw.type) {
     case 'weight':
       return validateWeight(raw);
     case 'workout_plan':
-      return validateWorkoutPlan(raw);
+      return validateWorkoutPlan(raw, defaultSport);
     case 'meal_plan':
       return validateMealPlan(raw);
     default:
       return null;
   }
+}
+
+/**
+ * Numbers as models write them: 8, "8", "8-12" (-> 8), "62,5". Anything
+ * else is returned unchanged and fails validation.
+ */
+function coerceNumber(value) {
+  if (typeof value !== 'string') return value;
+  const m = /^\s*(\d+(?:[.,]\d+)?)\s*(?:[-\u2013\u2014]\s*\d+(?:[.,]\d+)?)?\s*$/.exec(value);
+  return m ? Number(m[1].replace(',', '.')) : value;
 }
 
 function validateWeight(raw) {
@@ -168,8 +192,10 @@ function validateWeight(raw) {
   return { type: 'weight', mode: raw.mode, kg };
 }
 
-function validateWorkoutPlan(raw) {
-  if (!SPORTS.includes(raw.sport)) return null;
+function validateWorkoutPlan(raw, defaultSport) {
+  // In a sport chat the chat's sport stands in for a missing/invalid one.
+  const sport = SPORTS.includes(raw.sport) ? raw.sport : defaultSport;
+  if (!SPORTS.includes(sport)) return null;
   const { templates } = raw;
   if (!Array.isArray(templates) || templates.length < 1 || templates.length > 7) return null;
   const out = [];
@@ -181,17 +207,20 @@ function validateWorkoutPlan(raw) {
     const exercises = [];
     for (const e of t.exercises) {
       if (!e || typeof e !== 'object' || !isText(e.name, 100)) return null;
-      if (!isInt(e.sets, 1, 10) || !isInt(e.reps, 1, 100)) return null;
-      const exercise = { name: e.name.trim(), sets: e.sets, reps: e.reps };
+      const sets = coerceNumber(e.sets);
+      const reps = coerceNumber(e.reps);
+      if (!isInt(sets, 1, 10) || !isInt(reps, 1, 100)) return null;
+      const exercise = { name: e.name.trim(), sets, reps };
       if (e.kg !== undefined && e.kg !== null) {
-        if (!isNum(e.kg) || e.kg < 0 || e.kg > 500) return null;
-        exercise.kg = round1(e.kg);
+        const kg = coerceNumber(e.kg);
+        if (!isNum(kg) || kg < 0 || kg > 500) return null;
+        exercise.kg = round1(kg);
       }
       exercises.push(exercise);
     }
     out.push({ name: t.name.trim(), exercises });
   }
-  return { type: 'workout_plan', sport: raw.sport, templates: out };
+  return { type: 'workout_plan', sport, templates: out };
 }
 
 function validateMealPlan(raw) {
@@ -209,11 +238,11 @@ function validateMealPlan(raw) {
 }
 
 /** Non-streaming helper: { text, action, hadBlock } from a full reply. */
-function extractAction(content) {
+function extractAction(content, opts) {
   const filter = createActionFilter();
   const text = filter.push(content) + filter.flush();
   const block = filter.block();
-  return { text, action: parseAction(block), hadBlock: filter.sawBlock() };
+  return { text, action: parseAction(block, opts), hadBlock: filter.sawBlock() };
 }
 
 module.exports = {

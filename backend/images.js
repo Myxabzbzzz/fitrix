@@ -25,18 +25,15 @@ function validateImages(value) {
     if (item.startsWith('data:')) {
       return { status: 400, error: 'images must be raw base64 without a data: prefix' };
     }
-    // Cheap size bound before the strict check on a possibly huge string.
-    if (Math.floor((item.length * 3) / 4) > MAX_IMAGE_BYTES + 3) {
-      return { status: 413, error: 'Image is too large (max 1.5 MB)' };
-    }
     if (item.length % 4 !== 0 || !BASE64.test(item)) {
       return { status: 400, error: 'Image is not valid base64' };
     }
-    const bytes = Buffer.from(item, 'base64');
-    if (bytes.length > MAX_IMAGE_BYTES) {
+    const padding = item.endsWith('==') ? 2 : item.endsWith('=') ? 1 : 0;
+    if ((item.length / 4) * 3 - padding > MAX_IMAGE_BYTES) {
       return { status: 413, error: 'Image is too large (max 1.5 MB)' };
     }
-    if (bytes.length < 4 || bytes[0] !== 0xff || bytes[1] !== 0xd8) {
+    const head = Buffer.from(item.slice(0, 8), 'base64');
+    if (head.length < 3 || head[0] !== 0xff || head[1] !== 0xd8) {
       return { status: 400, error: 'Image must be a JPEG' };
     }
     images.push(item);
