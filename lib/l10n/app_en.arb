@@ -687,5 +687,53 @@
         "type": "int"
       }
     }
+  },
+  "chatActionConfirm": "Confirm",
+  "chatActionApplied": "Added ✓",
+  "chatActionWeightChange": "Update weight: {from} → {to} kg",
+  "chatActionWeightSet": "Update weight to {to} kg",
+  "chatActionWeightUnknown": "Weight change: {delta} kg. Enter your current weight in your profile first.",
+  "chatActionWorkoutTitle": "{count, plural, one{Add {count} workout to {sport}} other{Add {count} workouts to {sport}}}",
+  "chatActionWorkoutExercises": "{count, plural, one{{count} exercise} other{{count} exercises}}",
+  "chatActionMealTitle": "Add to today’s nutrition",
+  "chatActionMealTotal": "{kcal} kcal in total",
+  "chatActionWorkoutsAdded": "Workouts added to {sport}",
+  "chatActionOpen": "Open",
+  "@chatActionWeightChange": {
+    "placeholders": {
+      "from": {"type": "String"},
+      "to": {"type": "String"}
+    }
+  },
+  "@chatActionWeightSet": {
+    "placeholders": {
+      "to": {"type": "String"}
+    }
+  },
+  "@chatActionWeightUnknown": {
+    "placeholders": {
+      "delta": {"type": "String"}
+    }
+  },
+  "@chatActionWorkoutTitle": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "sport": {"type": "String"}
+    }
+  },
+  "@chatActionWorkoutExercises": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "@chatActionMealTotal": {
+    "placeholders": {
+      "kcal": {"type": "String"}
+    }
+  },
+  "@chatActionWorkoutsAdded": {
+    "placeholders": {
+      "sport": {"type": "String"}
+    }
   }
 }

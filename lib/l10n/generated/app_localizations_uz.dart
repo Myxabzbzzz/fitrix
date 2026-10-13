@@ -959,4 +959,61 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get shopOrderUnavailable =>
       'Ba’zi mahsulotlar endi mavjud emas. Savatni yangilang va qayta urinib ko‘ring.';
+
+  @override
+  String get chatActionConfirm => 'Tasdiqlash';
+
+  @override
+  String get chatActionApplied => 'Qo‘shildi ✓';
+
+  @override
+  String chatActionWeightChange(String from, String to) {
+    return 'Vaznni yangilash: $from → $to kg';
+  }
+
+  @override
+  String chatActionWeightSet(String to) {
+    return 'Vaznni $to kg ga yangilash';
+  }
+
+  @override
+  String chatActionWeightUnknown(String delta) {
+    return 'Vazn o‘zgarishi: $delta kg. Avval profilda joriy vazningizni kiriting.';
+  }
+
+  @override
+  String chatActionWorkoutTitle(int count, String sport) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$sport bo‘limiga $count ta mashg‘ulot qo‘shish',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chatActionWorkoutExercises(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ta mashq',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatActionMealTitle => 'Bugungi ovqatlanishga qo‘shish';
+
+  @override
+  String chatActionMealTotal(String kcal) {
+    return 'Jami $kcal kkal';
+  }
+
+  @override
+  String chatActionWorkoutsAdded(String sport) {
+    return 'Mashg‘ulotlar qo‘shildi: $sport';
+  }
+
+  @override
+  String get chatActionOpen => 'Ochish';
 }

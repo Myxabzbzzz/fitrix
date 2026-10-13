@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
@@ -30,6 +31,7 @@ class _FakeApi extends ChatApiService {
     Map<String, Object>? profile,
     List<Map<String, String>>? history,
     String? language,
+    void Function(ChatAction action)? onAction,
   }) async* {
     sent.add(message);
     yield 'Sure';

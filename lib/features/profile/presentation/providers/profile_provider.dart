@@ -50,6 +50,20 @@ class ProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
     }
   }
 
+  /// Sets the weight ("78.5") on the saved profile without flipping the
+  /// state to loading.
+  Future<void> saveWeight(String weight) async {
+    try {
+      final current = await _repository.getProfile() ??
+          UserProfile(name: '', surname: '', age: '', weight: '', height: '');
+      final updated = current.copyWith(weight: weight);
+      await _repository.saveProfile(updated);
+      state = AsyncValue.data(updated);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
   Future<void> saveProfile(UserProfile profile) async {
     state = const AsyncValue.loading();
     try {

@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/profile/data/models/user_profile.dart';
@@ -97,6 +98,7 @@ class ChatRepository {
   Stream<String> streamMessage(
     String message, {
     List<ChatMessage> context = const [],
+    void Function(ChatAction action)? onAction,
   }) async* {
     final conversationId = await getOrCreateConversationId();
     yield* _apiService.streamMessage(
@@ -106,6 +108,7 @@ class ChatRepository {
       profile: await _loadProfile(),
       history: ChatMessage.toApiHistory(context),
       language: _language?.call(),
+      onAction: onAction,
     );
   }
 

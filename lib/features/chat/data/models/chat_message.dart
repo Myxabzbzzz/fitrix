@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:fitrix/features/chat/data/models/chat_action.dart';
+
 enum MessageSender { user, assistant }
 
 class ChatMessage {
@@ -15,6 +17,13 @@ class ChatMessage {
   /// Assistant reply that failed; tapping it retries. Not persisted.
   final bool isFailed;
 
+  /// Change Felix proposes with this reply. Kept with the message on this
+  /// device only: never sent as history and not part of the synced row.
+  final ChatAction? action;
+
+  /// The user confirmed [action] and it was applied.
+  final bool actionApplied;
+
   ChatMessage({
     required this.id,
     required this.content,
@@ -23,12 +32,16 @@ class ChatMessage {
     this.isQuickReply = false,
     this.isStreaming = false,
     this.isFailed = false,
+    this.action,
+    this.actionApplied = false,
   });
 
   ChatMessage copyWith({
     String? content,
     bool? isStreaming,
     bool? isFailed,
+    ChatAction? action,
+    bool? actionApplied,
   }) {
     return ChatMessage(
       id: id,
@@ -38,6 +51,8 @@ class ChatMessage {
       isQuickReply: isQuickReply,
       isStreaming: isStreaming ?? this.isStreaming,
       isFailed: isFailed ?? this.isFailed,
+      action: action ?? this.action,
+      actionApplied: actionApplied ?? this.actionApplied,
     );
   }
 
@@ -48,6 +63,8 @@ class ChatMessage {
       'sender': sender.name,
       'timestamp': timestamp.toIso8601String(),
       'isQuickReply': isQuickReply,
+      if (action != null) 'action': action!.toJson(),
+      if (action != null && actionApplied) 'actionApplied': true,
     };
   }
 
@@ -60,6 +77,8 @@ class ChatMessage {
       ),
       timestamp: DateTime.parse(json['timestamp']),
       isQuickReply: json['isQuickReply'] ?? false,
+      action: ChatAction.tryParse(json['action']),
+      actionApplied: json['actionApplied'] == true,
     );
   }
 

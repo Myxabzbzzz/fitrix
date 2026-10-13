@@ -20,6 +20,16 @@ Widget _host(Widget child) => MaterialApp(
       home: child,
     );
 
+/// The Nutrition screen with empty storage (so it shows the sample day).
+Future<Widget> _nutrition() async {
+  SharedPreferences.setMockInitialValues({});
+  final prefs = await SharedPreferences.getInstance();
+  return ProviderScope(
+    overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+    child: _host(const NutritionScreen()),
+  );
+}
+
 void _se(WidgetTester tester) {
   tester.view.physicalSize = const Size(375, 667) * 3;
   tester.view.devicePixelRatio = 3;
@@ -87,7 +97,7 @@ void main() {
   group('Nutrition', () {
     testWidgets('ring shows consumed and goal', (t) async {
       _se(t);
-      await t.pumpWidget(_host(const NutritionScreen()));
+      await t.pumpWidget((await _nutrition()));
       await t.pumpAndSettle();
       expect(find.text('1,700'), findsOneWidget);
       expect(find.text('of 2,400 kcal'), findsOneWidget);
@@ -95,7 +105,7 @@ void main() {
 
     testWidgets('macro labels and Felix tip are shown', (t) async {
       _se(t);
-      await t.pumpWidget(_host(const NutritionScreen()));
+      await t.pumpWidget((await _nutrition()));
       await t.pumpAndSettle();
       for (final l in ['Protein', 'Carbs', 'Fat']) {
         expect(find.text(l), findsOneWidget);
@@ -107,7 +117,7 @@ void main() {
 
     testWidgets('ring is 132 px with a buttonMuted track', (t) async {
       _se(t);
-      await t.pumpWidget(_host(const NutritionScreen()));
+      await t.pumpWidget((await _nutrition()));
       await t.pumpAndSettle();
       final ring = find.byKey(const ValueKey('calorie-ring'));
       expect(t.getSize(ring), const Size(132, 132));
@@ -122,7 +132,7 @@ void main() {
       _se(t);
       await t.pumpWidget(MediaQuery(
         data: const MediaQueryData(disableAnimations: true),
-        child: _host(const NutritionScreen()),
+        child: (await _nutrition()),
       ));
       await t.pump();
       expect(t.hasRunningAnimations, isFalse);

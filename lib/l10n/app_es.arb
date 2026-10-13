@@ -267,5 +267,16 @@
   "programLevelBeginner": "Principiante",
   "programLevelMedium": "Intermedio",
   "programLevelAdvanced": "Avanzado",
-  "shopOrderUnavailable": "Algunos artículos ya no están disponibles. Actualiza tu carrito e inténtalo de nuevo."
+  "shopOrderUnavailable": "Algunos artículos ya no están disponibles. Actualiza tu carrito e inténtalo de nuevo.",
+  "chatActionConfirm": "Confirmar",
+  "chatActionApplied": "Añadido ✓",
+  "chatActionWeightChange": "Actualizar peso: {from} → {to} kg",
+  "chatActionWeightSet": "Actualizar peso a {to} kg",
+  "chatActionWeightUnknown": "Cambio de peso: {delta} kg. Primero indica tu peso actual en el perfil.",
+  "chatActionWorkoutTitle": "{count, plural, one{Añadir {count} entrenamiento a {sport}} other{Añadir {count} entrenamientos a {sport}}}",
+  "chatActionWorkoutExercises": "{count, plural, one{{count} ejercicio} other{{count} ejercicios}}",
+  "chatActionMealTitle": "Añadir a la nutrición de hoy",
+  "chatActionMealTotal": "{kcal} kcal en total",
+  "chatActionWorkoutsAdded": "Entrenamientos añadidos a {sport}",
+  "chatActionOpen": "Abrir"
 }

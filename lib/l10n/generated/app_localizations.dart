@@ -1709,6 +1709,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Some items are no longer available. Update your cart and try again.'**
   String get shopOrderUnavailable;
+
+  /// No description provided for @chatActionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get chatActionConfirm;
+
+  /// No description provided for @chatActionApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Added ✓'**
+  String get chatActionApplied;
+
+  /// No description provided for @chatActionWeightChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Update weight: {from} → {to} kg'**
+  String chatActionWeightChange(String from, String to);
+
+  /// No description provided for @chatActionWeightSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Update weight to {to} kg'**
+  String chatActionWeightSet(String to);
+
+  /// No description provided for @chatActionWeightUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight change: {delta} kg. Enter your current weight in your profile first.'**
+  String chatActionWeightUnknown(String delta);
+
+  /// No description provided for @chatActionWorkoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Add {count} workout to {sport}} other{Add {count} workouts to {sport}}}'**
+  String chatActionWorkoutTitle(int count, String sport);
+
+  /// No description provided for @chatActionWorkoutExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} exercise} other{{count} exercises}}'**
+  String chatActionWorkoutExercises(int count);
+
+  /// No description provided for @chatActionMealTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to today’s nutrition'**
+  String get chatActionMealTitle;
+
+  /// No description provided for @chatActionMealTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{kcal} kcal in total'**
+  String chatActionMealTotal(String kcal);
+
+  /// No description provided for @chatActionWorkoutsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts added to {sport}'**
+  String chatActionWorkoutsAdded(String sport);
+
+  /// No description provided for @chatActionOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get chatActionOpen;
 }
 
 class _AppLocalizationsDelegate

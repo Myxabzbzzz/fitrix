@@ -988,4 +988,63 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get shopOrderUnavailable =>
       'Algunos artículos ya no están disponibles. Actualiza tu carrito e inténtalo de nuevo.';
+
+  @override
+  String get chatActionConfirm => 'Confirmar';
+
+  @override
+  String get chatActionApplied => 'Añadido ✓';
+
+  @override
+  String chatActionWeightChange(String from, String to) {
+    return 'Actualizar peso: $from → $to kg';
+  }
+
+  @override
+  String chatActionWeightSet(String to) {
+    return 'Actualizar peso a $to kg';
+  }
+
+  @override
+  String chatActionWeightUnknown(String delta) {
+    return 'Cambio de peso: $delta kg. Primero indica tu peso actual en el perfil.';
+  }
+
+  @override
+  String chatActionWorkoutTitle(int count, String sport) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Añadir $count entrenamientos a $sport',
+      one: 'Añadir $count entrenamiento a $sport',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chatActionWorkoutExercises(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ejercicios',
+      one: '$count ejercicio',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatActionMealTitle => 'Añadir a la nutrición de hoy';
+
+  @override
+  String chatActionMealTotal(String kcal) {
+    return '$kcal kcal en total';
+  }
+
+  @override
+  String chatActionWorkoutsAdded(String sport) {
+    return 'Entrenamientos añadidos a $sport';
+  }
+
+  @override
+  String get chatActionOpen => 'Abrir';
 }

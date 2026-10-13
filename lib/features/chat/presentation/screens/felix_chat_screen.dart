@@ -5,6 +5,7 @@ import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
+import 'package:fitrix/features/chat/presentation/widgets/chat_action_card.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
 import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
@@ -92,12 +93,25 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                         key: ValueKey(message.id),
                         message: message,
                         delay: _entrance.take(message),
-                        child: ChatBubble(
-                          message: message,
-                          lastInGroup: lastInGroup,
-                          onRetry: () => ref
-                              .read(chatMessagesProviderFor(topic).notifier)
-                              .retry(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ChatBubble(
+                              message: message,
+                              lastInGroup: lastInGroup,
+                              onRetry: () => ref
+                                  .read(chatMessagesProviderFor(topic).notifier)
+                                  .retry(),
+                            ),
+                            if (message.action != null && !message.isStreaming)
+                              ChatActionCard(
+                                message: message,
+                                onApplied: () => ref
+                                    .read(
+                                        chatMessagesProviderFor(topic).notifier)
+                                    .markActionApplied(message.id),
+                              ),
+                          ],
                         ),
                       );
                     },
@@ -105,7 +119,8 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Center(
-                  child: Text(AppLocalizations.of(context).chatError('$error'))),
+                    child:
+                        Text(AppLocalizations.of(context).chatError('$error'))),
               ),
             ),
             Column(
@@ -235,8 +250,8 @@ class _Composer extends StatelessWidget {
                       decoration: InputDecoration.collapsed(
                         hintText: AppLocalizations.of(context).chatMessageHint,
                         filled: false,
-                        hintStyle:
-                            AppText.bodyRegular.copyWith(color: palette.chartLabel),
+                        hintStyle: AppText.bodyRegular
+                            .copyWith(color: palette.chartLabel),
                       ),
                     ),
                   ),
@@ -284,7 +299,8 @@ class _AllChatsDrawer extends StatelessWidget {
                   Expanded(
                     child: Text(
                       AppLocalizations.of(context).chatAllChats,
-                      style: AppText.headingS.copyWith(color: palette.textPrimary),
+                      style:
+                          AppText.headingS.copyWith(color: palette.textPrimary),
                     ),
                   ),
                   IconButton(
@@ -299,7 +315,8 @@ class _AllChatsDrawer extends StatelessWidget {
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 17),
                 itemCount: AssistantTopic.all.length,
-                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: AppSpacing.md),
                 itemBuilder: (context, index) {
                   final topic = AssistantTopic.all[index];
                   final isSelected = topic == selected;
@@ -311,8 +328,8 @@ class _AllChatsDrawer extends StatelessWidget {
                       onTap: () => onSelected(topic),
                       child: Container(
                         height: 36,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md),
                         alignment: Alignment.centerLeft,
                         child: Text(
                           topic.menuLabel,

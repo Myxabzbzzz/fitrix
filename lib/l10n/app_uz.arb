@@ -267,5 +267,16 @@
   "programLevelBeginner": "Boshlang‘ich",
   "programLevelMedium": "O‘rta",
   "programLevelAdvanced": "Ilg‘or",
-  "shopOrderUnavailable": "Ba’zi mahsulotlar endi mavjud emas. Savatni yangilang va qayta urinib ko‘ring."
+  "shopOrderUnavailable": "Ba’zi mahsulotlar endi mavjud emas. Savatni yangilang va qayta urinib ko‘ring.",
+  "chatActionConfirm": "Tasdiqlash",
+  "chatActionApplied": "Qo‘shildi ✓",
+  "chatActionWeightChange": "Vaznni yangilash: {from} → {to} kg",
+  "chatActionWeightSet": "Vaznni {to} kg ga yangilash",
+  "chatActionWeightUnknown": "Vazn o‘zgarishi: {delta} kg. Avval profilda joriy vazningizni kiriting.",
+  "chatActionWorkoutTitle": "{count, plural, other{{sport} bo‘limiga {count} ta mashg‘ulot qo‘shish}}",
+  "chatActionWorkoutExercises": "{count, plural, other{{count} ta mashq}}",
+  "chatActionMealTitle": "Bugungi ovqatlanishga qo‘shish",
+  "chatActionMealTotal": "Jami {kcal} kkal",
+  "chatActionWorkoutsAdded": "Mashg‘ulotlar qo‘shildi: {sport}",
+  "chatActionOpen": "Ochish"
 }

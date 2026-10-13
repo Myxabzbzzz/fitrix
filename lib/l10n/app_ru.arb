@@ -267,5 +267,16 @@
   "programLevelBeginner": "Начинающий",
   "programLevelMedium": "Средний",
   "programLevelAdvanced": "Продвинутый",
-  "shopOrderUnavailable": "Некоторые товары больше недоступны. Обновите корзину и попробуйте снова."
+  "shopOrderUnavailable": "Некоторые товары больше недоступны. Обновите корзину и попробуйте снова.",
+  "chatActionConfirm": "Подтвердить",
+  "chatActionApplied": "Добавлено ✓",
+  "chatActionWeightChange": "Обновить вес: {from} → {to} кг",
+  "chatActionWeightSet": "Обновить вес до {to} кг",
+  "chatActionWeightUnknown": "Изменение веса: {delta} кг. Сначала укажите текущий вес в профиле.",
+  "chatActionWorkoutTitle": "{count, plural, one{Добавить {count} тренировку в «{sport}»} few{Добавить {count} тренировки в «{sport}»} many{Добавить {count} тренировок в «{sport}»} other{Добавить {count} тренировки в «{sport}»}}",
+  "chatActionWorkoutExercises": "{count, plural, one{{count} упражнение} few{{count} упражнения} many{{count} упражнений} other{{count} упражнения}}",
+  "chatActionMealTitle": "Добавить в питание на сегодня",
+  "chatActionMealTotal": "Всего {kcal} ккал",
+  "chatActionWorkoutsAdded": "Тренировки добавлены: {sport}",
+  "chatActionOpen": "Открыть"
 }
