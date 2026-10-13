@@ -357,7 +357,7 @@ void main() {
   });
 
   group('navigation', () {
-    final nutritionTile = find.text('MY\nNUTRI\nTION');
+    final nutritionTile = find.text('MY\nNUTRITION');
 
     testWidgets('a Home tile presses in and reveals its section in a circle',
         (tester) async {

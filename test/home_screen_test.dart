@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/feature_tile.dart';
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -64,8 +66,8 @@ Future<ProviderContainer> _pump(
 
 void main() {
   const tiles = {
-    'MY\nPROG\nRESS': AppRouter.progress,
-    'MY\nNUTRI\nTION': AppRouter.nutrition,
+    'MY\nPROGRESS': AppRouter.progress,
+    'MY\nNUTRITION': AppRouter.nutrition,
     'FELIX': AppRouter.felix,
     'MY\nWORKOUTS': AppRouter.workouts,
     'SHOP': AppRouter.shop,
@@ -96,13 +98,29 @@ void main() {
     await tester.tap(find.text('Start'));
     await tester.pump();
     expect(container.read(activeWorkoutProvider)?.template.id, first.id);
+    expect(container.read(activeWorkoutExpandedProvider), isTrue);
+  });
+
+  testWidgets('small tile labels fit inside the 64 px tiles', (tester) async {
+    await _pump(tester);
+    for (final label in ['MY\nPROGRESS', 'MY\nNUTRITION']) {
+      final tile = find.ancestor(
+          of: find.text(label), matching: find.byType(FeatureTile));
+      final tileH = tester.getSize(tile.first).height;
+      final textH = tester.getSize(find.text(label)).height;
+      expect(textH, lessThanOrEqualTo(tileH - 2 * AppSpacing.sm),
+          reason: label);
+    }
   });
 
   testWidgets('with an active workout the button reads Continue',
       (tester) async {
-    await _pump(tester, active: true);
+    final container = await _pump(tester, active: true);
     expect(find.text('Continue'), findsOneWidget);
     expect(find.text('Start'), findsNothing);
+    await tester.tap(find.text('Continue'));
+    await tester.pump();
+    expect(container.read(activeWorkoutExpandedProvider), isTrue);
   });
 
   testWidgets('no overflow at 375x667', (tester) async {

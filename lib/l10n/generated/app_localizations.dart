@@ -255,7 +255,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeTodayMeta.
   ///
   /// In en, this message translates to:
-  /// **'{count} exercises · about {minutes} min'**
+  /// **'{count, plural, =1{1 exercise} other{{count} exercises}} · about {minutes} min'**
   String homeTodayMeta(int count, int minutes);
 
   /// No description provided for @homeStart.

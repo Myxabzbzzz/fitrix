@@ -94,7 +94,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String homeTodayMeta(int count, int minutes) {
-    return '$count exercises · about $minutes min';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count exercises',
+      one: '1 exercise',
+    );
+    return '$_temp0 · about $minutes min';
   }
 
   @override

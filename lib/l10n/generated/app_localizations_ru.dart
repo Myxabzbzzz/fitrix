@@ -93,7 +93,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String homeTodayMeta(int count, int minutes) {
-    return '$count упр. · около $minutes мин';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count упражнения',
+      many: '$count упражнений',
+      few: '$count упражнения',
+      one: '$count упражнение',
+    );
+    return '$_temp0 · около $minutes мин';
   }
 
   @override

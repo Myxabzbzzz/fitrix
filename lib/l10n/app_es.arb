@@ -25,7 +25,7 @@
   "workoutDeleted": "«{name}» eliminado",
   "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.",
   "homeToday": "Hoy",
-  "homeTodayMeta": "{count} ejercicios · unos {minutes} min",
+  "homeTodayMeta": "{count, plural, =1{1 ejercicio} other{{count} ejercicios}} · unos {minutes} min",
   "homeStart": "Empezar",
   "homeContinue": "Continuar"
 }

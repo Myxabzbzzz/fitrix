@@ -41,7 +41,7 @@
     }
   },
   "homeToday": "Today",
-  "homeTodayMeta": "{count} exercises · about {minutes} min",
+  "homeTodayMeta": "{count, plural, =1{1 exercise} other{{count} exercises}} · about {minutes} min",
   "@homeTodayMeta": {
     "placeholders": {
       "count": {"type": "int", "example": "7"},

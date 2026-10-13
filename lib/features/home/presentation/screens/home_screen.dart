@@ -66,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                                 Expanded(
                                   child: _SectionTile(
                                     location: AppRouter.progress,
-                                    label: 'MY\nPROG\nRESS',
+                                    label: 'MY\nPROGRESS',
                                     labelSize: AppText.displaySmall.fontSize!,
                                     imageAsset:
                                         'assets/images/tile_progress.png',
@@ -77,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                                 Expanded(
                                   child: _SectionTile(
                                     location: AppRouter.nutrition,
-                                    label: 'MY\nNUTRI\nTION',
+                                    label: 'MY\nNUTRITION',
                                     labelSize: AppText.displaySmall.fontSize!,
                                     imageAsset:
                                         'assets/images/tile_nutrition.png',
