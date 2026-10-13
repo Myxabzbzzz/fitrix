@@ -43,7 +43,7 @@
   "gymToday": "Today",
   "gymStart": "Start",
   "gymDone": "Done",
-  "gymAskFelix": "Ask Felix",
+  "gymAskFelix": "Ask",
   "gymCoachEyebrow": "AI {sport} COACH",
   "@gymCoachEyebrow": {
     "placeholders": {
@@ -53,7 +53,7 @@
       }
     }
   },
-  "gymTileCaption": "{plans} plans · {week} this week",
+  "gymTileCaption": "{plans, plural, one{{plans} plan} other{{plans} plans}} · {week} this week",
   "@gymTileCaption": {
     "placeholders": {
       "plans": {

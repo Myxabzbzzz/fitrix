@@ -27,7 +27,7 @@
   "gymToday": "Сегодня",
   "gymStart": "Начать",
   "gymDone": "Готово",
-  "gymAskFelix": "Спросить Феликса",
+  "gymAskFelix": "Спросить",
   "gymCoachEyebrow": "ИИ-ТРЕНЕР: {sport}",
-  "gymTileCaption": "Планов: {plans} · на этой неделе: {week}"
+  "gymTileCaption": "{plans, plural, one{{plans} план} few{{plans} плана} many{{plans} планов} other{{plans} плана}} · на этой неделе: {week}"
 }

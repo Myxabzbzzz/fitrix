@@ -267,7 +267,7 @@ abstract class AppLocalizations {
   /// No description provided for @gymAskFelix.
   ///
   /// In en, this message translates to:
-  /// **'Ask Felix'**
+  /// **'Ask'**
   String get gymAskFelix;
 
   /// No description provided for @gymCoachEyebrow.
@@ -279,7 +279,7 @@ abstract class AppLocalizations {
   /// No description provided for @gymTileCaption.
   ///
   /// In en, this message translates to:
-  /// **'{plans} plans · {week} this week'**
+  /// **'{plans, plural, one{{plans} plan} other{{plans} plans}} · {week} this week'**
   String gymTileCaption(int plans, int week);
 }
 

@@ -129,7 +129,10 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
         .toList();
     final now = widget.now();
     final localeName = Localizations.localeOf(context).toString();
-    final coach = coachMessage(history, now);
+    // Room for a 2-line title at the user's text size.
+    final cellHeight = 128 + MediaQuery.textScalerOf(context).scale(16) * 2 - 32;
+    final coach = coachMessage(history, now,
+        todayWorkout: workouts.isEmpty ? null : workouts.first.name);
 
     bool doneToday(WorkoutTemplate t) => history.any((w) =>
         w.templateId == t.id &&
@@ -161,11 +164,11 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                          SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: AppSpacing.md,
                         crossAxisSpacing: AppSpacing.md,
-                        mainAxisExtent: 128,
+                        mainAxisExtent: cellHeight,
                       ),
                       children: [
                         for (var i = 0; i < workouts.length; i++)

@@ -27,7 +27,7 @@
   "gymToday": "Hoy",
   "gymStart": "Empezar",
   "gymDone": "Hecho",
-  "gymAskFelix": "Preguntar a Felix",
+  "gymAskFelix": "Preguntar",
   "gymCoachEyebrow": "ENTRENADOR IA: {sport}",
-  "gymTileCaption": "{plans} planes · {week} esta semana"
+  "gymTileCaption": "{plans, plural, one{{plans} plan} other{{plans} planes}} · {week} esta semana"
 }

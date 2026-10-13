@@ -99,7 +99,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gymDone => 'Done';
 
   @override
-  String get gymAskFelix => 'Ask Felix';
+  String get gymAskFelix => 'Ask';
 
   @override
   String gymCoachEyebrow(String sport) {
@@ -108,6 +108,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String gymTileCaption(int plans, int week) {
-    return '$plans plans · $week this week';
+    String _temp0 = intl.Intl.pluralLogic(
+      plans,
+      locale: localeName,
+      other: '$plans plans',
+      one: '$plans plan',
+    );
+    return '$_temp0 · $week this week';
   }
 }

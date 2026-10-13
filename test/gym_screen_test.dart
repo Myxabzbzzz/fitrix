@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/workout_card.dart';
@@ -22,7 +25,8 @@ CompletedWorkout _done(DateTime at) => CompletedWorkout(
       exercises: const [],
     );
 
-Future<ProviderContainer> _pump(WidgetTester tester) async {
+Future<ProviderContainer> _pump(WidgetTester tester,
+    {double textScale = 1, GoRouter? router}) async {
   tester.view.physicalSize = const Size(375, 667) * 3;
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
@@ -33,11 +37,22 @@ Future<ProviderContainer> _pump(WidgetTester tester) async {
   addTearDown(container.dispose);
   await tester.pumpWidget(UncontrolledProviderScope(
     container: container,
-    child: const MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: SportWorkoutsScreen(sport: Sport.gym),
-    ),
+    child: router != null
+        ? MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          )
+        : MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: TextScaler.linear(textScale)),
+              child: child!,
+            ),
+            home: const SportWorkoutsScreen(sport: Sport.gym),
+          ),
   ));
   await tester.pumpAndSettle();
   return container;
@@ -57,6 +72,29 @@ void main() {
     test('trained 1 day ago: null', () {
       expect(coachMessage([_done(now.subtract(const Duration(days: 1)))], now),
           isNull);
+    });
+
+    test('first workout names today\'s workout when given', () {
+      final m = coachMessage([], now, todayWorkout: 'Legs')!;
+      expect(m.message, 'Start with Legs. Felix will adjust the plan after it.');
+    });
+
+    test('calendar-day boundaries', () {
+      expect(coachMessage([_done(DateTime(2026, 10, 11, 23))], now), isNull);
+      final three = coachMessage([_done(DateTime(2026, 10, 10, 23))], now)!;
+      expect(three.message, contains('3 days ago'));
+      // Late evening to early next morning is 1 day.
+      expect(
+          coachMessage(
+              [_done(DateTime(2026, 10, 12, 23, 30))], DateTime(2026, 10, 13, 6)),
+          isNull);
+    });
+
+    test('daylight-saving change does not shift the day count', () {
+      // Clocks go forward in many zones between these dates.
+      final m = coachMessage(
+          [_done(DateTime(2026, 3, 28, 12))], DateTime(2026, 3, 31, 0, 30))!;
+      expect(m.message, contains('3 days ago'));
     });
 
     test('trained 5 days ago: welcome back with n = 5', () {
@@ -108,6 +146,31 @@ void main() {
       await tester.tap(find.byType(AddWorkoutCard));
       await tester.pumpAndSettle();
       expect(find.text('New workout'), findsOneWidget);
+    });
+    testWidgets('lays out at 1.5x text on a small phone', (tester) async {
+      await _pump(tester, textScale: 1.5);
+      expect(tester.takeException(), isNull);
+      await tester.drag(find.byType(ListView).last, const Offset(0, -600));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('Ask opens the sport\'s Felix chat', (tester) async {
+      final router = GoRouter(routes: [
+        GoRoute(
+            path: '/',
+            builder: (_, __) => const SportWorkoutsScreen(sport: Sport.gym)),
+        GoRoute(
+            path: AppRouter.felix,
+            builder: (_, __) => const Text('felix-chat')),
+      ]);
+      final container = await _pump(tester, router: router);
+      await tester.ensureVisible(find.byType(CoachCard));
+      await tester.tap(find.descendant(
+          of: find.byType(CoachCard), matching: find.text('Ask')));
+      await tester.pumpAndSettle();
+      expect(container.read(selectedAssistantTopicProvider).sport, Sport.gym);
+      expect(find.text('felix-chat'), findsOneWidget);
     });
   });
 }

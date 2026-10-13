@@ -27,7 +27,7 @@
   "gymToday": "Bugun",
   "gymStart": "Boshlash",
   "gymDone": "Tayyor",
-  "gymAskFelix": "Feliksdan so‘rash",
+  "gymAskFelix": "So‘rash",
   "gymCoachEyebrow": "AI TRENER: {sport}",
-  "gymTileCaption": "Rejalar: {plans} · shu hafta: {week}"
+  "gymTileCaption": "{plans, plural, one{{plans} reja} other{{plans} reja}} · shu hafta: {week}"
 }
