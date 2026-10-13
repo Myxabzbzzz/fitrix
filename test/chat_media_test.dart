@@ -387,6 +387,22 @@ void main() {
       expect(decoded.width, 1280);
       expect(decoded.height, 960);
     });
+
+    test('an EXIF-rotated photo comes out upright', () async {
+      final noisy = img.Image(width: 2400, height: 1800);
+      var v = 54321;
+      for (final px in noisy) {
+        v = (v * 1103515245 + 12345) & 0x7fffffff;
+        px.setRgb(v & 255, (v >> 8) & 255, (v >> 16) & 255);
+      }
+      noisy.exif.imageIfd.orientation = 6; // rotate 90° clockwise
+      final big = Uint8List.fromList(img.encodeJpg(noisy, quality: 100));
+      expect(big.length, greaterThan(maxChatPhotoBytes));
+
+      final decoded = img.decodeJpg((await normalizeChatPhoto(big))!)!;
+      expect(decoded.width, 960);
+      expect(decoded.height, 1280);
+    });
   });
 
   test('resolveChatPhoto handles relative and old-container paths', () {

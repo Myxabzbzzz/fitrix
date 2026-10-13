@@ -80,7 +80,8 @@ Future<Uint8List?> normalizeChatPhoto(Uint8List bytes) {
   return Isolate.run(() {
     final decoded = img.decodeImage(bytes);
     if (decoded == null) return null;
-    var image = decoded;
+    // Apply the EXIF rotation; the JPEG encoder drops EXIF.
+    var image = img.bakeOrientation(decoded);
     final longest = image.width > image.height ? image.width : image.height;
     if (longest > 1280) {
       image = img.copyResize(
