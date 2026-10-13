@@ -23,5 +23,9 @@
   "deleteAccountFailed": "Hisobni o‘chirib bo‘lmadi. {reason}",
   "undo": "Qaytarish",
   "workoutDeleted": "“{name}” o‘chirildi",
-  "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring."
+  "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.",
+  "homeToday": "Bugun",
+  "homeTodayMeta": "{count} mashq · taxminan {minutes} daq",
+  "homeStart": "Boshlash",
+  "homeContinue": "Davom etish"
 }

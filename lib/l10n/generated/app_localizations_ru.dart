@@ -89,16 +89,16 @@ class AppLocalizationsRu extends AppLocalizations {
       'Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.';
 
   @override
-  String get homeToday => 'Today';
+  String get homeToday => 'Сегодня';
 
   @override
   String homeTodayMeta(int count, int minutes) {
-    return '$count exercises · about $minutes min';
+    return '$count упр. · около $minutes мин';
   }
 
   @override
-  String get homeStart => 'Start';
+  String get homeStart => 'Начать';
 
   @override
-  String get homeContinue => 'Continue';
+  String get homeContinue => 'Продолжить';
 }

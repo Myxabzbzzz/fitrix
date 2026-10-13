@@ -89,16 +89,16 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.';
 
   @override
-  String get homeToday => 'Today';
+  String get homeToday => 'Hoy';
 
   @override
   String homeTodayMeta(int count, int minutes) {
-    return '$count exercises · about $minutes min';
+    return '$count ejercicios · unos $minutes min';
   }
 
   @override
-  String get homeStart => 'Start';
+  String get homeStart => 'Empezar';
 
   @override
-  String get homeContinue => 'Continue';
+  String get homeContinue => 'Continuar';
 }
