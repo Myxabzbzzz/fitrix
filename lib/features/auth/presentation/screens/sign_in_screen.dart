@@ -494,8 +494,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               _busy || !enabled ? null : () => _continueWith(provider),
           style: OutlinedButton.styleFrom(
             side: BorderSide(color: palette.border),
+            // Matches the themed button radius, like the controls above.
             shape: RoundedRectangleBorder(
-              borderRadius: AppRadius.smAll,
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
           icon: _socialBusy == provider

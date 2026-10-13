@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/router/app_router.dart';
-import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
@@ -14,6 +13,7 @@ class ChatTransitionScreen extends ConsumerStatefulWidget {
   /// expanding "Start" circle must be exactly this color so the hand-off to
   /// this screen is seamless in both light and dark themes.
   static const background = Colors.black;
+  static const foreground = Colors.white;
 
   const ChatTransitionScreen({super.key});
 
@@ -111,7 +111,6 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
 
   @override
   Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
     final size = MediaQuery.of(context).size;
     final diagonal = sqrt(size.width * size.width + size.height * size.height);
 
@@ -129,7 +128,10 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
                   Text(
                     _displayedText,
                     textAlign: TextAlign.center,
-                    style: AppText.headingXL.copyWith(color: palette.onAccent),
+                    style: AppText.headingXL.copyWith(
+                      color: ChatTransitionScreen.foreground,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   AnimatedOpacity(
@@ -144,7 +146,7 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
                           vertical: AppSpacing.md,
                         ),
                         decoration: BoxDecoration(
-                          color: palette.onAccent,
+                          color: ChatTransitionScreen.foreground,
                           borderRadius: AppRadius.lgAll,
                         ),
                         child: Text(
@@ -169,7 +171,7 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
                   size: size,
                   painter: _CirclePainter(
                     progress: _whiteCircleAnimation.value,
-                    color: palette.onAccent,
+                    color: ChatTransitionScreen.foreground,
                     center: _buttonCenter ??
                         Offset(size.width / 2, size.height / 2 + 50),
                     maxRadius: diagonal,
