@@ -13,6 +13,7 @@ import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/providers/dictation_controller.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
+import 'package:fitrix/features/chat/presentation/widgets/chat_action_card.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
 import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
@@ -219,12 +220,26 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
                         key: ValueKey(message.id),
                         message: message,
                         delay: _entrance.take(message),
-                        child: ChatBubble(
-                          message: message,
-                          lastInGroup: lastInGroup,
-                          onRetry: () => ref
-                              .read(chatMessagesProviderFor(topic).notifier)
-                              .retry(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ChatBubble(
+                              message: message,
+                              lastInGroup: lastInGroup,
+                              onRetry: () => ref
+                                  .read(chatMessagesProviderFor(topic).notifier)
+                                  .retry(),
+                            ),
+                            if (message.action != null && !message.isStreaming)
+                              ChatActionCard(
+                                message: message,
+                                onApplied: (result) => ref
+                                    .read(
+                                        chatMessagesProviderFor(topic).notifier)
+                                    .markActionApplied(message.id,
+                                        result: result),
+                              ),
+                          ],
                         ),
                       );
                     },

@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/chat/data/services/photo_service.dart';
@@ -105,6 +106,7 @@ class ChatRepository {
     String message, {
     List<ChatMessage> context = const [],
     String? imagePath,
+    void Function(ChatAction action)? onAction,
   }) async* {
     final images = <String>[];
     if (imagePath != null) {
@@ -124,6 +126,7 @@ class ChatRepository {
       history: ChatMessage.toApiHistory(context),
       language: _language?.call(),
       images: images,
+      onAction: onAction,
     );
   }
 

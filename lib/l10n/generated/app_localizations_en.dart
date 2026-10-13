@@ -1091,4 +1091,80 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatMicStopped => 'Stopped listening';
+
+  @override
+  String get chatActionConfirm => 'Confirm';
+
+  @override
+  String get chatActionApplied => 'Added ✓';
+
+  @override
+  String chatActionWeightChange(String from, String to) {
+    return 'Update weight: $from → $to kg';
+  }
+
+  @override
+  String chatActionWeightSet(String to) {
+    return 'Update weight to $to kg';
+  }
+
+  @override
+  String chatActionWeightUnknown(String delta) {
+    return 'Weight change: $delta kg. Enter your current weight in your profile first.';
+  }
+
+  @override
+  String chatActionWorkoutTitle(int count, String sport) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count workouts to $sport',
+      one: 'Add $count workout to $sport',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chatActionWorkoutExercises(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count exercises',
+      one: '$count exercise',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatActionMealTitle => 'Add to today’s nutrition';
+
+  @override
+  String chatActionMealTotal(String kcal) {
+    return '$kcal kcal in total';
+  }
+
+  @override
+  String chatActionWorkoutsAdded(String sport) {
+    return 'Workouts added to $sport';
+  }
+
+  @override
+  String get chatActionOpen => 'Open';
+
+  @override
+  String chatActionWeightDone(String from, String to) {
+    return 'Weight updated: $from → $to kg';
+  }
+
+  @override
+  String chatActionWeightDoneSet(String to) {
+    return 'Weight updated to $to kg';
+  }
+
+  @override
+  String get chatActionNoProfile =>
+      'Fill in your profile first, then I can update your weight.';
+
+  @override
+  String get chatActionError => 'Couldn’t apply this. Please try again.';
 }

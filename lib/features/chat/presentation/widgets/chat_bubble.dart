@@ -32,6 +32,9 @@ class FelixAvatar extends StatelessWidget {
 class ChatBubble extends StatelessWidget {
   static const double maxWidth = 247;
 
+  /// Width of the avatar column beside a Felix bubble.
+  static const double avatarSize = 24;
+
   final ChatMessage message;
 
   /// Called when a failed reply is tapped.
@@ -103,8 +106,8 @@ class ChatBubble extends StatelessWidget {
         children: [
           if (!isUser) ...[
             SizedBox(
-              width: 24,
-              child: lastInGroup ? const FelixAvatar(size: 24) : null,
+              width: avatarSize,
+              child: lastInGroup ? const FelixAvatar(size: avatarSize) : null,
             ),
             const SizedBox(width: AppSpacing.xs),
           ],
@@ -184,7 +187,8 @@ class ChatPhotoImage extends StatelessWidget {
       builder: (context, snapshot) {
         final docs = snapshot.data;
         if (docs == null) return placeholder;
-        final ImageProvider file = FileImage(File(resolveChatPhoto(docs, path)));
+        final ImageProvider file =
+            FileImage(File(resolveChatPhoto(docs, path)));
         return Image(
           image: full
               ? file

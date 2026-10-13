@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
+import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
@@ -87,6 +88,7 @@ class RecordingRepo extends ChatRepository {
     String message, {
     List<ChatMessage> context = const [],
     String? imagePath,
+    void Function(ChatAction action)? onAction,
   }) async* {
     sent.add(message);
     imagePaths.add(imagePath);
@@ -106,6 +108,7 @@ class ImageApi extends ChatApiService {
     List<Map<String, String>>? history,
     String? language,
     List<String>? images,
+    void Function(ChatAction action)? onAction,
   }) async* {
     this.images.add(images);
     yield 'ok';

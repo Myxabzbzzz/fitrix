@@ -301,5 +301,20 @@
   "chatPhotoViewer": "Фото",
   "chatPhotoUnavailable": "Фото не найдено или слишком большое для отправки.",
   "chatMicListening": "Слушаю",
-  "chatMicStopped": "Прослушивание остановлено"
+  "chatMicStopped": "Прослушивание остановлено",
+  "chatActionConfirm": "Подтвердить",
+  "chatActionApplied": "Добавлено ✓",
+  "chatActionWeightChange": "Обновить вес: {from} → {to} кг",
+  "chatActionWeightSet": "Обновить вес до {to} кг",
+  "chatActionWeightUnknown": "Изменение веса: {delta} кг. Сначала укажите текущий вес в профиле.",
+  "chatActionWorkoutTitle": "{count, plural, one{Добавить {count} тренировку в «{sport}»} few{Добавить {count} тренировки в «{sport}»} many{Добавить {count} тренировок в «{sport}»} other{Добавить {count} тренировки в «{sport}»}}",
+  "chatActionWorkoutExercises": "{count, plural, one{{count} упражнение} few{{count} упражнения} many{{count} упражнений} other{{count} упражнения}}",
+  "chatActionMealTitle": "Добавить в питание на сегодня",
+  "chatActionMealTotal": "Всего {kcal} ккал",
+  "chatActionWorkoutsAdded": "Тренировки добавлены: {sport}",
+  "chatActionOpen": "Открыть",
+  "chatActionWeightDone": "Вес обновлён: {from} → {to} кг",
+  "chatActionWeightDoneSet": "Вес обновлён: {to} кг",
+  "chatActionNoProfile": "Сначала заполните профиль, тогда я смогу обновить вес.",
+  "chatActionError": "Не удалось применить. Попробуйте ещё раз."
 }

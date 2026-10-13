@@ -6,6 +6,7 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
@@ -185,9 +186,14 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
     await _repository.saveMessages(history);
 
     final text = StringBuffer();
+    ChatAction? action;
     try {
-      await for (final delta in _repository.streamMessage(prompt,
-          context: context, imagePath: imagePath)) {
+      await for (final delta in _repository.streamMessage(
+        prompt,
+        context: context,
+        imagePath: imagePath,
+        onAction: (a) => action = a,
+      )) {
         if (!mounted) return;
         text.write(delta);
         _updateReply(reply.id, (m) => m.copyWith(content: text.toString()));
@@ -195,7 +201,11 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       if (!mounted) return;
       _updateReply(
         reply.id,
-        (m) => m.copyWith(content: text.toString().trim(), isStreaming: false),
+        (m) => m.copyWith(
+          content: text.toString().trim(),
+          isStreaming: false,
+          action: action,
+        ),
       );
       await _repository.saveMessages(state.requireValue);
     } catch (e) {
@@ -219,6 +229,21 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
     state = AsyncValue.data([
       for (final m in messages) m.id == id ? update(m) : m,
     ]);
+  }
+
+  /// Marks the action of message [id] as applied (kept across restarts, so
+  /// it can't be applied twice).
+  Future<void> markActionApplied(
+    String id, {
+    Map<String, num>? result,
+  }) async {
+    final messages = state.valueOrNull;
+    if (messages == null) return;
+    _updateReply(
+      id,
+      (m) => m.copyWith(actionApplied: true, appliedResult: result),
+    );
+    await _repository.saveMessages(state.requireValue);
   }
 
   Future<void> clearMessages() async {

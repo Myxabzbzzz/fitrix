@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
+import 'package:fitrix/features/chat/data/models/chat_action.dart';
 
 /// A reply that couldn't be produced; [message] is shown in the chat.
 class ChatException implements Exception {
@@ -58,6 +59,8 @@ class ChatApiService {
   ///   own language isn't clear from the message.
   /// - [images]: at most one base64 JPEG (<= 1.5 MB decoded) for this turn
   ///   only; the backend then answers with its vision model.
+  /// - [onAction]: called with the change Felix proposes (at most one per
+  ///   reply, before the stream ends); invalid actions are ignored.
   Stream<String> streamMessage(
     String message,
     String conversationId, {
@@ -66,6 +69,7 @@ class ChatApiService {
     List<Map<String, String>>? history,
     String? language,
     List<String>? images,
+    void Function(ChatAction action)? onAction,
   }) async* {
     final token = await _currentToken();
     final Response<ResponseBody> response;
@@ -127,6 +131,8 @@ class ChatApiService {
         if (error != null) throw ChatException(error.toString());
         final delta = data['delta'];
         if (delta is String && delta.isNotEmpty) yield delta;
+        final action = ChatAction.tryParse(data['action']);
+        if (action != null) onAction?.call(action);
         if (data['done'] == true) {
           done = true;
           break;

@@ -1111,4 +1111,84 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatMicStopped => 'Прослушивание остановлено';
+
+  @override
+  String get chatActionConfirm => 'Подтвердить';
+
+  @override
+  String get chatActionApplied => 'Добавлено ✓';
+
+  @override
+  String chatActionWeightChange(String from, String to) {
+    return 'Обновить вес: $from → $to кг';
+  }
+
+  @override
+  String chatActionWeightSet(String to) {
+    return 'Обновить вес до $to кг';
+  }
+
+  @override
+  String chatActionWeightUnknown(String delta) {
+    return 'Изменение веса: $delta кг. Сначала укажите текущий вес в профиле.';
+  }
+
+  @override
+  String chatActionWorkoutTitle(int count, String sport) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Добавить $count тренировки в «$sport»',
+      many: 'Добавить $count тренировок в «$sport»',
+      few: 'Добавить $count тренировки в «$sport»',
+      one: 'Добавить $count тренировку в «$sport»',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chatActionWorkoutExercises(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count упражнения',
+      many: '$count упражнений',
+      few: '$count упражнения',
+      one: '$count упражнение',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatActionMealTitle => 'Добавить в питание на сегодня';
+
+  @override
+  String chatActionMealTotal(String kcal) {
+    return 'Всего $kcal ккал';
+  }
+
+  @override
+  String chatActionWorkoutsAdded(String sport) {
+    return 'Тренировки добавлены: $sport';
+  }
+
+  @override
+  String get chatActionOpen => 'Открыть';
+
+  @override
+  String chatActionWeightDone(String from, String to) {
+    return 'Вес обновлён: $from → $to кг';
+  }
+
+  @override
+  String chatActionWeightDoneSet(String to) {
+    return 'Вес обновлён: $to кг';
+  }
+
+  @override
+  String get chatActionNoProfile =>
+      'Сначала заполните профиль, тогда я смогу обновить вес.';
+
+  @override
+  String get chatActionError => 'Не удалось применить. Попробуйте ещё раз.';
 }

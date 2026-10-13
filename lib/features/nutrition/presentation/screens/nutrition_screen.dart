@@ -1,11 +1,13 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// "My Nutrition": today's calories ring and macro progress. The ring and
@@ -14,7 +16,7 @@ enum _Macro { protein, carbs, fat }
 
 enum _Meal { breakfast, lunch, snack }
 
-class NutritionScreen extends StatefulWidget {
+class NutritionScreen extends ConsumerStatefulWidget {
   const NutritionScreen({super.key});
 
   static const int _consumed = 1700;
@@ -33,12 +35,11 @@ class NutritionScreen extends StatefulWidget {
   ];
 
   @override
-  State<NutritionScreen> createState() => _NutritionScreenState();
+  ConsumerState<NutritionScreen> createState() => _NutritionScreenState();
 }
 
-class _NutritionScreenState extends State<NutritionScreen>
-    with SingleTickerProviderStateMixin {
-  static const _consumed = NutritionScreen._consumed;
+class _NutritionScreenState extends ConsumerState<NutritionScreen>
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   static const _goal = NutritionScreen._goal;
   static const _macros = NutritionScreen._macros;
 
@@ -47,6 +48,23 @@ class _NutritionScreenState extends State<NutritionScreen>
     duration: Motion.slow,
   );
   VoidCallback? _cancelPending;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // The date may have changed since the meals were loaded.
+    Future.microtask(() {
+      if (mounted) ref.read(todayMealsProvider.notifier).refresh();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) {
+      ref.read(todayMealsProvider.notifier).refresh();
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -64,6 +82,7 @@ class _NutritionScreenState extends State<NutritionScreen>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _cancelPending?.call();
     _fill.dispose();
     super.dispose();
@@ -85,9 +104,15 @@ class _NutritionScreenState extends State<NutritionScreen>
   Widget _build(BuildContext context) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
-    final fmt = NumberFormat.decimalPattern(
-        Localizations.localeOf(context).toString());
-    const left = _goal - _consumed;
+    final fmt =
+        NumberFormat.decimalPattern(Localizations.localeOf(context).toString());
+    // Meals confirmed from Felix replace the sample day.
+    final logged = ref.watch(todayMealsProvider);
+    final hasLogged = logged.isNotEmpty;
+    final consumed = hasLogged
+        ? logged.fold<int>(0, (sum, m) => sum + m.kcal)
+        : NutritionScreen._consumed;
+    final left = _goal - consumed;
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -119,7 +144,7 @@ class _NutritionScreenState extends State<NutritionScreen>
                             children: [
                               CustomPaint(
                                 painter: _RingPainter(
-                                  fraction: _consumed / _goal * _progress(0),
+                                  fraction: consumed / _goal * _progress(0),
                                   track: palette.buttonMuted,
                                   arc: palette.accent,
                                 ),
@@ -129,7 +154,7 @@ class _NutritionScreenState extends State<NutritionScreen>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      fmt.format(_consumed),
+                                      fmt.format(consumed),
                                       style: AppText.displayMedium
                                           .copyWith(color: palette.textPrimary),
                                     ),
@@ -144,28 +169,32 @@ class _NutritionScreenState extends State<NutritionScreen>
                             ],
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.lg),
-                        Expanded(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              for (final (i, macro) in _macros.indexed) ...[
-                                if (i > 0)
-                                  const SizedBox(height: AppSpacing.sm),
-                                _MacroRow(
-                                  label: switch (macro.id) {
-                                    _Macro.protein => l10n.nutritionProtein,
-                                    _Macro.carbs => l10n.nutritionCarbs,
-                                    _Macro.fat => l10n.nutritionFat,
-                                  },
-                                  grams: macro.grams,
-                                  goal: macro.goal,
-                                  progress: _progress(i + 1),
-                                ),
+                        if (hasLogged)
+                          const Spacer()
+                        else ...[
+                          const SizedBox(width: AppSpacing.lg),
+                          Expanded(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                for (final (i, macro) in _macros.indexed) ...[
+                                  if (i > 0)
+                                    const SizedBox(height: AppSpacing.sm),
+                                  _MacroRow(
+                                    label: switch (macro.id) {
+                                      _Macro.protein => l10n.nutritionProtein,
+                                      _Macro.carbs => l10n.nutritionCarbs,
+                                      _Macro.fat => l10n.nutritionFat,
+                                    },
+                                    grams: macro.grams,
+                                    goal: macro.goal,
+                                    progress: _progress(i + 1),
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),
@@ -178,27 +207,38 @@ class _NutritionScreenState extends State<NutritionScreen>
                         AppText.bodyStrong.copyWith(color: palette.textPrimary),
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  for (final meal in NutritionScreen._meals) ...[
+                  if (hasLogged)
+                    for (final meal in logged) ...[
+                      _MealRow(
+                        name: meal.name,
+                        items: meal.items,
+                        trailing: l10n.nutritionKcal('${meal.kcal}'),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                    ]
+                  else ...[
+                    for (final meal in NutritionScreen._meals) ...[
+                      _MealRow(
+                        name: switch (meal.id) {
+                          _Meal.breakfast => l10n.nutritionBreakfast,
+                          _Meal.lunch => l10n.nutritionLunch,
+                          _Meal.snack => l10n.nutritionSnack,
+                        },
+                        items: switch (meal.id) {
+                          _Meal.breakfast => l10n.nutritionBreakfastItems,
+                          _Meal.lunch => l10n.nutritionLunchItems,
+                          _Meal.snack => l10n.nutritionSnackItems,
+                        },
+                        trailing: l10n.nutritionKcal('${meal.kcal}'),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                    ],
                     _MealRow(
-                      name: switch (meal.id) {
-                        _Meal.breakfast => l10n.nutritionBreakfast,
-                        _Meal.lunch => l10n.nutritionLunch,
-                        _Meal.snack => l10n.nutritionSnack,
-                      },
-                      items: switch (meal.id) {
-                        _Meal.breakfast => l10n.nutritionBreakfastItems,
-                        _Meal.lunch => l10n.nutritionLunchItems,
-                        _Meal.snack => l10n.nutritionSnackItems,
-                      },
-                      trailing: l10n.nutritionKcal('${meal.kcal}'),
+                      name: l10n.nutritionDinner,
+                      items: l10n.nutritionNotLogged,
+                      trailing: '—',
                     ),
-                    const SizedBox(height: AppSpacing.xs),
                   ],
-                  _MealRow(
-                    name: l10n.nutritionDinner,
-                    items: l10n.nutritionNotLogged,
-                    trailing: '—',
-                  ),
                   const SizedBox(height: AppSpacing.md),
                   CoachCard(
                     eyebrow: l10n.nutritionTipEyebrow,

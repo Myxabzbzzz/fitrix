@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:fitrix/features/chat/data/models/chat_action.dart';
+
 enum MessageSender { user, assistant }
 
 class ChatMessage {
@@ -19,6 +21,17 @@ class ChatMessage {
   /// device only: not synced and never part of the history sent to Felix.
   final String? imagePath;
 
+  /// Change Felix proposes with this reply. Kept with the message on this
+  /// device only: never sent as history and not part of the synced row.
+  final ChatAction? action;
+
+  /// The user confirmed [action] and it was applied.
+  final bool actionApplied;
+
+  /// What applying [action] changed, frozen at apply time so the card keeps
+  /// saying the same thing later (weight: `{from, to}`).
+  final Map<String, num>? appliedResult;
+
   ChatMessage({
     required this.id,
     required this.content,
@@ -28,12 +41,18 @@ class ChatMessage {
     this.isStreaming = false,
     this.isFailed = false,
     this.imagePath,
+    this.action,
+    this.actionApplied = false,
+    this.appliedResult,
   });
 
   ChatMessage copyWith({
     String? content,
     bool? isStreaming,
     bool? isFailed,
+    ChatAction? action,
+    bool? actionApplied,
+    Map<String, num>? appliedResult,
   }) {
     return ChatMessage(
       id: id,
@@ -44,6 +63,9 @@ class ChatMessage {
       isStreaming: isStreaming ?? this.isStreaming,
       isFailed: isFailed ?? this.isFailed,
       imagePath: imagePath,
+      action: action ?? this.action,
+      actionApplied: actionApplied ?? this.actionApplied,
+      appliedResult: appliedResult ?? this.appliedResult,
     );
   }
 
@@ -55,6 +77,10 @@ class ChatMessage {
       'timestamp': timestamp.toIso8601String(),
       'isQuickReply': isQuickReply,
       if (imagePath != null) 'imagePath': imagePath,
+      if (action != null) 'action': action!.toJson(),
+      if (action != null && actionApplied) 'actionApplied': true,
+      if (action != null && actionApplied && appliedResult != null)
+        'appliedResult': appliedResult,
     };
   }
 
@@ -68,7 +94,18 @@ class ChatMessage {
       timestamp: DateTime.parse(json['timestamp']),
       isQuickReply: json['isQuickReply'] ?? false,
       imagePath: json['imagePath'] as String?,
+      action: ChatAction.tryParse(json['action']),
+      actionApplied: json['actionApplied'] == true,
+      appliedResult: _result(json['appliedResult']),
     );
+  }
+
+  static Map<String, num>? _result(Object? raw) {
+    if (raw is! Map) return null;
+    return {
+      for (final e in raw.entries)
+        if (e.key is String && e.value is num) e.key as String: e.value as num,
+    };
   }
 
   /// Only completed messages are stored; in-flight and failed replies are

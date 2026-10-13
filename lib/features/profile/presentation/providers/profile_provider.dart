@@ -6,7 +6,8 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   return ProfileRepository();
 });
 
-final profileProvider = StateNotifierProvider<ProfileNotifier, AsyncValue<UserProfile?>>((ref) {
+final profileProvider =
+    StateNotifierProvider<ProfileNotifier, AsyncValue<UserProfile?>>((ref) {
   return ProfileNotifier(ref.read(profileRepositoryProvider));
 });
 
@@ -47,6 +48,22 @@ class ProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
       state = AsyncValue.data(updated);
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  /// Sets the weight ("78.5") on the saved profile without flipping the
+  /// state to loading. Returns false (changing nothing) when there is no
+  /// saved profile or saving failed.
+  Future<bool> saveWeight(String weight) async {
+    try {
+      final current = await _repository.getProfile();
+      if (current == null) return false;
+      final updated = current.copyWith(weight: weight);
+      await _repository.saveProfile(updated);
+      state = AsyncValue.data(updated);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 

@@ -301,5 +301,20 @@
   "chatPhotoViewer": "Rasm",
   "chatPhotoUnavailable": "Rasm topilmadi yoki yuborish uchun juda katta.",
   "chatMicListening": "Tinglayapman",
-  "chatMicStopped": "Tinglash to‘xtatildi"
+  "chatMicStopped": "Tinglash to‘xtatildi",
+  "chatActionConfirm": "Tasdiqlash",
+  "chatActionApplied": "Qo‘shildi ✓",
+  "chatActionWeightChange": "Vaznni yangilash: {from} → {to} kg",
+  "chatActionWeightSet": "Vaznni {to} kg ga yangilash",
+  "chatActionWeightUnknown": "Vazn o‘zgarishi: {delta} kg. Avval profilda joriy vazningizni kiriting.",
+  "chatActionWorkoutTitle": "{count, plural, other{{sport} bo‘limiga {count} ta mashg‘ulot qo‘shish}}",
+  "chatActionWorkoutExercises": "{count, plural, other{{count} ta mashq}}",
+  "chatActionMealTitle": "Bugungi ovqatlanishga qo‘shish",
+  "chatActionMealTotal": "Jami {kcal} kkal",
+  "chatActionWorkoutsAdded": "Mashg‘ulotlar qo‘shildi: {sport}",
+  "chatActionOpen": "Ochish",
+  "chatActionWeightDone": "Vazn yangilandi: {from} → {to} kg",
+  "chatActionWeightDoneSet": "Vazn yangilandi: {to} kg",
+  "chatActionNoProfile": "Avval profilni to‘ldiring, shunda vazningizni yangilay olaman.",
+  "chatActionError": "Qo‘llab bo‘lmadi. Qayta urinib ko‘ring."
 }

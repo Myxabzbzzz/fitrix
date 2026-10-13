@@ -301,5 +301,20 @@
   "chatPhotoViewer": "Foto",
   "chatPhotoUnavailable": "La foto no está disponible o es demasiado grande para enviarla.",
   "chatMicListening": "Escuchando",
-  "chatMicStopped": "Escucha detenida"
+  "chatMicStopped": "Escucha detenida",
+  "chatActionConfirm": "Confirmar",
+  "chatActionApplied": "Añadido ✓",
+  "chatActionWeightChange": "Actualizar peso: {from} → {to} kg",
+  "chatActionWeightSet": "Actualizar peso a {to} kg",
+  "chatActionWeightUnknown": "Cambio de peso: {delta} kg. Primero indica tu peso actual en el perfil.",
+  "chatActionWorkoutTitle": "{count, plural, one{Añadir {count} entrenamiento a {sport}} other{Añadir {count} entrenamientos a {sport}}}",
+  "chatActionWorkoutExercises": "{count, plural, one{{count} ejercicio} other{{count} ejercicios}}",
+  "chatActionMealTitle": "Añadir a la nutrición de hoy",
+  "chatActionMealTotal": "{kcal} kcal en total",
+  "chatActionWorkoutsAdded": "Entrenamientos añadidos a {sport}",
+  "chatActionOpen": "Abrir",
+  "chatActionWeightDone": "Peso actualizado: {from} → {to} kg",
+  "chatActionWeightDoneSet": "Peso actualizado a {to} kg",
+  "chatActionNoProfile": "Primero completa tu perfil y entonces podré actualizar tu peso.",
+  "chatActionError": "No se pudo aplicar. Inténtalo de nuevo."
 }
