@@ -27,6 +27,14 @@ final Uint8List _blankPng = base64Decode(
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==');
 
 class BlankTileProvider extends TileProvider {
+  int disposed = 0;
+
+  @override
+  void dispose() {
+    disposed++;
+    super.dispose();
+  }
+
   @override
   ImageProvider getImage(TileCoordinates coordinates, TileLayer options) =>
       MemoryImage(_blankPng);
@@ -355,6 +363,40 @@ void main() {
     expect(tester.getBottomLeft(list).dy, lessThanOrEqualTo(ringTop));
     expect(tester.getSize(find.byType(FlutterMap)).height,
         greaterThanOrEqualTo(140));
+  });
+
+  testWidgets('switching theme keeps the tile provider alive', (tester) async {
+    final tiles = BlankTileProvider();
+    final mode = ValueNotifier(ThemeMode.light);
+    tester.view.physicalSize = const Size(390, 844) * 3;
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        placesProvider.overrideWith((ref) async => _places),
+        locationSourceProvider.overrideWithValue(FakeLocation(_me)),
+        routingServiceProvider.overrideWithValue(FakeRouting()),
+        mapTileProviderProvider.overrideWithValue(tiles),
+      ],
+      child: ValueListenableBuilder<ThemeMode>(
+        valueListenable: mode,
+        builder: (_, m, __) => MaterialApp(
+          themeMode: m,
+          theme: ThemeData(brightness: Brightness.light),
+          darkTheme: ThemeData(brightness: Brightness.dark),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const Scaffold(body: MapScreen()),
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    mode.value = ThemeMode.dark;
+    await tester.pumpAndSettle();
+    mode.value = ThemeMode.light;
+    await tester.pumpAndSettle();
+    expect(tiles.disposed, 0);
+    expect(find.byType(TileLayer), findsOneWidget);
   });
 
   testWidgets('selecting a pin updates the card', (tester) async {

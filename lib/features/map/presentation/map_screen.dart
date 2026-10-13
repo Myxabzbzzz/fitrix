@@ -40,6 +40,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
   final _controller = MapController();
   late final AnimationController _pan;
   TileProvider? _ownTiles;
+  late TileProvider _tileProvider;
   String _filter = 'all';
   String? _selectedId;
   TravelMode _mode = TravelMode.walk;
@@ -57,7 +58,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
   @override
   void dispose() {
     _pan.dispose();
-    _ownTiles?.dispose();
+    // The TileLayer disposes its provider when it unmounts.
     _controller.dispose();
     super.dispose();
   }
@@ -138,6 +139,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
   }
 
   void _fit(List<LatLng> points, {double padding = 48}) {
+    _pan.stop();
     if (points.isEmpty) return;
     try {
       _controller.fitCamera(CameraFit.coordinates(
@@ -179,6 +181,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
     final l10n = AppLocalizations.of(context);
     final palette = AppPalette.of(context);
     final places = ref.watch(placesProvider);
+    final location = ref.watch(myLocationProvider);
+    _tileProvider = ref.watch(mapTileProviderProvider) ??
+        (_ownTiles ??= NetworkTileProvider());
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -213,8 +218,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 return places.when(
                   loading: () => Center(
                       child: CircularProgressIndicator(color: palette.accent)),
-                  error: (_, __) => _content(context, const [], cardMax),
-                  data: (all) => _content(context, all, cardMax),
+                  error: (_, __) =>
+                      _content(context, const [], cardMax, location),
+                  data: (all) => _content(context, all, cardMax, location),
                 );
               }),
             ),
@@ -224,12 +230,12 @@ class _MapScreenState extends ConsumerState<MapScreen>
     );
   }
 
-  Widget _content(BuildContext context, List<Place> all, double cardMax) {
+  Widget _content(BuildContext context, List<Place> all, double cardMax,
+      AsyncValue<LatLng?> location) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final visible = _visible(all);
     final selected = _selected(visible);
-    final location = ref.watch(myLocationProvider);
     final me = location.valueOrNull;
     final locationOff = location.hasValue && me == null;
     final locating = location.isLoading;
@@ -323,8 +329,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
     final tiles = TileLayer(
       urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
       userAgentPackageName: 'com.elibayev.fitrix',
-      tileProvider: ref.watch(mapTileProviderProvider) ??
-          (_ownTiles ??= NetworkTileProvider()),
+      tileProvider: _tileProvider,
     );
     final points = [for (final p in visible) LatLng(p.lat, p.lon)];
 
@@ -347,11 +352,15 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 padding: const EdgeInsets.all(48),
                 maxZoom: 16,
               ),
+        onPointerDown: (_, __) => _pan.stop(),
         interactionOptions: const InteractionOptions(
             flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
       ),
       children: [
-        dark ? ColorFiltered(colorFilter: _darkTiles, child: tiles) : tiles,
+        // Always wrapped, so the TileLayer is never remounted (and its
+        // provider never disposed) when the theme changes.
+        ColorFiltered(
+            colorFilter: dark ? _darkTiles : _identityTiles, child: tiles),
         if (routeShown && plan != null) ..._routeLayers(palette, plan),
         MarkerLayer(
           markers: [
@@ -425,6 +434,13 @@ class _MapScreenState extends ConsumerState<MapScreen>
     ];
   }
 }
+
+const ColorFilter _identityTiles = ColorFilter.matrix(<double>[
+  1, 0, 0, 0, 0, //
+  0, 1, 0, 0, 0,
+  0, 0, 1, 0, 0,
+  0, 0, 0, 1, 0,
+]);
 
 /// Inverts the light OSM tiles and dims them for the dark theme.
 const ColorFilter _darkTiles = ColorFilter.matrix(<double>[
