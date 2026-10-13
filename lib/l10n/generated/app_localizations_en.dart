@@ -88,4 +88,31 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get syncFailed =>
       'Couldn\'t sync. Check your connection and try again.';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileWorkouts => 'workouts';
+
+  @override
+  String get profileDayStreak => 'day streak';
+
+  @override
+  String get profileKgNow => 'kg now';
+
+  @override
+  String get profileLanguage => 'Language';
+
+  @override
+  String get profileTheme => 'Theme';
+
+  @override
+  String get profileThemeAuto => 'Auto';
+
+  @override
+  String get profileThemeLight => 'Light';
+
+  @override
+  String get profileThemeDark => 'Dark';
 }

@@ -23,5 +23,14 @@
   "deleteAccountFailed": "No se pudo eliminar tu cuenta. {reason}",
   "undo": "Deshacer",
   "workoutDeleted": "«{name}» eliminado",
-  "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo."
+  "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.",
+  "profileTitle": "Perfil",
+  "profileWorkouts": "entrenamientos",
+  "profileDayStreak": "días seguidos",
+  "profileKgNow": "kg ahora",
+  "profileLanguage": "Idioma",
+  "profileTheme": "Tema",
+  "profileThemeAuto": "Auto",
+  "profileThemeLight": "Claro",
+  "profileThemeDark": "Oscuro"
 }

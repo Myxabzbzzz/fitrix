@@ -210,7 +210,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Alex'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(OutlinedButton, 'Sign out'));
+      await tester.tap(find.byKey(const Key('sign-out')));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(TextButton, 'Sign out'));
       await tester.pumpAndSettle();

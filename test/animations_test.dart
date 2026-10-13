@@ -490,11 +490,11 @@ void main() {
       await tester.pump(const Duration(milliseconds: 90));
       // Mid-fade both tabs are on stage.
       expect(find.text('FELIX'), findsOneWidget);
-      expect(find.text('About me'), findsWidgets);
+      expect(find.text('Profile'), findsWidgets);
 
       await tester.pumpAndSettle();
       expect(find.text('FELIX'), findsNothing);
-      expect(find.text('About me'), findsWidgets);
+      expect(find.text('Profile'), findsWidgets);
     });
 
     testWidgets('reduced motion: tabs switch instantly', (tester) async {

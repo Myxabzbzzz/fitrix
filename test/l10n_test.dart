@@ -82,7 +82,7 @@ void main() {
 
       expect(find.text('Обо мне'), findsOneWidget);
       expect(find.text('Выйти'), findsOneWidget);
-      expect(find.text('72 кг'), findsOneWidget);
+      expect(find.text('72'), findsOneWidget);
     });
 
     testWidgets('picking a language switches the app right away and saves it',

@@ -23,5 +23,14 @@
   "deleteAccountFailed": "Hisobni o‘chirib bo‘lmadi. {reason}",
   "undo": "Qaytarish",
   "workoutDeleted": "“{name}” o‘chirildi",
-  "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring."
+  "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.",
+  "profileTitle": "Profil",
+  "profileWorkouts": "mashg‘ulot",
+  "profileDayStreak": "kun ketma-ket",
+  "profileKgNow": "kg hozir",
+  "profileLanguage": "Til",
+  "profileTheme": "Mavzu",
+  "profileThemeAuto": "Avto",
+  "profileThemeLight": "Yorug‘",
+  "profileThemeDark": "Qorong‘i"
 }

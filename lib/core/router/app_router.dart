@@ -9,6 +9,7 @@ import 'package:fitrix/features/language/presentation/screens/language_screen.da
 import 'package:fitrix/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:fitrix/features/profile/presentation/screens/profile_screen.dart';
 import 'package:fitrix/features/profile/presentation/screens/about_me_screen.dart';
+import 'package:fitrix/features/profile/presentation/screens/profile_tab_screen.dart';
 import 'package:fitrix/features/chat/presentation/screens/chat_screen.dart';
 import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
 import 'package:fitrix/features/transition/presentation/screens/chat_transition_screen.dart';
@@ -36,6 +37,7 @@ class AppRouter {
   static const String home = '/home';
   static const String felix = '/felix';
   static const String me = '/me';
+  static const String aboutMe = '/me/about';
 
   // Home sections
   static const String workouts = '/home/workouts';
@@ -266,7 +268,14 @@ class AppRouter {
                   GoRoute(
                     path: me,
                     name: 'me',
-                    builder: (context, state) => const AboutMeScreen(),
+                    builder: (context, state) => const ProfileTabScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'about',
+                        name: 'aboutMe',
+                        builder: (context, state) => const AboutMeScreen(),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -87,4 +87,31 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get syncFailed =>
       'No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get profileTitle => 'Perfil';
+
+  @override
+  String get profileWorkouts => 'entrenamientos';
+
+  @override
+  String get profileDayStreak => 'días seguidos';
+
+  @override
+  String get profileKgNow => 'kg ahora';
+
+  @override
+  String get profileLanguage => 'Idioma';
+
+  @override
+  String get profileTheme => 'Tema';
+
+  @override
+  String get profileThemeAuto => 'Auto';
+
+  @override
+  String get profileThemeLight => 'Claro';
+
+  @override
+  String get profileThemeDark => 'Oscuro';
 }

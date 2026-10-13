@@ -39,5 +39,14 @@
         "example": "Push day"
       }
     }
-  }
+  },
+  "profileTitle": "Profile",
+  "profileWorkouts": "workouts",
+  "profileDayStreak": "day streak",
+  "profileKgNow": "kg now",
+  "profileLanguage": "Language",
+  "profileTheme": "Theme",
+  "profileThemeAuto": "Auto",
+  "profileThemeLight": "Light",
+  "profileThemeDark": "Dark"
 }
