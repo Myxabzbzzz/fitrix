@@ -16,7 +16,7 @@ class WorkoutCard extends StatelessWidget {
   /// Shows an edit icon in the top-right corner when set.
   final VoidCallback? onEdit;
 
-  /// Semantics label / tooltip of the edit icon.
+  /// Semantics label of the edit icon (no tooltip).
   final String editLabel;
 
   const WorkoutCard({

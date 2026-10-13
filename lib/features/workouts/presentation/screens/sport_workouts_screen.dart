@@ -193,7 +193,7 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                                 doneLabel: l10n.gymDone,
                                 onStart: () => _start(workouts[i]),
                                 onEdit: () => _edit(workouts[i]),
-                                editLabel: l10n.workoutEditLabel,
+                                editLabel: '${l10n.workoutEditLabel}, ${workouts[i].name}',
                               ),
                             ),
                           ),

@@ -253,6 +253,9 @@ class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
   }
 }
 
+/// Height of the Done bar above the keyboard.
+const double kDoneBarHeight = 44;
+
 /// Bar pinned to the top of the keyboard with a right-aligned Done button;
 /// the numeric keypad has no return key on iOS.
 class _KeyboardDoneBar extends StatelessWidget {
@@ -265,7 +268,7 @@ class _KeyboardDoneBar extends StatelessWidget {
     return Material(
       color: palette.sheet,
       child: Container(
-        height: 44,
+        height: kDoneBarHeight,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
         decoration: BoxDecoration(
@@ -810,6 +813,7 @@ class _NumberFieldState extends State<_NumberField> {
       focusNode: _focusNode,
       textAlign: TextAlign.center,
       style: widget.style,
+      scrollPadding: const EdgeInsets.fromLTRB(20, 20, 20, 20 + kDoneBarHeight),
       keyboardType: TextInputType.numberWithOptions(decimal: widget.decimal),
       inputFormatters: [
         FilteringTextInputFormatter.allow(

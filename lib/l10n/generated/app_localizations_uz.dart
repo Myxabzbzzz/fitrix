@@ -964,5 +964,5 @@ class AppLocalizationsUz extends AppLocalizations {
   String get workoutKeyboardDone => 'Tayyor';
 
   @override
-  String get workoutEditLabel => 'Mashgʻulotni tahrirlash';
+  String get workoutEditLabel => 'Mashg‘ulotni tahrirlash';
 }

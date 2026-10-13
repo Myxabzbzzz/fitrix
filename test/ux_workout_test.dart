@@ -107,6 +107,43 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
 
+    testWidgets('focused bottom field ends above the Done bar', (tester) async {
+      await pumpSheet(tester);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 900);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pumpAndSettle();
+      final scrollable = tester.state<ScrollableState>(find.descendant(
+          of: find.byKey(const ValueKey('table')),
+          matching: find.byType(Scrollable).first));
+
+      final tableRect = tester.getRect(find.byKey(const ValueKey('table')));
+      // Lowest field inside the viewport, scrolled flush with its bottom edge
+      // so only scrollPadding can lift it clear of the Done bar.
+      Finder lowest() => find
+          .byType(TextField)
+          .evaluate()
+          .map((e) => find.byElementPredicate((x) => x == e))
+          .where((f) => tester.getRect(f).bottom <= tableRect.bottom)
+          .last;
+      final pos = scrollable.position;
+      pos.jumpTo(pos.pixels + 40);
+      await tester.pumpAndSettle();
+      final before = tester.getRect(lowest()).bottom;
+      pos.jumpTo(pos.pixels + before - (tableRect.bottom - 2));
+      await tester.pumpAndSettle();
+      final last = lowest();
+      expect(tester.getRect(last).bottom, greaterThan(tableRect.bottom - 44));
+      await tester.tap(last);
+      await tester.pumpAndSettle();
+      expect(_fieldFocused(), isTrue);
+      final bar = find.byKey(const ValueKey('keyboardDone'));
+      expect(bar, findsOneWidget);
+      expect(tester.getRect(last).bottom,
+          lessThanOrEqualTo(tester.getTopLeft(bar).dy));
+      expect(tester.getBottomLeft(bar).dy, 844 - 300);
+      await tester.pumpWidget(const SizedBox());
+    });
+
     testWidgets('exercise list dismisses the keyboard on drag', (tester) async {
       await pumpSheet(tester);
       final list = tester.widget<ListView>(find.descendant(
@@ -129,7 +166,7 @@ void main() {
       final edit = find.byKey(const ValueKey('workoutCardEdit'));
       expect(edit, findsWidgets);
       expect(tester.getSize(edit.first).width, greaterThanOrEqualTo(44));
-      expect(find.bySemanticsLabel(RegExp('Edit workout')), findsWidgets);
+      expect(find.bySemanticsLabel(RegExp('Edit workout, ')), findsWidgets);
       final title =
           tester.widget<WorkoutCard>(find.byType(WorkoutCard).at(1)).title;
       await tester.tap(edit.at(1));
