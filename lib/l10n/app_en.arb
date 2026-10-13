@@ -39,5 +39,15 @@
         "example": "Push day"
       }
     }
-  }
+  },
+  "homeToday": "Today",
+  "homeTodayMeta": "{count, plural, =1{1 exercise} other{{count} exercises}} · about {minutes} min",
+  "@homeTodayMeta": {
+    "placeholders": {
+      "count": {"type": "int", "example": "7"},
+      "minutes": {"type": "int", "example": "55"}
+    }
+  },
+  "homeStart": "Start",
+  "homeContinue": "Continue"
 }

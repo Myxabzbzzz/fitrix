@@ -23,5 +23,9 @@
   "deleteAccountFailed": "Не удалось удалить аккаунт. {reason}",
   "undo": "Отменить",
   "workoutDeleted": "«{name}» удалена",
-  "syncFailed": "Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз."
+  "syncFailed": "Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.",
+  "homeToday": "Сегодня",
+  "homeTodayMeta": "{count, plural, one{{count} упражнение} few{{count} упражнения} many{{count} упражнений} other{{count} упражнения}} · около {minutes} мин",
+  "homeStart": "Начать",
+  "homeContinue": "Продолжить"
 }

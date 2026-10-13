@@ -87,4 +87,24 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get syncFailed =>
       'No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get homeToday => 'Hoy';
+
+  @override
+  String homeTodayMeta(int count, int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ejercicios',
+      one: '1 ejercicio',
+    );
+    return '$_temp0 · unos $minutes min';
+  }
+
+  @override
+  String get homeStart => 'Empezar';
+
+  @override
+  String get homeContinue => 'Continuar';
 }

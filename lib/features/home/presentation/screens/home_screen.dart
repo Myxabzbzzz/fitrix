@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/feature_tile.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
+import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
-/// Home dashboard from the design: a grid of feature tiles
-/// (My progress, My nutrition, Felix, My workouts, Shop, Fitrix map).
+/// Home dashboard: a grid of feature tiles (My progress, My nutrition, Felix,
+/// My workouts, Shop, Fitrix map) and a Today card with the next workout.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  static const double _gap = 17;
+  static const double _small = 64;
+  static const double _large = 148;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +38,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   const FitrixLogo(),
                   Positioned(
-                    left: 12,
+                    left: AppSpacing.sm,
                     child: Builder(
                       builder: (context) => IconButton(
                         icon: const Icon(Icons.menu),
@@ -46,104 +52,158 @@ class HomeScreen extends StatelessWidget {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(28, 24, 28, 24),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final half = (constraints.maxWidth - _gap) / 2;
-                    final small = (half - _gap) / 2;
-
-                    return Column(
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: half,
-                              height: half,
-                              child: const Column(
-                                children: [
-                                  Expanded(
-                                    child: _SectionTile(
-                                      location: AppRouter.progress,
-                                      label: 'MY\nPROG\nRESS',
-                                      imageAsset: 'assets/images/tile_progress.png',
-                                      imageWidthFactor: 0.5,
-                                    ),
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.lg),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: _small * 2 + AppSpacing.md,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: _SectionTile(
+                                    location: AppRouter.progress,
+                                    label: 'MY\nPROGRESS',
+                                    labelSize: AppText.displaySmall.fontSize!,
+                                    imageAsset:
+                                        'assets/images/tile_progress.png',
+                                    imageWidthFactor: 0.5,
                                   ),
-                                  SizedBox(height: _gap),
-                                  Expanded(
-                                    child: _SectionTile(
-                                      location: AppRouter.nutrition,
-                                      label: 'MY\nNUTRI\nTION',
-                                      imageAsset: 'assets/images/tile_nutrition.png',
-                                      imageWidthFactor: 0.55,
-                                    ),
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                Expanded(
+                                  child: _SectionTile(
+                                    location: AppRouter.nutrition,
+                                    label: 'MY\nNUTRITION',
+                                    labelSize: AppText.displaySmall.fontSize!,
+                                    imageAsset:
+                                        'assets/images/tile_nutrition.png',
+                                    imageWidthFactor: 0.55,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: _gap),
-                            SizedBox(
-                              width: half,
-                              height: half,
-                              child: FeatureTile(
-                                label: 'FELIX',
-                                labelSize: 26,
-                                imageAsset: 'assets/images/felix_robot.png',
-                                imageWidthFactor: 1,
-                                imageAlignment: Alignment.center,
-                                labelAlignment: Alignment.center,
-                                onTap: () => context.go(AppRouter.felix),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: _gap),
-                        SizedBox(
-                          height: half,
-                          child: const _SectionTile(
-                            location: AppRouter.workouts,
-                            label: 'MY\nWORKOUTS',
-                            labelSize: 28,
-                            imageAsset: 'assets/images/tile_workouts.png',
-                            imageWidthFactor: 0.55,
                           ),
-                        ),
-                        const SizedBox(height: _gap),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: half,
-                              height: small,
-                              child: FeatureTile(
-                                label: 'SHOP',
-                                labelSize: 20,
-                                imageAsset: 'assets/images/tile_shop.png',
-                                imageWidthFactor: 0.5,
-                                onTap: () => context.go(AppRouter.shop),
-                              ),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: FeatureTile(
+                              label: 'FELIX',
+                              labelSize: AppText.displayLarge.fontSize!,
+                              imageAsset: 'assets/images/felix_robot.png',
+                              imageWidthFactor: 1,
+                              imageAlignment: Alignment.center,
+                              labelAlignment: Alignment.center,
+                              onTap: () => context.go(AppRouter.felix),
                             ),
-                            const SizedBox(width: _gap),
-                            SizedBox(
-                              width: half,
-                              height: small,
-                              child: const _SectionTile(
-                                location: AppRouter.fitrixMap,
-                                label: 'FITRIX\nMAP',
-                                labelSize: 18,
-                                imageAsset: 'assets/images/tile_map.png',
-                                imageWidthFactor: 0.45,
-                              ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    SizedBox(
+                      height: _large,
+                      child: _SectionTile(
+                        location: AppRouter.workouts,
+                        label: 'MY\nWORKOUTS',
+                        labelSize: AppText.displayLarge.fontSize!,
+                        imageAsset: 'assets/images/tile_workouts.png',
+                        imageWidthFactor: 0.55,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    SizedBox(
+                      height: _small,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: FeatureTile(
+                              label: 'SHOP',
+                              labelSize: AppText.displayMedium.fontSize!,
+                              imageAsset: 'assets/images/tile_shop.png',
+                              imageWidthFactor: 0.5,
+                              onTap: () => context.go(AppRouter.shop),
                             ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: _SectionTile(
+                              location: AppRouter.fitrixMap,
+                              label: 'FITRIX\nMAP',
+                              labelSize: AppText.displaySmall.fontSize!,
+                              imageAsset: 'assets/images/tile_map.png',
+                              imageWidthFactor: 0.45,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    const _TodayCard(),
+                  ],
                 ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Today's workout (first plan of the user's first sport) with a Start /
+/// Continue button.
+class _TodayCard extends ConsumerWidget {
+  const _TodayCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final templates = ref.watch(workoutTemplatesProvider);
+    if (templates.isEmpty) return const SizedBox.shrink();
+    final today = templates.first;
+    final active = ref.watch(activeWorkoutProvider);
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration:
+          BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.homeToday.toUpperCase(),
+                    style: AppText.microStrong.copyWith(color: palette.accent)),
+                Text(today.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style:
+                        AppText.headingS.copyWith(color: palette.textPrimary)),
+                Text(
+                  l10n.homeTodayMeta(today.exercises.length,
+                      today.estimatedDuration.inMinutes),
+                  style: AppText.caption.copyWith(color: palette.textSecondary),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          AppButton(
+            label: active == null ? l10n.homeStart : l10n.homeContinue,
+            size: AppButtonSize.small,
+            onPressed: () {
+              if (active == null) {
+                ref.read(activeWorkoutProvider.notifier).start(today);
+              }
+              ref.read(activeWorkoutExpandedProvider.notifier).state = true;
+            },
+          ),
+        ],
       ),
     );
   }
@@ -213,7 +273,8 @@ class _HomeDrawer extends StatelessWidget {
               child: FitrixLogo(),
             ),
             item(Icons.show_chart, 'My progress', AppRouter.progress),
-            item(Icons.restaurant_outlined, 'My nutrition', AppRouter.nutrition),
+            item(
+                Icons.restaurant_outlined, 'My nutrition', AppRouter.nutrition),
             item(Icons.fitness_center, 'My workouts', AppRouter.workouts),
             item(Icons.smart_toy_outlined, 'Felix', AppRouter.felix),
             item(Icons.shopping_cart_outlined, 'Shop', AppRouter.shop),

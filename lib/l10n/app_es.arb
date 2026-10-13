@@ -23,5 +23,9 @@
   "deleteAccountFailed": "No se pudo eliminar tu cuenta. {reason}",
   "undo": "Deshacer",
   "workoutDeleted": "«{name}» eliminado",
-  "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo."
+  "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.",
+  "homeToday": "Hoy",
+  "homeTodayMeta": "{count, plural, =1{1 ejercicio} other{{count} ejercicios}} · unos {minutes} min",
+  "homeStart": "Empezar",
+  "homeContinue": "Continuar"
 }
