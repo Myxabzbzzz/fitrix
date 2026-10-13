@@ -53,6 +53,7 @@ Node.js/Express backend that connects the FITRIX Flutter app to Ollama LLM.
 | `PORT` | `3000` | HTTP port |
 | `OLLAMA_URL` | `http://localhost:11434` | Ollama server |
 | `OLLAMA_MODEL` | `qwen3:8b` | any model from `ollama list` |
+| `OLLAMA_VISION_MODEL` | `qwen2.5vl:7b` | used instead of `OLLAMA_MODEL` only for requests with a photo (`ollama pull qwen2.5vl:7b`) |
 | `OLLAMA_THINK` | `false` | `true` re-enables reasoning (~10x slower replies) |
 | `OLLAMA_KEEP_ALIVE` | `30m` | keep the model loaded between messages |
 | `OLLAMA_TIMEOUT_MS` | `120000` | give up (`504`) after this long without a response or new tokens from Ollama |
@@ -322,6 +323,31 @@ newline-delimited JSON as tokens are generated:
 
 If the model fails mid-reply the last line is `{"error":"..."}`. The Flutter
 app uses this endpoint so replies appear word by word.
+
+### Actions
+
+When the user reports a weight change or Felix gives a concrete workout or
+meal plan, the model appends a `<fitrix-action>{JSON}</fitrix-action>` block.
+It is never streamed as text: the backend strips it, validates it and sends
+at most one event after the last delta and before `done` (`/chat` returns it
+as an `action` field):
+
+```
+{"action":{"type":"weight","mode":"delta","kg":3}}
+{"action":{"type":"workout_plan","sport":"gym","templates":[{"name":"Upper","exercises":[{"name":"Bench press","sets":4,"reps":8,"kg":60}]}]}}
+{"action":{"type":"meal_plan","meals":[{"name":"Breakfast","items":"Oatmeal, banana","kcal":520}]}}
+```
+
+Weight `kg` is 20-400 for `set`, -50..50 for `delta` (pounds are converted,
+1 lb = 0.4536 kg). Invalid actions are dropped and only logged by type
+(never content). Limits for plans: see `actions.js`.
+
+### Photos
+
+`images` (optional, at most one raw base64 JPEG, no `data:` prefix, up to
+1.5 MB decoded) is passed to Ollama on the current user message only, and
+that request uses `OLLAMA_VISION_MODEL`. Oversize images get `413`,
+malformed ones `400`, both as `{"error","message"}`.
 
 ### Change Port
 
