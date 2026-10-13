@@ -246,6 +246,7 @@ abstract class AppLocalizations {
   /// **'Couldn\'t sync. Check your connection and try again.'**
   String get syncFailed;
 
+<<<<<<< HEAD
   /// No description provided for @homeToday.
   ///
   /// In en, this message translates to:
@@ -467,6 +468,61 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For dinner, aim for about 40 g of protein. Chicken, rice and greens fit your plan.'**
   String get nutritionTipMessage;
+=======
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'workouts'**
+  String get profileWorkouts;
+
+  /// No description provided for @profileDayStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'day streak'**
+  String get profileDayStreak;
+
+  /// No description provided for @profileKgNow.
+  ///
+  /// In en, this message translates to:
+  /// **'kg now'**
+  String get profileKgNow;
+
+  /// No description provided for @profileLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguage;
+
+  /// No description provided for @profileTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get profileTheme;
+
+  /// No description provided for @profileThemeAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get profileThemeAuto;
+
+  /// No description provided for @profileThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get profileThemeLight;
+
+  /// No description provided for @profileThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get profileThemeDark;
+>>>>>>> t10
 }
 
 class _AppLocalizationsDelegate

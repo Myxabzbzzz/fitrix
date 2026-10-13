@@ -204,7 +204,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Alex Smith'), findsOneWidget);
       expect(find.text('back@x.com'), findsOneWidget);
-      expect(find.text('72.5 kg'), findsOneWidget);
+      expect(find.text('72.5'), findsOneWidget);
+      expect(find.text('kg now'), findsOneWidget);
     });
 
     testWidgets('errors: rate limit and no connection', (tester) async {
@@ -542,7 +543,7 @@ void main() {
       expect(h.session.accountUserId, h.auth.userId);
     });
 
-    testWidgets('About me shows the email; sign out ends the session',
+    testWidgets('Profile shows the email; sign out ends the session',
         (tester) async {
       final h = await _pumpApp(
         tester,
@@ -557,7 +558,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('old@x.com'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(OutlinedButton, 'Sign out'));
+      await tester.tap(find.byKey(const Key('sign-out')));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(TextButton, 'Sign out'));
       await tester.pumpAndSettle();
@@ -570,7 +571,7 @@ void main() {
   });
 
   group('delete account', () {
-    Future<_Harness> openAboutMe(WidgetTester tester) async {
+    Future<_Harness> openProfile(WidgetTester tester) async {
       final h = await _pumpApp(
         tester,
         prefs: {
@@ -593,7 +594,7 @@ void main() {
 
     testWidgets('two confirmations, then the account and device data go',
         (tester) async {
-      final h = await openAboutMe(tester);
+      final h = await openProfile(tester);
 
       await tapKey(tester, 'delete-account');
       expect(find.text('Delete account?'), findsOneWidget);
@@ -609,7 +610,7 @@ void main() {
     });
 
     testWidgets('cancel at either step deletes nothing', (tester) async {
-      final h = await openAboutMe(tester);
+      final h = await openProfile(tester);
 
       await tapKey(tester, 'delete-account');
       await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
@@ -625,7 +626,7 @@ void main() {
     });
 
     testWidgets('offline: an error, and everything stays', (tester) async {
-      final h = await openAboutMe(tester);
+      final h = await openProfile(tester);
       h.auth.deleteError = const SocketException('offline');
 
       await tapKey(tester, 'delete-account');
@@ -642,7 +643,7 @@ void main() {
 
     testWidgets('Apple accounts mention Apple and send its code',
         (tester) async {
-      final h = await openAboutMe(tester);
+      final h = await openProfile(tester);
       h.auth.appleAccounts.add('old@x.com');
 
       await tapKey(tester, 'delete-account');

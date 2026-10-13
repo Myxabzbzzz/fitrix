@@ -89,6 +89,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.';
 
   @override
+<<<<<<< HEAD
   String get homeToday => 'Hoy';
 
   @override
@@ -226,4 +227,31 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get nutritionTipMessage =>
       'En la cena apunta a unos 40 g de proteína. Pollo, arroz y verduras encajan en tu plan.';
+=======
+  String get profileTitle => 'Perfil';
+
+  @override
+  String get profileWorkouts => 'entrenamientos';
+
+  @override
+  String get profileDayStreak => 'días seguidos';
+
+  @override
+  String get profileKgNow => 'kg ahora';
+
+  @override
+  String get profileLanguage => 'Idioma';
+
+  @override
+  String get profileTheme => 'Tema';
+
+  @override
+  String get profileThemeAuto => 'Auto';
+
+  @override
+  String get profileThemeLight => 'Claro';
+
+  @override
+  String get profileThemeDark => 'Oscuro';
+>>>>>>> t10
 }

@@ -24,6 +24,7 @@
   "undo": "Отменить",
   "workoutDeleted": "«{name}» удалена",
   "syncFailed": "Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.",
+<<<<<<< HEAD
   "homeToday": "Сегодня",
   "homeTodayMeta": "{count, plural, one{{count} упражнение} few{{count} упражнения} many{{count} упражнений} other{{count} упражнения}} · около {minutes} мин",
   "homeStart": "Начать",
@@ -61,4 +62,15 @@
   "nutritionTipEyebrow": "Совет Феликса",
   "nutritionTipTitle": "Белок на ужин",
   "nutritionTipMessage": "На ужин возьмите около 40 г белка. Курица, рис и зелень подойдут вашему плану."
+=======
+  "profileTitle": "Профиль",
+  "profileWorkouts": "тренировок",
+  "profileDayStreak": "дней подряд",
+  "profileKgNow": "кг сейчас",
+  "profileLanguage": "Язык",
+  "profileTheme": "Тема",
+  "profileThemeAuto": "Авто",
+  "profileThemeLight": "Светлая",
+  "profileThemeDark": "Тёмная"
+>>>>>>> t10
 }

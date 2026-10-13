@@ -9,7 +9,11 @@ import 'package:fitrix/features/language/presentation/providers/language_provide
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 class LanguageScreen extends ConsumerWidget {
-  const LanguageScreen({super.key});
+  /// Settings mode: when set, Continue saves the language and calls this
+  /// instead of continuing onboarding, and a back button is shown.
+  final VoidCallback? onContinue;
+
+  const LanguageScreen({super.key, this.onContinue});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +26,17 @@ class LanguageScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              const SizedBox(height: 40),
+              if (onContinue != null)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    key: const Key('language-back'),
+                    icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                    color: palette.textPrimary,
+                    onPressed: onContinue,
+                  ),
+                ),
+              SizedBox(height: onContinue != null ? 0 : 40),
 
               // FITRIX Logo
               const FitrixLogo(fontSize: 36),
@@ -141,7 +155,11 @@ class LanguageScreen extends ConsumerWidget {
           await ref
               .read(selectedLanguageProvider.notifier)
               .setLanguage(selectedLanguage);
-          router.go(AppRouter.signIn);
+          if (onContinue != null) {
+            onContinue!();
+          } else {
+            router.go(AppRouter.signIn);
+          }
         },
         child: Text(AppLocalizations.of(context).continueButton),
       ),

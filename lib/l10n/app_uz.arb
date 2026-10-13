@@ -24,6 +24,7 @@
   "undo": "Qaytarish",
   "workoutDeleted": "“{name}” o‘chirildi",
   "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.",
+<<<<<<< HEAD
   "homeToday": "Bugun",
   "homeTodayMeta": "{count} mashq · taxminan {minutes} daq",
   "homeStart": "Boshlash",
@@ -61,4 +62,15 @@
   "nutritionTipEyebrow": "Felix maslahati",
   "nutritionTipTitle": "Kechki ovqatda oqsil",
   "nutritionTipMessage": "Kechki ovqatga taxminan 40 g oqsil oling. Tovuq, guruch va ko‘kat rejangizga mos."
+=======
+  "profileTitle": "Profil",
+  "profileWorkouts": "mashg‘ulot",
+  "profileDayStreak": "kun ketma-ket",
+  "profileKgNow": "kg hozir",
+  "profileLanguage": "Til",
+  "profileTheme": "Mavzu",
+  "profileThemeAuto": "Avto",
+  "profileThemeLight": "Yorug‘",
+  "profileThemeDark": "Qorong‘i"
+>>>>>>> t10
 }
