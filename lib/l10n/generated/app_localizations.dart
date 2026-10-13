@@ -1721,6 +1721,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit workout'**
   String get workoutEditLabel;
+
+  /// No description provided for @aboutMeSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get aboutMeSave;
+
+  /// No description provided for @aboutMeSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get aboutMeSaved;
+
+  /// No description provided for @aboutMeDiscardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get aboutMeDiscardTitle;
+
+  /// No description provided for @aboutMeDiscardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your edits to this profile won\'t be saved.'**
+  String get aboutMeDiscardBody;
+
+  /// No description provided for @aboutMeDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get aboutMeDiscard;
+
+  /// No description provided for @aboutMeKeepEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get aboutMeKeepEditing;
+
+  /// No description provided for @aboutMeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get aboutMeEmail;
+
+  /// No description provided for @aboutMeGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get aboutMeGoal;
+
+  /// No description provided for @aboutMeGoalOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other…'**
+  String get aboutMeGoalOther;
+
+  /// No description provided for @aboutMeGoalOtherHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your goal'**
+  String get aboutMeGoalOtherHint;
+
+  /// No description provided for @aboutMeLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get aboutMeLevel;
+
+  /// No description provided for @aboutMeSports.
+  ///
+  /// In en, this message translates to:
+  /// **'Sports'**
+  String get aboutMeSports;
+
+  /// No description provided for @aboutMeSportsLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You can pick up to 6 sports.'**
+  String get aboutMeSportsLimit;
+
+  /// No description provided for @aboutGoalBuild.
+  ///
+  /// In en, this message translates to:
+  /// **'Build muscle and strength'**
+  String get aboutGoalBuild;
+
+  /// No description provided for @aboutGoalEndurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Improve endurance and stamina'**
+  String get aboutGoalEndurance;
+
+  /// No description provided for @aboutGoalLose.
+  ///
+  /// In en, this message translates to:
+  /// **'Lose weight and get toned'**
+  String get aboutGoalLose;
+
+  /// No description provided for @aboutGoalHealthy.
+  ///
+  /// In en, this message translates to:
+  /// **'Feel healthier and balanced'**
+  String get aboutGoalHealthy;
+
+  /// No description provided for @aboutGoalTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Just track my progress'**
+  String get aboutGoalTrack;
 }
 
 class _AppLocalizationsDelegate

@@ -689,5 +689,23 @@
     }
   },
   "workoutKeyboardDone": "Done",
-  "workoutEditLabel": "Edit workout"
+  "workoutEditLabel": "Edit workout",
+  "aboutMeSave": "Save",
+  "aboutMeSaved": "Saved",
+  "aboutMeDiscardTitle": "Discard changes?",
+  "aboutMeDiscardBody": "Your edits to this profile won't be saved.",
+  "aboutMeDiscard": "Discard",
+  "aboutMeKeepEditing": "Keep editing",
+  "aboutMeEmail": "Email",
+  "aboutMeGoal": "Goal",
+  "aboutMeGoalOther": "Other…",
+  "aboutMeGoalOtherHint": "Describe your goal",
+  "aboutMeLevel": "Level",
+  "aboutMeSports": "Sports",
+  "aboutMeSportsLimit": "You can pick up to 6 sports.",
+  "aboutGoalBuild": "Build muscle and strength",
+  "aboutGoalEndurance": "Improve endurance and stamina",
+  "aboutGoalLose": "Lose weight and get toned",
+  "aboutGoalHealthy": "Feel healthier and balanced",
+  "aboutGoalTrack": "Just track my progress"
 }

@@ -994,4 +994,58 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get workoutEditLabel => 'Editar entrenamiento';
+
+  @override
+  String get aboutMeSave => 'Guardar';
+
+  @override
+  String get aboutMeSaved => 'Guardado';
+
+  @override
+  String get aboutMeDiscardTitle => '¿Descartar cambios?';
+
+  @override
+  String get aboutMeDiscardBody => 'Tus cambios en el perfil no se guardarán.';
+
+  @override
+  String get aboutMeDiscard => 'Descartar';
+
+  @override
+  String get aboutMeKeepEditing => 'Seguir editando';
+
+  @override
+  String get aboutMeEmail => 'Correo';
+
+  @override
+  String get aboutMeGoal => 'Objetivo';
+
+  @override
+  String get aboutMeGoalOther => 'Otro…';
+
+  @override
+  String get aboutMeGoalOtherHint => 'Describe tu objetivo';
+
+  @override
+  String get aboutMeLevel => 'Nivel';
+
+  @override
+  String get aboutMeSports => 'Deportes';
+
+  @override
+  String get aboutMeSportsLimit => 'Puedes elegir hasta 6 deportes.';
+
+  @override
+  String get aboutGoalBuild => 'Ganar músculo y fuerza';
+
+  @override
+  String get aboutGoalEndurance => 'Mejorar la resistencia';
+
+  @override
+  String get aboutGoalLose => 'Perder peso y tonificar';
+
+  @override
+  String get aboutGoalHealthy => 'Sentirme más sano y equilibrado';
+
+  @override
+  String get aboutGoalTrack => 'Solo seguir mi progreso';
 }

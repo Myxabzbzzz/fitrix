@@ -7,7 +7,8 @@ abstract class ProfileRemote {
   Future<ProfileRow?> fetch(String userId);
 
   /// Inserts or updates the row (see [ProfileRow.toUpsert]).
-  Future<void> upsert(ProfileRow row, {bool includeProfile = true});
+  Future<void> upsert(ProfileRow row,
+      {bool includeProfile = true, bool clearBlankAnswers = false});
 }
 
 class SupabaseProfileRemote implements ProfileRemote {
@@ -29,10 +30,13 @@ class SupabaseProfileRemote implements ProfileRemote {
   }
 
   @override
-  Future<void> upsert(ProfileRow row, {bool includeProfile = true}) async {
+  Future<void> upsert(ProfileRow row,
+      {bool includeProfile = true, bool clearBlankAnswers = false}) async {
     await _client
         .from(ProfileRow.table)
-        .upsert(row.toUpsert(includeProfile: includeProfile))
+        .upsert(row.toUpsert(
+            includeProfile: includeProfile,
+            clearBlankAnswers: clearBlankAnswers))
         .timeout(_timeout);
   }
 }
