@@ -1006,4 +1006,58 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get shopOrderUnavailable =>
       'Некоторые товары больше недоступны. Обновите корзину и попробуйте снова.';
+
+  @override
+  String get aboutMeSave => 'Сохранить';
+
+  @override
+  String get aboutMeSaved => 'Сохранено';
+
+  @override
+  String get aboutMeDiscardTitle => 'Отменить изменения?';
+
+  @override
+  String get aboutMeDiscardBody => 'Ваши правки в профиле не будут сохранены.';
+
+  @override
+  String get aboutMeDiscard => 'Отменить';
+
+  @override
+  String get aboutMeKeepEditing => 'Продолжить';
+
+  @override
+  String get aboutMeEmail => 'Эл. почта';
+
+  @override
+  String get aboutMeGoal => 'Цель';
+
+  @override
+  String get aboutMeGoalOther => 'Другое…';
+
+  @override
+  String get aboutMeGoalOtherHint => 'Опишите свою цель';
+
+  @override
+  String get aboutMeLevel => 'Уровень';
+
+  @override
+  String get aboutMeSports => 'Виды спорта';
+
+  @override
+  String get aboutMeSportsLimit => 'Можно выбрать до 6 видов спорта.';
+
+  @override
+  String get aboutGoalBuild => 'Набрать мышцы и силу';
+
+  @override
+  String get aboutGoalEndurance => 'Повысить выносливость';
+
+  @override
+  String get aboutGoalLose => 'Похудеть и подтянуться';
+
+  @override
+  String get aboutGoalHealthy => 'Стать здоровее и сбалансированнее';
+
+  @override
+  String get aboutGoalTrack => 'Просто следить за прогрессом';
 }

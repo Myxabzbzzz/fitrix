@@ -959,4 +959,59 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get shopOrderUnavailable =>
       'Ba’zi mahsulotlar endi mavjud emas. Savatni yangilang va qayta urinib ko‘ring.';
+
+  @override
+  String get aboutMeSave => 'Saqlash';
+
+  @override
+  String get aboutMeSaved => 'Saqlandi';
+
+  @override
+  String get aboutMeDiscardTitle => 'O‘zgarishlar bekor qilinsinmi?';
+
+  @override
+  String get aboutMeDiscardBody =>
+      'Profilga kiritgan o‘zgarishlaringiz saqlanmaydi.';
+
+  @override
+  String get aboutMeDiscard => 'Bekor qilish';
+
+  @override
+  String get aboutMeKeepEditing => 'Tahrirlashni davom ettirish';
+
+  @override
+  String get aboutMeEmail => 'E-pochta';
+
+  @override
+  String get aboutMeGoal => 'Maqsad';
+
+  @override
+  String get aboutMeGoalOther => 'Boshqa…';
+
+  @override
+  String get aboutMeGoalOtherHint => 'Maqsadingizni yozing';
+
+  @override
+  String get aboutMeLevel => 'Daraja';
+
+  @override
+  String get aboutMeSports => 'Sport turlari';
+
+  @override
+  String get aboutMeSportsLimit => '6 tagacha sport turini tanlash mumkin.';
+
+  @override
+  String get aboutGoalBuild => 'Mushak va kuch orttirish';
+
+  @override
+  String get aboutGoalEndurance => 'Chidamlilikni oshirish';
+
+  @override
+  String get aboutGoalLose => 'Ozish va tarang tana';
+
+  @override
+  String get aboutGoalHealthy => 'Sog‘lom va muvozanatli bo‘lish';
+
+  @override
+  String get aboutGoalTrack => 'Shunchaki natijani kuzatish';
 }
