@@ -87,4 +87,168 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get syncFailed =>
       'Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.';
+
+  @override
+  String get discoverTitle => 'Обзор';
+
+  @override
+  String get discoverNotifications => 'Уведомления';
+
+  @override
+  String get discoverNoNotifications => 'Новых уведомлений нет';
+
+  @override
+  String get discoverForYou => 'Для вас';
+
+  @override
+  String get discoverChallenges => 'Челленджи';
+
+  @override
+  String get discoverPrograms => 'Программы';
+
+  @override
+  String get discoverArticles => 'Статьи';
+
+  @override
+  String get discoverThisWeek => 'На этой неделе';
+
+  @override
+  String get discoverJoin => 'Участвовать';
+
+  @override
+  String get discoverJoined => 'Вы участвуете';
+
+  @override
+  String get discoverSignInToJoin => 'Войдите, чтобы участвовать в челленджах';
+
+  @override
+  String get discoverSignIn => 'Войти';
+
+  @override
+  String get discoverJoinFailed =>
+      'Не удалось присоединиться. Попробуйте ещё раз.';
+
+  @override
+  String get discoverProgramsForYou => 'Программы для вас';
+
+  @override
+  String get discoverAll => 'Все';
+
+  @override
+  String discoverProgramSoon(String title) {
+    return '$title: предпросмотр скоро появится';
+  }
+
+  @override
+  String get discoverFelixEyebrow => 'Совет от Феликса';
+
+  @override
+  String get discoverFelixTitle => 'Отдых делает сильнее';
+
+  @override
+  String get discoverFelixMessage =>
+      'Два лёгких дня в неделю снижают риск травм и помогают расти в весах.';
+
+  @override
+  String get discoverAskFelix => 'Спросить Феликса';
+
+  @override
+  String get discoverRead => 'Читать';
+
+  @override
+  String discoverMinRead(int n) {
+    return '$n мин чтения';
+  }
+
+  @override
+  String get discoverArticleMissing => 'Эта статья недоступна.';
+
+  @override
+  String get shopTitle => 'Магазин';
+
+  @override
+  String shopCartLabel(int n) {
+    return 'Корзина, товаров: $n';
+  }
+
+  @override
+  String get shopSearchHint => 'Поиск товаров';
+
+  @override
+  String get shopAll => 'Все';
+
+  @override
+  String get shopCatSupplements => 'Добавки';
+
+  @override
+  String get shopCatEquipment => 'Инвентарь';
+
+  @override
+  String get shopCatApparel => 'Одежда';
+
+  @override
+  String get shopProBlurb =>
+      'Безлимитные чаты с Феликсом, индивидуальные планы и разбор техники.';
+
+  @override
+  String get shopProButton => 'Подробнее';
+
+  @override
+  String get shopProSoonTitle => 'FITRIX Pro скоро появится';
+
+  @override
+  String get shopProSoonBody => 'Мы сообщим, как только всё будет готово.';
+
+  @override
+  String get shopGotIt => 'Понятно';
+
+  @override
+  String shopNothingFound(String query) {
+    return 'По запросу «$query» ничего не найдено.';
+  }
+
+  @override
+  String shopAdd(String name) {
+    return 'Добавить: $name';
+  }
+
+  @override
+  String get shopCartTitle => 'Корзина';
+
+  @override
+  String get shopClose => 'Закрыть';
+
+  @override
+  String get shopRemoveOne => 'Убрать один';
+
+  @override
+  String get shopAddOne => 'Добавить один';
+
+  @override
+  String get shopTotal => 'Итого';
+
+  @override
+  String get shopPlaceOrder => 'Оформить заказ';
+
+  @override
+  String get shopCartEmpty =>
+      'Корзина пуста. Нажмите + у любого товара, чтобы добавить его.';
+
+  @override
+  String get shopOrderPlaced => 'Заказ оформлен';
+
+  @override
+  String get shopSignInToOrder => 'Войдите, чтобы оформить заказ';
+
+  @override
+  String get shopOrderFailed =>
+      'Не удалось оформить заказ. Проверьте подключение.';
+
+  @override
+  String shopOrderRejected(String message) {
+    return 'Заказ отклонён: $message';
+  }
+
+  @override
+  String get shopRetry => 'Повторить';
 }

@@ -245,6 +245,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t sync. Check your connection and try again.'**
   String get syncFailed;
+
+  /// No description provided for @discoverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover'**
+  String get discoverTitle;
+
+  /// No description provided for @discoverNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get discoverNotifications;
+
+  /// No description provided for @discoverNoNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No new notifications'**
+  String get discoverNoNotifications;
+
+  /// No description provided for @discoverForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'For you'**
+  String get discoverForYou;
+
+  /// No description provided for @discoverChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get discoverChallenges;
+
+  /// No description provided for @discoverPrograms.
+  ///
+  /// In en, this message translates to:
+  /// **'Programs'**
+  String get discoverPrograms;
+
+  /// No description provided for @discoverArticles.
+  ///
+  /// In en, this message translates to:
+  /// **'Articles'**
+  String get discoverArticles;
+
+  /// No description provided for @discoverThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get discoverThisWeek;
+
+  /// No description provided for @discoverJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Join challenge'**
+  String get discoverJoin;
+
+  /// No description provided for @discoverJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined'**
+  String get discoverJoined;
+
+  /// No description provided for @discoverSignInToJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to join challenges'**
+  String get discoverSignInToJoin;
+
+  /// No description provided for @discoverSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get discoverSignIn;
+
+  /// No description provided for @discoverJoinFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t join. Try again.'**
+  String get discoverJoinFailed;
+
+  /// No description provided for @discoverProgramsForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Programs for you'**
+  String get discoverProgramsForYou;
+
+  /// No description provided for @discoverAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get discoverAll;
+
+  /// No description provided for @discoverProgramSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'{title}: preview coming soon'**
+  String discoverProgramSoon(String title);
+
+  /// No description provided for @discoverFelixEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip from Felix'**
+  String get discoverFelixEyebrow;
+
+  /// No description provided for @discoverFelixTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest keeps you strong'**
+  String get discoverFelixTitle;
+
+  /// No description provided for @discoverFelixMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Two easy days a week lower injury risk and keep your lifts climbing.'**
+  String get discoverFelixMessage;
+
+  /// No description provided for @discoverAskFelix.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Felix'**
+  String get discoverAskFelix;
+
+  /// No description provided for @discoverRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get discoverRead;
+
+  /// No description provided for @discoverMinRead.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} min read'**
+  String discoverMinRead(int n);
+
+  /// No description provided for @discoverArticleMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'This article isn’t available.'**
+  String get discoverArticleMissing;
+
+  /// No description provided for @shopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop'**
+  String get shopTitle;
+
+  /// No description provided for @shopCartLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart, {n} items'**
+  String shopCartLabel(int n);
+
+  /// No description provided for @shopSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search products'**
+  String get shopSearchHint;
+
+  /// No description provided for @shopAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get shopAll;
+
+  /// No description provided for @shopCatSupplements.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplements'**
+  String get shopCatSupplements;
+
+  /// No description provided for @shopCatEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get shopCatEquipment;
+
+  /// No description provided for @shopCatApparel.
+  ///
+  /// In en, this message translates to:
+  /// **'Apparel'**
+  String get shopCatApparel;
+
+  /// No description provided for @shopProBlurb.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited chats with Felix, custom plans and form checks.'**
+  String get shopProBlurb;
+
+  /// No description provided for @shopProButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn more'**
+  String get shopProButton;
+
+  /// No description provided for @shopProSoonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FITRIX Pro is coming soon'**
+  String get shopProSoonTitle;
+
+  /// No description provided for @shopProSoonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We’ll let you know as soon as it’s ready.'**
+  String get shopProSoonBody;
+
+  /// No description provided for @shopGotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get shopGotIt;
+
+  /// No description provided for @shopNothingFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found for “{query}”.'**
+  String shopNothingFound(String query);
+
+  /// No description provided for @shopAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add {name}'**
+  String shopAdd(String name);
+
+  /// No description provided for @shopCartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart'**
+  String get shopCartTitle;
+
+  /// No description provided for @shopClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get shopClose;
+
+  /// No description provided for @shopRemoveOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove one'**
+  String get shopRemoveOne;
+
+  /// No description provided for @shopAddOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Add one'**
+  String get shopAddOne;
+
+  /// No description provided for @shopTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get shopTotal;
+
+  /// No description provided for @shopPlaceOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Place order'**
+  String get shopPlaceOrder;
+
+  /// No description provided for @shopCartEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cart is empty. Tap + on any product to add it.'**
+  String get shopCartEmpty;
+
+  /// No description provided for @shopOrderPlaced.
+  ///
+  /// In en, this message translates to:
+  /// **'Order placed'**
+  String get shopOrderPlaced;
+
+  /// No description provided for @shopSignInToOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to place an order'**
+  String get shopSignInToOrder;
+
+  /// No description provided for @shopOrderFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t place the order. Check your connection.'**
+  String get shopOrderFailed;
+
+  /// No description provided for @shopOrderRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Order rejected: {message}'**
+  String shopOrderRejected(String message);
+
+  /// No description provided for @shopRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get shopRetry;
 }
 
 class _AppLocalizationsDelegate

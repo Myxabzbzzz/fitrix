@@ -39,5 +39,102 @@
         "example": "Push day"
       }
     }
-  }
+  },
+  "discoverTitle": "Discover",
+  "discoverNotifications": "Notifications",
+  "discoverNoNotifications": "No new notifications",
+  "discoverForYou": "For you",
+  "discoverChallenges": "Challenges",
+  "discoverPrograms": "Programs",
+  "discoverArticles": "Articles",
+  "discoverThisWeek": "This week",
+  "discoverJoin": "Join challenge",
+  "discoverJoined": "Joined",
+  "discoverSignInToJoin": "Sign in to join challenges",
+  "discoverSignIn": "Sign in",
+  "discoverJoinFailed": "Couldn’t join. Try again.",
+  "discoverProgramsForYou": "Programs for you",
+  "discoverAll": "All",
+  "discoverProgramSoon": "{title}: preview coming soon",
+  "@discoverProgramSoon": {
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Strength base"
+      }
+    }
+  },
+  "discoverFelixEyebrow": "Tip from Felix",
+  "discoverFelixTitle": "Rest keeps you strong",
+  "discoverFelixMessage": "Two easy days a week lower injury risk and keep your lifts climbing.",
+  "discoverAskFelix": "Ask Felix",
+  "discoverRead": "Read",
+  "discoverMinRead": "{n} min read",
+  "@discoverMinRead": {
+    "placeholders": {
+      "n": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "discoverArticleMissing": "This article isn’t available.",
+  "shopTitle": "Shop",
+  "shopCartLabel": "Cart, {n} items",
+  "@shopCartLabel": {
+    "placeholders": {
+      "n": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "shopSearchHint": "Search products",
+  "shopAll": "All",
+  "shopCatSupplements": "Supplements",
+  "shopCatEquipment": "Equipment",
+  "shopCatApparel": "Apparel",
+  "shopProBlurb": "Unlimited chats with Felix, custom plans and form checks.",
+  "shopProButton": "Learn more",
+  "shopProSoonTitle": "FITRIX Pro is coming soon",
+  "shopProSoonBody": "We’ll let you know as soon as it’s ready.",
+  "shopGotIt": "Got it",
+  "shopNothingFound": "Nothing found for “{query}”.",
+  "@shopNothingFound": {
+    "placeholders": {
+      "query": {
+        "type": "String",
+        "example": "whey"
+      }
+    }
+  },
+  "shopAdd": "Add {name}",
+  "@shopAdd": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Whey"
+      }
+    }
+  },
+  "shopCartTitle": "Cart",
+  "shopClose": "Close",
+  "shopRemoveOne": "Remove one",
+  "shopAddOne": "Add one",
+  "shopTotal": "Total",
+  "shopPlaceOrder": "Place order",
+  "shopCartEmpty": "Your cart is empty. Tap + on any product to add it.",
+  "shopOrderPlaced": "Order placed",
+  "shopSignInToOrder": "Sign in to place an order",
+  "shopOrderFailed": "Couldn’t place the order. Check your connection.",
+  "shopOrderRejected": "Order rejected: {message}",
+  "@shopOrderRejected": {
+    "placeholders": {
+      "message": {
+        "type": "String",
+        "example": "Out of stock"
+      }
+    }
+  },
+  "shopRetry": "Retry"
 }
