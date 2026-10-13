@@ -933,7 +933,7 @@ abstract class AppLocalizations {
   /// No description provided for @workoutNoExercises.
   ///
   /// In en, this message translates to:
-  /// **'No exercises yet. Add some with “Edit” on the workout card.'**
+  /// **'No exercises yet. Long-press the workout card to add some.'**
   String get workoutNoExercises;
 
   /// No description provided for @workoutAddSet.
@@ -1158,12 +1158,6 @@ abstract class AppLocalizations {
   /// **'FITRIX\nMAP'**
   String get homeTileMap;
 
-  /// No description provided for @homeMenuNutrition.
-  ///
-  /// In en, this message translates to:
-  /// **'My nutrition'**
-  String get homeMenuNutrition;
-
   /// No description provided for @homeMenuMap.
   ///
   /// In en, this message translates to:
@@ -1259,6 +1253,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Height, cm'**
   String get profileFieldHeightCm;
+
+  /// No description provided for @signInAgainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in again'**
+  String get signInAgainTitle;
+
+  /// No description provided for @signInAgainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has ended. Enter your email to continue.'**
+  String get signInAgainSubtitle;
+
+  /// No description provided for @signInCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account'**
+  String get signInCreateTitle;
+
+  /// No description provided for @signInCreateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email to sign up for this app'**
+  String get signInCreateSubtitle;
+
+  /// No description provided for @signInGetCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Get code'**
+  String get signInGetCode;
+
+  /// No description provided for @signInTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get signInTryAgain;
+
+  /// No description provided for @signInOr.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get signInOr;
+
+  /// No description provided for @signInTermsPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'By clicking continue, you agree to our '**
+  String get signInTermsPrefix;
+
+  /// No description provided for @signInTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get signInTerms;
+
+  /// No description provided for @signInTermsAnd.
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get signInTermsAnd;
+
+  /// No description provided for @signInPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get signInPrivacy;
+
+  /// No description provided for @signInTermsSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'.'**
+  String get signInTermsSuffix;
+
+  /// No description provided for @signInContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with {provider}'**
+  String signInContinueWith(String provider);
+
+  /// No description provided for @signInCheckEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get signInCheckEmailTitle;
+
+  /// No description provided for @signInCodePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the {length}-digit code we sent to\n{email}'**
+  String signInCodePrompt(String length, String email);
+
+  /// No description provided for @signInResend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get signInResend;
+
+  /// No description provided for @signInResendIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code in {time}'**
+  String signInResendIn(String time);
+
+  /// No description provided for @signInSpamNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t find it? Check your spam folder.'**
+  String get signInSpamNote;
+
+  /// No description provided for @signInComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with {provider} is coming soon. Please use your email for now.'**
+  String signInComingSoon(String provider);
+
+  /// No description provided for @signInProfileLoadOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed in, but your profile couldn\'t be loaded. Check your connection and try again.'**
+  String get signInProfileLoadOffline;
+
+  /// No description provided for @signInProfileLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed in, but your profile couldn\'t be loaded. Please try again.'**
+  String get signInProfileLoadFailed;
+
+  /// No description provided for @signInErrInvalidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'That code is wrong or has expired. Check the latest email or send a new code.'**
+  String get signInErrInvalidCode;
+
+  /// No description provided for @signInErrRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please wait a minute and try again.'**
+  String get signInErrRateLimited;
+
+  /// No description provided for @signInErrNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection. Check your internet and try again.'**
+  String get signInErrNetwork;
+
+  /// No description provided for @signInErrInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get signInErrInvalidEmail;
+
+  /// No description provided for @signInErrUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get signInErrUnknown;
+
+  /// No description provided for @signInErrProviderDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with {provider} isn\'t set up on the server yet. Please use your email for now.'**
+  String signInErrProviderDisabled(String provider);
+
+  /// No description provided for @signInErrProviderUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with {provider} isn\'t available on this device. Please use your email instead.'**
+  String signInErrProviderUnavailable(String provider);
+
+  /// No description provided for @signInErrSocialFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t sign in with {provider}. Please try again or use your email.'**
+  String signInErrSocialFailed(String provider);
+
+  /// No description provided for @profileErrNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get profileErrNameRequired;
+
+  /// No description provided for @profileErrNameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is too long'**
+  String get profileErrNameTooLong;
+
+  /// No description provided for @profileErrSurnameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Surname is too long'**
+  String get profileErrSurnameTooLong;
+
+  /// No description provided for @profileErrAgeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your age'**
+  String get profileErrAgeRequired;
+
+  /// No description provided for @profileErrAgeWhole.
+  ///
+  /// In en, this message translates to:
+  /// **'Age must be a whole number'**
+  String get profileErrAgeWhole;
+
+  /// No description provided for @profileErrAgeRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Age must be between {min} and {max}'**
+  String profileErrAgeRange(String min, String max);
+
+  /// No description provided for @profileErrWeightRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your weight'**
+  String get profileErrWeightRequired;
+
+  /// No description provided for @profileErrWeightNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your weight as a number'**
+  String get profileErrWeightNumber;
+
+  /// No description provided for @profileErrWeightRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight must be between {min} and {max} kg'**
+  String profileErrWeightRange(String min, String max);
+
+  /// No description provided for @profileErrHeightRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your height'**
+  String get profileErrHeightRequired;
+
+  /// No description provided for @profileErrHeightNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your height as a number'**
+  String get profileErrHeightNumber;
+
+  /// No description provided for @profileErrHeightRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Height must be between {min} and {max} cm'**
+  String profileErrHeightRange(String min, String max);
 }
 
 class _AppLocalizationsDelegate

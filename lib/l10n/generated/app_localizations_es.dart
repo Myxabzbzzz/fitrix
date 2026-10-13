@@ -520,7 +520,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get workoutNoExercises =>
-      'Aún no hay ejercicios. Añade algunos con “Editar” en la tarjeta del entrenamiento.';
+      'Aún no hay ejercicios. Mantén pulsada la tarjeta del entrenamiento para añadir.';
 
   @override
   String get workoutAddSet => 'Añadir serie';
@@ -529,7 +529,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get workoutFinishButton => 'Terminar entrenamiento';
 
   @override
-  String get workoutColSet => 'Serie';
+  String get workoutColSet => '#';
 
   @override
   String get workoutColPrevious => 'Anterior';
@@ -541,7 +541,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get workoutColReps => 'Reps';
 
   @override
-  String get gymCoachFirstTitle => '¿Listo para tu primer entrenamiento?';
+  String get gymCoachFirstTitle => '¿Todo listo para tu primer entrenamiento?';
 
   @override
   String gymCoachFirstMessage(String workout) {
@@ -549,7 +549,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get gymCoachBackTitle => 'Bienvenido de nuevo';
+  String get gymCoachBackTitle => '¡Hola de nuevo!';
 
   @override
   String gymCoachBackMessage(int days) {
@@ -646,9 +646,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeTileMap => 'MAPA\nFITRIX';
 
   @override
-  String get homeMenuNutrition => 'Mi nutrición';
-
-  @override
   String get homeMenuMap => 'Mapa Fitrix';
 
   @override
@@ -699,4 +696,154 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileFieldHeightCm => 'Altura, cm';
+
+  @override
+  String get signInAgainTitle => 'Inicia sesión de nuevo';
+
+  @override
+  String get signInAgainSubtitle =>
+      'Tu sesión ha terminado. Introduce tu correo para continuar.';
+
+  @override
+  String get signInCreateTitle => 'Crea una cuenta';
+
+  @override
+  String get signInCreateSubtitle =>
+      'Introduce tu correo para registrarte en la app';
+
+  @override
+  String get signInGetCode => 'Obtener código';
+
+  @override
+  String get signInTryAgain => 'Reintentar';
+
+  @override
+  String get signInOr => 'o';
+
+  @override
+  String get signInTermsPrefix => 'Al continuar, aceptas los ';
+
+  @override
+  String get signInTerms => 'Términos del servicio';
+
+  @override
+  String get signInTermsAnd => ' y la ';
+
+  @override
+  String get signInPrivacy => 'Política de privacidad';
+
+  @override
+  String get signInTermsSuffix => '.';
+
+  @override
+  String signInContinueWith(String provider) {
+    return 'Continuar con $provider';
+  }
+
+  @override
+  String get signInCheckEmailTitle => 'Revisa tu correo';
+
+  @override
+  String signInCodePrompt(String length, String email) {
+    return 'Introduce el código de $length dígitos que enviamos a\n$email';
+  }
+
+  @override
+  String get signInResend => 'Reenviar código';
+
+  @override
+  String signInResendIn(String time) {
+    return 'Reenviar código en $time';
+  }
+
+  @override
+  String get signInSpamNote => '¿No lo encuentras? Revisa la carpeta de spam.';
+
+  @override
+  String signInComingSoon(String provider) {
+    return 'Iniciar sesión con $provider llegará pronto. Por ahora usa tu correo.';
+  }
+
+  @override
+  String get signInProfileLoadOffline =>
+      'Has iniciado sesión, pero no se pudo cargar tu perfil. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get signInProfileLoadFailed =>
+      'Has iniciado sesión, pero no se pudo cargar tu perfil. Inténtalo de nuevo.';
+
+  @override
+  String get signInErrInvalidCode =>
+      'El código es incorrecto o ha caducado. Revisa el último correo o pide un código nuevo.';
+
+  @override
+  String get signInErrRateLimited =>
+      'Demasiados intentos. Espera un minuto e inténtalo de nuevo.';
+
+  @override
+  String get signInErrNetwork =>
+      'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
+
+  @override
+  String get signInErrInvalidEmail => 'Introduce un correo válido.';
+
+  @override
+  String get signInErrUnknown => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String signInErrProviderDisabled(String provider) {
+    return 'Iniciar sesión con $provider aún no está configurado en el servidor. Por ahora usa tu correo.';
+  }
+
+  @override
+  String signInErrProviderUnavailable(String provider) {
+    return 'Iniciar sesión con $provider no está disponible en este dispositivo. Usa tu correo.';
+  }
+
+  @override
+  String signInErrSocialFailed(String provider) {
+    return 'No se pudo iniciar sesión con $provider. Inténtalo de nuevo o usa tu correo.';
+  }
+
+  @override
+  String get profileErrNameRequired => 'Introduce tu nombre';
+
+  @override
+  String get profileErrNameTooLong => 'El nombre es demasiado largo';
+
+  @override
+  String get profileErrSurnameTooLong => 'El apellido es demasiado largo';
+
+  @override
+  String get profileErrAgeRequired => 'Introduce tu edad';
+
+  @override
+  String get profileErrAgeWhole => 'La edad debe ser un número entero';
+
+  @override
+  String profileErrAgeRange(String min, String max) {
+    return 'La edad debe estar entre $min y $max';
+  }
+
+  @override
+  String get profileErrWeightRequired => 'Introduce tu peso';
+
+  @override
+  String get profileErrWeightNumber => 'Introduce tu peso como número';
+
+  @override
+  String profileErrWeightRange(String min, String max) {
+    return 'El peso debe estar entre $min y $max kg';
+  }
+
+  @override
+  String get profileErrHeightRequired => 'Introduce tu altura';
+
+  @override
+  String get profileErrHeightNumber => 'Introduce tu altura como número';
+
+  @override
+  String profileErrHeightRange(String min, String max) {
+    return 'La altura debe estar entre $min y $max cm';
+  }
 }

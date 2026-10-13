@@ -276,7 +276,7 @@ class _HomeDrawer extends StatelessWidget {
             ),
             item(Icons.show_chart, l10n.progressTitle, AppRouter.progress),
             item(
-                Icons.restaurant_outlined, l10n.homeMenuNutrition, AppRouter.nutrition),
+                Icons.restaurant_outlined, l10n.nutritionTitle, AppRouter.nutrition),
             item(Icons.fitness_center, l10n.gymMyWorkouts, AppRouter.workouts),
             item(Icons.smart_toy_outlined, 'Felix', AppRouter.felix),
             item(Icons.shopping_cart_outlined, l10n.shopTitle, AppRouter.shop),

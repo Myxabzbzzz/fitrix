@@ -498,7 +498,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get workoutNoExercises =>
-      'Hozircha mashqlar yo‘q. Mashg‘ulot kartasidagi “Tahrirlash” orqali qo‘shing.';
+      'Hozircha mashqlar yo‘q. Qo‘shish uchun mashg‘ulot kartasini bosib turing.';
 
   @override
   String get workoutAddSet => 'Yondashuv qo‘shish';
@@ -507,7 +507,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get workoutFinishButton => 'Mashg‘ulotni yakunlash';
 
   @override
-  String get workoutColSet => 'Yond.';
+  String get workoutColSet => '#';
 
   @override
   String get workoutColPrevious => 'Oldingi';
@@ -523,7 +523,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String gymCoachFirstMessage(String workout) {
-    return '$workout bilan boshlang. Undan keyin Felix rejani moslashtiradi.';
+    return 'Bugun $workout bilan boshlang. Undan keyin Felix rejani moslashtiradi.';
   }
 
   @override
@@ -588,7 +588,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get sportWinterSportsTile => 'QISHKI\nSPORT';
 
   @override
-  String get tabDiscover => 'Kashfiyot';
+  String get tabDiscover => 'Kashf etish';
 
   @override
   String get tabShop => 'Do‘kon';
@@ -603,22 +603,19 @@ class AppLocalizationsUz extends AppLocalizations {
   String get tabProfile => 'Profil';
 
   @override
-  String get homeTileProgress => 'MENING\nYUTUQLARIM';
+  String get homeTileProgress => 'MENING\nNATIJAM';
 
   @override
   String get homeTileNutrition => 'MENING\nOVQATIM';
 
   @override
-  String get homeTileWorkouts => 'MENING\nMASHQLARIM';
+  String get homeTileWorkouts => 'MENING\nMASHG‘ULOT';
 
   @override
   String get homeTileShop => 'DO‘KON';
 
   @override
   String get homeTileMap => 'FITRIX\nXARITASI';
-
-  @override
-  String get homeMenuNutrition => 'Mening ovqatim';
 
   @override
   String get homeMenuMap => 'Fitrix xaritasi';
@@ -671,4 +668,154 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get profileFieldHeightCm => 'Bo‘y, sm';
+
+  @override
+  String get signInAgainTitle => 'Qaytadan kiring';
+
+  @override
+  String get signInAgainSubtitle =>
+      'Seans tugadi. Davom etish uchun emailingizni kiriting.';
+
+  @override
+  String get signInCreateTitle => 'Hisob yarating';
+
+  @override
+  String get signInCreateSubtitle =>
+      'Ilovada ro‘yxatdan o‘tish uchun emailingizni kiriting';
+
+  @override
+  String get signInGetCode => 'Kodni olish';
+
+  @override
+  String get signInTryAgain => 'Qayta urinish';
+
+  @override
+  String get signInOr => 'yoki';
+
+  @override
+  String get signInTermsPrefix => '“Davom etish” tugmasini bosish orqali siz ';
+
+  @override
+  String get signInTerms => 'Foydalanish shartlari';
+
+  @override
+  String get signInTermsAnd => ' va ';
+
+  @override
+  String get signInPrivacy => 'Maxfiylik siyosati';
+
+  @override
+  String get signInTermsSuffix => 'ga rozilik bildirasiz.';
+
+  @override
+  String signInContinueWith(String provider) {
+    return '$provider orqali davom etish';
+  }
+
+  @override
+  String get signInCheckEmailTitle => 'Emailingizni tekshiring';
+
+  @override
+  String signInCodePrompt(String length, String email) {
+    return 'Biz yuborgan $length xonali kodni kiriting:\n$email';
+  }
+
+  @override
+  String get signInResend => 'Kodni qayta yuborish';
+
+  @override
+  String signInResendIn(String time) {
+    return 'Kodni qayta yuborish: $time';
+  }
+
+  @override
+  String get signInSpamNote => 'Topolmadingizmi? Spam jildini tekshiring.';
+
+  @override
+  String signInComingSoon(String provider) {
+    return '$provider orqali kirish tez orada qo‘shiladi. Hozircha email orqali kiring.';
+  }
+
+  @override
+  String get signInProfileLoadOffline =>
+      'Siz kirdingiz, lekin profilni yuklab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.';
+
+  @override
+  String get signInProfileLoadFailed =>
+      'Siz kirdingiz, lekin profilni yuklab bo‘lmadi. Qayta urinib ko‘ring.';
+
+  @override
+  String get signInErrInvalidCode =>
+      'Kod noto‘g‘ri yoki eskirgan. Eng so‘nggi xatni tekshiring yoki yangi kod so‘rang.';
+
+  @override
+  String get signInErrRateLimited =>
+      'Urinishlar juda ko‘p. Bir daqiqa kutib, qayta urinib ko‘ring.';
+
+  @override
+  String get signInErrNetwork =>
+      'Aloqa yo‘q. Internetni tekshirib, qayta urinib ko‘ring.';
+
+  @override
+  String get signInErrInvalidEmail => 'To‘g‘ri email manzilini kiriting.';
+
+  @override
+  String get signInErrUnknown => 'Nimadir xato ketdi. Qayta urinib ko‘ring.';
+
+  @override
+  String signInErrProviderDisabled(String provider) {
+    return '$provider orqali kirish serverda hali sozlanmagan. Hozircha email orqali kiring.';
+  }
+
+  @override
+  String signInErrProviderUnavailable(String provider) {
+    return '$provider orqali kirish bu qurilmada mavjud emas. Email orqali kiring.';
+  }
+
+  @override
+  String signInErrSocialFailed(String provider) {
+    return '$provider orqali kirib bo‘lmadi. Qayta urinib ko‘ring yoki email orqali kiring.';
+  }
+
+  @override
+  String get profileErrNameRequired => 'Ismingizni kiriting';
+
+  @override
+  String get profileErrNameTooLong => 'Ism juda uzun';
+
+  @override
+  String get profileErrSurnameTooLong => 'Familiya juda uzun';
+
+  @override
+  String get profileErrAgeRequired => 'Yoshingizni kiriting';
+
+  @override
+  String get profileErrAgeWhole => 'Yosh butun son bo‘lishi kerak';
+
+  @override
+  String profileErrAgeRange(String min, String max) {
+    return 'Yosh $min dan $max gacha bo‘lishi kerak';
+  }
+
+  @override
+  String get profileErrWeightRequired => 'Vazningizni kiriting';
+
+  @override
+  String get profileErrWeightNumber => 'Vazningizni son bilan kiriting';
+
+  @override
+  String profileErrWeightRange(String min, String max) {
+    return 'Vazn $min dan $max kg gacha bo‘lishi kerak';
+  }
+
+  @override
+  String get profileErrHeightRequired => 'Bo‘yingizni kiriting';
+
+  @override
+  String get profileErrHeightNumber => 'Bo‘yingizni son bilan kiriting';
+
+  @override
+  String profileErrHeightRange(String min, String max) {
+    return 'Bo‘y $min dan $max sm gacha bo‘lishi kerak';
+  }
 }

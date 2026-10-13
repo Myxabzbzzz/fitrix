@@ -533,7 +533,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get workoutNoExercises =>
-      'Упражнений пока нет. Добавьте их через «Изменить» на карточке тренировки.';
+      'Упражнений пока нет. Нажмите и удерживайте карточку тренировки, чтобы добавить.';
 
   @override
   String get workoutAddSet => 'Добавить подход';
@@ -542,7 +542,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get workoutFinishButton => 'Завершить тренировку';
 
   @override
-  String get workoutColSet => 'Подх.';
+  String get workoutColSet => '#';
 
   @override
   String get workoutColPrevious => 'Ранее';
@@ -558,7 +558,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String gymCoachFirstMessage(String workout) {
-    return 'Начните с «$workout». После неё Felix скорректирует план.';
+    return 'Начните сегодня ($workout). После этого Felix скорректирует план.';
   }
 
   @override
@@ -661,9 +661,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get homeTileMap => 'КАРТА\nFITRIX';
 
   @override
-  String get homeMenuNutrition => 'Моё питание';
-
-  @override
   String get homeMenuMap => 'Карта Fitrix';
 
   @override
@@ -714,4 +711,154 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileFieldHeightCm => 'Рост, см';
+
+  @override
+  String get signInAgainTitle => 'Войдите снова';
+
+  @override
+  String get signInAgainSubtitle =>
+      'Сеанс завершён. Введите email, чтобы продолжить.';
+
+  @override
+  String get signInCreateTitle => 'Создайте аккаунт';
+
+  @override
+  String get signInCreateSubtitle =>
+      'Введите email, чтобы зарегистрироваться в приложении';
+
+  @override
+  String get signInGetCode => 'Получить код';
+
+  @override
+  String get signInTryAgain => 'Повторить';
+
+  @override
+  String get signInOr => 'или';
+
+  @override
+  String get signInTermsPrefix => 'Нажимая «Продолжить», вы принимаете ';
+
+  @override
+  String get signInTerms => 'Условия использования';
+
+  @override
+  String get signInTermsAnd => ' и ';
+
+  @override
+  String get signInPrivacy => 'Политику конфиденциальности';
+
+  @override
+  String get signInTermsSuffix => '.';
+
+  @override
+  String signInContinueWith(String provider) {
+    return 'Продолжить через $provider';
+  }
+
+  @override
+  String get signInCheckEmailTitle => 'Проверьте почту';
+
+  @override
+  String signInCodePrompt(String length, String email) {
+    return 'Введите $length-значный код, который мы отправили на\n$email';
+  }
+
+  @override
+  String get signInResend => 'Отправить код ещё раз';
+
+  @override
+  String signInResendIn(String time) {
+    return 'Отправить код ещё раз через $time';
+  }
+
+  @override
+  String get signInSpamNote => 'Не нашли письмо? Проверьте папку «Спам».';
+
+  @override
+  String signInComingSoon(String provider) {
+    return 'Вход через $provider скоро появится. Пока используйте email.';
+  }
+
+  @override
+  String get signInProfileLoadOffline =>
+      'Вы вошли, но профиль не удалось загрузить. Проверьте подключение и повторите попытку.';
+
+  @override
+  String get signInProfileLoadFailed =>
+      'Вы вошли, но профиль не удалось загрузить. Попробуйте ещё раз.';
+
+  @override
+  String get signInErrInvalidCode =>
+      'Код неверный или устарел. Проверьте последнее письмо или запросите новый код.';
+
+  @override
+  String get signInErrRateLimited =>
+      'Слишком много попыток. Подождите минуту и повторите.';
+
+  @override
+  String get signInErrNetwork =>
+      'Нет соединения. Проверьте интернет и повторите попытку.';
+
+  @override
+  String get signInErrInvalidEmail => 'Введите корректный адрес email.';
+
+  @override
+  String get signInErrUnknown => 'Что-то пошло не так. Попробуйте ещё раз.';
+
+  @override
+  String signInErrProviderDisabled(String provider) {
+    return 'Вход через $provider на сервере пока не настроен. Пока используйте email.';
+  }
+
+  @override
+  String signInErrProviderUnavailable(String provider) {
+    return 'Вход через $provider недоступен на этом устройстве. Используйте email.';
+  }
+
+  @override
+  String signInErrSocialFailed(String provider) {
+    return 'Не удалось войти через $provider. Повторите попытку или используйте email.';
+  }
+
+  @override
+  String get profileErrNameRequired => 'Введите имя';
+
+  @override
+  String get profileErrNameTooLong => 'Имя слишком длинное';
+
+  @override
+  String get profileErrSurnameTooLong => 'Фамилия слишком длинная';
+
+  @override
+  String get profileErrAgeRequired => 'Введите возраст';
+
+  @override
+  String get profileErrAgeWhole => 'Возраст должен быть целым числом';
+
+  @override
+  String profileErrAgeRange(String min, String max) {
+    return 'Возраст должен быть от $min до $max';
+  }
+
+  @override
+  String get profileErrWeightRequired => 'Введите вес';
+
+  @override
+  String get profileErrWeightNumber => 'Введите вес числом';
+
+  @override
+  String profileErrWeightRange(String min, String max) {
+    return 'Вес должен быть от $min до $max кг';
+  }
+
+  @override
+  String get profileErrHeightRequired => 'Введите рост';
+
+  @override
+  String get profileErrHeightNumber => 'Введите рост числом';
+
+  @override
+  String profileErrHeightRange(String min, String max) {
+    return 'Рост должен быть от $min до $max см';
+  }
 }

@@ -34,72 +34,136 @@ String formatProfileNumber(num? value) {
       : rounded.toString();
 }
 
-/// Profile form validation. Each check returns an error message or null.
+enum ProfileErrorKind {
+  nameRequired,
+  nameTooLong,
+  surnameTooLong,
+  ageRequired,
+  ageWhole,
+  ageRange,
+  weightRequired,
+  weightNumber,
+  weightRange,
+  heightRequired,
+  heightNumber,
+  heightRange,
+}
+
+/// A profile form error: [kind] (plus [min] / [max] for range errors) is
+/// mapped to localized text by the UI; [message] is the English fallback.
+class ProfileError {
+  const ProfileError(this.kind, this.message, {this.min = '', this.max = ''});
+
+  final ProfileErrorKind kind;
+  final String message;
+  final String min;
+  final String max;
+
+  @override
+  String toString() => message;
+}
+
+/// Profile form validation. Each check returns an error or null.
 class ProfileValidator {
   ProfileValidator._();
 
-  static String? name(String value) {
+  static ProfileError? name(String value) {
     final name = value.trim();
-    if (name.isEmpty) return 'Enter your name';
-    if (name.length > ProfileLimits.nameMaxLength) return 'Name is too long';
-    return null;
-  }
-
-  static String? surname(String value) =>
-      value.trim().length > ProfileLimits.nameMaxLength
-          ? 'Surname is too long'
-          : null;
-
-  static String? age(String value) {
-    final text = value.trim();
-    if (text.isEmpty) return 'Enter your age';
-    final age = int.tryParse(text);
-    if (age == null) return 'Age must be a whole number';
-    if (age < ProfileLimits.ageMin || age > ProfileLimits.ageMax) {
-      return 'Age must be between ${ProfileLimits.ageMin} and ${ProfileLimits.ageMax}';
+    if (name.isEmpty) {
+      return const ProfileError(
+          ProfileErrorKind.nameRequired, 'Enter your name');
+    }
+    if (name.length > ProfileLimits.nameMaxLength) {
+      return const ProfileError(
+          ProfileErrorKind.nameTooLong, 'Name is too long');
     }
     return null;
   }
 
-  static String? weight(String value) => _measure(
+  static ProfileError? surname(String value) =>
+      value.trim().length > ProfileLimits.nameMaxLength
+          ? const ProfileError(
+              ProfileErrorKind.surnameTooLong, 'Surname is too long')
+          : null;
+
+  static ProfileError? age(String value) {
+    final text = value.trim();
+    if (text.isEmpty) {
+      return const ProfileError(ProfileErrorKind.ageRequired, 'Enter your age');
+    }
+    final age = int.tryParse(text);
+    if (age == null) {
+      return const ProfileError(
+          ProfileErrorKind.ageWhole, 'Age must be a whole number');
+    }
+    if (age < ProfileLimits.ageMin || age > ProfileLimits.ageMax) {
+      return const ProfileError(
+        ProfileErrorKind.ageRange,
+        'Age must be between ${ProfileLimits.ageMin} and ${ProfileLimits.ageMax}',
+        min: '${ProfileLimits.ageMin}',
+        max: '${ProfileLimits.ageMax}',
+      );
+    }
+    return null;
+  }
+
+  static ProfileError? weight(String value) => _measure(
         value,
         what: 'weight',
         min: ProfileLimits.weightMin,
         max: ProfileLimits.weightMax,
         unit: 'kg',
+        required: ProfileErrorKind.weightRequired,
+        number: ProfileErrorKind.weightNumber,
+        range: ProfileErrorKind.weightRange,
       );
 
-  static String? height(String value) => _measure(
+  static ProfileError? height(String value) => _measure(
         value,
         what: 'height',
         min: ProfileLimits.heightMin,
         max: ProfileLimits.heightMax,
         unit: 'cm',
+        required: ProfileErrorKind.heightRequired,
+        number: ProfileErrorKind.heightNumber,
+        range: ProfileErrorKind.heightRange,
       );
 
-  static String? _measure(
+  static ProfileError? _measure(
     String value, {
     required String what,
     required double min,
     required double max,
     required String unit,
+    required ProfileErrorKind required,
+    required ProfileErrorKind number,
+    required ProfileErrorKind range,
   }) {
     final text = value.trim();
-    if (text.isEmpty) return 'Enter your $what';
-    final number = parseProfileNumber(text);
-    if (number == null) return 'Enter your $what as a number';
-    final rounded = _oneDecimal(number);
+    if (text.isEmpty) return ProfileError(required, 'Enter your $what');
+    final parsed = parseProfileNumber(text);
+    if (parsed == null) {
+      return ProfileError(number, 'Enter your $what as a number');
+    }
+    final rounded = _oneDecimal(parsed);
     if (rounded < min || rounded > max) {
-      return '${what[0].toUpperCase()}${what.substring(1)} must be between '
-          '${formatProfileNumber(min)} and ${formatProfileNumber(max)} $unit';
+      final lo = formatProfileNumber(min);
+      final hi = formatProfileNumber(max);
+      return ProfileError(
+        range,
+        '${what[0].toUpperCase()}${what.substring(1)} must be between '
+        '$lo and $hi $unit',
+        min: lo,
+        max: hi,
+      );
     }
     return null;
   }
 
   /// Field name ('name', 'surname', 'age', 'weight', 'height') → error.
   /// Empty when the profile is valid.
-  static Map<String, String> validate(UserProfile profile) {
-    final errors = <String, String?>{
+  static Map<String, ProfileError> validate(UserProfile profile) {
+    final errors = <String, ProfileError?>{
       'name': name(profile.name),
       'surname': surname(profile.surname),
       'age': age(profile.age),
@@ -107,7 +171,7 @@ class ProfileValidator {
       'height': height(profile.height),
     };
     errors.removeWhere((_, error) => error == null);
-    return errors.cast<String, String>();
+    return errors.cast<String, ProfileError>();
   }
 
   /// Trimmed, with numbers in a canonical form ("72,50" → "72.5").
@@ -183,10 +247,10 @@ class ProfileRow {
               age <= ProfileLimits.ageMax
           ? age
           : null,
-      weightKg: _inRange(
-          weight, ProfileLimits.weightMin, ProfileLimits.weightMax),
-      heightCm: _inRange(
-          height, ProfileLimits.heightMin, ProfileLimits.heightMax),
+      weightKg:
+          _inRange(weight, ProfileLimits.weightMin, ProfileLimits.weightMax),
+      heightCm:
+          _inRange(height, ProfileLimits.heightMin, ProfileLimits.heightMax),
       language: normalizeLanguage(language),
       onboardingComplete: onboardingComplete,
     );

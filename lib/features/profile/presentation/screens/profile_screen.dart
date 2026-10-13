@@ -28,7 +28,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _heightController = TextEditingController();
 
   /// Field → error, shown after the first Continue tap.
-  Map<String, String> _errors = const {};
+  Map<String, ProfileError> _errors = const {};
   bool _submitted = false;
 
   List<TextEditingController> get _controllers => [
@@ -94,6 +94,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _weightController.dispose();
     _heightController.dispose();
     super.dispose();
+  }
+
+  String? _errorText(ProfileError? e) {
+    if (e == null) return null;
+    final l10n = AppLocalizations.of(context);
+    return switch (e.kind) {
+      ProfileErrorKind.nameRequired => l10n.profileErrNameRequired,
+      ProfileErrorKind.nameTooLong => l10n.profileErrNameTooLong,
+      ProfileErrorKind.surnameTooLong => l10n.profileErrSurnameTooLong,
+      ProfileErrorKind.ageRequired => l10n.profileErrAgeRequired,
+      ProfileErrorKind.ageWhole => l10n.profileErrAgeWhole,
+      ProfileErrorKind.ageRange => l10n.profileErrAgeRange(e.min, e.max),
+      ProfileErrorKind.weightRequired => l10n.profileErrWeightRequired,
+      ProfileErrorKind.weightNumber => l10n.profileErrWeightNumber,
+      ProfileErrorKind.weightRange => l10n.profileErrWeightRange(e.min, e.max),
+      ProfileErrorKind.heightRequired => l10n.profileErrHeightRequired,
+      ProfileErrorKind.heightNumber => l10n.profileErrHeightNumber,
+      ProfileErrorKind.heightRange => l10n.profileErrHeightRange(e.min, e.max),
+    };
   }
 
   @override
@@ -220,7 +239,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       onChanged: (_) => _revalidate(),
       decoration: InputDecoration(
         hintText: label,
-        errorText: _errors[field],
+        errorText: _errorText(_errors[field]),
         errorMaxLines: 2,
         hintStyle: AppText.headingS.copyWith(
           fontWeight: FontWeight.w400,

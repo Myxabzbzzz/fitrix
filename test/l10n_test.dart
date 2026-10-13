@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
+import 'package:fitrix/core/widgets/feature_tile.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -212,8 +213,14 @@ void main() {
   });
 
   group('home tiles', () {
-    for (final language in ['ru', 'uz', 'es']) {
-      testWidgets('fit on iPhone SE in $language', (tester) async {
+    const labels = {
+      'ru': ['МОЙ\nПРОГРЕСС', 'МОЁ\nПИТАНИЕ', 'МОИ\nТРЕНИРОВКИ', 'МАГАЗИН', 'КАРТА\nFITRIX'],
+      'uz': ['MENING\nNATIJAM', 'MENING\nOVQATIM', 'MENING\nMASHG‘ULOT', 'DO‘KON', 'FITRIX\nXARITASI'],
+      'es': ['MI\nPROGRESO', 'MI\nNUTRICIÓN', 'MIS\nENTRENOS', 'TIENDA', 'MAPA\nFITRIX'],
+    };
+    for (final language in labels.keys) {
+      testWidgets('are localized and fit their tiles on iPhone SE in $language',
+          (tester) async {
         tester.view.physicalSize = const Size(375, 667) * 3;
         tester.view.devicePixelRatio = 3;
         addTearDown(tester.view.reset);
@@ -230,6 +237,28 @@ void main() {
           router: AppRouter.create(session),
         ));
         await tester.pumpAndSettle();
+        for (final label in labels[language]!) {
+          final finder = find.text(label);
+          expect(finder, findsOneWidget, reason: label);
+          final tile = find.ancestor(
+              of: finder, matching: find.byType(FeatureTile));
+          expect(tile, findsOneWidget, reason: label);
+          final text = tester.getRect(finder);
+          final bounds = tester.getRect(tile);
+          expect(bounds.contains(text.topLeft) && bounds.contains(text.bottomRight),
+              isTrue,
+              reason: '$label: $text outside $bounds');
+          // The label's own width is not clipped to the tile.
+          final painter = TextPainter(
+            text: TextSpan(
+                text: label,
+                style: tester.widget<Text>(finder).style ??
+                    DefaultTextStyle.of(tester.element(finder)).style),
+            textDirection: TextDirection.ltr,
+          )..layout();
+          expect(painter.width, lessThanOrEqualTo(bounds.width),
+              reason: label);
+        }
         expect(tester.takeException(), isNull);
       });
     }

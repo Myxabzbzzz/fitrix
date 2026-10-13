@@ -520,7 +520,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workoutNoExercises =>
-      'No exercises yet. Add some with “Edit” on the workout card.';
+      'No exercises yet. Long-press the workout card to add some.';
 
   @override
   String get workoutAddSet => 'Add set';
@@ -646,9 +646,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeTileMap => 'FITRIX\nMAP';
 
   @override
-  String get homeMenuNutrition => 'My nutrition';
-
-  @override
   String get homeMenuMap => 'Fitrix map';
 
   @override
@@ -699,4 +696,153 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileFieldHeightCm => 'Height, cm';
+
+  @override
+  String get signInAgainTitle => 'Sign in again';
+
+  @override
+  String get signInAgainSubtitle =>
+      'Your session has ended. Enter your email to continue.';
+
+  @override
+  String get signInCreateTitle => 'Create an account';
+
+  @override
+  String get signInCreateSubtitle => 'Enter your email to sign up for this app';
+
+  @override
+  String get signInGetCode => 'Get code';
+
+  @override
+  String get signInTryAgain => 'Try again';
+
+  @override
+  String get signInOr => 'or';
+
+  @override
+  String get signInTermsPrefix => 'By clicking continue, you agree to our ';
+
+  @override
+  String get signInTerms => 'Terms of Service';
+
+  @override
+  String get signInTermsAnd => ' and ';
+
+  @override
+  String get signInPrivacy => 'Privacy Policy';
+
+  @override
+  String get signInTermsSuffix => '.';
+
+  @override
+  String signInContinueWith(String provider) {
+    return 'Continue with $provider';
+  }
+
+  @override
+  String get signInCheckEmailTitle => 'Check your email';
+
+  @override
+  String signInCodePrompt(String length, String email) {
+    return 'Enter the $length-digit code we sent to\n$email';
+  }
+
+  @override
+  String get signInResend => 'Resend code';
+
+  @override
+  String signInResendIn(String time) {
+    return 'Resend code in $time';
+  }
+
+  @override
+  String get signInSpamNote => 'Can\'t find it? Check your spam folder.';
+
+  @override
+  String signInComingSoon(String provider) {
+    return 'Sign in with $provider is coming soon. Please use your email for now.';
+  }
+
+  @override
+  String get signInProfileLoadOffline =>
+      'You\'re signed in, but your profile couldn\'t be loaded. Check your connection and try again.';
+
+  @override
+  String get signInProfileLoadFailed =>
+      'You\'re signed in, but your profile couldn\'t be loaded. Please try again.';
+
+  @override
+  String get signInErrInvalidCode =>
+      'That code is wrong or has expired. Check the latest email or send a new code.';
+
+  @override
+  String get signInErrRateLimited =>
+      'Too many attempts. Please wait a minute and try again.';
+
+  @override
+  String get signInErrNetwork =>
+      'No connection. Check your internet and try again.';
+
+  @override
+  String get signInErrInvalidEmail => 'Enter a valid email address.';
+
+  @override
+  String get signInErrUnknown => 'Something went wrong. Please try again.';
+
+  @override
+  String signInErrProviderDisabled(String provider) {
+    return 'Sign in with $provider isn\'t set up on the server yet. Please use your email for now.';
+  }
+
+  @override
+  String signInErrProviderUnavailable(String provider) {
+    return 'Sign in with $provider isn\'t available on this device. Please use your email instead.';
+  }
+
+  @override
+  String signInErrSocialFailed(String provider) {
+    return 'Couldn\'t sign in with $provider. Please try again or use your email.';
+  }
+
+  @override
+  String get profileErrNameRequired => 'Enter your name';
+
+  @override
+  String get profileErrNameTooLong => 'Name is too long';
+
+  @override
+  String get profileErrSurnameTooLong => 'Surname is too long';
+
+  @override
+  String get profileErrAgeRequired => 'Enter your age';
+
+  @override
+  String get profileErrAgeWhole => 'Age must be a whole number';
+
+  @override
+  String profileErrAgeRange(String min, String max) {
+    return 'Age must be between $min and $max';
+  }
+
+  @override
+  String get profileErrWeightRequired => 'Enter your weight';
+
+  @override
+  String get profileErrWeightNumber => 'Enter your weight as a number';
+
+  @override
+  String profileErrWeightRange(String min, String max) {
+    return 'Weight must be between $min and $max kg';
+  }
+
+  @override
+  String get profileErrHeightRequired => 'Enter your height';
+
+  @override
+  String get profileErrHeightNumber => 'Enter your height as a number';
+
+  @override
+  String profileErrHeightRange(String min, String max) {
+    return 'Height must be between $min and $max cm';
+  }
 }
