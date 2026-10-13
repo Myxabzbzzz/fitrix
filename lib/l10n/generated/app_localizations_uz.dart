@@ -90,6 +90,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
 <<<<<<< HEAD
+<<<<<<< HEAD
   String get homeToday => 'Bugun';
 
   @override
@@ -248,4 +249,13 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get profileThemeDark => 'Qorong‘i';
 >>>>>>> t10
+=======
+  String get chatQuickPlanWeek => 'Haftamni rejalashtir';
+
+  @override
+  String get chatQuickEatToday => 'Bugun nima yeyishim kerak?';
+
+  @override
+  String get chatQuickTired => 'Bugun o\'zimni charchagan his qilyapman';
+>>>>>>> t9
 }

@@ -25,6 +25,7 @@
   "workoutDeleted": "«{name}» удалена",
   "syncFailed": "Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.",
 <<<<<<< HEAD
+<<<<<<< HEAD
   "homeToday": "Сегодня",
   "homeTodayMeta": "{count, plural, one{{count} упражнение} few{{count} упражнения} many{{count} упражнений} other{{count} упражнения}} · около {minutes} мин",
   "homeStart": "Начать",
@@ -73,4 +74,9 @@
   "profileThemeLight": "Светлая",
   "profileThemeDark": "Тёмная"
 >>>>>>> t10
+=======
+  "chatQuickPlanWeek": "Составь план на неделю",
+  "chatQuickEatToday": "Что мне съесть сегодня?",
+  "chatQuickTired": "Сегодня я устал"
+>>>>>>> t9
 }

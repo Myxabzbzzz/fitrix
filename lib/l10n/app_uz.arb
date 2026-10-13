@@ -25,6 +25,7 @@
   "workoutDeleted": "“{name}” o‘chirildi",
   "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.",
 <<<<<<< HEAD
+<<<<<<< HEAD
   "homeToday": "Bugun",
   "homeTodayMeta": "{count} mashq · taxminan {minutes} daq",
   "homeStart": "Boshlash",
@@ -73,4 +74,9 @@
   "profileThemeLight": "Yorug‘",
   "profileThemeDark": "Qorong‘i"
 >>>>>>> t10
+=======
+  "chatQuickPlanWeek": "Haftamni rejalashtir",
+  "chatQuickEatToday": "Bugun nima yeyishim kerak?",
+  "chatQuickTired": "Bugun o'zimni charchagan his qilyapman"
+>>>>>>> t9
 }

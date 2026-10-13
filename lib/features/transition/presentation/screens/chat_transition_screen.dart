@@ -8,6 +8,11 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 
 class ChatTransitionScreen extends ConsumerStatefulWidget {
+  /// Deliberate exception to the palette rule: the onboarding chat's
+  /// expanding "Start" circle must be exactly this color so the hand-off to
+  /// this screen is seamless in both light and dark themes.
+  static const background = Colors.black;
+
   const ChatTransitionScreen({super.key});
 
   @override
@@ -108,7 +113,7 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
     final diagonal = sqrt(size.width * size.width + size.height * size.height);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: ChatTransitionScreen.background,
       body: Stack(
         children: [
           // Typewriter text + button

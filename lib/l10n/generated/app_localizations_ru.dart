@@ -90,6 +90,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
 <<<<<<< HEAD
+<<<<<<< HEAD
   String get homeToday => 'Сегодня';
 
   @override
@@ -256,4 +257,13 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get profileThemeDark => 'Тёмная';
 >>>>>>> t10
+=======
+  String get chatQuickPlanWeek => 'Составь план на неделю';
+
+  @override
+  String get chatQuickEatToday => 'Что мне съесть сегодня?';
+
+  @override
+  String get chatQuickTired => 'Сегодня я устал';
+>>>>>>> t9
 }

@@ -247,6 +247,7 @@ abstract class AppLocalizations {
   String get syncFailed;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   /// No description provided for @homeToday.
   ///
   /// In en, this message translates to:
@@ -523,6 +524,25 @@ abstract class AppLocalizations {
   /// **'Dark'**
   String get profileThemeDark;
 >>>>>>> t10
+=======
+  /// No description provided for @chatQuickPlanWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan my week'**
+  String get chatQuickPlanWeek;
+
+  /// No description provided for @chatQuickEatToday.
+  ///
+  /// In en, this message translates to:
+  /// **'What should I eat today?'**
+  String get chatQuickEatToday;
+
+  /// No description provided for @chatQuickTired.
+  ///
+  /// In en, this message translates to:
+  /// **'I feel tired today'**
+  String get chatQuickTired;
+>>>>>>> t9
 }
 
 class _AppLocalizationsDelegate

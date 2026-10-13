@@ -25,6 +25,7 @@
   "workoutDeleted": "«{name}» eliminado",
   "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.",
 <<<<<<< HEAD
+<<<<<<< HEAD
   "homeToday": "Hoy",
   "homeTodayMeta": "{count, plural, =1{1 ejercicio} other{{count} ejercicios}} · unos {minutes} min",
   "homeStart": "Empezar",
@@ -73,4 +74,9 @@
   "profileThemeLight": "Claro",
   "profileThemeDark": "Oscuro"
 >>>>>>> t10
+=======
+  "chatQuickPlanWeek": "Planifica mi semana",
+  "chatQuickEatToday": "¿Qué debería comer hoy?",
+  "chatQuickTired": "Hoy me siento cansado"
+>>>>>>> t9
 }

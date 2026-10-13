@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
-import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
-import 'package:fitrix/features/chat/presentation/widgets/typing_indicator.dart';
+import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Chat currently open on the Felix tab.
 final selectedAssistantTopicProvider =
@@ -46,6 +46,7 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
     final topic = ref.watch(selectedAssistantTopicProvider);
     final messages = ref.watch(chatMessagesProviderFor(topic));
 
@@ -79,7 +80,7 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                   _entrance.sync(list, scope: topic);
                   return ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                    padding: const EdgeInsets.all(AppSpacing.md),
                     itemCount: list.length,
                     itemBuilder: (context, index) {
                       final message = list[index];
@@ -91,9 +92,9 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                         key: ValueKey(message.id),
                         message: message,
                         delay: _entrance.take(message),
-                        child: _MessageBubble(
+                        child: ChatBubble(
                           message: message,
-                          showAvatar: lastInGroup,
+                          lastInGroup: lastInGroup,
                           onRetry: () => ref
                               .read(chatMessagesProviderFor(topic).notifier)
                               .retry(),
@@ -106,12 +107,29 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                 error: (error, _) => Center(child: Text('Error: $error')),
               ),
             ),
-            _Composer(
-              controller: _controller,
-              enabled: !isReplying,
-              onSend: () => _send(topic),
+            Column(
+              key: const ValueKey('chat-composer'),
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                QuickReplyBar(
+                  replies: [
+                    l10n.chatQuickPlanWeek,
+                    l10n.chatQuickEatToday,
+                    l10n.chatQuickTired,
+                  ],
+                  hidden: isReplying,
+                  onTap: (reply) => ref
+                      .read(chatMessagesProviderFor(topic).notifier)
+                      .sendMessage(reply, isQuickReply: true),
+                ),
+                _Composer(
+                  controller: _controller,
+                  enabled: !isReplying,
+                  onSend: () => _send(topic),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.xs),
           ],
         ),
       ),
@@ -143,11 +161,8 @@ class _Header extends StatelessWidget {
               onPressed: () => Scaffold.of(context).openDrawer(),
             ),
           ),
-          const CircleAvatar(
-            radius: 16,
-            backgroundImage: AssetImage('assets/images/felix_avatar.png'),
-          ),
-          const SizedBox(width: 8),
+          const FelixAvatar(size: 32),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -155,99 +170,15 @@ class _Header extends StatelessWidget {
               children: [
                 Text(
                   topic.title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: palette.textPrimary,
-                  ),
+                  style: AppText.headingS.copyWith(color: palette.textPrimary),
                 ),
                 Text(
                   topic.subtitle,
-                  style: TextStyle(fontSize: 12, color: palette.textSecondary),
+                  style: AppText.caption.copyWith(color: palette.textSecondary),
                 ),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MessageBubble extends StatelessWidget {
-  final ChatMessage message;
-  final bool showAvatar;
-  final VoidCallback onRetry;
-
-  const _MessageBubble({
-    required this.message,
-    required this.showAvatar,
-    required this.onRetry,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-    final isUser = message.sender == MessageSender.user;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final userBubble = isDark ? Colors.white : Colors.black;
-    final userText = isDark ? Colors.black : Colors.white;
-
-    final textColor = isUser ? userText : palette.textPrimary;
-    final Widget content;
-    if (message.isStreaming && message.content.isEmpty) {
-      content = TypingIndicator(color: textColor);
-    } else if (message.isFailed) {
-      content = ChatFailedContent(message: message.content, color: textColor);
-    } else {
-      content = Text(
-        message.content,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: isUser ? FontWeight.w500 : FontWeight.w400,
-          height: 1.3,
-          color: textColor,
-        ),
-      );
-    }
-
-    final bubble = GestureDetector(
-      onTap: message.isFailed ? onRetry : null,
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 247),
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
-        decoration: BoxDecoration(
-          color: isUser ? userBubble : palette.bubble,
-          borderRadius: BorderRadius.circular(isUser ? 18 : 24),
-          border: message.isFailed
-              ? Border.all(color: AppColors.error.withValues(alpha: 0.6))
-              : null,
-        ),
-        child: content,
-      ),
-    );
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: showAvatar ? 14 : 2),
-      child: Row(
-        mainAxisAlignment:
-            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (!isUser) ...[
-            SizedBox(
-              width: 24,
-              child: showAvatar
-                  ? const CircleAvatar(
-                      radius: 12,
-                      backgroundImage:
-                          AssetImage('assets/images/felix_avatar.png'),
-                    )
-                  : null,
-            ),
-            const SizedBox(width: 8),
-          ],
-          Flexible(child: bubble),
         ],
       ),
     );
@@ -270,7 +201,8 @@ class _Composer extends StatelessWidget {
     final palette = AppPalette.of(context);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 4, 16, 0),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.sm, AppSpacing.xxs, AppSpacing.md, 0),
       child: Row(
         children: [
           IconButton(
@@ -281,10 +213,11 @@ class _Composer extends StatelessWidget {
           Expanded(
             child: Container(
               height: 37,
-              padding: const EdgeInsets.only(left: 14, right: 4),
+              padding: const EdgeInsets.only(
+                  left: AppSpacing.sm, right: AppSpacing.xxs),
               decoration: BoxDecoration(
                 color: palette.background,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: AppRadius.mdAll,
                 border: Border.all(color: palette.border),
               ),
               child: Row(
@@ -296,15 +229,13 @@ class _Composer extends StatelessWidget {
                       onSubmitted: (_) {
                         if (enabled) onSend();
                       },
-                      style:
-                          TextStyle(fontSize: 14, color: palette.textPrimary),
+                      style: AppText.bodyRegular
+                          .copyWith(color: palette.textPrimary),
                       decoration: InputDecoration.collapsed(
                         hintText: 'Message...',
                         filled: false,
-                        hintStyle: TextStyle(
-                          fontSize: 14,
-                          color: palette.chartLabel,
-                        ),
+                        hintStyle:
+                            AppText.bodyRegular.copyWith(color: palette.chartLabel),
                       ),
                     ),
                   ),
@@ -352,11 +283,7 @@ class _AllChatsDrawer extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'All chats',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: palette.textPrimary,
-                      ),
+                      style: AppText.headingS.copyWith(color: palette.textPrimary),
                     ),
                   ),
                   IconButton(
@@ -371,25 +298,24 @@ class _AllChatsDrawer extends StatelessWidget {
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 17),
                 itemCount: AssistantTopic.all.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 16),
+                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
                 itemBuilder: (context, index) {
                   final topic = AssistantTopic.all[index];
                   final isSelected = topic == selected;
                   return Material(
                     color: isSelected ? palette.pillSelected : palette.bubble,
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: AppRadius.mdAll,
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: AppRadius.mdAll,
                       onTap: () => onSelected(topic),
                       child: Container(
                         height: 36,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                         alignment: Alignment.centerLeft,
                         child: Text(
                           topic.menuLabel,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                          style: AppText.body14.copyWith(
                             color: isSelected
                                 ? palette.onPillSelected
                                 : palette.textPrimary,

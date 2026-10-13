@@ -1,75 +1,79 @@
 import 'package:flutter/material.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
+import 'package:fitrix/core/animation/motion.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 
-class QuickReplyChip extends StatefulWidget {
-  final String label;
-  final VoidCallback onTap;
-  final bool isSelected;
+/// Horizontal row of quick replies, placed directly above the chat input.
+/// Collapses to nothing while Felix is replying or when there are no
+/// options. Chips fade up with a 50 ms stagger.
+class QuickReplyBar extends StatelessWidget {
+  final List<String> replies;
+  final bool hidden;
+  final ValueChanged<String> onTap;
 
-  const QuickReplyChip({
+  const QuickReplyBar({
     super.key,
-    required this.label,
+    required this.replies,
     required this.onTap,
-    this.isSelected = false,
+    this.hidden = false,
   });
 
   @override
-  State<QuickReplyChip> createState() => _QuickReplyChipState();
+  Widget build(BuildContext context) {
+    if (hidden || replies.isEmpty) return const SizedBox.shrink();
+    return SingleChildScrollView(
+      key: ValueKey(replies.join('|')),
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+      child: Row(
+        children: [
+          for (var i = 0; i < replies.length; i++) ...[
+            if (i > 0) const SizedBox(width: AppSpacing.xs),
+            FadeSlideIn(
+              delay: Duration(milliseconds: 50 * i.clamp(0, 6)),
+              duration: Motion.fast,
+              offset: const Offset(0, 10),
+              child: QuickReplyChip(
+                label: replies[i],
+                onTap: () => onTap(replies[i]),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
-class _QuickReplyChipState extends State<QuickReplyChip> {
-  bool _isSelected = false;
+class QuickReplyChip extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const QuickReplyChip({super.key, required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final isSelected = widget.isSelected || _isSelected;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _isSelected = true;
-        });
-        widget.onTap();
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.secondary
-              : (isDark ? AppColors.darkButtonPrimary : AppColors.lightButtonPrimary),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (isSelected)
-              Padding(
-                padding: const EdgeInsets.only(right: 6),
-                child: Icon(
-                  Icons.star,
-                  size: 14,
-                  color: isDark ? AppColors.darkTextOnDark : AppColors.lightTextOnDark,
-                ),
-              ),
-            Text(
-              widget.label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: isDark ? AppColors.darkTextOnDark : AppColors.lightTextOnDark,
-              ),
-            ),
-            if (isSelected)
-              Padding(
-                padding: const EdgeInsets.only(left: 6),
-                child: Icon(
-                  Icons.close,
-                  size: 14,
-                  color: isDark ? AppColors.darkTextOnDark : AppColors.lightTextOnDark,
-                ),
-              ),
-          ],
+    final palette = AppPalette.of(context);
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 32,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: palette.background,
+            borderRadius: AppRadius.fullAll,
+            border: Border.all(color: palette.border),
+          ),
+          child: Text(
+            label,
+            style: AppText.body14.copyWith(color: palette.textPrimary),
+          ),
         ),
       ),
     );

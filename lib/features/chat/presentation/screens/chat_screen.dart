@@ -5,8 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/features/transition/presentation/screens/chat_transition_screen.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
@@ -136,36 +140,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       appBar: AppBar(
         backgroundColor: palette.background,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        shape: Border(bottom: BorderSide(color: palette.border)),
         title: Row(
           children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: palette.tile,
-              child: Icon(
-                Icons.person,
-                color: palette.textSecondary,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 12),
+            const FelixAvatar(size: 32),
+            const SizedBox(width: AppSpacing.sm),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   AppConstants.assistantName,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: palette.textPrimary,
-                  ),
+                  style: AppText.headingS.copyWith(color: palette.textPrimary),
                 ),
                 Text(
                   AppConstants.assistantSubtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: palette.textSecondary,
-                  ),
+                  style: AppText.caption.copyWith(color: palette.textSecondary),
                 ),
               ],
             ),
@@ -183,15 +173,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                     return ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
                         final message = messages[index];
                         final showTimestamp = index == 0 ||
-                            message.timestamp
-                                    .difference(messages[index - 1].timestamp)
-                                    .inMinutes >
-                                5;
+                            _showsTimestamp(messages, index);
+
+                        final next = index + 1 < messages.length
+                            ? messages[index + 1]
+                            : null;
+                        final lastInGroup = next == null ||
+                            next.sender != message.sender ||
+                            _showsTimestamp(messages, index + 1);
 
                         return ChatEntrance(
                           key: ValueKey(message.id),
@@ -202,23 +196,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                               if (showTimestamp)
                                 Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
+                                      const EdgeInsets.symmetric(
+                                          vertical: AppSpacing.sm),
                                   child: Text(
                                     DateFormat('MMM dd, yyyy, h:mm a')
                                         .format(message.timestamp),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: palette.textSecondary,
-                                    ),
+                                    style: AppText.caption
+                                        .copyWith(color: palette.textSecondary),
                                   ),
                                 ),
                               ChatBubble(
                                 message: message,
+                                lastInGroup: lastInGroup,
                                 onRetry: () => ref
                                     .read(chatMessagesProvider.notifier)
                                     .retry(),
                               ),
-                              const SizedBox(height: 8),
                             ],
                           ),
                         );
@@ -233,29 +226,28 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                 ),
               ),
 
-              // Quick replies, then the Start button once the conversation
-              // is complete. Each new set of options animates in.
-              AnimatedSize(
-                duration: Motion.of(context, Motion.medium),
-                curve: Motion.curve,
-                alignment: Alignment.bottomCenter,
-                child: AnimatedSwitcher(
-                  duration: Motion.of(context, Motion.fast),
-                  switchInCurve: Motion.curve,
-                  switchOutCurve: Curves.easeIn,
-                  transitionBuilder: _optionsTransition,
-                  // Old and new options share the bottom edge (next to the
-                  // composer) while they cross-fade.
-                  layoutBuilder: (current, previous) => Stack(
+              // Composer area: quick replies (or the Start button once the
+              // conversation is complete) directly above the input.
+              Column(
+                key: const ValueKey('chat-composer'),
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedSize(
+                    duration: Motion.of(context, Motion.medium),
+                    curve: Motion.curve,
                     alignment: Alignment.bottomCenter,
-                    children: [...previous, if (current != null) current],
+                    child: _showQuickReplies
+                        ? QuickReplyBar(
+                            replies: _quickReplies,
+                            hidden: isReplying,
+                            onTap: (reply) =>
+                                _sendMessage(reply, isQuickReply: true),
+                          )
+                        : _buildStartButton(),
                   ),
-                  child: _buildOptions(isReplying: isReplying),
-                ),
+                  _buildMessageInput(isReplying: isReplying),
+                ],
               ),
-
-              // Message Input
-              _buildMessageInput(isReplying: isReplying),
             ],
           ),
 
@@ -268,7 +260,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   size: size,
                   painter: _CirclePainter(
                     progress: _circleAnimation.value,
-                    color: Colors.black,
+                    color: ChatTransitionScreen.background,
                     center: _buttonCenter ??
                         Offset(size.width / 2, size.height - 100),
                     maxRadius: diagonal,
@@ -281,100 +273,38 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     );
   }
 
-  /// Fades the outgoing options away; the incoming ones stagger in chip by
-  /// chip. Outgoing options can't be tapped.
-  static Widget _optionsTransition(Widget child, Animation<double> animation) {
-    return FadeTransition(
-      opacity: animation,
-      child: AnimatedBuilder(
-        animation: animation,
-        child: child,
-        builder: (context, child) => IgnorePointer(
-          ignoring: animation.status == AnimationStatus.reverse ||
-              animation.status == AnimationStatus.dismissed,
-          child: child,
+  static bool _showsTimestamp(List<ChatMessage> messages, int index) =>
+      index == 0 ||
+      messages[index].timestamp
+              .difference(messages[index - 1].timestamp)
+              .inMinutes >
+          5;
+
+  Widget _buildStartButton() {
+    return Padding(
+      key: const ValueKey('start'),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: AppButton(
+          key: _startButtonKey,
+          label: 'Start',
+          size: AppButtonSize.large,
+          onPressed: _animating ? null : _onStartPressed,
         ),
       ),
     );
   }
 
-  Widget _buildOptions({required bool isReplying}) {
-    if (_showQuickReplies && _quickReplies.isNotEmpty) {
-      return AnimatedOpacity(
-        key: ValueKey(_quickReplies.join('|')),
-        opacity: isReplying ? 0.4 : 1,
-        duration: const Duration(milliseconds: 200),
-        child: IgnorePointer(
-          ignoring: isReplying,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (var i = 0; i < _quickReplies.length; i++)
-                  FadeSlideIn(
-                    delay: Duration(milliseconds: 30 * i.clamp(0, 6)),
-                    duration: Motion.fast,
-                    offset: const Offset(0, 10),
-                    scale: 0.9,
-                    child: QuickReplyChip(
-                      label: _quickReplies[i],
-                      onTap: () =>
-                          _sendMessage(_quickReplies[i], isQuickReply: true),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    if (!_showQuickReplies) {
-      // Start button (shown when chat conversation is complete)
-      return Padding(
-        key: const ValueKey('start'),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: SizedBox(
-          width: 160,
-          height: 44,
-          child: ElevatedButton(
-            key: _startButtonKey,
-            onPressed: _animating ? null : _onStartPressed,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text(
-              'Start',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return const SizedBox.shrink(key: ValueKey('none'));
-  }
-
   Widget _buildMessageInput({required bool isReplying}) {
     final palette = AppPalette.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       decoration: BoxDecoration(
         color: palette.background,
-        border: Border(
-          top: BorderSide(
-            color: palette.border,
-            width: 1,
-          ),
-        ),
+        border: Border(top: BorderSide(color: palette.border)),
       ),
       child: SafeArea(
         child: Row(
@@ -395,7 +325,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               ),
             ),
 
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.sm),
 
             // Text Input
             Expanded(
@@ -410,7 +340,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               ),
             ),
 
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.sm),
 
             // Microphone button
             Container(
@@ -427,7 +357,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               ),
             ),
 
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.xs),
 
             // Send button
             AnimatedContainer(
@@ -443,7 +373,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                 onPressed: isReplying
                     ? null
                     : () => _sendMessage(_messageController.text),
-                color: Colors.white,
+                color: palette.onAccent,
                 padding: EdgeInsets.zero,
               ),
             ),
