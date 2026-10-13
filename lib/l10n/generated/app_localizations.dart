@@ -1775,6 +1775,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Photo'**
   String get chatPhotoViewer;
+
+  /// No description provided for @chatPhotoUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo is missing or too large to send.'**
+  String get chatPhotoUnavailable;
+
+  /// No description provided for @chatMicListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening'**
+  String get chatMicListening;
+
+  /// No description provided for @chatMicStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped listening'**
+  String get chatMicStopped;
 }
 
 class _AppLocalizationsDelegate

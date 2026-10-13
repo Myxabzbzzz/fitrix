@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
+import 'package:fitrix/features/chat/data/services/photo_service.dart';
 import 'package:fitrix/features/chat/presentation/widgets/typing_indicator.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -150,6 +151,55 @@ class ChatFailedContent extends StatelessWidget {
   }
 }
 
+/// A stored chat photo (see photo_service), resolved against the current
+/// documents directory. Decoded at <= 480 px so landscape photos stay sharp.
+class ChatPhotoImage extends StatelessWidget {
+  final String path;
+  final BoxFit fit;
+  final double? width;
+  final double? height;
+  final bool full;
+
+  const ChatPhotoImage({
+    super.key,
+    required this.path,
+    this.fit = BoxFit.cover,
+    this.width,
+    this.height,
+    this.full = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final placeholder = Container(
+      width: width,
+      height: height,
+      color: palette.tile,
+      child: Icon(Icons.image_not_supported_outlined,
+          color: palette.textSecondary),
+    );
+    return FutureBuilder<String>(
+      future: chatDocsDir(),
+      builder: (context, snapshot) {
+        final docs = snapshot.data;
+        if (docs == null) return placeholder;
+        final ImageProvider file = FileImage(File(resolveChatPhoto(docs, path)));
+        return Image(
+          image: full
+              ? file
+              : ResizeImage(file,
+                  width: 480, height: 480, policy: ResizeImagePolicy.fit),
+          width: width,
+          height: height,
+          fit: fit,
+          errorBuilder: (_, __, ___) => placeholder,
+        );
+      },
+    );
+  }
+}
+
 /// A photo sent with a message; tap to view it full screen.
 class ChatPhotoThumb extends StatelessWidget {
   final String path;
@@ -158,27 +208,18 @@ class ChatPhotoThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-    return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (_) => ChatPhotoViewer(path: path)),
-      ),
-      child: ClipRRect(
-        key: const ValueKey('chat-bubble-image'),
-        borderRadius: AppRadius.smAll,
-        child: Image.file(
-          File(path),
-          width: 160,
-          height: 160,
-          fit: BoxFit.cover,
-          cacheWidth: 480,
-          errorBuilder: (_, __, ___) => Container(
-            width: 160,
-            height: 160,
-            color: palette.tile,
-            child: Icon(Icons.image_not_supported_outlined,
-                color: palette.textSecondary),
-          ),
+    return Semantics(
+      button: true,
+      image: true,
+      label: AppLocalizations.of(context).chatPhotoViewer,
+      child: GestureDetector(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => ChatPhotoViewer(path: path)),
+        ),
+        child: ClipRRect(
+          key: const ValueKey('chat-bubble-image'),
+          borderRadius: AppRadius.smAll,
+          child: ChatPhotoImage(path: path, width: 160, height: 160),
         ),
       ),
     );
@@ -204,13 +245,7 @@ class ChatPhotoViewer extends StatelessWidget {
       ),
       body: Center(
         child: InteractiveViewer(
-          child: Image.file(
-            File(path),
-            fit: BoxFit.contain,
-            errorBuilder: (_, __, ___) => Icon(
-                Icons.image_not_supported_outlined,
-                color: palette.textSecondary),
-          ),
+          child: ChatPhotoImage(path: path, fit: BoxFit.contain, full: true),
         ),
       ),
     );

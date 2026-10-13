@@ -278,5 +278,8 @@
   "chatMicStart": "Xabarni ovozda aytish",
   "chatMicStop": "Diktovkani to‘xtatish",
   "chatMicDenied": "Felix sizni hali eshitmayapti. Sozlamalarni oching va FITRIX uchun mikrofon va nutqni tanishga ruxsat bering.",
-  "chatPhotoViewer": "Rasm"
+  "chatPhotoViewer": "Rasm",
+  "chatPhotoUnavailable": "Rasm topilmadi yoki yuborish uchun juda katta.",
+  "chatMicListening": "Tinglayapman",
+  "chatMicStopped": "Tinglash to‘xtatildi"
 }

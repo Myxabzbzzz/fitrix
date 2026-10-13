@@ -28,6 +28,9 @@ class ChatRepository {
   /// The app's current language code, sent so Felix answers in it.
   final String Function()? _language;
 
+  /// Localized "photo is missing or too large" text for the failed bubble.
+  final String Function()? _photoUnavailable;
+
   ChatRepository(
     this._apiService, {
     ProfileRepository? profileRepository,
@@ -42,8 +45,10 @@ class ChatRepository {
     SharedPreferences? prefs,
     void Function()? onSaved,
     String Function()? language,
+    String Function()? photoUnavailable,
   })  : _profileRepository = profileRepository,
         _language = language,
+        _photoUnavailable = photoUnavailable,
         _preloadedPrefs = prefs,
         _onSaved = onSaved;
 
@@ -104,7 +109,10 @@ class ChatRepository {
     final images = <String>[];
     if (imagePath != null) {
       final encoded = await encodeChatPhoto(imagePath);
-      if (encoded == null) throw ChatException(photoUnavailableMessage);
+      if (encoded == null) {
+        throw ChatException(
+            _photoUnavailable?.call() ?? photoUnavailableMessage);
+      }
       images.add(encoded);
     }
     final conversationId = await getOrCreateConversationId();

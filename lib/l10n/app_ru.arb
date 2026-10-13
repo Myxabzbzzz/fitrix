@@ -278,5 +278,8 @@
   "chatMicStart": "Надиктовать сообщение",
   "chatMicStop": "Остановить диктовку",
   "chatMicDenied": "Felix пока вас не слышит. Откройте Настройки и разрешите FITRIX микрофон и распознавание речи.",
-  "chatPhotoViewer": "Фото"
+  "chatPhotoViewer": "Фото",
+  "chatPhotoUnavailable": "Фото не найдено или слишком большое для отправки.",
+  "chatMicListening": "Слушаю",
+  "chatMicStopped": "Прослушивание остановлено"
 }

@@ -1020,4 +1020,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatPhotoViewer => 'Photo';
+
+  @override
+  String get chatPhotoUnavailable =>
+      'The photo is missing or too large to send.';
+
+  @override
+  String get chatMicListening => 'Listening';
+
+  @override
+  String get chatMicStopped => 'Stopped listening';
 }

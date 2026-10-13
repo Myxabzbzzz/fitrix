@@ -1041,4 +1041,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatPhotoViewer => 'Фото';
+
+  @override
+  String get chatPhotoUnavailable =>
+      'Фото не найдено или слишком большое для отправки.';
+
+  @override
+  String get chatMicListening => 'Слушаю';
+
+  @override
+  String get chatMicStopped => 'Прослушивание остановлено';
 }

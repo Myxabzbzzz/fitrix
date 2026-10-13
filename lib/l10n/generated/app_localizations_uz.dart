@@ -994,4 +994,14 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get chatPhotoViewer => 'Rasm';
+
+  @override
+  String get chatPhotoUnavailable =>
+      'Rasm topilmadi yoki yuborish uchun juda katta.';
+
+  @override
+  String get chatMicListening => 'Tinglayapman';
+
+  @override
+  String get chatMicStopped => 'Tinglash to‘xtatildi';
 }

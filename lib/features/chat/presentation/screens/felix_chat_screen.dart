@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -30,7 +31,8 @@ class FelixChatScreen extends ConsumerStatefulWidget {
   ConsumerState<FelixChatScreen> createState() => _FelixChatScreenState();
 }
 
-class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
+class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
+    with WidgetsBindingObserver {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final ChatEntranceTracker _entrance = ChatEntranceTracker();
@@ -40,12 +42,48 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
     language: () => ref.read(selectedLanguageProvider),
   );
 
-  /// Photo picked for the next message (file in the documents dir).
+  /// Photo picked for the next message (stored path, see photo_service).
   String? _pendingPhoto;
+  bool _wasListening = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _dictation.addListener(_announceDictation);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Tabs keep their state: an offstage tab has its tickers off.
+    if (!TickerMode.of(context)) _dictation.stop();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) _dictation.stop();
+  }
+
+  void _announceDictation() {
+    if (_dictation.listening == _wasListening || !mounted) return;
+    _wasListening = _dictation.listening;
+    final l10n = AppLocalizations.of(context);
+    SemanticsService.sendAnnouncement(
+      View.of(context),
+      _wasListening ? l10n.chatMicListening : l10n.chatMicStopped,
+      Directionality.of(context),
+    );
+  }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _dictation.removeListener(_announceDictation);
     _dictation.dispose();
+    // A picked photo that was never sent is not kept.
+    final unsent = _pendingPhoto;
+    if (unsent != null) deleteChatPhoto(unsent);
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -53,14 +91,15 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
 
   void _send(AssistantTopic topic) {
     final notifier = ref.read(chatMessagesProviderFor(topic).notifier);
+    // Stop first so a late dictation result can't refill the cleared field.
+    _dictation.stop();
     final photo = _pendingPhoto;
     var text = _controller.text.trim();
     if (text.isEmpty && photo != null) {
       text = AppLocalizations.of(context).chatPhotoPrompt;
     }
-    if (text.isEmpty || notifier.isReplying) return;
-    _dictation.stop();
-    notifier.sendMessage(text, imagePath: photo);
+    if (text.isEmpty || !notifier.canSend) return;
+    if (!notifier.startSend(text, imagePath: photo)) return;
     _controller.clear();
     setState(() => _pendingPhoto = null);
   }
@@ -105,32 +144,30 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
     final String? path;
     try {
       path = await ref.read(photoServiceProvider).pick(source);
+    } on PhotoTooLargeException {
+      if (mounted) _snack(l10n.chatPhotoTooLarge);
+      return;
     } catch (_) {
       if (mounted) _snack(l10n.chatPhotoFailed);
       return;
     }
     if (path == null || !mounted) return;
-    if (File(path).lengthSync() > maxChatPhotoBytes) {
-      await _deletePhoto(path);
+    final docs = await chatDocsDir();
+    if (File(resolveChatPhoto(docs, path)).lengthSync() > maxChatPhotoBytes) {
+      await deleteChatPhoto(path);
       if (mounted) _snack(l10n.chatPhotoTooLarge);
       return;
     }
     if (!mounted) return;
     final previous = _pendingPhoto;
     setState(() => _pendingPhoto = path);
-    if (previous != null) await _deletePhoto(previous);
+    if (previous != null) await deleteChatPhoto(previous);
   }
 
   Future<void> _removePhoto() async {
     final path = _pendingPhoto;
     setState(() => _pendingPhoto = null);
-    if (path != null) await _deletePhoto(path);
-  }
-
-  Future<void> _deletePhoto(String path) async {
-    try {
-      File(path).deleteSync();
-    } catch (_) {}
+    if (path != null) await deleteChatPhoto(path);
   }
 
   @override
@@ -394,7 +431,8 @@ class _Composer extends StatelessWidget {
   }
 }
 
-/// Thumbnail of the photo about to be sent, with a remove button.
+/// Thumbnail of the photo about to be sent, with a remove button. The
+/// button's 44x44 hit area lies inside the widget's bounds.
 class _PendingPhoto extends StatelessWidget {
   final String path;
   final String removeLabel;
@@ -411,44 +449,38 @@ class _PendingPhoto extends StatelessWidget {
     final palette = AppPalette.of(context);
     return SizedBox(
       key: const ValueKey('chat-pending-photo'),
-      width: 72,
-      height: 72,
+      width: 84,
+      height: 84,
       child: Stack(
-        clipBehavior: Clip.none,
         children: [
-          Positioned.fill(
+          Positioned(
+            left: 0,
+            bottom: 0,
+            width: 72,
+            height: 72,
             child: ClipRRect(
               borderRadius: AppRadius.smAll,
-              child: Image.file(
-                File(path),
-                fit: BoxFit.cover,
-                cacheWidth: 216,
-                errorBuilder: (_, __, ___) => Container(
-                  color: palette.tile,
-                  child: Icon(Icons.image_not_supported_outlined,
-                      color: palette.textSecondary),
-                ),
-              ),
+              child: ChatPhotoImage(path: path, fit: BoxFit.cover),
             ),
           ),
           Positioned(
-            top: -AppSpacing.xs,
-            right: -AppSpacing.xs,
-            child: GestureDetector(
+            top: 0,
+            right: 0,
+            width: 44,
+            height: 44,
+            child: IconButton(
               key: const ValueKey('chat-remove-photo'),
-              onTap: onRemove,
-              child: Semantics(
-                button: true,
-                label: removeLabel,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: palette.textPrimary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.close, size: 16, color: palette.background),
+              padding: EdgeInsets.zero,
+              tooltip: removeLabel,
+              onPressed: onRemove,
+              icon: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: palette.textPrimary,
+                  shape: BoxShape.circle,
                 ),
+                child: Icon(Icons.close, size: 16, color: palette.background),
               ),
             ),
           ),

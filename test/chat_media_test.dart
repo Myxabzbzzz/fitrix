@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +15,7 @@ import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/chat/data/services/photo_service.dart';
+import 'package:image/image.dart' as img;
 import 'package:fitrix/features/chat/data/services/speech_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
@@ -68,9 +70,10 @@ class FakePhotos implements PhotoService {
   @override
   Future<String?> pick(PhotoSource source) async {
     lastSource = source;
-    final file = File('${dir.path}/p${_n++}.jpg')
-      ..writeAsBytesSync(List.filled(bytes, 7));
-    return file.path;
+    final name = 'p${_n++}.jpg';
+    File('${dir.path}/chat_photos/$name')
+        .writeAsBytesSync(List.filled(bytes, 7));
+    return 'chat_photos/$name';
   }
 }
 
@@ -119,10 +122,19 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     tmp = Directory.systemTemp.createTempSync('fc_media');
     speech = FakeSpeech();
+    Directory('${tmp.path}/chat_photos').createSync();
+    documentsDirLoader = () async => tmp.path;
+    resetChatDocsDir();
     photos = FakePhotos(tmp);
   });
 
-  tearDown(() => tmp.deleteSync(recursive: true));
+  tearDown(() {
+    resetChatDocsDir();
+    tmp.deleteSync(recursive: true);
+  });
+
+  List<FileSystemEntity> stored() =>
+      Directory('${tmp.path}/chat_photos').listSync();
 
   Future<void> pump(WidgetTester tester,
       {String language = 'en', bool reduced = false}) async {
@@ -210,6 +222,34 @@ void main() {
       expect(find.byIcon(Icons.mic), findsNothing);
     });
 
+    testWidgets('a late result after stop does not change the field',
+        (tester) async {
+      await pump(tester);
+      await tester.tap(find.byKey(const ValueKey('chat-mic')));
+      await tester.pump();
+      speech.say('hello');
+      await tester.tap(find.byKey(const ValueKey('chat-mic')));
+      await tester.pump();
+      speech.say('hello world');
+      await tester.pump();
+      expect(fieldText(tester), 'hello');
+    });
+
+    testWidgets('sending stops dictation; a late result does not refill',
+        (tester) async {
+      await pump(tester);
+      await tester.tap(find.byKey(const ValueKey('chat-mic')));
+      await tester.pump();
+      speech.say('hello');
+      await tester.tap(find.byIcon(Icons.arrow_circle_up));
+      await tester.pump();
+      speech.say('hello again');
+      await tester.pump();
+      expect(repo.sent.single, 'hello');
+      expect(fieldText(tester), isEmpty);
+      expect(speech.stopCalls, 1);
+    });
+
     testWidgets('uses the Russian locale for the Russian app', (tester) async {
       await pump(tester, language: 'ru');
       await tester.tap(find.byKey(const ValueKey('chat-mic')));
@@ -255,7 +295,22 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('chat-remove-photo')));
       await tester.pump();
       expect(find.byKey(const ValueKey('chat-pending-photo')), findsNothing);
-      expect(tmp.listSync(), isEmpty, reason: 'removed photo is deleted');
+      expect(stored(), isEmpty, reason: 'removed photo is deleted');
+    });
+
+    testWidgets('the remove button works near the edge of its hit area',
+        (tester) async {
+      await pump(tester);
+      await choose(tester);
+      final rect =
+          tester.getRect(find.byKey(const ValueKey('chat-remove-photo')));
+      final box =
+          tester.getRect(find.byKey(const ValueKey('chat-pending-photo')));
+      expect(rect.width, greaterThanOrEqualTo(44));
+      expect(box.contains(rect.topRight - const Offset(1, -1)), isTrue);
+      await tester.tapAt(rect.topRight + const Offset(-3, 3));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('chat-pending-photo')), findsNothing);
     });
 
     testWidgets('sending passes the photo and shows it in the bubble',
@@ -268,7 +323,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(repo.sent.single, 'What is this?');
-      expect(repo.imagePaths.single, startsWith(tmp.path));
+      expect(repo.imagePaths.single, startsWith('chat_photos/'));
       expect(find.byKey(const ValueKey('chat-pending-photo')), findsNothing);
       expect(find.byKey(const ValueKey('chat-bubble-image')), findsOneWidget);
 
@@ -294,8 +349,51 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.byKey(const ValueKey('chat-pending-photo')), findsNothing);
       expect(find.textContaining('too large'), findsOneWidget);
-      expect(tmp.listSync(), isEmpty);
+      expect(stored(), isEmpty);
     });
+  });
+
+  group('normalizeChatPhoto', () {
+    bool isJpeg(List<int> b) => b[0] == 0xFF && b[1] == 0xD8;
+
+    test('a PNG becomes a JPEG', () async {
+      final png =
+          Uint8List.fromList(img.encodePng(img.Image(width: 64, height: 32)));
+      final out = await normalizeChatPhoto(png);
+      expect(isJpeg(out!), isTrue);
+    });
+
+    test('a small JPEG is kept as is', () async {
+      final jpg =
+          Uint8List.fromList(img.encodeJpg(img.Image(width: 64, height: 32)));
+      expect(identical(await normalizeChatPhoto(jpg), jpg), isTrue);
+    });
+
+    test('an oversize photo is recompressed to <= 1280 px and the limit',
+        () async {
+      final noisy = img.Image(width: 2400, height: 1800);
+      var v = 12345;
+      for (final px in noisy) {
+        v = (v * 1103515245 + 12345) & 0x7fffffff;
+        px.setRgb(v & 255, (v >> 8) & 255, (v >> 16) & 255);
+      }
+      final big = Uint8List.fromList(img.encodeJpg(noisy, quality: 100));
+      expect(big.length, greaterThan(maxChatPhotoBytes));
+
+      final out = await normalizeChatPhoto(big);
+      expect(out, isNotNull);
+      expect(out!.length, lessThanOrEqualTo(maxChatPhotoBytes));
+      final decoded = img.decodeJpg(out)!;
+      expect(decoded.width, 1280);
+      expect(decoded.height, 960);
+    });
+  });
+
+  test('resolveChatPhoto handles relative and old-container paths', () {
+    expect(resolveChatPhoto('/new', 'chat_photos/a.jpg'),
+        '/new/chat_photos/a.jpg');
+    expect(resolveChatPhoto('/new', '/old/Documents/chat_photos/a.jpg'),
+        '/new/chat_photos/a.jpg');
   });
 
   group('request', () {
@@ -304,25 +402,42 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       final api = ImageApi();
       final repository = ChatRepository(api);
-      final file = File('${tmp.path}/a.jpg')..writeAsBytesSync([1, 2, 3, 4]);
+      final file = File('${tmp.path}/chat_photos/a.jpg')
+        ..writeAsBytesSync([1, 2, 3, 4]);
 
-      await repository.streamMessage('look', imagePath: file.path).toList();
+      await repository
+          .streamMessage('look', imagePath: 'chat_photos/a.jpg')
+          .toList();
+      // A path from an old app container resolves by file name.
+      await repository
+          .streamMessage('again',
+              imagePath: '/old/Containers/ABC/Documents/chat_photos/a.jpg')
+          .toList();
+      expect(file.existsSync(), isTrue);
       await repository.streamMessage('and now?').toList();
 
       expect(api.images[0], [
         base64Encode([1, 2, 3, 4])
       ]);
-      expect(api.images[1], isEmpty);
+      expect(api.images[1], [
+        base64Encode([1, 2, 3, 4])
+      ]);
+      expect(api.images[2], isEmpty);
     });
 
     test('an oversize or missing photo is not sent', () async {
       final repository = ChatRepository(ImageApi());
-      final big = File('${tmp.path}/big.jpg')
-        ..writeAsBytesSync(List.filled(maxChatPhotoBytes + 1, 1));
-      expect(repository.streamMessage('x', imagePath: big.path).toList(),
+      File('${tmp.path}/chat_photos/big.jpg')
+          .writeAsBytesSync(List.filled(maxChatPhotoBytes + 1, 1));
+      expect(
+          repository
+              .streamMessage('x', imagePath: 'chat_photos/big.jpg')
+              .toList(),
           throwsA(isA<ChatException>()));
       expect(
-          repository.streamMessage('x', imagePath: '${tmp.path}/nope').toList(),
+          repository
+              .streamMessage('x', imagePath: 'chat_photos/nope.jpg')
+              .toList(),
           throwsA(isA<ChatException>()));
     });
 

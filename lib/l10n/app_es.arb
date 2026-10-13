@@ -278,5 +278,8 @@
   "chatMicStart": "Dictar un mensaje",
   "chatMicStop": "Detener dictado",
   "chatMicDenied": "Felix aún no te oye. Abre Ajustes y permite a FITRIX el micrófono y el reconocimiento de voz.",
-  "chatPhotoViewer": "Foto"
+  "chatPhotoViewer": "Foto",
+  "chatPhotoUnavailable": "La foto no está disponible o es demasiado grande para enviarla.",
+  "chatMicListening": "Escuchando",
+  "chatMicStopped": "Escucha detenida"
 }

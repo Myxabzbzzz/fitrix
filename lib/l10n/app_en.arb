@@ -698,5 +698,8 @@
   "chatMicStart": "Dictate a message",
   "chatMicStop": "Stop dictation",
   "chatMicDenied": "Felix can't hear you yet. Open Settings and allow microphone and speech recognition for FITRIX.",
-  "chatPhotoViewer": "Photo"
+  "chatPhotoViewer": "Photo",
+  "chatPhotoUnavailable": "The photo is missing or too large to send.",
+  "chatMicListening": "Listening",
+  "chatMicStopped": "Stopped listening"
 }
