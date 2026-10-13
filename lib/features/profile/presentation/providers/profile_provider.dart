@@ -27,6 +27,29 @@ class ProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
     }
   }
 
+  /// Stores onboarding answers (goal, experience, sports) on the saved
+  /// profile, leaving the other fields as they are. Doesn't flip the state
+  /// to loading, so screens watching the profile don't flicker.
+  Future<void> saveAnswers({
+    String? goal,
+    String? experience,
+    List<String>? sports,
+  }) async {
+    try {
+      final current = await _repository.getProfile() ??
+          UserProfile(name: '', surname: '', age: '', weight: '', height: '');
+      final updated = current.copyWith(
+        goal: goal,
+        experience: experience,
+        sports: sports,
+      );
+      await _repository.saveProfile(updated);
+      state = AsyncValue.data(updated);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
   Future<void> saveProfile(UserProfile profile) async {
     state = const AsyncValue.loading();
     try {

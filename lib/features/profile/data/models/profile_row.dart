@@ -13,6 +13,8 @@ class ProfileLimits {
   static const double weightMax = 400;
   static const double heightMin = 80;
   static const double heightMax = 260;
+  static const int answerMaxLength = 120;
+  static const int sportsMax = 6;
 }
 
 /// Parses "72", "72.5" or "72,5". Null for anything else.
@@ -181,6 +183,9 @@ class ProfileValidator {
         age: profile.age.trim(),
         weight: _normalizeNumber(profile.weight),
         height: _normalizeNumber(profile.height),
+        goal: profile.goal,
+        experience: profile.experience,
+        sports: profile.sports,
       );
 
   static String _normalizeNumber(String text) {
@@ -200,6 +205,9 @@ class ProfileRow {
     this.heightCm,
     this.language = 'en',
     this.onboardingComplete = false,
+    this.goal,
+    this.experience,
+    this.sports = const [],
   });
 
   final String id;
@@ -210,10 +218,13 @@ class ProfileRow {
   final double? heightCm;
   final String language;
   final bool onboardingComplete;
+  final String? goal;
+  final String? experience;
+  final List<String> sports;
 
   static const table = 'profiles';
   static const columns =
-      'id, name, surname, age, weight_kg, height_cm, language, onboarding_complete';
+      'id, name, surname, age, weight_kg, height_cm, language, onboarding_complete, goal, experience, sports';
 
   factory ProfileRow.fromJson(Map<String, dynamic> json) => ProfileRow(
         id: json['id'] as String,
@@ -224,6 +235,12 @@ class ProfileRow {
         heightCm: _toDouble(json['height_cm']),
         language: (json['language'] as String?) ?? 'en',
         onboardingComplete: (json['onboarding_complete'] as bool?) ?? false,
+        goal: json['goal'] as String?,
+        experience: json['experience'] as String?,
+        sports: [
+          for (final s in (json['sports'] as List?) ?? const [])
+            if (s is String) s,
+        ],
       );
 
   /// Builds a row from what's stored on the device. Values the database
@@ -253,6 +270,12 @@ class ProfileRow {
           _inRange(height, ProfileLimits.heightMin, ProfileLimits.heightMax),
       language: normalizeLanguage(language),
       onboardingComplete: onboardingComplete,
+      goal: _answer(profile.goal),
+      experience: _answer(profile.experience),
+      sports: [
+        for (final s in profile.sports)
+          if (_answer(s) != null) _answer(s)!,
+      ].take(ProfileLimits.sportsMax).toList(),
     );
   }
 
@@ -272,6 +295,9 @@ class ProfileRow {
           'age': age,
           'weight_kg': weightKg,
           'height_cm': heightCm,
+          'goal': goal,
+          'experience': experience,
+          'sports': sports,
         },
         'language': normalizeLanguage(language),
         if (onboardingComplete) 'onboarding_complete': true,
@@ -284,7 +310,19 @@ class ProfileRow {
         age: age?.toString() ?? '',
         weight: formatProfileNumber(weightKg),
         height: formatProfileNumber(heightCm),
+        goal: goal ?? '',
+        experience: experience ?? '',
+        sports: sports,
       );
+
+  /// Trimmed and clipped to the column limit; null when empty.
+  static String? _answer(String text) {
+    final t = text.trim();
+    if (t.isEmpty) return null;
+    return t.length > ProfileLimits.answerMaxLength
+        ? t.substring(0, ProfileLimits.answerMaxLength)
+        : t;
+  }
 
   static double? _toDouble(Object? value) {
     if (value is num) return value.toDouble();

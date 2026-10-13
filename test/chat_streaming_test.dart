@@ -241,17 +241,19 @@ void main() {
       backend.handler = FakeBackend.streaming(['ok']);
       final api = ChatApiService(baseUrl: backend.baseUrl);
 
-      await api.streamMessage(
-        'And protein?',
-        'c1',
-        topic: 'gym',
-        profile: {'name': 'Misha', 'weightKg': 82},
-        history: [
-          {'role': 'user', 'content': 'I want to bulk'},
-          {'role': 'assistant', 'content': 'Eat in a surplus.'},
-        ],
-        language: 'ru',
-      ).toList();
+      await api
+          .streamMessage(
+            'And protein?',
+            'c1',
+            topic: 'gym',
+            profile: {'name': 'Misha', 'weightKg': 82},
+            history: [
+              {'role': 'user', 'content': 'I want to bulk'},
+              {'role': 'assistant', 'content': 'Eat in a surplus.'},
+            ],
+            language: 'ru',
+          )
+          .toList();
 
       expect(backend.bodies.single, {
         'message': 'And protein?',
@@ -329,6 +331,27 @@ void main() {
         isEmpty,
       );
       expect(ChatRepository.profilePayload(null), isEmpty);
+    });
+
+    test('profile payload carries goal, experience and sports', () {
+      expect(
+        ChatRepository.profilePayload(UserProfile(
+          name: 'Misha',
+          surname: '',
+          age: '',
+          weight: '',
+          height: '',
+          goal: 'Build muscle and strength',
+          experience: 'Beginner',
+          sports: const ['Gym', 'Running'],
+        )),
+        {
+          'name': 'Misha',
+          'goal': 'Build muscle and strength',
+          'experience': 'Beginner',
+          'sports': ['Gym', 'Running'],
+        },
+      );
     });
 
     test('trainer chat sends its topic, the profile and prior turns only',

@@ -10,6 +10,9 @@ class ProfileRepository {
     await prefs.setString(AppConstants.keyUserAge, profile.age);
     await prefs.setString(AppConstants.keyUserWeight, profile.weight);
     await prefs.setString(AppConstants.keyUserHeight, profile.height);
+    await prefs.setString(AppConstants.keyUserGoal, profile.goal);
+    await prefs.setString(AppConstants.keyUserExperience, profile.experience);
+    await prefs.setStringList(AppConstants.keyUserSports, profile.sports);
   }
 
   Future<UserProfile?> getProfile() async {
@@ -24,6 +27,9 @@ class ProfileRepository {
       age: prefs.getString(AppConstants.keyUserAge) ?? '',
       weight: prefs.getString(AppConstants.keyUserWeight) ?? '',
       height: prefs.getString(AppConstants.keyUserHeight) ?? '',
+      goal: prefs.getString(AppConstants.keyUserGoal) ?? '',
+      experience: prefs.getString(AppConstants.keyUserExperience) ?? '',
+      sports: prefs.getStringList(AppConstants.keyUserSports) ?? const [],
     );
   }
 }

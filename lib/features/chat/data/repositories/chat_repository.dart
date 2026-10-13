@@ -122,18 +122,27 @@ class ChatRepository {
   }
 
   /// The profile as the backend expects it: `name`, `age`, `weightKg`,
-  /// `heightCm`, each left out when empty or not a number.
+  /// `heightCm`, `goal`, `experience`, `sports`, each left out when empty or not a number.
   static Map<String, Object> profilePayload(UserProfile? profile) {
     if (profile == null) return const {};
     final name = profile.name.trim();
     final age = _number(profile.age);
     final weight = _number(profile.weight);
     final height = _number(profile.height);
+    final goal = profile.goal.trim();
+    final experience = profile.experience.trim();
+    final sports = [
+      for (final s in profile.sports)
+        if (s.trim().isNotEmpty) s.trim(),
+    ];
     return {
       if (name.isNotEmpty) 'name': name,
       if (age != null) 'age': age.round(),
       if (weight != null) 'weightKg': weight,
       if (height != null) 'heightCm': height,
+      if (goal.isNotEmpty) 'goal': goal,
+      if (experience.isNotEmpty) 'experience': experience,
+      if (sports.isNotEmpty) 'sports': sports,
     };
   }
 

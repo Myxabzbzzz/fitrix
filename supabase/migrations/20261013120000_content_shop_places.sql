@@ -292,3 +292,13 @@ insert into public.places (id, name, kind, type, lat, lon, hours, note, osm_ref)
   ('olympic-reserve-aquatics-school', 'Olympic Reserve Aquatics School', 'pools', 'Swimming school', 41.29869, 69.25744, null, null, null),
   ('more-water-park', 'More water park', 'pools', 'Water park', 41.31123, 69.30026, 'Daily 09:00–22:00', null, null)
 on conflict (id) do nothing;
+
+-- ---------------------------------------------------------------------------
+-- Onboarding answers Felix uses: goal, experience level and sports. Free
+-- text from the onboarding chat (quick-reply value or what the user typed).
+-- ---------------------------------------------------------------------------
+alter table public.profiles
+  add column goal text check (char_length(goal) <= 120),
+  add column experience text check (char_length(experience) <= 120),
+  add column sports text[] not null default '{}'
+    check (coalesce(array_length(sports, 1), 0) <= 6);

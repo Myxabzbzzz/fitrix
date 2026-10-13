@@ -95,6 +95,11 @@ class AppConstants {
   /// Key for storing user's height
   static const String keyUserHeight = 'user_height';
 
+  /// Onboarding answers (goal, experience level, sports) Felix uses.
+  static const String keyUserGoal = 'user_goal';
+  static const String keyUserExperience = 'user_experience';
+  static const String keyUserSports = 'user_sports';
+
   /// Key for storing chat conversation history
   /// Stored as JSON string for persistence between app sessions
   static const String keyChatHistory = 'chat_history';
