@@ -100,6 +100,8 @@ test('system prompt tells Felix to answer first and not repeat questions', () =>
   assert.match(prompt, /Never repeat a question you already asked/);
   assert.match(prompt, /instead of asking again/);
   assert.match(prompt, /under about 120 words/);
+  assert.match(prompt, /rely on a clearly stated assumption/);
+  assert.doesNotMatch(prompt, /say you don't know it yet and ask/);
   assert.doesNotMatch(prompt, /when you need to know the user's goals/);
 });
 
