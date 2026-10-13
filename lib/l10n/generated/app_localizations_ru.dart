@@ -470,4 +470,132 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shopNoProducts => 'Товаров пока нет';
+
+  @override
+  String get mapTitle => 'Карта Fitrix';
+
+  @override
+  String get mapFilterAll => 'Все';
+
+  @override
+  String get mapFilterGyms => 'Залы';
+
+  @override
+  String get mapFilterParks => 'Парки';
+
+  @override
+  String get mapFilterTracks => 'Трассы';
+
+  @override
+  String get mapFilterPools => 'Бассейны';
+
+  @override
+  String get mapLocationOff => 'Геолокация выключена: показан центр Ташкента';
+
+  @override
+  String get mapHoursUnknown => 'Часы работы не указаны';
+
+  @override
+  String mapAway(String distance) {
+    return '$distance от вас';
+  }
+
+  @override
+  String get mapShowRoute => 'Показать маршрут';
+
+  @override
+  String get mapHideRoute => 'Скрыть маршрут';
+
+  @override
+  String get mapModesLabel => 'Как добраться';
+
+  @override
+  String get mapModeWalk => 'Пешком';
+
+  @override
+  String get mapModeBike => 'Велосипед';
+
+  @override
+  String get mapModeCar => 'Авто';
+
+  @override
+  String get mapModeMetro => 'Метро';
+
+  @override
+  String get mapComputing => 'Считаем маршруты…';
+
+  @override
+  String get mapCoverage => 'Маршруты есть только для центра Ташкента';
+
+  @override
+  String get mapNoRoute => 'Для этого способа маршрута нет';
+
+  @override
+  String get mapMetroNoHelp =>
+      'Метро не поможет в этой поездке: нет пары станций, которая экономит время.';
+
+  @override
+  String get mapPlanFailed =>
+      'Не удалось построить маршруты. Выберите другое место.';
+
+  @override
+  String mapMinutes(int n) {
+    return '$n мин';
+  }
+
+  @override
+  String mapHoursMinutes(int h, int m) {
+    return '$h ч $m мин';
+  }
+
+  @override
+  String mapArrive(String duration, String time) {
+    return '$duration · прибытие в $time';
+  }
+
+  @override
+  String mapRide(String from, String to, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count остановки',
+      many: '$count остановок',
+      few: '$count остановки',
+      one: '$count остановка',
+    );
+    return '$from → $to, $_temp0';
+  }
+
+  @override
+  String mapWalkTotal(String distance) {
+    return 'Всего пешком: $distance';
+  }
+
+  @override
+  String get mapWalkingFaster => 'пешком здесь быстрее';
+
+  @override
+  String mapNoteWalk(String distance) {
+    return '$distance пешком';
+  }
+
+  @override
+  String mapNoteBike(String distance) {
+    return '$distance на велосипеде, включая дорожки';
+  }
+
+  @override
+  String mapNoteCar(String distance) {
+    return '$distance на авто, без учёта пробок, 2 мин на парковку';
+  }
+
+  @override
+  String mapMeters(int n) {
+    return '$n м';
+  }
+
+  @override
+  String mapKilometers(String n) {
+    return '$n км';
+  }
 }

@@ -287,5 +287,126 @@
     }
   },
   "shopRetry": "Retry",
-  "shopNoProducts": "No products yet"
+  "shopNoProducts": "No products yet",
+  "mapTitle": "Fitrix map",
+  "mapFilterAll": "All",
+  "mapFilterGyms": "Gyms",
+  "mapFilterParks": "Parks",
+  "mapFilterTracks": "Tracks",
+  "mapFilterPools": "Pools",
+  "mapLocationOff": "Location off: showing central Tashkent",
+  "mapHoursUnknown": "Hours not listed",
+  "mapAway": "{distance} away",
+  "@mapAway": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "mapShowRoute": "Show route",
+  "mapHideRoute": "Hide route",
+  "mapModesLabel": "How to get there",
+  "mapModeWalk": "Walk",
+  "mapModeBike": "Bike",
+  "mapModeCar": "Car",
+  "mapModeMetro": "Metro",
+  "mapComputing": "Working out routes…",
+  "mapCoverage": "Routes cover central Tashkent",
+  "mapNoRoute": "No route for this mode",
+  "mapMetroNoHelp": "Metro does not help on this trip: no station pair that saves time.",
+  "mapPlanFailed": "Could not work out routes. Try another place.",
+  "mapMinutes": "{n} min",
+  "@mapMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "mapHoursMinutes": "{h} h {m} min",
+  "@mapHoursMinutes": {
+    "placeholders": {
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "mapArrive": "{duration} · arrive {time}",
+  "@mapArrive": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "mapRide": "{from} → {to}, {count, plural, one{{count} stop} other{{count} stops}}",
+  "@mapRide": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mapWalkTotal": "{distance} on foot in total",
+  "@mapWalkTotal": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "mapWalkingFaster": "walking is faster here",
+  "mapNoteWalk": "{distance} on foot",
+  "@mapNoteWalk": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "mapNoteBike": "{distance} by bike, paths included",
+  "@mapNoteBike": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "mapNoteCar": "{distance} by car, no traffic data, 2 min to park",
+  "@mapNoteCar": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "mapMeters": "{n} m",
+  "@mapMeters": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "mapKilometers": "{n} km",
+  "@mapKilometers": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -463,4 +463,131 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get shopNoProducts => 'Aún no hay productos';
+
+  @override
+  String get mapTitle => 'Mapa Fitrix';
+
+  @override
+  String get mapFilterAll => 'Todo';
+
+  @override
+  String get mapFilterGyms => 'Gimnasios';
+
+  @override
+  String get mapFilterParks => 'Parques';
+
+  @override
+  String get mapFilterTracks => 'Pistas';
+
+  @override
+  String get mapFilterPools => 'Piscinas';
+
+  @override
+  String get mapLocationOff =>
+      'Ubicación desactivada: mostrando el centro de Taskent';
+
+  @override
+  String get mapHoursUnknown => 'Horario no indicado';
+
+  @override
+  String mapAway(String distance) {
+    return 'a $distance';
+  }
+
+  @override
+  String get mapShowRoute => 'Mostrar ruta';
+
+  @override
+  String get mapHideRoute => 'Ocultar ruta';
+
+  @override
+  String get mapModesLabel => 'Cómo llegar';
+
+  @override
+  String get mapModeWalk => 'A pie';
+
+  @override
+  String get mapModeBike => 'Bici';
+
+  @override
+  String get mapModeCar => 'Coche';
+
+  @override
+  String get mapModeMetro => 'Metro';
+
+  @override
+  String get mapComputing => 'Calculando rutas…';
+
+  @override
+  String get mapCoverage => 'Las rutas cubren el centro de Taskent';
+
+  @override
+  String get mapNoRoute => 'No hay ruta para este modo';
+
+  @override
+  String get mapMetroNoHelp =>
+      'El metro no ayuda en este trayecto: ningún par de estaciones ahorra tiempo.';
+
+  @override
+  String get mapPlanFailed =>
+      'No se pudieron calcular las rutas. Prueba con otro lugar.';
+
+  @override
+  String mapMinutes(int n) {
+    return '$n min';
+  }
+
+  @override
+  String mapHoursMinutes(int h, int m) {
+    return '$h h $m min';
+  }
+
+  @override
+  String mapArrive(String duration, String time) {
+    return '$duration · llegada $time';
+  }
+
+  @override
+  String mapRide(String from, String to, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count paradas',
+      one: '$count parada',
+    );
+    return '$from → $to, $_temp0';
+  }
+
+  @override
+  String mapWalkTotal(String distance) {
+    return '$distance a pie en total';
+  }
+
+  @override
+  String get mapWalkingFaster => 'aquí es más rápido ir a pie';
+
+  @override
+  String mapNoteWalk(String distance) {
+    return '$distance a pie';
+  }
+
+  @override
+  String mapNoteBike(String distance) {
+    return '$distance en bici, con ciclovías';
+  }
+
+  @override
+  String mapNoteCar(String distance) {
+    return '$distance en coche, sin datos de tráfico, 2 min para aparcar';
+  }
+
+  @override
+  String mapMeters(int n) {
+    return '$n m';
+  }
+
+  @override
+  String mapKilometers(String n) {
+    return '$n km';
+  }
 }

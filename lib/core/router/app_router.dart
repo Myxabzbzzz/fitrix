@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/session/app_session.dart';
-import 'package:fitrix/core/widgets/coming_soon_screen.dart';
 import 'package:fitrix/features/auth/data/auth_gateway.dart';
 import 'package:fitrix/features/intro/presentation/screens/intro_screen.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
@@ -24,6 +23,7 @@ import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.
 import 'package:fitrix/features/content/presentation/article_screen.dart';
 import 'package:fitrix/features/content/presentation/discover_screen.dart';
 import 'package:fitrix/features/shop/presentation/shop_screen.dart';
+import 'package:fitrix/features/map/presentation/map_screen.dart';
 
 class AppRouter {
   // Onboarding
@@ -249,11 +249,7 @@ class AppRouter {
                         pageBuilder: (context, state) => circleRevealPage(
                           context,
                           state,
-                          const ComingSoonScreen(
-                            title: 'Fitrix map',
-                            icon: Icons.map_outlined,
-                            imageAsset: 'assets/images/tile_map.png',
-                          ),
+                          const MapScreen(),
                         ),
                       ),
                     ],

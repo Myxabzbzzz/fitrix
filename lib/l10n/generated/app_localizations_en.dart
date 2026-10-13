@@ -463,4 +463,129 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shopNoProducts => 'No products yet';
+
+  @override
+  String get mapTitle => 'Fitrix map';
+
+  @override
+  String get mapFilterAll => 'All';
+
+  @override
+  String get mapFilterGyms => 'Gyms';
+
+  @override
+  String get mapFilterParks => 'Parks';
+
+  @override
+  String get mapFilterTracks => 'Tracks';
+
+  @override
+  String get mapFilterPools => 'Pools';
+
+  @override
+  String get mapLocationOff => 'Location off: showing central Tashkent';
+
+  @override
+  String get mapHoursUnknown => 'Hours not listed';
+
+  @override
+  String mapAway(String distance) {
+    return '$distance away';
+  }
+
+  @override
+  String get mapShowRoute => 'Show route';
+
+  @override
+  String get mapHideRoute => 'Hide route';
+
+  @override
+  String get mapModesLabel => 'How to get there';
+
+  @override
+  String get mapModeWalk => 'Walk';
+
+  @override
+  String get mapModeBike => 'Bike';
+
+  @override
+  String get mapModeCar => 'Car';
+
+  @override
+  String get mapModeMetro => 'Metro';
+
+  @override
+  String get mapComputing => 'Working out routes…';
+
+  @override
+  String get mapCoverage => 'Routes cover central Tashkent';
+
+  @override
+  String get mapNoRoute => 'No route for this mode';
+
+  @override
+  String get mapMetroNoHelp =>
+      'Metro does not help on this trip: no station pair that saves time.';
+
+  @override
+  String get mapPlanFailed => 'Could not work out routes. Try another place.';
+
+  @override
+  String mapMinutes(int n) {
+    return '$n min';
+  }
+
+  @override
+  String mapHoursMinutes(int h, int m) {
+    return '$h h $m min';
+  }
+
+  @override
+  String mapArrive(String duration, String time) {
+    return '$duration · arrive $time';
+  }
+
+  @override
+  String mapRide(String from, String to, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count stops',
+      one: '$count stop',
+    );
+    return '$from → $to, $_temp0';
+  }
+
+  @override
+  String mapWalkTotal(String distance) {
+    return '$distance on foot in total';
+  }
+
+  @override
+  String get mapWalkingFaster => 'walking is faster here';
+
+  @override
+  String mapNoteWalk(String distance) {
+    return '$distance on foot';
+  }
+
+  @override
+  String mapNoteBike(String distance) {
+    return '$distance by bike, paths included';
+  }
+
+  @override
+  String mapNoteCar(String distance) {
+    return '$distance by car, no traffic data, 2 min to park';
+  }
+
+  @override
+  String mapMeters(int n) {
+    return '$n m';
+  }
+
+  @override
+  String mapKilometers(String n) {
+    return '$n km';
+  }
 }

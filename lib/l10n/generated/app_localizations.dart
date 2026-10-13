@@ -875,6 +875,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No products yet'**
   String get shopNoProducts;
+
+  /// No description provided for @mapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitrix map'**
+  String get mapTitle;
+
+  /// No description provided for @mapFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get mapFilterAll;
+
+  /// No description provided for @mapFilterGyms.
+  ///
+  /// In en, this message translates to:
+  /// **'Gyms'**
+  String get mapFilterGyms;
+
+  /// No description provided for @mapFilterParks.
+  ///
+  /// In en, this message translates to:
+  /// **'Parks'**
+  String get mapFilterParks;
+
+  /// No description provided for @mapFilterTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks'**
+  String get mapFilterTracks;
+
+  /// No description provided for @mapFilterPools.
+  ///
+  /// In en, this message translates to:
+  /// **'Pools'**
+  String get mapFilterPools;
+
+  /// No description provided for @mapLocationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location off: showing central Tashkent'**
+  String get mapLocationOff;
+
+  /// No description provided for @mapHoursUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours not listed'**
+  String get mapHoursUnknown;
+
+  /// No description provided for @mapAway.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} away'**
+  String mapAway(String distance);
+
+  /// No description provided for @mapShowRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Show route'**
+  String get mapShowRoute;
+
+  /// No description provided for @mapHideRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide route'**
+  String get mapHideRoute;
+
+  /// No description provided for @mapModesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How to get there'**
+  String get mapModesLabel;
+
+  /// No description provided for @mapModeWalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk'**
+  String get mapModeWalk;
+
+  /// No description provided for @mapModeBike.
+  ///
+  /// In en, this message translates to:
+  /// **'Bike'**
+  String get mapModeBike;
+
+  /// No description provided for @mapModeCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Car'**
+  String get mapModeCar;
+
+  /// No description provided for @mapModeMetro.
+  ///
+  /// In en, this message translates to:
+  /// **'Metro'**
+  String get mapModeMetro;
+
+  /// No description provided for @mapComputing.
+  ///
+  /// In en, this message translates to:
+  /// **'Working out routes…'**
+  String get mapComputing;
+
+  /// No description provided for @mapCoverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Routes cover central Tashkent'**
+  String get mapCoverage;
+
+  /// No description provided for @mapNoRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'No route for this mode'**
+  String get mapNoRoute;
+
+  /// No description provided for @mapMetroNoHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Metro does not help on this trip: no station pair that saves time.'**
+  String get mapMetroNoHelp;
+
+  /// No description provided for @mapPlanFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not work out routes. Try another place.'**
+  String get mapPlanFailed;
+
+  /// No description provided for @mapMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} min'**
+  String mapMinutes(int n);
+
+  /// No description provided for @mapHoursMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{h} h {m} min'**
+  String mapHoursMinutes(int h, int m);
+
+  /// No description provided for @mapArrive.
+  ///
+  /// In en, this message translates to:
+  /// **'{duration} · arrive {time}'**
+  String mapArrive(String duration, String time);
+
+  /// No description provided for @mapRide.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} → {to}, {count, plural, one{{count} stop} other{{count} stops}}'**
+  String mapRide(String from, String to, int count);
+
+  /// No description provided for @mapWalkTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} on foot in total'**
+  String mapWalkTotal(String distance);
+
+  /// No description provided for @mapWalkingFaster.
+  ///
+  /// In en, this message translates to:
+  /// **'walking is faster here'**
+  String get mapWalkingFaster;
+
+  /// No description provided for @mapNoteWalk.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} on foot'**
+  String mapNoteWalk(String distance);
+
+  /// No description provided for @mapNoteBike.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} by bike, paths included'**
+  String mapNoteBike(String distance);
+
+  /// No description provided for @mapNoteCar.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} by car, no traffic data, 2 min to park'**
+  String mapNoteCar(String distance);
+
+  /// No description provided for @mapMeters.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} m'**
+  String mapMeters(int n);
+
+  /// No description provided for @mapKilometers.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} km'**
+  String mapKilometers(String n);
 }
 
 class _AppLocalizationsDelegate
