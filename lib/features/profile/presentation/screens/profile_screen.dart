@@ -11,6 +11,7 @@ import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/profile/data/models/profile_row.dart';
 import 'package:fitrix/features/profile/data/models/user_profile.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -98,6 +99,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -140,7 +142,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // Name Input
               _buildInputField(
                 controller: _nameController,
-                label: 'Name',
+                label: l10n.profileFieldName,
                 field: 'name',
               ),
 
@@ -149,7 +151,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // Surname Input
               _buildInputField(
                 controller: _surnameController,
-                label: 'Surname',
+                label: l10n.profileFieldSurname,
                 field: 'surname',
               ),
 
@@ -158,7 +160,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // Age Input
               _buildInputField(
                 controller: _ageController,
-                label: 'Age',
+                label: l10n.age,
                 field: 'age',
                 keyboardType: TextInputType.number,
               ),
@@ -168,7 +170,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // Weight Input
               _buildInputField(
                 controller: _weightController,
-                label: 'Weight, kg',
+                label: l10n.profileFieldWeightKg,
                 field: 'weight',
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
@@ -178,7 +180,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // Height Input
               _buildInputField(
                 controller: _heightController,
-                label: 'Height, cm',
+                label: l10n.profileFieldHeightCm,
                 field: 'height',
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
@@ -191,7 +193,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 height: 54,
                 child: ElevatedButton(
                   onPressed: _continue,
-                  child: const Text('Continue'),
+                  child: Text(l10n.continueButton),
                 ),
               ),
 

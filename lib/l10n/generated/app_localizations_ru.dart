@@ -263,7 +263,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get chatQuickEatToday => 'Что мне съесть сегодня?';
 
   @override
-  String get chatQuickTired => 'Сегодня я устал';
+  String get chatQuickTired => 'Сегодня нет сил';
 
   @override
   String get gymToday => 'Сегодня';
@@ -470,4 +470,248 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shopNoProducts => 'Товаров пока нет';
+
+  @override
+  String workoutSetsProgress(int done, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$done из $total подхода',
+      many: '$done из $total подходов',
+      few: '$done из $total подходов',
+      one: '$done из $total подхода',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String workoutSetCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n подхода',
+      many: '$n подходов',
+      few: '$n подхода',
+      one: '$n подход',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String workoutSetDone(int n) {
+    return 'Подход $n выполнен';
+  }
+
+  @override
+  String get workoutFinishTitle => 'Завершить тренировку?';
+
+  @override
+  String get workoutFinishNoSets =>
+      'Ни один подход не отмечен, поэтому тренировка не будет сохранена.';
+
+  @override
+  String workoutFinishSummary(int done, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: 'Выполнено $done из $total подхода.',
+      many: 'Выполнено $done из $total подходов.',
+      few: 'Выполнено $done из $total подходов.',
+      one: 'Выполнено $done из $total подхода.',
+    );
+    return '$_temp0 Тренировка будет сохранена в вашей истории.';
+  }
+
+  @override
+  String get workoutKeepGoing => 'Продолжить';
+
+  @override
+  String get workoutFinish => 'Завершить';
+
+  @override
+  String get workoutSaved => 'Тренировка сохранена в «Мой прогресс»';
+
+  @override
+  String get workoutNoExercises =>
+      'Упражнений пока нет. Добавьте их через «Изменить» на карточке тренировки.';
+
+  @override
+  String get workoutAddSet => 'Добавить подход';
+
+  @override
+  String get workoutFinishButton => 'Завершить тренировку';
+
+  @override
+  String get workoutColSet => 'Подх.';
+
+  @override
+  String get workoutColPrevious => 'Ранее';
+
+  @override
+  String get workoutColKg => 'Кг';
+
+  @override
+  String get workoutColReps => 'Повт.';
+
+  @override
+  String get gymCoachFirstTitle => 'Готовы к первой тренировке?';
+
+  @override
+  String gymCoachFirstMessage(String workout) {
+    return 'Начните с «$workout». После неё Felix скорректирует план.';
+  }
+
+  @override
+  String get gymCoachBackTitle => 'С возвращением';
+
+  @override
+  String gymCoachBackMessage(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days дня',
+      many: '$days дней',
+      few: '$days дня',
+      one: '$days день',
+    );
+    return 'Ваша последняя тренировка была $_temp0 назад. Лёгкое занятие сегодня поможет вернуться в ритм.';
+  }
+
+  @override
+  String get gymFinishCurrentTitle => 'Завершить текущую тренировку?';
+
+  @override
+  String gymFinishCurrentBody(String current, String next) {
+    return '«$current» ещё не завершена. Начать «$next» вместо неё?';
+  }
+
+  @override
+  String get gymMyWorkouts => 'Мои тренировки';
+
+  @override
+  String get gymNewWorkout => 'Новая тренировка';
+
+  @override
+  String get gymNewWorkoutHint => 'например, Плечи';
+
+  @override
+  String get gymAdd => 'Добавить';
+
+  @override
+  String get gymEditNameHint => 'Название тренировки';
+
+  @override
+  String get gymEditDelete => 'Удалить тренировку';
+
+  @override
+  String get gymEditAddExerciseHint => 'Добавить упражнение';
+
+  @override
+  String get gymEditSave => 'Сохранить';
+
+  @override
+  String get sportGym => 'Спортзал';
+
+  @override
+  String get sportFitness => 'Фитнес';
+
+  @override
+  String get sportCycling => 'Велоспорт';
+
+  @override
+  String get sportRunning => 'Бег';
+
+  @override
+  String get sportFootball => 'Футбол';
+
+  @override
+  String get sportWinterSports => 'Зимние виды спорта';
+
+  @override
+  String get sportWinterSportsTile => 'ЗИМНИЕ\nВИДЫ СПОРТА';
+
+  @override
+  String get tabDiscover => 'Обзор';
+
+  @override
+  String get tabShop => 'Магазин';
+
+  @override
+  String get tabHome => 'Главная';
+
+  @override
+  String get tabFelix => 'Felix';
+
+  @override
+  String get tabProfile => 'Профиль';
+
+  @override
+  String get homeTileProgress => 'МОЙ\nПРОГРЕСС';
+
+  @override
+  String get homeTileNutrition => 'МОЁ\nПИТАНИЕ';
+
+  @override
+  String get homeTileWorkouts => 'МОИ\nТРЕНИРОВКИ';
+
+  @override
+  String get homeTileShop => 'МАГАЗИН';
+
+  @override
+  String get homeTileMap => 'КАРТА\nFITRIX';
+
+  @override
+  String get homeMenuNutrition => 'Моё питание';
+
+  @override
+  String get homeMenuMap => 'Карта Fitrix';
+
+  @override
+  String get chatTyping => 'Felix печатает';
+
+  @override
+  String chatError(String error) {
+    return 'Ошибка: $error';
+  }
+
+  @override
+  String get chatStart => 'Начать';
+
+  @override
+  String get chatMessageHint => 'Сообщение...';
+
+  @override
+  String get chatAllChats => 'Все чаты';
+
+  @override
+  String get chatTapToRetry => 'Нажмите, чтобы повторить';
+
+  @override
+  String get comingSoon => 'Скоро';
+
+  @override
+  String get progressWeightTitle => 'Мой вес (кг)';
+
+  @override
+  String get progressCaloriesTitle => 'Калории: потреблено и сожжено';
+
+  @override
+  String signInCodeResent(String email) {
+    return 'Мы отправили новый код на $email';
+  }
+
+  @override
+  String get signInChangeEmail => 'Изменить email';
+
+  @override
+  String get profileFieldName => 'Имя';
+
+  @override
+  String get profileFieldSurname => 'Фамилия';
+
+  @override
+  String get profileFieldWeightKg => 'Вес, кг';
+
+  @override
+  String get profileFieldHeightCm => 'Рост, см';
 }

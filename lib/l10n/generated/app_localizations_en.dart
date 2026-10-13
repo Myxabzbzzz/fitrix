@@ -463,4 +463,240 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shopNoProducts => 'No products yet';
+
+  @override
+  String workoutSetsProgress(int done, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$done of $total sets',
+      one: '$done of $total set',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String workoutSetCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n sets',
+      one: '$n set',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String workoutSetDone(int n) {
+    return 'Set $n done';
+  }
+
+  @override
+  String get workoutFinishTitle => 'Finish workout?';
+
+  @override
+  String get workoutFinishNoSets =>
+      'No sets are checked off, so this workout won’t be saved.';
+
+  @override
+  String workoutFinishSummary(int done, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$done of $total sets completed.',
+      one: '$done of $total set completed.',
+    );
+    return '$_temp0 The workout will be saved to your history.';
+  }
+
+  @override
+  String get workoutKeepGoing => 'Keep going';
+
+  @override
+  String get workoutFinish => 'Finish';
+
+  @override
+  String get workoutSaved => 'Workout saved to My progress';
+
+  @override
+  String get workoutNoExercises =>
+      'No exercises yet. Add some with “Edit” on the workout card.';
+
+  @override
+  String get workoutAddSet => 'Add set';
+
+  @override
+  String get workoutFinishButton => 'Finish workout';
+
+  @override
+  String get workoutColSet => 'Set';
+
+  @override
+  String get workoutColPrevious => 'Previous';
+
+  @override
+  String get workoutColKg => 'Kg';
+
+  @override
+  String get workoutColReps => 'Reps';
+
+  @override
+  String get gymCoachFirstTitle => 'Ready for your first workout?';
+
+  @override
+  String gymCoachFirstMessage(String workout) {
+    return 'Start with $workout. Felix will adjust the plan after it.';
+  }
+
+  @override
+  String get gymCoachBackTitle => 'Welcome back';
+
+  @override
+  String gymCoachBackMessage(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '$days day',
+    );
+    return 'Your last workout was $_temp0 ago. A lighter session today gets you back on track.';
+  }
+
+  @override
+  String get gymFinishCurrentTitle => 'Finish current workout?';
+
+  @override
+  String gymFinishCurrentBody(String current, String next) {
+    return '“$current” is still in progress. Start “$next” instead?';
+  }
+
+  @override
+  String get gymMyWorkouts => 'My workouts';
+
+  @override
+  String get gymNewWorkout => 'New workout';
+
+  @override
+  String get gymNewWorkoutHint => 'e.g. Shoulders';
+
+  @override
+  String get gymAdd => 'Add';
+
+  @override
+  String get gymEditNameHint => 'Workout name';
+
+  @override
+  String get gymEditDelete => 'Delete workout';
+
+  @override
+  String get gymEditAddExerciseHint => 'Add exercise';
+
+  @override
+  String get gymEditSave => 'Save';
+
+  @override
+  String get sportGym => 'Gym';
+
+  @override
+  String get sportFitness => 'Fitness';
+
+  @override
+  String get sportCycling => 'Cycling';
+
+  @override
+  String get sportRunning => 'Running';
+
+  @override
+  String get sportFootball => 'Football';
+
+  @override
+  String get sportWinterSports => 'Winter sports';
+
+  @override
+  String get sportWinterSportsTile => 'WINTER\nSPORTS';
+
+  @override
+  String get tabDiscover => 'Discover';
+
+  @override
+  String get tabShop => 'Shop';
+
+  @override
+  String get tabHome => 'Home';
+
+  @override
+  String get tabFelix => 'Felix';
+
+  @override
+  String get tabProfile => 'Profile';
+
+  @override
+  String get homeTileProgress => 'MY\nPROGRESS';
+
+  @override
+  String get homeTileNutrition => 'MY\nNUTRITION';
+
+  @override
+  String get homeTileWorkouts => 'MY\nWORKOUTS';
+
+  @override
+  String get homeTileShop => 'SHOP';
+
+  @override
+  String get homeTileMap => 'FITRIX\nMAP';
+
+  @override
+  String get homeMenuNutrition => 'My nutrition';
+
+  @override
+  String get homeMenuMap => 'Fitrix map';
+
+  @override
+  String get chatTyping => 'Felix is typing';
+
+  @override
+  String chatError(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get chatStart => 'Start';
+
+  @override
+  String get chatMessageHint => 'Message...';
+
+  @override
+  String get chatAllChats => 'All chats';
+
+  @override
+  String get chatTapToRetry => 'Tap to retry';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get progressWeightTitle => 'My weight (kg)';
+
+  @override
+  String get progressCaloriesTitle => 'Calories: intake vs burn';
+
+  @override
+  String signInCodeResent(String email) {
+    return 'We sent a new code to $email';
+  }
+
+  @override
+  String get signInChangeEmail => 'Change email';
+
+  @override
+  String get profileFieldName => 'Name';
+
+  @override
+  String get profileFieldSurname => 'Surname';
+
+  @override
+  String get profileFieldWeightKg => 'Weight, kg';
+
+  @override
+  String get profileFieldHeightCm => 'Height, cm';
 }

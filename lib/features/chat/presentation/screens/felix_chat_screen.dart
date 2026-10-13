@@ -104,7 +104,8 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => Center(child: Text('Error: $error')),
+                error: (error, _) => Center(
+                  child: Text(AppLocalizations.of(context).chatError('$error'))),
               ),
             ),
             Column(
@@ -157,7 +158,7 @@ class _Header extends StatelessWidget {
             builder: (context) => IconButton(
               icon: const Icon(Icons.sort),
               color: palette.textPrimary,
-              tooltip: 'All chats',
+              tooltip: AppLocalizations.of(context).chatAllChats,
               onPressed: () => Scaffold.of(context).openDrawer(),
             ),
           ),
@@ -232,7 +233,7 @@ class _Composer extends StatelessWidget {
                       style: AppText.bodyRegular
                           .copyWith(color: palette.textPrimary),
                       decoration: InputDecoration.collapsed(
-                        hintText: 'Message...',
+                        hintText: AppLocalizations.of(context).chatMessageHint,
                         filled: false,
                         hintStyle:
                             AppText.bodyRegular.copyWith(color: palette.chartLabel),
@@ -282,7 +283,7 @@ class _AllChatsDrawer extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'All chats',
+                      AppLocalizations.of(context).chatAllChats,
                       style: AppText.headingS.copyWith(color: palette.textPrimary),
                     ),
                   ),

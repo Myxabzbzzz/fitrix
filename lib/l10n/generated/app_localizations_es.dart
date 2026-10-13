@@ -261,7 +261,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chatQuickEatToday => '¿Qué debería comer hoy?';
 
   @override
-  String get chatQuickTired => 'Hoy me siento cansado';
+  String get chatQuickTired => 'Hoy estoy sin energía';
 
   @override
   String get gymToday => 'Hoy';
@@ -463,4 +463,240 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get shopNoProducts => 'Aún no hay productos';
+
+  @override
+  String workoutSetsProgress(int done, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$done de $total series',
+      one: '$done de $total serie',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String workoutSetCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n series',
+      one: '$n serie',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String workoutSetDone(int n) {
+    return 'Serie $n hecha';
+  }
+
+  @override
+  String get workoutFinishTitle => '¿Terminar el entrenamiento?';
+
+  @override
+  String get workoutFinishNoSets =>
+      'No hay ninguna serie marcada, así que este entrenamiento no se guardará.';
+
+  @override
+  String workoutFinishSummary(int done, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$done de $total series completadas.',
+      one: '$done de $total serie completada.',
+    );
+    return '$_temp0 El entrenamiento se guardará en tu historial.';
+  }
+
+  @override
+  String get workoutKeepGoing => 'Seguir';
+
+  @override
+  String get workoutFinish => 'Terminar';
+
+  @override
+  String get workoutSaved => 'Entrenamiento guardado en Mi progreso';
+
+  @override
+  String get workoutNoExercises =>
+      'Aún no hay ejercicios. Añade algunos con “Editar” en la tarjeta del entrenamiento.';
+
+  @override
+  String get workoutAddSet => 'Añadir serie';
+
+  @override
+  String get workoutFinishButton => 'Terminar entrenamiento';
+
+  @override
+  String get workoutColSet => 'Serie';
+
+  @override
+  String get workoutColPrevious => 'Anterior';
+
+  @override
+  String get workoutColKg => 'Kg';
+
+  @override
+  String get workoutColReps => 'Reps';
+
+  @override
+  String get gymCoachFirstTitle => '¿Listo para tu primer entrenamiento?';
+
+  @override
+  String gymCoachFirstMessage(String workout) {
+    return 'Empieza con $workout. Felix ajustará el plan después.';
+  }
+
+  @override
+  String get gymCoachBackTitle => 'Bienvenido de nuevo';
+
+  @override
+  String gymCoachBackMessage(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days días',
+      one: '$days día',
+    );
+    return 'Tu último entrenamiento fue hace $_temp0. Una sesión más ligera hoy te devuelve al ritmo.';
+  }
+
+  @override
+  String get gymFinishCurrentTitle => '¿Terminar el entrenamiento actual?';
+
+  @override
+  String gymFinishCurrentBody(String current, String next) {
+    return '«$current» sigue en curso. ¿Empezar «$next» en su lugar?';
+  }
+
+  @override
+  String get gymMyWorkouts => 'Mis entrenamientos';
+
+  @override
+  String get gymNewWorkout => 'Nuevo entrenamiento';
+
+  @override
+  String get gymNewWorkoutHint => 'p. ej., Hombros';
+
+  @override
+  String get gymAdd => 'Añadir';
+
+  @override
+  String get gymEditNameHint => 'Nombre del entrenamiento';
+
+  @override
+  String get gymEditDelete => 'Eliminar entrenamiento';
+
+  @override
+  String get gymEditAddExerciseHint => 'Añadir ejercicio';
+
+  @override
+  String get gymEditSave => 'Guardar';
+
+  @override
+  String get sportGym => 'Gimnasio';
+
+  @override
+  String get sportFitness => 'Fitness';
+
+  @override
+  String get sportCycling => 'Ciclismo';
+
+  @override
+  String get sportRunning => 'Running';
+
+  @override
+  String get sportFootball => 'Fútbol';
+
+  @override
+  String get sportWinterSports => 'Deportes de invierno';
+
+  @override
+  String get sportWinterSportsTile => 'DEPORTES\nDE INVIERNO';
+
+  @override
+  String get tabDiscover => 'Descubrir';
+
+  @override
+  String get tabShop => 'Tienda';
+
+  @override
+  String get tabHome => 'Inicio';
+
+  @override
+  String get tabFelix => 'Felix';
+
+  @override
+  String get tabProfile => 'Perfil';
+
+  @override
+  String get homeTileProgress => 'MI\nPROGRESO';
+
+  @override
+  String get homeTileNutrition => 'MI\nNUTRICIÓN';
+
+  @override
+  String get homeTileWorkouts => 'MIS\nENTRENOS';
+
+  @override
+  String get homeTileShop => 'TIENDA';
+
+  @override
+  String get homeTileMap => 'MAPA\nFITRIX';
+
+  @override
+  String get homeMenuNutrition => 'Mi nutrición';
+
+  @override
+  String get homeMenuMap => 'Mapa Fitrix';
+
+  @override
+  String get chatTyping => 'Felix está escribiendo';
+
+  @override
+  String chatError(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get chatStart => 'Empezar';
+
+  @override
+  String get chatMessageHint => 'Mensaje...';
+
+  @override
+  String get chatAllChats => 'Todos los chats';
+
+  @override
+  String get chatTapToRetry => 'Toca para reintentar';
+
+  @override
+  String get comingSoon => 'Próximamente';
+
+  @override
+  String get progressWeightTitle => 'Mi peso (kg)';
+
+  @override
+  String get progressCaloriesTitle => 'Calorías: ingesta y gasto';
+
+  @override
+  String signInCodeResent(String email) {
+    return 'Hemos enviado un nuevo código a $email';
+  }
+
+  @override
+  String get signInChangeEmail => 'Cambiar correo';
+
+  @override
+  String get profileFieldName => 'Nombre';
+
+  @override
+  String get profileFieldSurname => 'Apellido';
+
+  @override
+  String get profileFieldWeightKg => 'Peso, kg';
+
+  @override
+  String get profileFieldHeightCm => 'Altura, cm';
 }

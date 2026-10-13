@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// App shell after onboarding: the 5-tab bar from the design
 /// (Discover · Shop · Home · Felix · Profile) plus the active workout sheet
@@ -54,24 +55,31 @@ class _TabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
 
     Widget icon(int index, IconData outlined, IconData filled, String label) {
-      return Icon(
-        index == currentIndex ? filled : outlined,
-        size: 26,
-        color: palette.tabInactive,
-        semanticLabel: label,
+      return Semantics(
+        label: label,
+        selected: index == currentIndex,
+        child: ExcludeSemantics(
+          child: Icon(
+            index == currentIndex ? filled : outlined,
+            size: 26,
+            color: palette.tabInactive,
+          ),
+        ),
       );
     }
 
     final felixSelected = currentIndex == 3;
     final items = <Widget>[
-      icon(0, Icons.explore_outlined, Icons.explore, 'Discover'),
-      icon(1, Icons.shopping_cart_outlined, Icons.shopping_cart, 'Shop'),
-      icon(2, Icons.home_outlined, Icons.home, 'Home'),
+      icon(0, Icons.explore_outlined, Icons.explore, l10n.tabDiscover),
+      icon(1, Icons.shopping_cart_outlined, Icons.shopping_cart, l10n.tabShop),
+      icon(2, Icons.home_outlined, Icons.home, l10n.tabHome),
       Semantics(
-        label: 'Felix',
+        label: l10n.tabFelix,
         image: true,
+        selected: felixSelected,
         child: ExcludeSemantics(
           child: DecoratedBox(
             key: const ValueKey('felix-ring'),
@@ -96,7 +104,7 @@ class _TabBar extends StatelessWidget {
           ),
         ),
       ),
-      icon(4, Icons.person_outline, Icons.person, 'Profile'),
+      icon(4, Icons.person_outline, Icons.person, l10n.tabProfile),
     ];
 
     return DecoratedBox(

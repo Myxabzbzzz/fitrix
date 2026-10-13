@@ -2,7 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/widgets/coach_card.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/features/workouts/data/workout_catalog.dart';
+import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_screen.dart';
+import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
 import 'package:fitrix/features/profile/presentation/screens/profile_tab_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -140,5 +149,89 @@ void main() {
       await tester.pumpAndSettle();
       expect(prefs.getString('language'), 'en');
     });
+  });
+
+  group('uz apostrophes', () {
+    test('o‘ and g‘ use U+2018, never an ASCII apostrophe', () {
+      final uz = _arb('uz');
+      for (final e in uz.entries) {
+        if (e.value is! String) continue;
+        expect(RegExp(r"[oOgG]'").hasMatch(e.value as String), isFalse,
+            reason: e.key);
+      }
+    });
+  });
+
+  group('localized workout copy', () {
+    Future<ProviderContainer> pumpRu(WidgetTester tester, Widget home) async {
+      tester.view.physicalSize = const Size(1170, 2532);
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final container = ProviderContainer(
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)]);
+      addTearDown(container.dispose);
+      container
+          .read(activeWorkoutProvider.notifier)
+          .start(WorkoutCatalog.defaults.first);
+      await tester.pumpWidget(UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          locale: const Locale('ru'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: home,
+        ),
+      ));
+      await tester.pump();
+      return container;
+    }
+
+    testWidgets('active workout sheet shows "x из y подходов" in ru',
+        (tester) async {
+      final container =
+          await pumpRu(tester, const Scaffold(body: ActiveWorkoutSheet()));
+      container.read(activeWorkoutExpandedProvider.notifier).state = true;
+      await tester.pumpAndSettle();
+      final total = container.read(activeWorkoutProvider)!.totalSets;
+      expect(total, greaterThanOrEqualTo(5));
+      expect(find.text('0 из $total подходов'), findsOneWidget);
+      expect(find.text('Добавить подход'), findsWidgets);
+      expect(find.text('Add set'), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('coach card renders in ru', (tester) async {
+      await pumpRu(tester, const SportWorkoutsScreen(sport: Sport.gym));
+      await tester.pumpAndSettle();
+      expect(find.byType(CoachCard), findsOneWidget);
+      expect(find.text('Готовы к первой тренировке?'), findsOneWidget);
+      expect(find.text('Ready for your first workout?'), findsNothing);
+    });
+  });
+
+  group('home tiles', () {
+    for (final language in ['ru', 'uz', 'es']) {
+      testWidgets('fit on iPhone SE in $language', (tester) async {
+        tester.view.physicalSize = const Size(375, 667) * 3;
+        tester.view.devicePixelRatio = 3;
+        addTearDown(tester.view.reset);
+        SharedPreferences.setMockInitialValues({
+          'language': language,
+          'onboarding_complete': true,
+          'user_name': 'Alex',
+        });
+        final storage = await SharedPreferences.getInstance();
+        final session = AppSession(storage);
+        await tester.pumpWidget(FitrixRoot(
+          prefs: storage,
+          session: session,
+          router: AppRouter.create(session),
+        ));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      });
+    }
   });
 }

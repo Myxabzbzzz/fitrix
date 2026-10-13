@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/features/shell/presentation/main_shell.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 Future<GoRouter> _pump(WidgetTester tester) async {
   tester.view.physicalSize = const Size(1170, 2532);
@@ -33,7 +34,11 @@ Future<GoRouter> _pump(WidgetTester tester) async {
   );
   await tester.pumpWidget(ProviderScope(
     overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
-    child: MaterialApp.router(routerConfig: router),
+    child: MaterialApp.router(
+      routerConfig: router,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+    ),
   ));
   await tester.pumpAndSettle();
   return router;
@@ -45,6 +50,34 @@ void main() {
     for (final l in ['Discover', 'Shop', 'Home', 'Felix', 'Profile']) {
       expect(find.bySemanticsLabel(l), findsWidgets, reason: l);
     }
+  });
+
+  testWidgets('the current tab is exposed as selected', (tester) async {
+    final handle = tester.ensureSemantics();
+    final router = await _pump(tester);
+    router.go('/t2');
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('Home').first),
+      matchesSemantics(
+          label: 'Home',
+          isSelected: true,
+          hasSelectedState: true,
+          hasTapAction: true,
+          hasFocusAction: true,
+          isFocusable: true),
+    );
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('Shop').first),
+      matchesSemantics(
+          label: 'Shop',
+          isSelected: false,
+          hasSelectedState: true,
+          hasTapAction: true,
+          hasFocusAction: true,
+          isFocusable: true),
+    );
+    handle.dispose();
   });
 
   testWidgets('tapping each tab switches to its branch', (tester) async {

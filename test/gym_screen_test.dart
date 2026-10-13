@@ -64,9 +64,9 @@ void main() {
   group('coachMessage', () {
     test('no history: first workout prompt', () {
       final m = coachMessage([], now)!;
-      expect(m.title, 'Ready for your first workout?');
-      expect(m.message, startsWith('Start with '));
-      expect(m.message, endsWith('Felix will adjust the plan after it.'));
+      expect(m.kind, CoachMessageKind.firstWorkout);
+      // 2026-10-13 is a Tuesday: the weekday is the fallback.
+      expect(m.today, 'Tuesday');
     });
 
     test('trained 1 day ago: null', () {
@@ -76,13 +76,15 @@ void main() {
 
     test('first workout names today\'s workout when given', () {
       final m = coachMessage([], now, todayWorkout: 'Legs')!;
-      expect(m.message, 'Start with Legs. Felix will adjust the plan after it.');
+      expect(m.kind, CoachMessageKind.firstWorkout);
+      expect(m.today, 'Legs');
     });
 
     test('calendar-day boundaries', () {
       expect(coachMessage([_done(DateTime(2026, 10, 11, 23))], now), isNull);
       final three = coachMessage([_done(DateTime(2026, 10, 10, 23))], now)!;
-      expect(three.message, contains('3 days ago'));
+      expect(three.kind, CoachMessageKind.welcomeBack);
+      expect(three.days, 3);
       // Late evening to early next morning is 1 day.
       expect(
           coachMessage(
@@ -94,14 +96,14 @@ void main() {
       // Clocks go forward in many zones between these dates.
       final m = coachMessage(
           [_done(DateTime(2026, 3, 28, 12))], DateTime(2026, 3, 31, 0, 30))!;
-      expect(m.message, contains('3 days ago'));
+      expect(m.days, 3);
     });
 
     test('trained 5 days ago: welcome back with n = 5', () {
       final m =
           coachMessage([_done(now.subtract(const Duration(days: 5)))], now)!;
-      expect(m.title, 'Welcome back');
-      expect(m.message, contains('5 days ago'));
+      expect(m.kind, CoachMessageKind.welcomeBack);
+      expect(m.days, 5);
     });
   });
 

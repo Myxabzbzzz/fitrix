@@ -14,6 +14,7 @@ import 'package:fitrix/features/auth/data/auth_failure.dart';
 import 'package:fitrix/features/auth/data/social_sign_in.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/auth/presentation/widgets/code_input.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Sign in with email: enter the address, then the 6-digit code from the
 /// email. New addresses get an account automatically. "Continue with
@@ -131,7 +132,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       _focusCode();
       if (!switchToCodeStep) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('We sent a new code to $email')),
+          SnackBar(
+              content: Text(
+                  AppLocalizations.of(context).signInCodeResent(email))),
         );
       }
     } catch (e) {
@@ -575,7 +578,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           ),
         TextButton(
           onPressed: _busy ? null : _changeEmail,
-          child: const Text('Change email'),
+          child: Text(AppLocalizations.of(context).signInChangeEmail),
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(

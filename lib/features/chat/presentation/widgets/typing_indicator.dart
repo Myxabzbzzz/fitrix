@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Three bouncing dots shown while Felix is preparing a reply.
 class TypingIndicator extends StatefulWidget {
@@ -27,7 +28,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'Felix is typing',
+      label: AppLocalizations.of(context).chatTyping,
       child: SizedBox(
         height: 18,
         child: AnimatedBuilder(

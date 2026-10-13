@@ -255,7 +255,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get chatQuickEatToday => 'Bugun nima yeyishim kerak?';
 
   @override
-  String get chatQuickTired => 'Bugun o\'zimni charchagan his qilyapman';
+  String get chatQuickTired => 'Bugun o‘zimni charchagan his qilyapman';
 
   @override
   String get gymToday => 'Bugun';
@@ -458,4 +458,217 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get shopNoProducts => 'Hozircha mahsulotlar yo‘q';
+
+  @override
+  String workoutSetsProgress(int done, int total) {
+    return '$done / $total yondashuv';
+  }
+
+  @override
+  String workoutSetCount(int n) {
+    return '$n yondashuv';
+  }
+
+  @override
+  String workoutSetDone(int n) {
+    return '$n-yondashuv bajarildi';
+  }
+
+  @override
+  String get workoutFinishTitle => 'Mashg‘ulotni yakunlaysizmi?';
+
+  @override
+  String get workoutFinishNoSets =>
+      'Birorta yondashuv belgilanmagan, shuning uchun mashg‘ulot saqlanmaydi.';
+
+  @override
+  String workoutFinishSummary(int done, int total) {
+    return '$total yondashuvdan $done tasi bajarildi. Mashg‘ulot tarixingizga saqlanadi.';
+  }
+
+  @override
+  String get workoutKeepGoing => 'Davom etish';
+
+  @override
+  String get workoutFinish => 'Yakunlash';
+
+  @override
+  String get workoutSaved =>
+      'Mashg‘ulot “Mening yutuqlarim” bo‘limiga saqlandi';
+
+  @override
+  String get workoutNoExercises =>
+      'Hozircha mashqlar yo‘q. Mashg‘ulot kartasidagi “Tahrirlash” orqali qo‘shing.';
+
+  @override
+  String get workoutAddSet => 'Yondashuv qo‘shish';
+
+  @override
+  String get workoutFinishButton => 'Mashg‘ulotni yakunlash';
+
+  @override
+  String get workoutColSet => 'Yond.';
+
+  @override
+  String get workoutColPrevious => 'Oldingi';
+
+  @override
+  String get workoutColKg => 'Kg';
+
+  @override
+  String get workoutColReps => 'Takror';
+
+  @override
+  String get gymCoachFirstTitle => 'Birinchi mashg‘ulotga tayyormisiz?';
+
+  @override
+  String gymCoachFirstMessage(String workout) {
+    return '$workout bilan boshlang. Undan keyin Felix rejani moslashtiradi.';
+  }
+
+  @override
+  String get gymCoachBackTitle => 'Qaytganingiz bilan';
+
+  @override
+  String gymCoachBackMessage(int days) {
+    return 'Oxirgi mashg‘ulotingiz $days kun oldin bo‘lgan. Bugungi yengil mashg‘ulot sizni izga qaytaradi.';
+  }
+
+  @override
+  String get gymFinishCurrentTitle => 'Joriy mashg‘ulotni yakunlaysizmi?';
+
+  @override
+  String gymFinishCurrentBody(String current, String next) {
+    return '“$current” hali davom etmoqda. Uning o‘rniga “$next” ni boshlaysizmi?';
+  }
+
+  @override
+  String get gymMyWorkouts => 'Mening mashg‘ulotlarim';
+
+  @override
+  String get gymNewWorkout => 'Yangi mashg‘ulot';
+
+  @override
+  String get gymNewWorkoutHint => 'masalan, Yelkalar';
+
+  @override
+  String get gymAdd => 'Qo‘shish';
+
+  @override
+  String get gymEditNameHint => 'Mashg‘ulot nomi';
+
+  @override
+  String get gymEditDelete => 'Mashg‘ulotni o‘chirish';
+
+  @override
+  String get gymEditAddExerciseHint => 'Mashq qo‘shish';
+
+  @override
+  String get gymEditSave => 'Saqlash';
+
+  @override
+  String get sportGym => 'Sport zali';
+
+  @override
+  String get sportFitness => 'Fitnes';
+
+  @override
+  String get sportCycling => 'Velosport';
+
+  @override
+  String get sportRunning => 'Yugurish';
+
+  @override
+  String get sportFootball => 'Futbol';
+
+  @override
+  String get sportWinterSports => 'Qishki sport turlari';
+
+  @override
+  String get sportWinterSportsTile => 'QISHKI\nSPORT';
+
+  @override
+  String get tabDiscover => 'Kashfiyot';
+
+  @override
+  String get tabShop => 'Do‘kon';
+
+  @override
+  String get tabHome => 'Bosh sahifa';
+
+  @override
+  String get tabFelix => 'Felix';
+
+  @override
+  String get tabProfile => 'Profil';
+
+  @override
+  String get homeTileProgress => 'MENING\nYUTUQLARIM';
+
+  @override
+  String get homeTileNutrition => 'MENING\nOVQATIM';
+
+  @override
+  String get homeTileWorkouts => 'MENING\nMASHQLARIM';
+
+  @override
+  String get homeTileShop => 'DO‘KON';
+
+  @override
+  String get homeTileMap => 'FITRIX\nXARITASI';
+
+  @override
+  String get homeMenuNutrition => 'Mening ovqatim';
+
+  @override
+  String get homeMenuMap => 'Fitrix xaritasi';
+
+  @override
+  String get chatTyping => 'Felix yozmoqda';
+
+  @override
+  String chatError(String error) {
+    return 'Xato: $error';
+  }
+
+  @override
+  String get chatStart => 'Boshlash';
+
+  @override
+  String get chatMessageHint => 'Xabar...';
+
+  @override
+  String get chatAllChats => 'Barcha chatlar';
+
+  @override
+  String get chatTapToRetry => 'Qayta urinish uchun bosing';
+
+  @override
+  String get comingSoon => 'Tez orada';
+
+  @override
+  String get progressWeightTitle => 'Mening vaznim (kg)';
+
+  @override
+  String get progressCaloriesTitle => 'Kaloriya: qabul va sarf';
+
+  @override
+  String signInCodeResent(String email) {
+    return 'Yangi kodni $email manziliga yubordik';
+  }
+
+  @override
+  String get signInChangeEmail => 'Emailni o‘zgartirish';
+
+  @override
+  String get profileFieldName => 'Ism';
+
+  @override
+  String get profileFieldSurname => 'Familiya';
+
+  @override
+  String get profileFieldWeightKg => 'Vazn, kg';
+
+  @override
+  String get profileFieldHeightCm => 'Bo‘y, sm';
 }

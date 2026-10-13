@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Bottom sheet for renaming a workout and adding / removing exercises.
 class EditWorkoutSheet extends ConsumerStatefulWidget {
@@ -69,6 +70,7 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -92,13 +94,13 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
                         fontWeight: FontWeight.w600,
                         color: palette.textPrimary,
                       ),
-                      decoration: const InputDecoration(
-                        hintText: 'Workout name',
+                      decoration: InputDecoration(
+                        hintText: l10n.gymEditNameHint,
                       ),
                     ),
                   ),
                   IconButton(
-                    tooltip: 'Delete workout',
+                    tooltip: l10n.gymEditDelete,
                     icon: const Icon(Icons.delete_outline),
                     color: palette.textSecondary,
                     onPressed: _delete,
@@ -147,8 +149,8 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
                   Expanded(
                     child: TextField(
                       controller: _exerciseController,
-                      decoration: const InputDecoration(
-                        hintText: 'Add exercise',
+                      decoration: InputDecoration(
+                        hintText: l10n.gymEditAddExerciseHint,
                       ),
                       onSubmitted: (_) => _addExercise(),
                     ),
@@ -170,7 +172,7 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
                   height: 48,
                   child: ElevatedButton(
                     onPressed: _save,
-                    child: const Text('Save'),
+                    child: Text(l10n.gymEditSave),
                   ),
                 ),
               ),

@@ -9,6 +9,7 @@ import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 
 /// "My workouts": a large tile per sport, each opening its list of workouts.
 class MyWorkoutsScreen extends ConsumerWidget {
@@ -38,7 +39,7 @@ class MyWorkoutsScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const ScreenTitle('My workouts'),
+            ScreenTitle(l10n.gymMyWorkouts),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(
@@ -50,7 +51,7 @@ class MyWorkoutsScreen extends ConsumerWidget {
                       child: Builder(
                         // The tile's own context, so the reveal starts there.
                         builder: (tileContext) => FeatureTile(
-                          label: sport.tileLabel,
+                          label: sport.localizedTileLabel(l10n),
                           labelSize: 24,
                           imageAsset: sport.imageAsset,
                           imageWidthFactor: 0.45,

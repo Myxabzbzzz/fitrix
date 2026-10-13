@@ -16,6 +16,7 @@ import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
 import 'package:fitrix/main.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 void _phoneSize(WidgetTester tester) {
   tester.view.physicalSize = const Size(1170, 2532); // 390 x 844
@@ -57,6 +58,8 @@ Future<ProviderContainer> _pumpSheet(WidgetTester tester) async {
   await tester.pumpWidget(UncontrolledProviderScope(
     container: container,
     child: const MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(body: ActiveWorkoutSheet()),
     ),
   ));

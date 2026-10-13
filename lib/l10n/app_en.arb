@@ -287,5 +287,153 @@
     }
   },
   "shopRetry": "Retry",
-  "shopNoProducts": "No products yet"
+  "shopNoProducts": "No products yet",
+  "workoutSetsProgress": "{total, plural, one{{done} of {total} set} other{{done} of {total} sets}}",
+  "@workoutSetsProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int",
+        "example": "3"
+      },
+      "total": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "workoutSetCount": "{n, plural, one{{n} set} other{{n} sets}}",
+  "@workoutSetCount": {
+    "placeholders": {
+      "n": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "workoutSetDone": "Set {n} done",
+  "@workoutSetDone": {
+    "placeholders": {
+      "n": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "workoutFinishTitle": "Finish workout?",
+  "workoutFinishNoSets": "No sets are checked off, so this workout won’t be saved.",
+  "workoutFinishSummary": "{total, plural, one{{done} of {total} set completed.} other{{done} of {total} sets completed.}} The workout will be saved to your history.",
+  "@workoutFinishSummary": {
+    "placeholders": {
+      "done": {
+        "type": "int",
+        "example": "3"
+      },
+      "total": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "workoutKeepGoing": "Keep going",
+  "workoutFinish": "Finish",
+  "workoutSaved": "Workout saved to My progress",
+  "workoutNoExercises": "No exercises yet. Add some with “Edit” on the workout card.",
+  "workoutAddSet": "Add set",
+  "workoutFinishButton": "Finish workout",
+  "workoutColSet": "Set",
+  "workoutColPrevious": "Previous",
+  "workoutColKg": "Kg",
+  "workoutColReps": "Reps",
+  "gymCoachFirstTitle": "Ready for your first workout?",
+  "gymCoachFirstMessage": "Start with {workout}. Felix will adjust the plan after it.",
+  "@gymCoachFirstMessage": {
+    "placeholders": {
+      "workout": {
+        "type": "String",
+        "example": "Legs"
+      }
+    }
+  },
+  "gymCoachBackTitle": "Welcome back",
+  "gymCoachBackMessage": "Your last workout was {days, plural, one{{days} day} other{{days} days}} ago. A lighter session today gets you back on track.",
+  "@gymCoachBackMessage": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "gymFinishCurrentTitle": "Finish current workout?",
+  "gymFinishCurrentBody": "“{current}” is still in progress. Start “{next}” instead?",
+  "@gymFinishCurrentBody": {
+    "placeholders": {
+      "current": {
+        "type": "String",
+        "example": "Legs"
+      },
+      "next": {
+        "type": "String",
+        "example": "Full body"
+      }
+    }
+  },
+  "gymMyWorkouts": "My workouts",
+  "gymNewWorkout": "New workout",
+  "gymNewWorkoutHint": "e.g. Shoulders",
+  "gymAdd": "Add",
+  "gymEditNameHint": "Workout name",
+  "gymEditDelete": "Delete workout",
+  "gymEditAddExerciseHint": "Add exercise",
+  "gymEditSave": "Save",
+  "sportGym": "Gym",
+  "sportFitness": "Fitness",
+  "sportCycling": "Cycling",
+  "sportRunning": "Running",
+  "sportFootball": "Football",
+  "sportWinterSports": "Winter sports",
+  "sportWinterSportsTile": "WINTER\nSPORTS",
+  "tabDiscover": "Discover",
+  "tabShop": "Shop",
+  "tabHome": "Home",
+  "tabFelix": "Felix",
+  "tabProfile": "Profile",
+  "homeTileProgress": "MY\nPROGRESS",
+  "homeTileNutrition": "MY\nNUTRITION",
+  "homeTileWorkouts": "MY\nWORKOUTS",
+  "homeTileShop": "SHOP",
+  "homeTileMap": "FITRIX\nMAP",
+  "homeMenuNutrition": "My nutrition",
+  "homeMenuMap": "Fitrix map",
+  "chatTyping": "Felix is typing",
+  "chatError": "Error: {error}",
+  "@chatError": {
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "timeout"
+      }
+    }
+  },
+  "chatStart": "Start",
+  "chatMessageHint": "Message...",
+  "chatAllChats": "All chats",
+  "chatTapToRetry": "Tap to retry",
+  "comingSoon": "Coming soon",
+  "progressWeightTitle": "My weight (kg)",
+  "progressCaloriesTitle": "Calories: intake vs burn",
+  "signInCodeResent": "We sent a new code to {email}",
+  "@signInCodeResent": {
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "alex@example.com"
+      }
+    }
+  },
+  "signInChangeEmail": "Change email",
+  "profileFieldName": "Name",
+  "profileFieldSurname": "Surname",
+  "profileFieldWeightKg": "Weight, kg",
+  "profileFieldHeightCm": "Height, cm"
 }

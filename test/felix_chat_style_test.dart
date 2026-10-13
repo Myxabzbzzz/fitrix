@@ -56,7 +56,11 @@ void main() {
               greeting: const ['Hi, I am Felix', 'Pick a goal'],
             ))),
       ],
-      child: const MaterialApp(home: ChatScreen()),
+      child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: ChatScreen(),
+      ),
     ));
     await tester.pump(const Duration(milliseconds: 100));
     await tester.pump(const Duration(milliseconds: 500));
