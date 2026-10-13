@@ -23,5 +23,8 @@
   "deleteAccountFailed": "No se pudo eliminar tu cuenta. {reason}",
   "undo": "Deshacer",
   "workoutDeleted": "«{name}» eliminado",
-  "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo."
+  "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.",
+  "chatQuickPlanWeek": "Planifica mi semana",
+  "chatQuickEatToday": "¿Qué debería comer hoy?",
+  "chatQuickTired": "Hoy me siento cansado"
 }

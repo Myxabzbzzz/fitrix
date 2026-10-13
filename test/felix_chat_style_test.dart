@@ -11,6 +11,8 @@ import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/screens/chat_screen.dart';
+import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
 
 /// Replies with [reply] chunks, holding the stream open until [release].
@@ -140,5 +142,56 @@ void main() {
     final header = find.descendant(of: find.byType(AppBar), matching: avatar);
     expect(tester.getSize(header), const Size(32, 32));
     expect(find.text(AppConstants.assistantSubtitle), findsOneWidget);
+  });
+
+  group('Felix tab', () {
+    Future<void> pumpFelix(WidgetTester tester) async {
+      tester.view.physicalSize = const Size(375, 667) * 3;
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          chatMessagesProvider
+              .overrideWith((ref) => ChatNotifier(ChatRepository(
+                    api,
+                    greeting: const ['Hi, I am Felix'],
+                  ))),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: FelixChatScreen(),
+        ),
+      ));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 500));
+    }
+
+    testWidgets(
+        'quick replies sit above the input, hide while streaming, '
+        'tap sends', (tester) async {
+      api.release = Completer<void>();
+      await pumpFelix(tester);
+
+      final composer = find.byKey(const ValueKey('chat-composer'));
+      final chips = find.byType(QuickReplyChip);
+      expect(find.descendant(of: composer, matching: chips), findsNWidgets(3));
+      expect(find.descendant(of: find.byType(ListView), matching: chips),
+          findsNothing);
+      expect(tester.getBottomLeft(chips.first).dy,
+          lessThanOrEqualTo(tester.getTopLeft(find.byType(TextField)).dy));
+      expect(tester.getSize(chips.first).height, 32);
+
+      await tester.tap(find.text('Plan my week'));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(api.sent.single, 'Plan my week');
+      expect(chips, findsNothing);
+
+      api.release.complete();
+      await tester.pumpAndSettle();
+      expect(chips, findsNWidgets(3));
+      expect(tester.takeException(), isNull);
+    });
   });
 }

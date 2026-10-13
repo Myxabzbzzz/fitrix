@@ -10,6 +10,7 @@ import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/features/transition/presentation/screens/chat_transition_screen.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
@@ -259,7 +260,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   size: size,
                   painter: _CirclePainter(
                     progress: _circleAnimation.value,
-                    color: palette.accent,
+                    color: ChatTransitionScreen.background,
                     center: _buttonCenter ??
                         Offset(size.width / 2, size.height - 100),
                     maxRadius: diagonal,

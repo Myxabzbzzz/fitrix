@@ -87,4 +87,13 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get syncFailed =>
       'Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.';
+
+  @override
+  String get chatQuickPlanWeek => 'Составь план на неделю';
+
+  @override
+  String get chatQuickEatToday => 'Что мне съесть сегодня?';
+
+  @override
+  String get chatQuickTired => 'Сегодня я устал';
 }

@@ -23,5 +23,8 @@
   "deleteAccountFailed": "Hisobni o‘chirib bo‘lmadi. {reason}",
   "undo": "Qaytarish",
   "workoutDeleted": "“{name}” o‘chirildi",
-  "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring."
+  "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.",
+  "chatQuickPlanWeek": "Haftamni rejalashtir",
+  "chatQuickEatToday": "Bugun nima yeyishim kerak?",
+  "chatQuickTired": "Bugun o'zimni charchagan his qilyapman"
 }

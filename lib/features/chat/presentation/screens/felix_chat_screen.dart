@@ -7,6 +7,8 @@ import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
+import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Chat currently open on the Felix tab.
 final selectedAssistantTopicProvider =
@@ -44,6 +46,7 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
     final topic = ref.watch(selectedAssistantTopicProvider);
     final messages = ref.watch(chatMessagesProviderFor(topic));
 
@@ -104,10 +107,27 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                 error: (error, _) => Center(child: Text('Error: $error')),
               ),
             ),
-            _Composer(
-              controller: _controller,
-              enabled: !isReplying,
-              onSend: () => _send(topic),
+            Column(
+              key: const ValueKey('chat-composer'),
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                QuickReplyBar(
+                  replies: [
+                    l10n.chatQuickPlanWeek,
+                    l10n.chatQuickEatToday,
+                    l10n.chatQuickTired,
+                  ],
+                  hidden: isReplying,
+                  onTap: (reply) => ref
+                      .read(chatMessagesProviderFor(topic).notifier)
+                      .sendMessage(reply, isQuickReply: true),
+                ),
+                _Composer(
+                  controller: _controller,
+                  enabled: !isReplying,
+                  onSend: () => _send(topic),
+                ),
+              ],
             ),
             const SizedBox(height: AppSpacing.xs),
           ],

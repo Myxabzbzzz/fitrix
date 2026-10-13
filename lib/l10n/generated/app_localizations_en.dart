@@ -88,4 +88,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get syncFailed =>
       'Couldn\'t sync. Check your connection and try again.';
+
+  @override
+  String get chatQuickPlanWeek => 'Plan my week';
+
+  @override
+  String get chatQuickEatToday => 'What should I eat today?';
+
+  @override
+  String get chatQuickTired => 'I feel tired today';
 }

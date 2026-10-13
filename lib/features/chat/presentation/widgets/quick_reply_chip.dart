@@ -55,18 +55,25 @@ class QuickReplyChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-        decoration: BoxDecoration(
-          color: palette.bubble,
-          borderRadius: AppRadius.mdAll,
-        ),
-        child: Text(
-          label,
-          style: AppText.body14.copyWith(color: palette.textPrimary),
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 32,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: palette.background,
+            borderRadius: AppRadius.fullAll,
+            border: Border.all(color: palette.border),
+          ),
+          child: Text(
+            label,
+            style: AppText.body14.copyWith(color: palette.textPrimary),
+          ),
         ),
       ),
     );

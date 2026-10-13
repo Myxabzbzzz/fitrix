@@ -245,6 +245,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t sync. Check your connection and try again.'**
   String get syncFailed;
+
+  /// No description provided for @chatQuickPlanWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan my week'**
+  String get chatQuickPlanWeek;
+
+  /// No description provided for @chatQuickEatToday.
+  ///
+  /// In en, this message translates to:
+  /// **'What should I eat today?'**
+  String get chatQuickEatToday;
+
+  /// No description provided for @chatQuickTired.
+  ///
+  /// In en, this message translates to:
+  /// **'I feel tired today'**
+  String get chatQuickTired;
 }
 
 class _AppLocalizationsDelegate

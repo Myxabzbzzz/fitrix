@@ -58,7 +58,7 @@ class ChatBubble extends StatelessWidget {
     } else {
       content = Text(
         message.content,
-        style: AppText.bodyRegular.copyWith(color: textColor),
+        style: AppText.body14.copyWith(color: textColor),
       );
     }
 
@@ -79,7 +79,7 @@ class ChatBubble extends StatelessWidget {
     );
 
     return Padding(
-      padding: EdgeInsets.only(bottom: lastInGroup ? AppSpacing.xs : 2),
+      padding: EdgeInsets.only(bottom: lastInGroup ? AppSpacing.md : 2),
       child: Row(
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,

@@ -77,7 +77,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get undo => 'Bekor qilish';
+  String get undo => 'Qaytarish';
 
   @override
   String workoutDeleted(String name) {
@@ -87,4 +87,13 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get syncFailed =>
       'Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.';
+
+  @override
+  String get chatQuickPlanWeek => 'Haftamni rejalashtir';
+
+  @override
+  String get chatQuickEatToday => 'Bugun nima yeyishim kerak?';
+
+  @override
+  String get chatQuickTired => 'Bugun o\'zimni charchagan his qilyapman';
 }
