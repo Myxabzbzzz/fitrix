@@ -246,8 +246,6 @@ abstract class AppLocalizations {
   /// **'Couldn\'t sync. Check your connection and try again.'**
   String get syncFailed;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   /// No description provided for @homeToday.
   ///
   /// In en, this message translates to:
@@ -469,7 +467,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For dinner, aim for about 40 g of protein. Chicken, rice and greens fit your plan.'**
   String get nutritionTipMessage;
-=======
+
   /// No description provided for @profileTitle.
   ///
   /// In en, this message translates to:
@@ -523,8 +521,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get profileThemeDark;
->>>>>>> t10
-=======
+
   /// No description provided for @chatQuickPlanWeek.
   ///
   /// In en, this message translates to:
@@ -542,7 +539,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I feel tired today'**
   String get chatQuickTired;
->>>>>>> t9
 }
 
 class _AppLocalizationsDelegate

@@ -90,8 +90,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t sync. Check your connection and try again.';
 
   @override
-<<<<<<< HEAD
-<<<<<<< HEAD
   String get homeToday => 'Today';
 
   @override
@@ -228,7 +226,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get nutritionTipMessage =>
       'For dinner, aim for about 40 g of protein. Chicken, rice and greens fit your plan.';
-=======
+
+  @override
   String get profileTitle => 'Profile';
 
   @override
@@ -254,8 +253,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileThemeDark => 'Dark';
->>>>>>> t10
-=======
+
+  @override
   String get chatQuickPlanWeek => 'Plan my week';
 
   @override
@@ -263,5 +262,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatQuickTired => 'I feel tired today';
->>>>>>> t9
 }

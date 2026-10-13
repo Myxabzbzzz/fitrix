@@ -40,8 +40,6 @@
       }
     }
   },
-<<<<<<< HEAD
-<<<<<<< HEAD
   "homeToday": "Today",
   "homeTodayMeta": "{count, plural, =1{1 exercise} other{{count} exercises}} · about {minutes} min",
   "@homeTodayMeta": {
@@ -153,8 +151,7 @@
         "type": "String"
       }
     }
-  }
-=======
+  },
   "profileTitle": "Profile",
   "profileWorkouts": "workouts",
   "profileDayStreak": "day streak",
@@ -163,11 +160,8 @@
   "profileTheme": "Theme",
   "profileThemeAuto": "Auto",
   "profileThemeLight": "Light",
-  "profileThemeDark": "Dark"
->>>>>>> t10
-=======
+  "profileThemeDark": "Dark",
   "chatQuickPlanWeek": "Plan my week",
   "chatQuickEatToday": "What should I eat today?",
   "chatQuickTired": "I feel tired today"
->>>>>>> t9
 }

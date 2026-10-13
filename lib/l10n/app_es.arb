@@ -24,8 +24,6 @@
   "undo": "Deshacer",
   "workoutDeleted": "«{name}» eliminado",
   "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.",
-<<<<<<< HEAD
-<<<<<<< HEAD
   "homeToday": "Hoy",
   "homeTodayMeta": "{count, plural, =1{1 ejercicio} other{{count} ejercicios}} · unos {minutes} min",
   "homeStart": "Empezar",
@@ -62,8 +60,7 @@
   "nutritionKcal": "{kcal} kcal",
   "nutritionTipEyebrow": "Consejo de Felix",
   "nutritionTipTitle": "Proteína en la cena",
-  "nutritionTipMessage": "En la cena apunta a unos 40 g de proteína. Pollo, arroz y verduras encajan en tu plan."
-=======
+  "nutritionTipMessage": "En la cena apunta a unos 40 g de proteína. Pollo, arroz y verduras encajan en tu plan.",
   "profileTitle": "Perfil",
   "profileWorkouts": "entrenamientos",
   "profileDayStreak": "días seguidos",
@@ -72,11 +69,8 @@
   "profileTheme": "Tema",
   "profileThemeAuto": "Auto",
   "profileThemeLight": "Claro",
-  "profileThemeDark": "Oscuro"
->>>>>>> t10
-=======
+  "profileThemeDark": "Oscuro",
   "chatQuickPlanWeek": "Planifica mi semana",
   "chatQuickEatToday": "¿Qué debería comer hoy?",
   "chatQuickTired": "Hoy me siento cansado"
->>>>>>> t9
 }

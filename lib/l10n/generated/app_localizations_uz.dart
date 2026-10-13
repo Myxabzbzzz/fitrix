@@ -89,8 +89,6 @@ class AppLocalizationsUz extends AppLocalizations {
       'Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.';
 
   @override
-<<<<<<< HEAD
-<<<<<<< HEAD
   String get homeToday => 'Bugun';
 
   @override
@@ -222,7 +220,8 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get nutritionTipMessage =>
       'Kechki ovqatga taxminan 40 g oqsil oling. Tovuq, guruch va ko‘kat rejangizga mos.';
-=======
+
+  @override
   String get profileTitle => 'Profil';
 
   @override
@@ -248,8 +247,8 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get profileThemeDark => 'Qorong‘i';
->>>>>>> t10
-=======
+
+  @override
   String get chatQuickPlanWeek => 'Haftamni rejalashtir';
 
   @override
@@ -257,5 +256,4 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get chatQuickTired => 'Bugun o\'zimni charchagan his qilyapman';
->>>>>>> t9
 }

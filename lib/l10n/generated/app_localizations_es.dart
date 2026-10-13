@@ -89,8 +89,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.';
 
   @override
-<<<<<<< HEAD
-<<<<<<< HEAD
   String get homeToday => 'Hoy';
 
   @override
@@ -228,7 +226,8 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get nutritionTipMessage =>
       'En la cena apunta a unos 40 g de proteína. Pollo, arroz y verduras encajan en tu plan.';
-=======
+
+  @override
   String get profileTitle => 'Perfil';
 
   @override
@@ -254,8 +253,8 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileThemeDark => 'Oscuro';
->>>>>>> t10
-=======
+
+  @override
   String get chatQuickPlanWeek => 'Planifica mi semana';
 
   @override
@@ -263,5 +262,4 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chatQuickTired => 'Hoy me siento cansado';
->>>>>>> t9
 }

@@ -89,8 +89,6 @@ class AppLocalizationsRu extends AppLocalizations {
       'Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.';
 
   @override
-<<<<<<< HEAD
-<<<<<<< HEAD
   String get homeToday => 'Сегодня';
 
   @override
@@ -230,7 +228,8 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get nutritionTipMessage =>
       'На ужин возьмите около 40 г белка. Курица, рис и зелень подойдут вашему плану.';
-=======
+
+  @override
   String get profileTitle => 'Профиль';
 
   @override
@@ -256,8 +255,8 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileThemeDark => 'Тёмная';
->>>>>>> t10
-=======
+
+  @override
   String get chatQuickPlanWeek => 'Составь план на неделю';
 
   @override
@@ -265,5 +264,4 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatQuickTired => 'Сегодня я устал';
->>>>>>> t9
 }

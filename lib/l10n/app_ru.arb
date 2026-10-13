@@ -24,8 +24,6 @@
   "undo": "Отменить",
   "workoutDeleted": "«{name}» удалена",
   "syncFailed": "Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.",
-<<<<<<< HEAD
-<<<<<<< HEAD
   "homeToday": "Сегодня",
   "homeTodayMeta": "{count, plural, one{{count} упражнение} few{{count} упражнения} many{{count} упражнений} other{{count} упражнения}} · около {minutes} мин",
   "homeStart": "Начать",
@@ -62,8 +60,7 @@
   "nutritionKcal": "{kcal} ккал",
   "nutritionTipEyebrow": "Совет Феликса",
   "nutritionTipTitle": "Белок на ужин",
-  "nutritionTipMessage": "На ужин возьмите около 40 г белка. Курица, рис и зелень подойдут вашему плану."
-=======
+  "nutritionTipMessage": "На ужин возьмите около 40 г белка. Курица, рис и зелень подойдут вашему плану.",
   "profileTitle": "Профиль",
   "profileWorkouts": "тренировок",
   "profileDayStreak": "дней подряд",
@@ -72,11 +69,8 @@
   "profileTheme": "Тема",
   "profileThemeAuto": "Авто",
   "profileThemeLight": "Светлая",
-  "profileThemeDark": "Тёмная"
->>>>>>> t10
-=======
+  "profileThemeDark": "Тёмная",
   "chatQuickPlanWeek": "Составь план на неделю",
   "chatQuickEatToday": "Что мне съесть сегодня?",
   "chatQuickTired": "Сегодня я устал"
->>>>>>> t9
 }
