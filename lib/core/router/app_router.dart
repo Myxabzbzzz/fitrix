@@ -21,6 +21,9 @@ import 'package:fitrix/features/workouts/presentation/screens/my_workouts_screen
 import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_screen.dart';
 import 'package:fitrix/features/progress/presentation/screens/progress_screen.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.dart';
+import 'package:fitrix/features/content/presentation/article_screen.dart';
+import 'package:fitrix/features/content/presentation/discover_screen.dart';
+import 'package:fitrix/features/shop/presentation/shop_screen.dart';
 
 class AppRouter {
   // Onboarding
@@ -44,6 +47,8 @@ class AppRouter {
   static const String progress = '/home/progress';
   static const String nutrition = '/home/nutrition';
   static const String fitrixMap = '/home/map';
+
+  static String article(String id) => '$discover/article/$id';
 
   static String sportWorkouts(Sport sport) => '$workouts/${sport.name}';
 
@@ -166,10 +171,15 @@ class AppRouter {
                   GoRoute(
                     path: discover,
                     name: 'discover',
-                    builder: (context, state) => const ComingSoonScreen(
-                      title: 'Discover',
-                      icon: Icons.explore_outlined,
-                    ),
+                    builder: (context, state) => const DiscoverScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'article/:id',
+                        name: 'article',
+                        builder: (context, state) =>
+                            ArticleScreen(id: state.pathParameters['id']!),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -178,11 +188,7 @@ class AppRouter {
                   GoRoute(
                     path: shop,
                     name: 'shop',
-                    builder: (context, state) => const ComingSoonScreen(
-                      title: 'Shop',
-                      icon: Icons.shopping_cart_outlined,
-                      imageAsset: 'assets/images/tile_shop.png',
-                    ),
+                    builder: (context, state) => const ShopScreen(),
                   ),
                 ],
               ),

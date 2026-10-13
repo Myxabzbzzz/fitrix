@@ -290,4 +290,177 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0 · $week this week';
   }
+
+  @override
+  String get discoverTitle => 'Discover';
+
+  @override
+  String get discoverNotifications => 'Notifications';
+
+  @override
+  String get discoverNoNotifications => 'No new notifications';
+
+  @override
+  String get discoverForYou => 'For you';
+
+  @override
+  String get discoverChallenges => 'Challenges';
+
+  @override
+  String get discoverPrograms => 'Programs';
+
+  @override
+  String get discoverArticles => 'Articles';
+
+  @override
+  String get discoverThisWeek => 'This week';
+
+  @override
+  String get discoverJoin => 'Join challenge';
+
+  @override
+  String get discoverJoined => 'Joined';
+
+  @override
+  String get discoverSignInToJoin => 'Sign in to join challenges';
+
+  @override
+  String get discoverSignIn => 'Sign in';
+
+  @override
+  String get discoverJoinFailed => 'Couldn’t join. Try again.';
+
+  @override
+  String get discoverProgramsForYou => 'Programs for you';
+
+  @override
+  String get discoverAll => 'All';
+
+  @override
+  String discoverProgramSoon(String title) {
+    return '$title: preview coming soon';
+  }
+
+  @override
+  String get discoverFelixEyebrow => 'Tip from Felix';
+
+  @override
+  String get discoverFelixTitle => 'Rest keeps you strong';
+
+  @override
+  String get discoverFelixMessage =>
+      'Two easy days a week lower injury risk and keep your lifts climbing.';
+
+  @override
+  String get discoverAskFelix => 'Ask Felix';
+
+  @override
+  String get discoverRead => 'Read';
+
+  @override
+  String discoverMinRead(int n) {
+    return '$n min read';
+  }
+
+  @override
+  String get discoverArticleMissing => 'This article isn’t available.';
+
+  @override
+  String get shopTitle => 'Shop';
+
+  @override
+  String shopCartLabel(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Cart, $n items',
+      one: 'Cart, 1 item',
+      zero: 'Cart, empty',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shopSearchHint => 'Search products';
+
+  @override
+  String get shopAll => 'All';
+
+  @override
+  String get shopCatSupplements => 'Supplements';
+
+  @override
+  String get shopCatEquipment => 'Equipment';
+
+  @override
+  String get shopCatApparel => 'Apparel';
+
+  @override
+  String get shopProBlurb =>
+      'Unlimited chats with Felix, custom plans and form checks.';
+
+  @override
+  String get shopProButton => 'Learn more';
+
+  @override
+  String get shopProSoonTitle => 'FITRIX Pro is coming soon';
+
+  @override
+  String get shopProSoonBody => 'We’ll let you know as soon as it’s ready.';
+
+  @override
+  String get shopGotIt => 'Got it';
+
+  @override
+  String shopNothingFound(String query) {
+    return 'Nothing found for “$query”.';
+  }
+
+  @override
+  String shopAdd(String name) {
+    return 'Add $name';
+  }
+
+  @override
+  String get shopCartTitle => 'Cart';
+
+  @override
+  String get shopClose => 'Close';
+
+  @override
+  String get shopRemoveOne => 'Remove one';
+
+  @override
+  String get shopAddOne => 'Add one';
+
+  @override
+  String get shopTotal => 'Total';
+
+  @override
+  String get shopPlaceOrder => 'Place order';
+
+  @override
+  String get shopCartEmpty =>
+      'Your cart is empty. Tap + on any product to add it.';
+
+  @override
+  String get shopOrderPlaced => 'Order placed';
+
+  @override
+  String get shopSignInToOrder => 'Sign in to place an order';
+
+  @override
+  String get shopOrderFailed =>
+      'Couldn’t place the order. Check your connection.';
+
+  @override
+  String shopOrderRejected(String message) {
+    return 'Order rejected: $message';
+  }
+
+  @override
+  String get shopRetry => 'Retry';
+
+  @override
+  String get shopNoProducts => 'No products yet';
 }
