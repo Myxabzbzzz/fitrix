@@ -163,5 +163,31 @@
   "profileThemeDark": "Dark",
   "chatQuickPlanWeek": "Plan my week",
   "chatQuickEatToday": "What should I eat today?",
-  "chatQuickTired": "I feel tired today"
+  "chatQuickTired": "I feel tired today",
+  "gymToday": "Today",
+  "gymStart": "Start",
+  "gymDone": "Done",
+  "gymAskFelix": "Ask",
+  "gymCoachEyebrow": "AI {sport} COACH",
+  "@gymCoachEyebrow": {
+    "placeholders": {
+      "sport": {
+        "type": "String",
+        "example": "Gym"
+      }
+    }
+  },
+  "gymTileCaption": "{plans, plural, one{{plans} plan} other{{plans} plans}} · {week} this week",
+  "@gymTileCaption": {
+    "placeholders": {
+      "plans": {
+        "type": "int",
+        "example": "3"
+      },
+      "week": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  }
 }

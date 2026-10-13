@@ -264,4 +264,34 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatQuickTired => 'Сегодня я устал';
+
+  @override
+  String get gymToday => 'Сегодня';
+
+  @override
+  String get gymStart => 'Начать';
+
+  @override
+  String get gymDone => 'Готово';
+
+  @override
+  String get gymAskFelix => 'Спросить';
+
+  @override
+  String gymCoachEyebrow(String sport) {
+    return 'ИИ-ТРЕНЕР: $sport';
+  }
+
+  @override
+  String gymTileCaption(int plans, int week) {
+    String _temp0 = intl.Intl.pluralLogic(
+      plans,
+      locale: localeName,
+      other: '$plans плана',
+      many: '$plans планов',
+      few: '$plans плана',
+      one: '$plans план',
+    );
+    return '$_temp0 · на этой неделе: $week';
+  }
 }

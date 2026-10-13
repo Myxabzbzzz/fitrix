@@ -72,5 +72,11 @@
   "profileThemeDark": "Тёмная",
   "chatQuickPlanWeek": "Составь план на неделю",
   "chatQuickEatToday": "Что мне съесть сегодня?",
-  "chatQuickTired": "Сегодня я устал"
+  "chatQuickTired": "Сегодня я устал",
+  "gymToday": "Сегодня",
+  "gymStart": "Начать",
+  "gymDone": "Готово",
+  "gymAskFelix": "Спросить",
+  "gymCoachEyebrow": "ИИ-ТРЕНЕР: {sport}",
+  "gymTileCaption": "{plans, plural, one{{plans} план} few{{plans} плана} many{{plans} планов} other{{plans} плана}} · на этой неделе: {week}"
 }

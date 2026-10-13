@@ -72,5 +72,11 @@
   "profileThemeDark": "Qorong‘i",
   "chatQuickPlanWeek": "Haftamni rejalashtir",
   "chatQuickEatToday": "Bugun nima yeyishim kerak?",
-  "chatQuickTired": "Bugun o'zimni charchagan his qilyapman"
+  "chatQuickTired": "Bugun o'zimni charchagan his qilyapman",
+  "gymToday": "Bugun",
+  "gymStart": "Boshlash",
+  "gymDone": "Tayyor",
+  "gymAskFelix": "So‘rash",
+  "gymCoachEyebrow": "AI TRENER: {sport}",
+  "gymTileCaption": "{plans, plural, one{{plans} reja} other{{plans} reja}} · shu hafta: {week}"
 }

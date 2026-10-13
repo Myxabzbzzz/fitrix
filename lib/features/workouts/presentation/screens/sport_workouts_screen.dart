@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/coach_card.dart';
+import 'package:fitrix/core/widgets/workout_card.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
+import 'package:fitrix/features/workouts/domain/coach_message.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -14,7 +23,14 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 class SportWorkoutsScreen extends ConsumerStatefulWidget {
   final Sport sport;
 
-  const SportWorkoutsScreen({super.key, required this.sport});
+  /// Clock, injectable for tests.
+  final DateTime Function() now;
+
+  const SportWorkoutsScreen({
+    super.key,
+    required this.sport,
+    this.now = DateTime.now,
+  });
 
   @override
   ConsumerState<SportWorkoutsScreen> createState() =>
@@ -95,10 +111,34 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
     );
   }
 
+  /// Opens this sport's Felix trainer chat (the Felix tab).
+  void _askFelix() {
+    ref.read(selectedAssistantTopicProvider.notifier).state =
+        AssistantTopic.all.firstWhere((t) => t.sport == _sport);
+    context.go(AppRouter.felix);
+  }
+
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
     final workouts = ref.watch(workoutsForSportProvider(_sport));
+    final history = ref
+        .watch(workoutHistoryProvider)
+        .where((w) => w.sport == _sport)
+        .toList();
+    final now = widget.now();
+    final localeName = Localizations.localeOf(context).toString();
+    // Room for a 2-line title at the user's text size.
+    final cellHeight = 128 + MediaQuery.textScalerOf(context).scale(16) * 2 - 32;
+    final coach = coachMessage(history, now,
+        todayWorkout: workouts.isEmpty ? null : workouts.first.name);
+
+    bool doneToday(WorkoutTemplate t) => history.any((w) =>
+        w.templateId == t.id &&
+        w.finishedAt.year == now.year &&
+        w.finishedAt.month == now.month &&
+        w.finishedAt.day == now.day);
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -118,40 +158,58 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
               child: SyncRefresh(
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(31, 24, 31, 24),
+                  padding: const EdgeInsets.all(AppSpacing.md),
                   children: [
-                    if (workouts.isNotEmpty)
-                      _SwipeToDelete(
-                        key: ValueKey('swipe-${workouts.first.id}'),
-                        onDelete: () => _delete(workouts.first),
-                        child: _TodayWorkoutCard(
-                          workout: workouts.first,
-                          onStart: () => _start(workouts.first),
-                          onEdit: () => _edit(workouts.first),
-                        ),
-                      ),
-                    const SizedBox(height: 17),
-                    GridView.count(
+                    GridView(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 17,
-                      crossAxisSpacing: 17,
-                      childAspectRatio: 148 / 96,
+                      gridDelegate:
+                          SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: AppSpacing.md,
+                        crossAxisSpacing: AppSpacing.md,
+                        mainAxisExtent: cellHeight,
+                      ),
                       children: [
-                        for (final workout in workouts.skip(1))
+                        for (var i = 0; i < workouts.length; i++)
                           _SwipeToDelete(
-                            key: ValueKey('swipe-${workout.id}'),
-                            onDelete: () => _delete(workout),
-                            child: _WorkoutTile(
-                              workout: workout,
-                              onStart: () => _start(workout),
-                              onEdit: () => _edit(workout),
+                            key: ValueKey('swipe-${workouts[i].id}'),
+                            onDelete: () => _delete(workouts[i]),
+                            child: GestureDetector(
+                              onLongPress: () => _edit(workouts[i]),
+                              child: WorkoutCard(
+                                title: workouts[i].name,
+                                dayLabel: i == 0
+                                    ? l10n.gymToday
+                                    : DateFormat('EEEE', localeName)
+                                        .format(now.add(Duration(days: i))),
+                                today: i == 0,
+                                done: doneToday(workouts[i]),
+                                startLabel: l10n.gymStart,
+                                doneLabel: l10n.gymDone,
+                                onStart: () => _start(workouts[i]),
+                              ),
                             ),
                           ),
-                        _AddWorkoutTile(onTap: _addWorkout),
+                        AddWorkoutCard(onTap: _addWorkout),
                       ],
                     ),
+                    if (coach != null) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      CoachCard(
+                        eyebrow: l10n.gymCoachEyebrow(_sport.label),
+                        title: coach.title,
+                        message: coach.message,
+                        imageAsset: 'assets/images/felix_avatar.png',
+                        primaryLabel:
+                            workouts.isEmpty ? null : l10n.gymStart,
+                        onPrimary: workouts.isEmpty
+                            ? null
+                            : () => _start(workouts.first),
+                        secondaryLabel: l10n.gymAskFelix,
+                        onSecondary: _askFelix,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -205,165 +263,6 @@ class _NewWorkoutDialogState extends State<_NewWorkoutDialog> {
   }
 }
 
-class _TodayWorkoutCard extends StatelessWidget {
-  final WorkoutTemplate workout;
-  final VoidCallback onStart;
-  final VoidCallback onEdit;
-
-  const _TodayWorkoutCard({
-    required this.workout,
-    required this.onStart,
-    required this.onEdit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-    final meta = [
-      formatDuration(workout.estimatedDuration, withSeconds: false),
-      '${workout.exercises.length} exercises',
-      workout.focus,
-    ].join(' · ');
-
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-      decoration: BoxDecoration(
-        color: palette.tile,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-            decoration: BoxDecoration(
-              color: palette.buttonMuted.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.play_arrow, size: 12, color: palette.textPrimary),
-                const SizedBox(width: 2),
-                Text(
-                  'TODAY’S WORKOUT',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: palette.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            workout.name,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: palette.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            meta,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: palette.textSecondary,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                flex: 131,
-                child: _SmallButton(
-                  label: 'Start',
-                  primary: true,
-                  height: 32,
-                  fontSize: 16,
-                  onTap: onStart,
-                ),
-              ),
-              const SizedBox(width: 9),
-              Expanded(
-                flex: 57,
-                child: _SmallButton(
-                  label: 'Edit',
-                  height: 32,
-                  fontSize: 16,
-                  onTap: onEdit,
-                ),
-              ),
-              const Spacer(flex: 70),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _WorkoutTile extends StatelessWidget {
-  final WorkoutTemplate workout;
-  final VoidCallback onStart;
-  final VoidCallback onEdit;
-
-  const _WorkoutTile({
-    required this.workout,
-    required this.onStart,
-    required this.onEdit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-
-    return Material(
-      color: palette.tile,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onLongPress: onEdit,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  workout.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    height: 1.1,
-                    color: palette.textPrimary,
-                  ),
-                ),
-              ),
-              Center(
-                child: SizedBox(
-                  width: 92,
-                  child: _SmallButton(
-                    label: 'Start',
-                    height: 23,
-                    fontSize: 12,
-                    onTap: onStart,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 /// Swipe left to delete: a red strip with a bin follows the finger, with a
 /// tap of haptics once the swipe is far enough to delete.
 class _SwipeToDelete extends StatelessWidget {
@@ -389,92 +288,19 @@ class _SwipeToDelete extends StatelessWidget {
       onDismissed: (_) => onDelete(),
       background: DecoratedBox(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.error,
-          borderRadius: BorderRadius.circular(8),
+          color: AppPalette.of(context).danger,
+          borderRadius: AppRadius.smAll,
         ),
-        child: const Align(
+        child: Align(
           alignment: Alignment.centerRight,
           child: Padding(
-            padding: EdgeInsets.only(right: 20),
-            child: Icon(Icons.delete_outline, color: Colors.white),
+            padding: const EdgeInsets.only(right: AppSpacing.md),
+            child: Icon(Icons.delete_outline,
+                color: AppPalette.of(context).onAccent),
           ),
         ),
       ),
       child: child,
-    );
-  }
-}
-
-class _AddWorkoutTile extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _AddWorkoutTile({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-
-    return Material(
-      color: palette.tile,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        child: Center(
-          child: Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: palette.buttonMuted,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.add, color: palette.textPrimary),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SmallButton extends StatelessWidget {
-  final String label;
-  final bool primary;
-  final double height;
-  final double fontSize;
-  final VoidCallback onTap;
-
-  const _SmallButton({
-    required this.label,
-    required this.height,
-    required this.fontSize,
-    required this.onTap,
-    this.primary = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-
-    return Material(
-      color: primary ? palette.accent : palette.buttonMuted,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        child: SizedBox(
-          height: height,
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w600,
-                color: primary ? Colors.white : palette.textPrimary,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

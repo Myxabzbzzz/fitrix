@@ -256,4 +256,32 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get chatQuickTired => 'Bugun o\'zimni charchagan his qilyapman';
+
+  @override
+  String get gymToday => 'Bugun';
+
+  @override
+  String get gymStart => 'Boshlash';
+
+  @override
+  String get gymDone => 'Tayyor';
+
+  @override
+  String get gymAskFelix => 'So‘rash';
+
+  @override
+  String gymCoachEyebrow(String sport) {
+    return 'AI TRENER: $sport';
+  }
+
+  @override
+  String gymTileCaption(int plans, int week) {
+    String _temp0 = intl.Intl.pluralLogic(
+      plans,
+      locale: localeName,
+      other: '$plans reja',
+      one: '$plans reja',
+    );
+    return '$_temp0 · shu hafta: $week';
+  }
 }

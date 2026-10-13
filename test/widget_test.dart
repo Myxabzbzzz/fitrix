@@ -236,7 +236,7 @@ void main() {
 
     await tester.tap(find.text('GYM'));
     await tester.pumpAndSettle();
-    expect(find.text('TODAY’S WORKOUT'), findsOneWidget);
+    expect(find.text('TODAY'), findsOneWidget);
     expect(find.text('Chest and Biceps'), findsOneWidget);
 
     await tester.tap(find.text('Start').first);

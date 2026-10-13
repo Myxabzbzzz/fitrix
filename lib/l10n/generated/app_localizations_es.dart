@@ -262,4 +262,32 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chatQuickTired => 'Hoy me siento cansado';
+
+  @override
+  String get gymToday => 'Hoy';
+
+  @override
+  String get gymStart => 'Empezar';
+
+  @override
+  String get gymDone => 'Hecho';
+
+  @override
+  String get gymAskFelix => 'Preguntar';
+
+  @override
+  String gymCoachEyebrow(String sport) {
+    return 'ENTRENADOR IA: $sport';
+  }
+
+  @override
+  String gymTileCaption(int plans, int week) {
+    String _temp0 = intl.Intl.pluralLogic(
+      plans,
+      locale: localeName,
+      other: '$plans planes',
+      one: '$plans plan',
+    );
+    return '$_temp0 · $week esta semana';
+  }
 }
