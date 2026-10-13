@@ -23,5 +23,11 @@
   "deleteAccountFailed": "No se pudo eliminar tu cuenta. {reason}",
   "undo": "Deshacer",
   "workoutDeleted": "«{name}» eliminado",
-  "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo."
+  "syncFailed": "No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.",
+  "gymToday": "Hoy",
+  "gymStart": "Empezar",
+  "gymDone": "Hecho",
+  "gymAskFelix": "Preguntar a Felix",
+  "gymCoachEyebrow": "ENTRENADOR IA: {sport}",
+  "gymTileCaption": "{plans} planes · {week} esta semana"
 }

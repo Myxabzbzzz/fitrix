@@ -23,5 +23,11 @@
   "deleteAccountFailed": "Hisobni o‘chirib bo‘lmadi. {reason}",
   "undo": "Qaytarish",
   "workoutDeleted": "“{name}” o‘chirildi",
-  "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring."
+  "syncFailed": "Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.",
+  "gymToday": "Bugun",
+  "gymStart": "Boshlash",
+  "gymDone": "Tayyor",
+  "gymAskFelix": "Feliksdan so‘rash",
+  "gymCoachEyebrow": "AI TRENER: {sport}",
+  "gymTileCaption": "Rejalar: {plans} · shu hafta: {week}"
 }

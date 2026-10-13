@@ -39,5 +39,31 @@
         "example": "Push day"
       }
     }
+  },
+  "gymToday": "Today",
+  "gymStart": "Start",
+  "gymDone": "Done",
+  "gymAskFelix": "Ask Felix",
+  "gymCoachEyebrow": "AI {sport} COACH",
+  "@gymCoachEyebrow": {
+    "placeholders": {
+      "sport": {
+        "type": "String",
+        "example": "Gym"
+      }
+    }
+  },
+  "gymTileCaption": "{plans} plans · {week} this week",
+  "@gymTileCaption": {
+    "placeholders": {
+      "plans": {
+        "type": "int",
+        "example": "3"
+      },
+      "week": {
+        "type": "int",
+        "example": "2"
+      }
+    }
   }
 }

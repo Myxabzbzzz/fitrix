@@ -77,7 +77,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get undo => 'Bekor qilish';
+  String get undo => 'Qaytarish';
 
   @override
   String workoutDeleted(String name) {
@@ -87,4 +87,26 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get syncFailed =>
       'Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.';
+
+  @override
+  String get gymToday => 'Bugun';
+
+  @override
+  String get gymStart => 'Boshlash';
+
+  @override
+  String get gymDone => 'Tayyor';
+
+  @override
+  String get gymAskFelix => 'Feliksdan so‘rash';
+
+  @override
+  String gymCoachEyebrow(String sport) {
+    return 'AI TRENER: $sport';
+  }
+
+  @override
+  String gymTileCaption(int plans, int week) {
+    return 'Rejalar: $plans · shu hafta: $week';
+  }
 }

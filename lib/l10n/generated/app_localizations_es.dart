@@ -87,4 +87,26 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get syncFailed =>
       'No se pudo sincronizar. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get gymToday => 'Hoy';
+
+  @override
+  String get gymStart => 'Empezar';
+
+  @override
+  String get gymDone => 'Hecho';
+
+  @override
+  String get gymAskFelix => 'Preguntar a Felix';
+
+  @override
+  String gymCoachEyebrow(String sport) {
+    return 'ENTRENADOR IA: $sport';
+  }
+
+  @override
+  String gymTileCaption(int plans, int week) {
+    return '$plans planes · $week esta semana';
+  }
 }

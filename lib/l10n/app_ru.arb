@@ -23,5 +23,11 @@
   "deleteAccountFailed": "Не удалось удалить аккаунт. {reason}",
   "undo": "Отменить",
   "workoutDeleted": "«{name}» удалена",
-  "syncFailed": "Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз."
+  "syncFailed": "Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.",
+  "gymToday": "Сегодня",
+  "gymStart": "Начать",
+  "gymDone": "Готово",
+  "gymAskFelix": "Спросить Феликса",
+  "gymCoachEyebrow": "ИИ-ТРЕНЕР: {sport}",
+  "gymTileCaption": "Планов: {plans} · на этой неделе: {week}"
 }

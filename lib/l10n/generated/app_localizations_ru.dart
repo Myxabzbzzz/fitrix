@@ -87,4 +87,26 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get syncFailed =>
       'Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.';
+
+  @override
+  String get gymToday => 'Сегодня';
+
+  @override
+  String get gymStart => 'Начать';
+
+  @override
+  String get gymDone => 'Готово';
+
+  @override
+  String get gymAskFelix => 'Спросить Феликса';
+
+  @override
+  String gymCoachEyebrow(String sport) {
+    return 'ИИ-ТРЕНЕР: $sport';
+  }
+
+  @override
+  String gymTileCaption(int plans, int week) {
+    return 'Планов: $plans · на этой неделе: $week';
+  }
 }

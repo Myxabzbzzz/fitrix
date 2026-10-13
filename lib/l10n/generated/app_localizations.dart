@@ -245,6 +245,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t sync. Check your connection and try again.'**
   String get syncFailed;
+
+  /// No description provided for @gymToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get gymToday;
+
+  /// No description provided for @gymStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get gymStart;
+
+  /// No description provided for @gymDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get gymDone;
+
+  /// No description provided for @gymAskFelix.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Felix'**
+  String get gymAskFelix;
+
+  /// No description provided for @gymCoachEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'AI {sport} COACH'**
+  String gymCoachEyebrow(String sport);
+
+  /// No description provided for @gymTileCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'{plans} plans · {week} this week'**
+  String gymTileCaption(int plans, int week);
 }
 
 class _AppLocalizationsDelegate
