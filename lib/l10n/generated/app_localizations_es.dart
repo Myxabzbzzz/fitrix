@@ -988,4 +988,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get shopOrderUnavailable =>
       'Algunos artículos ya no están disponibles. Actualiza tu carrito e inténtalo de nuevo.';
+
+  @override
+  String get workoutKeyboardDone => 'Listo';
+
+  @override
+  String get workoutEditLabel => 'Editar entrenamiento';
 }

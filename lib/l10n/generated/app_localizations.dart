@@ -1709,6 +1709,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Some items are no longer available. Update your cart and try again.'**
   String get shopOrderUnavailable;
+
+  /// No description provided for @workoutKeyboardDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get workoutKeyboardDone;
+
+  /// No description provided for @workoutEditLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit workout'**
+  String get workoutEditLabel;
 }
 
 class _AppLocalizationsDelegate

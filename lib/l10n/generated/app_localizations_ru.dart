@@ -1006,4 +1006,10 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get shopOrderUnavailable =>
       'Некоторые товары больше недоступны. Обновите корзину и попробуйте снова.';
+
+  @override
+  String get workoutKeyboardDone => 'Готово';
+
+  @override
+  String get workoutEditLabel => 'Редактировать тренировку';
 }
