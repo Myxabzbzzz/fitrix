@@ -16,24 +16,27 @@ void main() {
   });
 
   test('OrderException propagates', () async {
-    final remote = FakeContentSource()..error = OrderException('unknown product');
+    final remote = FakeContentSource()
+      ..error = OrderException('unknown product');
     final shop = ShopRepository(ContentRepository(remote, () async => {}));
     expect(() => shop.placeOrder({'a': 1}), throwsA(isA<OrderException>()));
   });
 
   test('products fall back to the seed offline', () async {
     final remote = FakeContentSource()..error = const SocketException('x');
-    final shop = ShopRepository(ContentRepository(remote, () async => {
-          'products': [
-            {
-              'id': 'p',
-              'name': 'P',
-              'category': 'apparel',
-              'price_cents': 5,
-              'currency': 'USD',
-            }
-          ]
-        }));
+    final shop = ShopRepository(ContentRepository(
+        remote,
+        () async => {
+              'products': [
+                {
+                  'id': 'p',
+                  'name': 'P',
+                  'category': 'apparel',
+                  'price_cents': 5,
+                  'currency': 'USD',
+                }
+              ]
+            }));
     expect((await shop.products()).single.id, 'p');
   });
 }

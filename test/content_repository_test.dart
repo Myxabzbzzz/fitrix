@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/features/content/providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fitrix/features/content/data/content_repository.dart';
 
@@ -57,9 +59,11 @@ Future<Map<String, dynamic>> _seed() async => {
     };
 
 void main() {
+  _extra();
   test('falls back to the seed when the remote throws SocketException',
       () async {
-    final remote = FakeContentSource()..error = const SocketException('offline');
+    final remote = FakeContentSource()
+      ..error = const SocketException('offline');
     final repo = ContentRepository(remote, _seed);
     final programs = await repo.programs();
     expect(programs.single.id, 'seed-prog');
@@ -75,11 +79,7 @@ void main() {
     final remote = FakeContentSource()
       ..programTable = const [
         Program(
-            id: 'remote',
-            title: 'R',
-            meta: 'm',
-            level: 'medium',
-            sport: 'gym')
+            id: 'remote', title: 'R', meta: 'm', level: 'medium', sport: 'gym')
       ];
     final repo = ContentRepository(remote, _seed);
     expect((await repo.programs()).single.id, 'remote');
@@ -112,5 +112,35 @@ void main() {
     expect(await repo.joinedChallenges('u1'), {'c'});
     await repo.leaveChallenge('c', 'u1');
     expect(await repo.joinedChallenges('u1'), isEmpty);
+  });
+}
+
+void _extra() {
+  test('a remote that never answers falls back to the seed', () async {
+    final remote = FakeContentSource()..hang = true;
+    final repo = ContentRepository(remote, _seed,
+        timeout: const Duration(milliseconds: 20));
+    expect((await repo.programs()).single.id, 'seed-prog');
+  });
+
+  test('joinedChallenges degrades to empty when the remote fails', () async {
+    final remote = FakeContentSource()..error = const SocketException('x');
+    final repo = ContentRepository(remote, _seed);
+    expect(await repo.joinedChallenges('u'), isEmpty);
+  });
+
+  test('signed-out leave throws and joinedChallenges(null) is empty', () async {
+    final repo = ContentRepository(FakeContentSource(), _seed);
+    expect(
+        () => repo.leaveChallenge('c', null), throwsA(isA<SignInRequired>()));
+    expect(await repo.joinedChallenges(null), isEmpty);
+  });
+
+  test('a null supabase client serves the seed through the provider', () async {
+    final c = ProviderContainer(
+        overrides: [seedLoaderProvider.overrideWithValue(_seed)]);
+    addTearDown(c.dispose);
+    expect((await c.read(programsProvider.future)).single.id, 'seed-prog');
+    expect(await c.read(joinedChallengesProvider.future), isEmpty);
   });
 }

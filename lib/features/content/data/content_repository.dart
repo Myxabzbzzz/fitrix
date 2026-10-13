@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fitrix/features/content/data/models.dart';
 import 'package:fitrix/features/shop/data/models.dart';
@@ -32,7 +33,9 @@ abstract class ContentSource {
   Future<void> joinChallenge(String challengeId, String userId);
   Future<void> leaveChallenge(String challengeId, String userId);
 
-  /// Returns the new order id; throws [OrderException] or [SignInRequired].
+  /// Returns the new order id. Throws [OrderException] when the server
+  /// rejects the order and [SignInRequired] when there is no valid session.
+  /// Network failures surface as SocketException / ClientException (retryable).
   Future<String> placeOrder(Map<String, int> quantities);
 }
 
@@ -66,6 +69,12 @@ class OfflineContentSource implements ContentSource {
   Future<String> placeOrder(Map<String, int> quantities) async =>
       throw const SignInRequired();
 }
+
+bool _isAuthError(PostgrestException e, {required String extra}) =>
+    e.code == extra ||
+    e.code == '28000' ||
+    (e.code?.startsWith('PGRST3') ?? false) ||
+    e.code == '401';
 
 class SupabaseContentSource implements ContentSource {
   SupabaseContentSource(this._client);
@@ -114,17 +123,24 @@ class SupabaseContentSource implements ContentSource {
           .from('challenge_participants')
           .insert({'challenge_id': challengeId, 'user_id': userId});
     } on PostgrestException catch (e) {
-      if (e.code != '23505') rethrow; // already joined
+      if (e.code == '23505') return; // already joined
+      if (_isAuthError(e, extra: '42501')) throw const SignInRequired();
+      rethrow;
     }
   }
 
   @override
   Future<void> leaveChallenge(String challengeId, String userId) async {
-    await _client
-        .from('challenge_participants')
-        .delete()
-        .eq('challenge_id', challengeId)
-        .eq('user_id', userId);
+    try {
+      await _client
+          .from('challenge_participants')
+          .delete()
+          .eq('challenge_id', challengeId)
+          .eq('user_id', userId);
+    } on PostgrestException catch (e) {
+      if (_isAuthError(e, extra: '42501')) throw const SignInRequired();
+      rethrow;
+    }
   }
 
   @override
@@ -139,6 +155,7 @@ class SupabaseContentSource implements ContentSource {
       });
       return id as String;
     } on PostgrestException catch (e) {
+      if (_isAuthError(e, extra: '28000')) throw const SignInRequired();
       throw OrderException(e.message);
     }
   }
@@ -147,7 +164,13 @@ class SupabaseContentSource implements ContentSource {
 /// Remote first; on any error the bundled seed answers, so every screen
 /// works offline and signed out.
 class ContentRepository {
-  ContentRepository(this._remote, this._loadSeed);
+  ContentRepository(
+    this._remote,
+    this._loadSeed, {
+    this.timeout = const Duration(seconds: 8),
+  });
+
+  final Duration timeout;
 
   final ContentSource _remote;
   final Future<Map<String, dynamic>> Function() _loadSeed;
@@ -158,8 +181,9 @@ class ContentRepository {
     T Function(Map<String, dynamic>) fromJson,
   ) async {
     try {
-      return await remote();
-    } catch (_) {
+      return await remote().timeout(timeout);
+    } catch (e) {
+      debugPrint('Content "$key": remote failed ($e), using the seed');
       final seed = await _loadSeed();
       final rows = (seed[key] as List?) ?? const [];
       return [
@@ -181,7 +205,12 @@ class ContentRepository {
 
   Future<Set<String>> joinedChallenges(String? userId) async {
     if (userId == null) return <String>{};
-    return _remote.joinedChallenges(userId);
+    try {
+      return await _remote.joinedChallenges(userId).timeout(timeout);
+    } catch (e) {
+      debugPrint('joinedChallenges failed ($e), assuming none');
+      return <String>{};
+    }
   }
 
   Future<void> joinChallenge(String challengeId, String? userId) async {

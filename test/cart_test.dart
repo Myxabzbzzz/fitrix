@@ -6,7 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/shop/providers.dart';
 
-Future<ProviderContainer> _make([Map<String, Object> initial = const {}]) async {
+Future<ProviderContainer> _make(
+    [Map<String, Object> initial = const {}]) async {
   SharedPreferences.setMockInitialValues(initial);
   final prefs = await SharedPreferences.getInstance();
   final c = ProviderContainer(
@@ -55,6 +56,16 @@ void main() {
 
   test('ignores corrupt stored data', () async {
     final c = await _make({'cart': 'not json'});
+    expect(c.read(cartProvider), isEmpty);
+  });
+
+  test('sanitises odd stored values', () async {
+    final c = await _make({'cart': '{"a":-1,"b":99,"c":"x","d":2,"e":0}'});
+    expect(c.read(cartProvider), {'b': 20, 'd': 2});
+  });
+
+  test('ignores a JSON array', () async {
+    final c = await _make({'cart': '[1,2]'});
     expect(c.read(cartProvider), isEmpty);
   });
 }
