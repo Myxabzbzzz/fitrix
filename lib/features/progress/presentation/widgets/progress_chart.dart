@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 
 /// Line chart card from the "My progress" design: grid, Y/X labels,
 /// a gradient-filled line and a highlighted last point. The line and area
@@ -18,6 +19,9 @@ class ProgressChart extends StatefulWidget {
   final String? footerLeft;
   final String? footerRight;
 
+  /// Change over the period, shown in the accent color next to the title.
+  final String? delta;
+
   const ProgressChart({
     super.key,
     required this.title,
@@ -28,6 +32,7 @@ class ProgressChart extends StatefulWidget {
     this.yDivisions = 4,
     this.footerLeft,
     this.footerRight,
+    this.delta,
   });
 
   @override
@@ -84,30 +89,34 @@ class _ProgressChartState extends State<ProgressChart>
     final palette = AppPalette.of(context);
     final footerLeft = widget.footerLeft;
     final footerRight = widget.footerRight;
-    final footerStyle = TextStyle(
-      fontSize: 11,
-      fontWeight: FontWeight.w500,
-      color: palette.textPrimary,
-    );
+    final footerStyle = AppText.caption.copyWith(color: palette.textSecondary);
+    final delta = widget.delta;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
         color: palette.chartCard,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.smAll,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: palette.textPrimary,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style:
+                      AppText.bodyStrong.copyWith(color: palette.textPrimary),
+                ),
+              ),
+              if (delta != null)
+                Text(delta,
+                    style:
+                        AppText.captionStrong.copyWith(color: palette.accent)),
+            ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.xs),
           SizedBox(
             height: 110,
             width: double.infinity,
@@ -126,7 +135,7 @@ class _ProgressChartState extends State<ProgressChart>
             ),
           ),
           if (footerLeft != null || footerRight != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.xs),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -137,7 +146,7 @@ class _ProgressChartState extends State<ProgressChart>
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.xs),
                 Flexible(
                   child: Text(
                     footerRight ?? '',
@@ -186,7 +195,7 @@ class _ChartPainter extends CustomPainter {
   TextPainter _label(String text) => TextPainter(
         text: TextSpan(
           text: text,
-          style: TextStyle(fontSize: 10, color: labelColor),
+          style: AppText.micro.copyWith(color: labelColor),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
@@ -268,8 +277,8 @@ class _ChartPainter extends CustomPainter {
           Offset(0, chart.top),
           Offset(0, chart.bottom),
           [
-            lineColor.withValues(alpha: 0.30),
-            lineColor.withValues(alpha: 0.05),
+            lineColor.withValues(alpha: 0.28),
+            lineColor.withValues(alpha: 0),
           ],
         ),
     );
@@ -294,7 +303,7 @@ class _ChartPainter extends CustomPainter {
       canvas.drawCircle(
         last,
         8 * dot,
-        Paint()..color = lineColor.withValues(alpha: 0.15),
+        Paint()..color = lineColor.withValues(alpha: 0.22),
       );
       canvas.drawCircle(last, 3 * dot, Paint()..color = lineColor);
     }

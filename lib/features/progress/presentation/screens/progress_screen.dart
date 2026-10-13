@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/core/widgets/sync_refresh.dart';
@@ -22,7 +23,12 @@ class ProgressScreen extends ConsumerStatefulWidget {
 class _ProgressScreenState extends ConsumerState<ProgressScreen> {
   Sport _sport = Sport.gym;
 
-  ProgressChart _chart(ProgressSeries s, {String? left, String? right}) =>
+  ProgressChart _chart(
+    ProgressSeries s, {
+    String? left,
+    String? right,
+    String? delta,
+  }) =>
       ProgressChart(
         title: s.title,
         values: s.values,
@@ -31,17 +37,20 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
         maxY: s.maxY,
         footerLeft: left,
         footerRight: right,
+        delta: delta,
       );
+
+  /// "+2.5 kg" style change between the first and last value.
+  String _delta(ProgressSeries s) {
+    final d = s.values.last - s.values.first;
+    return '${d < 0 ? '−' : '+'}${formatKg(d.abs())}';
+  }
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final sectionStyle = TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-      color: palette.textPrimary,
-    );
-    final noteStyle = TextStyle(fontSize: 13, color: palette.textSecondary);
+    final sectionStyle = AppText.headingS.copyWith(color: palette.textPrimary);
+    final noteStyle = AppText.caption.copyWith(color: palette.textSecondary);
 
     final history = ref
         .watch(workoutHistoryProvider)
@@ -68,13 +77,14 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
               child: SyncRefresh(
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(28, 20, 28, 24),
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.md,
+                      AppSpacing.sm, AppSpacing.md, AppSpacing.lg),
                   children: [
                     Text('Strength', style: sectionStyle),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm),
                     if (strength.isEmpty)
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                         child: Text(
                           'No ${_sport.label.toLowerCase()} workouts yet. '
                           'Finish one with at least one set checked off and '
@@ -85,36 +95,52 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                     for (final series in strength) ...[
                       _chart(
                         series,
-                        left: 'Latest: ${formatKg(series.values.last)}',
-                        right: series.values.length > 1
+                        delta: series.values.length > 1 ? _delta(series) : null,
+                        left: series.values.length > 1
                             ? 'First: ${formatKg(series.values.first)}'
                             : null,
+                        right: 'Latest: ${formatKg(series.values.last)}',
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.sm),
                     ],
                     if (history.isNotEmpty) ...[
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.xs),
                       Text('Recent workouts', style: sectionStyle),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.xs),
                       for (final workout in history.take(10))
                         _HistoryTile(workout: workout),
                     ],
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.md),
                     Text('Body', style: sectionStyle),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xxs),
                     Text('Sample data — tracking is coming soon.',
                         style: noteStyle),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm),
                     _chart(
                       weight,
-                      left: 'Current: ${formatKg(weight.values.last)}',
-                      right: 'One month ago: ${formatKg(weight.values.first)}',
+                      delta: _delta(weight),
+                      left: 'One month ago: ${formatKg(weight.values.first)}',
+                      right: 'Current: ${formatKg(weight.values.last)}',
                     ),
-                    const SizedBox(height: 20),
-                    _chart(
-                      ProgressData.calories,
-                      left: 'Intake: ${ProgressData.caloriesIntake}',
-                      right: 'Burn: ${ProgressData.caloriesBurn}',
+                    const SizedBox(height: AppSpacing.sm),
+                    _chart(ProgressData.calories),
+                    const SizedBox(height: AppSpacing.sm),
+                    const Row(
+                      children: [
+                        Expanded(
+                          child: _StatTile(
+                            label: 'Intake',
+                            value: '${ProgressData.caloriesIntake}',
+                          ),
+                        ),
+                        SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: _StatTile(
+                            label: 'Burn',
+                            value: '${ProgressData.caloriesBurn}',
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -122,6 +148,35 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _StatTile extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _StatTile({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration:
+          BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: AppText.caption.copyWith(color: palette.textSecondary)),
+          Text(value,
+              style:
+                  AppText.displayMedium.copyWith(color: palette.textPrimary)),
+          Text('kcal / day',
+              style: AppText.micro.copyWith(color: palette.textSecondary)),
+        ],
       ),
     );
   }
@@ -137,11 +192,12 @@ class _HistoryTile extends StatelessWidget {
     final palette = AppPalette.of(context);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.only(bottom: AppSpacing.xs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       decoration: BoxDecoration(
         color: palette.tile,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.smAll,
       ),
       child: Row(
         children: [
@@ -151,16 +207,13 @@ class _HistoryTile extends StatelessWidget {
               children: [
                 Text(
                   workout.name,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: palette.textPrimary,
-                  ),
+                  style:
+                      AppText.bodyStrong.copyWith(color: palette.textPrimary),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xxs),
                 Text(
                   DateFormat('EEE, d MMM · HH:mm').format(workout.finishedAt),
-                  style: TextStyle(fontSize: 12, color: palette.textSecondary),
+                  style: AppText.caption.copyWith(color: palette.textSecondary),
                 ),
               ],
             ),
@@ -170,15 +223,12 @@ class _HistoryTile extends StatelessWidget {
             children: [
               Text(
                 formatDuration(workout.duration, withSeconds: false),
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: palette.textPrimary,
-                ),
+                style:
+                    AppText.captionStrong.copyWith(color: palette.textPrimary),
               ),
               Text(
                 '${workout.setCount} sets',
-                style: TextStyle(fontSize: 12, color: palette.textSecondary),
+                style: AppText.caption.copyWith(color: palette.textSecondary),
               ),
             ],
           ),
