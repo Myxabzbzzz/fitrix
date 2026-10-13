@@ -735,5 +735,20 @@
     "placeholders": {
       "sport": {"type": "String"}
     }
+  },
+  "chatActionWeightDone": "Weight updated: {from} → {to} kg",
+  "chatActionWeightDoneSet": "Weight updated to {to} kg",
+  "chatActionNoProfile": "Fill in your profile first, then I can update your weight.",
+  "chatActionError": "Couldn’t apply this. Please try again.",
+  "@chatActionWeightDone": {
+    "placeholders": {
+      "from": {"type": "String"},
+      "to": {"type": "String"}
+    }
+  },
+  "@chatActionWeightDoneSet": {
+    "placeholders": {
+      "to": {"type": "String"}
+    }
   }
 }

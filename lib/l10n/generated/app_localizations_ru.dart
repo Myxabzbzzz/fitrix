@@ -1069,4 +1069,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatActionOpen => 'Открыть';
+
+  @override
+  String chatActionWeightDone(String from, String to) {
+    return 'Вес обновлён: $from → $to кг';
+  }
+
+  @override
+  String chatActionWeightDoneSet(String to) {
+    return 'Вес обновлён: $to кг';
+  }
+
+  @override
+  String get chatActionNoProfile =>
+      'Сначала заполните профиль, тогда я смогу обновить вес.';
+
+  @override
+  String get chatActionError => 'Не удалось применить. Попробуйте ещё раз.';
 }

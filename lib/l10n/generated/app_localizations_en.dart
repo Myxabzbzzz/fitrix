@@ -1044,4 +1044,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatActionOpen => 'Open';
+
+  @override
+  String chatActionWeightDone(String from, String to) {
+    return 'Weight updated: $from → $to kg';
+  }
+
+  @override
+  String chatActionWeightDoneSet(String to) {
+    return 'Weight updated to $to kg';
+  }
+
+  @override
+  String get chatActionNoProfile =>
+      'Fill in your profile first, then I can update your weight.';
+
+  @override
+  String get chatActionError => 'Couldn’t apply this. Please try again.';
 }

@@ -10,12 +10,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
+import 'package:fitrix/core/sync/sync_merge.dart';
 import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
+import 'package:fitrix/features/nutrition/data/nutrition_store.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -121,6 +123,72 @@ void main() {
       expect(const WeightAction(isSet: false, kg: -50).resultFrom(30), 20);
       expect(const WeightAction(isSet: true, kg: 82.04).resultFrom(null), 82);
       expect(const WeightAction(isSet: true, kg: 500).resultFrom(70), 400);
+    });
+
+    test('out-of-range values are rejected, not clamped', () {
+      Map<String, dynamic> w(String mode, num kg) =>
+          {'type': 'weight', 'mode': mode, 'kg': kg};
+      expect(ChatAction.tryParse(w('set', 19.9)), isNull);
+      expect(ChatAction.tryParse(w('set', 400.1)), isNull);
+      expect(ChatAction.tryParse(w('set', 20)), isNotNull);
+      expect(ChatAction.tryParse(w('delta', 50.1)), isNull);
+      expect(ChatAction.tryParse(w('delta', -50.1)), isNull);
+      expect(ChatAction.tryParse(w('delta', -50)), isNotNull);
+
+      Map<String, dynamic> plan(List<Map<String, dynamic>> exercises) => {
+            'type': 'workout_plan',
+            'sport': 'gym',
+            'templates': [
+              {'name': 'A', 'exercises': exercises},
+            ],
+          };
+      Map<String, dynamic> ex(Map<String, dynamic> extra) =>
+          {'name': 'Lift', 'sets': 3, 'reps': 8, ...extra};
+      for (final bad in [
+        {'sets': 11},
+        {'sets': 0},
+        {'reps': 101},
+        {'reps': 0},
+        {'kg': 501},
+        {'kg': -1},
+      ]) {
+        expect(ChatAction.tryParse(plan([ex(bad)])), isNull, reason: '$bad');
+      }
+      final mixed = ChatAction.tryParse(plan([
+        ex({'sets': 11}),
+        ex({})
+      ])) as WorkoutPlanAction;
+      expect(mixed.templates.single.exercises, hasLength(1));
+
+      Map<String, dynamic> meals(num kcal) => {
+            'type': 'meal_plan',
+            'meals': [
+              {'name': 'Lunch', 'items': 'x', 'kcal': kcal},
+              {'name': 'Dinner', 'items': 'y', 'kcal': 500},
+            ],
+          };
+      expect((ChatAction.tryParse(meals(3001)) as MealPlanAction).meals,
+          hasLength(1));
+      expect((ChatAction.tryParse(meals(-1)) as MealPlanAction).meals,
+          hasLength(1));
+      expect(
+          ChatAction.tryParse({
+            'type': 'meal_plan',
+            'meals': [
+              {'name': 'x', 'kcal': 9999}
+            ]
+          }),
+          isNull);
+    });
+
+    test('strings are cut by characters, not UTF-16 units', () {
+      final action = ChatAction.tryParse({
+        'type': 'meal_plan',
+        'meals': [
+          {'name': '😀' * 150, 'items': 'x', 'kcal': 100}
+        ]
+      }) as MealPlanAction;
+      expect(action.meals.single.name, '😀' * 100);
     });
 
     test('ChatApiService reads the action event before done', () async {
@@ -278,7 +346,7 @@ void main() {
       await seed(action: _meals);
       await pumpFelix(tester);
       expect(find.text('Add to today’s nutrition'), findsOneWidget);
-      expect(find.text('1220 kcal in total'), findsOneWidget);
+      expect(find.text('1,220 kcal in total'), findsOneWidget);
 
       await tester.tap(find.text('Confirm'));
       await tester.pumpAndSettle();
@@ -331,6 +399,49 @@ void main() {
       expect(find.text('Confirm'), findsNothing);
     });
 
+    testWidgets('weight title is frozen after apply and after reload',
+        (tester) async {
+      await seed(action: _weightDelta);
+      await pumpFelix(tester);
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      expect(prefs.getString(AppConstants.keyUserWeight), '78');
+      expect(find.text('Weight updated: 75 → 78 kg'), findsOneWidget);
+      expect(find.textContaining('78 → 81'), findsNothing);
+
+      await prefs.setString(AppConstants.keyUserWeight, '90');
+      await pumpFelix(tester);
+      expect(find.text('Weight updated: 75 → 78 kg'), findsOneWidget);
+      expect(applied, findsOneWidget);
+    });
+
+    testWidgets('confirm button is at least 44 px tall', (tester) async {
+      await seed(action: _weightDelta);
+      await pumpFelix(tester);
+      final button = find.ancestor(
+          of: find.text('Confirm'), matching: find.byType(InkWell));
+      expect(tester.getSize(button.first).height, greaterThanOrEqualTo(44));
+    });
+
+    testWidgets('no saved profile: explanation, no button, none created',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({
+        AppConstants.keyChatHistory:
+            ChatMessage.encodeMessages([_felixMessage(_weightDelta)]),
+      });
+      prefs = await SharedPreferences.getInstance();
+      await pumpFelix(tester);
+      expect(find.textContaining('Fill in your profile first'), findsOneWidget);
+      expect(find.text('Confirm'), findsNothing);
+      expect(prefs.getString(AppConstants.keyUserName), isNull);
+    });
+
+    testWidgets('numbers use the locale decimal separator', (tester) async {
+      await seed(action: _weightDelta, weight: '75.5');
+      await pumpFelix(tester, locale: const Locale('ru'));
+      expect(find.text('Обновить вес: 75,5 → 78,5 кг'), findsOneWidget);
+    });
+
     testWidgets('Russian strings render without overflow on SE',
         (tester) async {
       await seed(action: _plan);
@@ -338,6 +449,92 @@ void main() {
       expect(find.text('Подтвердить'), findsOneWidget);
       expect(find.textContaining('Добавить 2 тренировки'), findsOneWidget);
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('nutrition store', () {
+    test('a plan applied on a new day is stored under that day only', () async {
+      await seed();
+      var now = DateTime(2026, 10, 12, 22);
+      final container = ProviderContainer(overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        nutritionClockProvider.overrideWithValue(() => now),
+      ]);
+      addTearDown(container.dispose);
+      final notifier = container.read(todayMealsProvider.notifier);
+      await notifier.replaceToday(
+          [const LoggedMeal(name: 'Yesterday', items: '', kcal: 100)]);
+
+      now = DateTime(2026, 10, 13, 8); // the app stayed open overnight
+      notifier.refresh();
+      expect(container.read(todayMealsProvider), isEmpty);
+      await notifier.replaceToday(
+          [const LoggedMeal(name: 'Today', items: '', kcal: 200)]);
+
+      final stored = jsonDecode(prefs.getString(NutritionStore.key)!)
+          as Map<String, dynamic>;
+      expect(stored['date'], '2026-10-13');
+      expect((stored['meals'] as List).map((m) => m['name']), ['Today']);
+    });
+
+    test('applying a second meal plan replaces the first', () async {
+      await seed();
+      final container = ProviderContainer(overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ]);
+      addTearDown(container.dispose);
+      final notifier = container.read(todayMealsProvider.notifier);
+      await notifier.replaceToday([
+        const LoggedMeal(name: 'A', items: '', kcal: 1),
+        const LoggedMeal(name: 'B', items: '', kcal: 2),
+      ]);
+      await notifier
+          .replaceToday([const LoggedMeal(name: 'C', items: '', kcal: 3)]);
+      expect(container.read(todayMealsProvider).map((m) => m.name), ['C']);
+      expect(NutritionStore(prefs).loadToday().map((m) => m.name), ['C']);
+    });
+  });
+
+  group('persistence', () {
+    test('sync pull keeps the local action and applied state', () {
+      final local = _felixMessage(_plan, applied: true);
+      final remote = ChatMessage(
+        id: local.id,
+        content: local.content,
+        sender: local.sender,
+        timestamp: local.timestamp,
+      );
+      final merge = unionById<ChatMessage>(
+        local: [local],
+        remote: [remote],
+        idOf: (m) => m.id,
+        compare: (a, b) => a.timestamp.compareTo(b.timestamp),
+      );
+      expect(merge.items.single.action, isA<WorkoutPlanAction>());
+      expect(merge.items.single.actionApplied, isTrue);
+    });
+
+    test('a malformed stored action loads as a plain message', () async {
+      await seed();
+      await prefs.setString(
+        AppConstants.keyChatHistory,
+        jsonEncode([
+          {
+            'id': 'x',
+            'content': 'hello',
+            'sender': 'assistant',
+            'timestamp': DateTime(2026).toIso8601String(),
+            'action': {'type': 'weight', 'mode': 'bogus', 'kg': 'x'},
+            'actionApplied': true,
+          }
+        ]),
+      );
+      final notifier = ChatNotifier(
+          ChatRepository(_FakeApi(), prefs: prefs, greeting: const ['Hi']));
+      await Future<void>.delayed(Duration.zero);
+      final message = notifier.state.requireValue.single;
+      expect(message.content, 'hello');
+      expect(message.action, isNull);
     });
   });
 }

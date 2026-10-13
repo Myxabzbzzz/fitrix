@@ -39,7 +39,7 @@ class NutritionScreen extends ConsumerStatefulWidget {
 }
 
 class _NutritionScreenState extends ConsumerState<NutritionScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   static const _goal = NutritionScreen._goal;
   static const _macros = NutritionScreen._macros;
 
@@ -48,6 +48,23 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen>
     duration: Motion.slow,
   );
   VoidCallback? _cancelPending;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // The date may have changed since the meals were loaded.
+    Future.microtask(() {
+      if (mounted) ref.read(todayMealsProvider.notifier).refresh();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) {
+      ref.read(todayMealsProvider.notifier).refresh();
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -65,6 +82,7 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _cancelPending?.call();
     _fill.dispose();
     super.dispose();

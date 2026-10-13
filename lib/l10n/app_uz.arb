@@ -278,5 +278,9 @@
   "chatActionMealTitle": "Bugungi ovqatlanishga qo‘shish",
   "chatActionMealTotal": "Jami {kcal} kkal",
   "chatActionWorkoutsAdded": "Mashg‘ulotlar qo‘shildi: {sport}",
-  "chatActionOpen": "Ochish"
+  "chatActionOpen": "Ochish",
+  "chatActionWeightDone": "Vazn yangilandi: {from} → {to} kg",
+  "chatActionWeightDoneSet": "Vazn yangilandi: {to} kg",
+  "chatActionNoProfile": "Avval profilni to‘ldiring, shunda vazningizni yangilay olaman.",
+  "chatActionError": "Qo‘llab bo‘lmadi. Qayta urinib ko‘ring."
 }

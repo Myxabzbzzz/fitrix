@@ -37,6 +37,12 @@ class WeightAction extends ChatAction {
     final kg = raw['kg'];
     if (kg is! num || !kg.isFinite) return null;
     if (mode != 'set' && mode != 'delta') return null;
+    // Out-of-range values are rejected, not silently clamped.
+    if (mode == 'set' &&
+        (kg < ProfileLimits.weightMin || kg > ProfileLimits.weightMax)) {
+      return null;
+    }
+    if (mode == 'delta' && (kg < -50 || kg > 50)) return null;
     return WeightAction(isSet: mode == 'set', kg: kg.toDouble());
   }
 
@@ -109,6 +115,9 @@ class WorkoutPlanAction extends ChatAction {
         final reps = e['reps'];
         if (exName.isEmpty || sets is! num || reps is! num) continue;
         final kg = e['kg'];
+        if (!sets.isFinite || !reps.isFinite) continue;
+        if (sets < 1 || sets > 10 || reps < 1 || reps > 100) continue;
+        if (kg != null && (kg is! num || !(kg >= 0 && kg <= 500))) continue;
         exercises.add(PlannedExercise(
           name: exName,
           sets: sets.round().clamp(1, 10),
@@ -157,7 +166,8 @@ class MealPlanAction extends ChatAction {
       if (m is! Map) continue;
       final name = _text(m['name'], 100);
       final kcal = m['kcal'];
-      if (name.isEmpty || kcal is! num) continue;
+      if (name.isEmpty || kcal is! num || !kcal.isFinite) continue;
+      if (kcal < 0 || kcal > 3000) continue;
       meals.add(PlannedMeal(
         name: name,
         items: _text(m['items'], 200),
@@ -177,5 +187,7 @@ class MealPlanAction extends ChatAction {
 
 String _text(Object? value, int max) {
   final text = value is String ? value.trim() : '';
-  return text.length > max ? text.substring(0, max) : text;
+  // By characters (runes), so emoji and surrogate pairs are never cut.
+  final runes = text.runes;
+  return runes.length > max ? String.fromCharCodes(runes.take(max)) : text;
 }

@@ -106,10 +106,11 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                             if (message.action != null && !message.isStreaming)
                               ChatActionCard(
                                 message: message,
-                                onApplied: () => ref
+                                onApplied: (result) => ref
                                     .read(
                                         chatMessagesProviderFor(topic).notifier)
-                                    .markActionApplied(message.id),
+                                    .markActionApplied(message.id,
+                                        result: result),
                               ),
                           ],
                         ),

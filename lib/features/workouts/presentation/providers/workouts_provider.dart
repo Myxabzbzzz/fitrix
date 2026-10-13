@@ -82,7 +82,8 @@ class WorkoutTemplatesNotifier extends StateNotifier<List<WorkoutTemplate>> {
   }
 
   /// Adds ready-made plans (e.g. proposed by Felix) for [sport] in one go.
-  void addAll(Sport sport, List<({String name, List<Exercise> exercises})> plans) {
+  void addAll(
+      Sport sport, List<({String name, List<Exercise> exercises})> plans) {
     final now = DateTime.now();
     state = [
       ...state,

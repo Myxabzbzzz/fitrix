@@ -14,18 +14,25 @@ import 'package:fitrix/features/workouts/presentation/providers/workouts_provide
 double? weightKgOf(UserProfile? profile) =>
     profile == null ? null : parseProfileNumber(profile.weight);
 
-/// Applies a confirmed [action] to the app's own data.
-Future<void> applyChatAction(WidgetRef ref, ChatAction action) async {
+/// Applies a confirmed [action] to the app's own data. Returns what was
+/// changed (weight: `{from, to}`; empty for other actions), or null when
+/// nothing was applied.
+Future<Map<String, num>?> applyChatAction(
+    WidgetRef ref, ChatAction action) async {
   switch (action) {
     case WeightAction():
-      final kg = action.resultFrom(
-        weightKgOf(await ref.read(profileRepositoryProvider).getProfile()),
-      );
-      if (kg == null) return;
-      await ref
+      final profile = await ref.read(profileRepositoryProvider).getProfile();
+      // No saved profile: nothing to update (and none is created here).
+      if (profile == null) return null;
+      final from = weightKgOf(profile);
+      final to = action.resultFrom(from);
+      if (to == null) return null;
+      final saved = await ref
           .read(profileProvider.notifier)
-          .saveWeight(formatProfileNumber(kg));
+          .saveWeight(formatProfileNumber(to));
+      if (!saved) return null;
       unawaited(ref.read(accountServiceProvider)?.profileChanged());
+      return {if (from != null) 'from': from, 'to': to};
     case WorkoutPlanAction():
       ref.read(workoutTemplatesProvider.notifier).addAll(action.sport, [
         for (final t in action.templates)
@@ -45,10 +52,13 @@ Future<void> applyChatAction(WidgetRef ref, ChatAction action) async {
             ],
           ),
       ]);
+      return const {};
     case MealPlanAction():
-      ref.read(todayMealsProvider.notifier).addAll([
+      // A meal plan is a whole day: it replaces what was logged today.
+      await ref.read(todayMealsProvider.notifier).replaceToday([
         for (final m in action.meals)
           LoggedMeal(name: m.name, items: m.items, kcal: m.kcal),
       ]);
+      return const {};
   }
 }

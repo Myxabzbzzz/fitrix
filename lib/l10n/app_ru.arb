@@ -278,5 +278,9 @@
   "chatActionMealTitle": "Добавить в питание на сегодня",
   "chatActionMealTotal": "Всего {kcal} ккал",
   "chatActionWorkoutsAdded": "Тренировки добавлены: {sport}",
-  "chatActionOpen": "Открыть"
+  "chatActionOpen": "Открыть",
+  "chatActionWeightDone": "Вес обновлён: {from} → {to} кг",
+  "chatActionWeightDoneSet": "Вес обновлён: {to} кг",
+  "chatActionNoProfile": "Сначала заполните профиль, тогда я смогу обновить вес.",
+  "chatActionError": "Не удалось применить. Попробуйте ещё раз."
 }

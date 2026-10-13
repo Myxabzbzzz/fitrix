@@ -24,6 +24,10 @@ class ChatMessage {
   /// The user confirmed [action] and it was applied.
   final bool actionApplied;
 
+  /// What applying [action] changed, frozen at apply time so the card keeps
+  /// saying the same thing later (weight: `{from, to}`).
+  final Map<String, num>? appliedResult;
+
   ChatMessage({
     required this.id,
     required this.content,
@@ -34,6 +38,7 @@ class ChatMessage {
     this.isFailed = false,
     this.action,
     this.actionApplied = false,
+    this.appliedResult,
   });
 
   ChatMessage copyWith({
@@ -42,6 +47,7 @@ class ChatMessage {
     bool? isFailed,
     ChatAction? action,
     bool? actionApplied,
+    Map<String, num>? appliedResult,
   }) {
     return ChatMessage(
       id: id,
@@ -53,6 +59,7 @@ class ChatMessage {
       isFailed: isFailed ?? this.isFailed,
       action: action ?? this.action,
       actionApplied: actionApplied ?? this.actionApplied,
+      appliedResult: appliedResult ?? this.appliedResult,
     );
   }
 
@@ -65,6 +72,8 @@ class ChatMessage {
       'isQuickReply': isQuickReply,
       if (action != null) 'action': action!.toJson(),
       if (action != null && actionApplied) 'actionApplied': true,
+      if (action != null && actionApplied && appliedResult != null)
+        'appliedResult': appliedResult,
     };
   }
 
@@ -79,7 +88,16 @@ class ChatMessage {
       isQuickReply: json['isQuickReply'] ?? false,
       action: ChatAction.tryParse(json['action']),
       actionApplied: json['actionApplied'] == true,
+      appliedResult: _result(json['appliedResult']),
     );
+  }
+
+  static Map<String, num>? _result(Object? raw) {
+    if (raw is! Map) return null;
+    return {
+      for (final e in raw.entries)
+        if (e.key is String && e.value is num) e.key as String: e.value as num,
+    };
   }
 
   /// Only completed messages are stored; in-flight and failed replies are

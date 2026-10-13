@@ -278,5 +278,9 @@
   "chatActionMealTitle": "Añadir a la nutrición de hoy",
   "chatActionMealTotal": "{kcal} kcal en total",
   "chatActionWorkoutsAdded": "Entrenamientos añadidos a {sport}",
-  "chatActionOpen": "Abrir"
+  "chatActionOpen": "Abrir",
+  "chatActionWeightDone": "Peso actualizado: {from} → {to} kg",
+  "chatActionWeightDoneSet": "Peso actualizado a {to} kg",
+  "chatActionNoProfile": "Primero completa tu perfil y entonces podré actualizar tu peso.",
+  "chatActionError": "No se pudo aplicar. Inténtalo de nuevo."
 }

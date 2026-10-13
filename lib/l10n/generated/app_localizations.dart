@@ -1775,6 +1775,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open'**
   String get chatActionOpen;
+
+  /// No description provided for @chatActionWeightDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight updated: {from} → {to} kg'**
+  String chatActionWeightDone(String from, String to);
+
+  /// No description provided for @chatActionWeightDoneSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight updated to {to} kg'**
+  String chatActionWeightDoneSet(String to);
+
+  /// No description provided for @chatActionNoProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in your profile first, then I can update your weight.'**
+  String get chatActionNoProfile;
+
+  /// No description provided for @chatActionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t apply this. Please try again.'**
+  String get chatActionError;
 }
 
 class _AppLocalizationsDelegate

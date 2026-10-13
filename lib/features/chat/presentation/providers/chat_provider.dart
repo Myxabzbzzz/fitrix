@@ -216,10 +216,16 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
   /// Marks the action of message [id] as applied (kept across restarts, so
   /// it can't be applied twice).
-  Future<void> markActionApplied(String id) async {
+  Future<void> markActionApplied(
+    String id, {
+    Map<String, num>? result,
+  }) async {
     final messages = state.valueOrNull;
     if (messages == null) return;
-    _updateReply(id, (m) => m.copyWith(actionApplied: true));
+    _updateReply(
+      id,
+      (m) => m.copyWith(actionApplied: true, appliedResult: result),
+    );
     await _repository.saveMessages(state.requireValue);
   }
 

@@ -1016,4 +1016,21 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get chatActionOpen => 'Ochish';
+
+  @override
+  String chatActionWeightDone(String from, String to) {
+    return 'Vazn yangilandi: $from → $to kg';
+  }
+
+  @override
+  String chatActionWeightDoneSet(String to) {
+    return 'Vazn yangilandi: $to kg';
+  }
+
+  @override
+  String get chatActionNoProfile =>
+      'Avval profilni to‘ldiring, shunda vazningizni yangilay olaman.';
+
+  @override
+  String get chatActionError => 'Qo‘llab bo‘lmadi. Qayta urinib ko‘ring.';
 }
