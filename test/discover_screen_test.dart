@@ -67,13 +67,15 @@ Future<void> _pump(
   bool signedIn = false,
   Size size = const Size(390, 844),
   Locale locale = const Locale('en'),
+  double textScale = 1,
+  String initial = '/discover',
 }) async {
   tester.view.physicalSize = size * 3;
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
   SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
-  router = GoRouter(initialLocation: '/discover', routes: [
+  router = GoRouter(initialLocation: initial, routes: [
     GoRoute(
       path: '/discover',
       builder: (_, __) => const DiscoverScreen(),
@@ -97,6 +99,11 @@ Future<void> _pump(
     ],
     child: MaterialApp.router(
       routerConfig: router,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(textScale)),
+        child: child!,
+      ),
       locale: locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -205,7 +212,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('First paragraph here.'), findsOneWidget);
     expect(find.text('Second paragraph here.'), findsOneWidget);
-    expect(find.text('RECOVERY').hitTestable(), findsOneWidget);
+    expect(find.text('Recovery').hitTestable(), findsOneWidget);
   });
 
   testWidgets('unknown article shows a message', (tester) async {
@@ -214,6 +221,28 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('This article isn’t available.'), findsOneWidget);
   });
+
+  for (final code in ['en', 'ru']) {
+    testWidgets('no overflow at 1.3x text on iPhone SE ($code)',
+        (tester) async {
+      await _pump(tester, _source(),
+          size: const Size(375, 667), locale: Locale(code), textScale: 1.3);
+      expect(tester.takeException(), isNull);
+      await tester.drag(_list.first, const Offset(0, -900));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('article fits iPhone SE at 1.3x text ($code)', (tester) async {
+      await _pump(tester, _source(),
+          size: const Size(375, 667),
+          locale: Locale(code),
+          textScale: 1.3,
+          initial: '/discover/article/rest');
+      expect(find.text('First paragraph here.'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   for (final code in ['en', 'ru', 'uz', 'es']) {
     testWidgets('no overflow on iPhone SE ($code)', (tester) async {

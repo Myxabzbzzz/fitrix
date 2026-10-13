@@ -393,7 +393,7 @@ abstract class AppLocalizations {
   /// No description provided for @shopCartLabel.
   ///
   /// In en, this message translates to:
-  /// **'Cart, {n} items'**
+  /// **'{n, plural, =0{Cart, empty} one{Cart, 1 item} other{Cart, {n} items}}'**
   String shopCartLabel(int n);
 
   /// No description provided for @shopSearchHint.
@@ -539,6 +539,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get shopRetry;
+
+  /// No description provided for @shopNoProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'No products yet'**
+  String get shopNoProducts;
 }
 
 class _AppLocalizationsDelegate

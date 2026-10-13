@@ -168,7 +168,14 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String shopCartLabel(int n) {
-    return 'Savat, mahsulotlar: $n';
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Savat, $n mahsulot',
+      one: 'Savat, $n mahsulot',
+      zero: 'Savat bo‘sh',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -251,4 +258,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get shopRetry => 'Qayta urinish';
+
+  @override
+  String get shopNoProducts => 'Hozircha mahsulotlar yo‘q';
 }

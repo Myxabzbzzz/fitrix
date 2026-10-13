@@ -48,7 +48,7 @@
   "discoverMinRead": "{n} min de lectura",
   "discoverArticleMissing": "Este artículo no está disponible.",
   "shopTitle": "Tienda",
-  "shopCartLabel": "Carrito, {n} artículos",
+  "shopCartLabel": "{n, plural, =0{Carrito vacío} one{Carrito, 1 artículo} other{Carrito, {n} artículos}}",
   "shopSearchHint": "Buscar productos",
   "shopAll": "Todo",
   "shopCatSupplements": "Suplementos",
@@ -72,5 +72,6 @@
   "shopSignInToOrder": "Inicia sesión para hacer el pedido",
   "shopOrderFailed": "No se pudo hacer el pedido. Revisa tu conexión.",
   "shopOrderRejected": "Pedido rechazado: {message}",
-  "shopRetry": "Reintentar"
+  "shopRetry": "Reintentar",
+  "shopNoProducts": "Aún no hay productos"
 }

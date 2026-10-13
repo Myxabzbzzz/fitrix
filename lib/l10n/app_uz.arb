@@ -48,7 +48,7 @@
   "discoverMinRead": "{n} daqiqa o‘qish",
   "discoverArticleMissing": "Bu maqola mavjud emas.",
   "shopTitle": "Do‘kon",
-  "shopCartLabel": "Savat, mahsulotlar: {n}",
+  "shopCartLabel": "{n, plural, =0{Savat bo‘sh} one{Savat, {n} mahsulot} other{Savat, {n} mahsulot}}",
   "shopSearchHint": "Mahsulot qidirish",
   "shopAll": "Hammasi",
   "shopCatSupplements": "Qo‘shimchalar",
@@ -72,5 +72,6 @@
   "shopSignInToOrder": "Buyurtma berish uchun hisobga kiring",
   "shopOrderFailed": "Buyurtma berib bo‘lmadi. Internetni tekshiring.",
   "shopOrderRejected": "Buyurtma rad etildi: {message}",
-  "shopRetry": "Qayta urinish"
+  "shopRetry": "Qayta urinish",
+  "shopNoProducts": "Hozircha mahsulotlar yo‘q"
 }

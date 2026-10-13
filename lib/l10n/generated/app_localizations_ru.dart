@@ -140,7 +140,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get discoverFelixEyebrow => 'Совет от Феликса';
+  String get discoverFelixEyebrow => 'Совет от Felix';
 
   @override
   String get discoverFelixTitle => 'Отдых делает сильнее';
@@ -150,7 +150,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Два лёгких дня в неделю снижают риск травм и помогают расти в весах.';
 
   @override
-  String get discoverAskFelix => 'Спросить Феликса';
+  String get discoverAskFelix => 'Спросить Felix';
 
   @override
   String get discoverRead => 'Читать';
@@ -168,7 +168,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String shopCartLabel(int n) {
-    return 'Корзина, товаров: $n';
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Корзина, $n товара',
+      many: 'Корзина, $n товаров',
+      few: 'Корзина, $n товара',
+      one: 'Корзина, $n товар',
+      zero: 'Корзина пуста',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -188,7 +197,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shopProBlurb =>
-      'Безлимитные чаты с Феликсом, индивидуальные планы и разбор техники.';
+      'Безлимитные чаты с Felix, индивидуальные планы и разбор техники.';
 
   @override
   String get shopProButton => 'Подробнее';
@@ -251,4 +260,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shopRetry => 'Повторить';
+
+  @override
+  String get shopNoProducts => 'Товаров пока нет';
 }

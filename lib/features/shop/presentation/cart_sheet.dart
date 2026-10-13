@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -7,9 +8,14 @@ import 'package:fitrix/features/shop/presentation/shop_screen.dart';
 import 'package:fitrix/features/shop/providers.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
-/// Opens the cart. Completes with true when the user taps "Place order"
-/// (the sheet is closed first so the result is visible on the shop screen).
-Future<bool?> showCartSheet(BuildContext context) => showModalBottomSheet<bool>(
+/// Opens the cart. "Place order" runs [onPlaceOrder] with the sheet still
+/// open (button disabled while [busy]) and closes the sheet when it is done.
+Future<void> showCartSheet(
+  BuildContext context, {
+  required ValueListenable<bool> busy,
+  required Future<void> Function() onPlaceOrder,
+}) =>
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
@@ -17,11 +23,14 @@ Future<bool?> showCartSheet(BuildContext context) => showModalBottomSheet<bool>(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.8,
       ),
-      builder: (_) => const CartSheet(),
+      builder: (_) => CartSheet(busy: busy, onPlaceOrder: onPlaceOrder),
     );
 
 class CartSheet extends ConsumerWidget {
-  const CartSheet({super.key});
+  const CartSheet({super.key, required this.busy, required this.onPlaceOrder});
+
+  final ValueListenable<bool> busy;
+  final Future<void> Function() onPlaceOrder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -128,11 +137,36 @@ class CartSheet extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              AppButton(
-                label: l10n.shopPlaceOrder,
-                size: AppButtonSize.large,
-                expand: true,
-                onPressed: () => Navigator.of(context).pop(true),
+              ValueListenableBuilder<bool>(
+                valueListenable: busy,
+                builder: (context, working, _) => Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        label: l10n.shopPlaceOrder,
+                        size: AppButtonSize.large,
+                        expand: true,
+                        onPressed: working
+                            ? null
+                            : () async {
+                                final navigator = Navigator.of(context);
+                                await onPlaceOrder();
+                                if (navigator.mounted) navigator.pop();
+                              },
+                      ),
+                    ),
+                    if (working) ...[
+                      const SizedBox(width: AppSpacing.sm),
+                      SizedBox(
+                        key: const Key('order-progress'),
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: palette.accent),
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ],
           ],

@@ -68,7 +68,15 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       if (mounted) _promptSignIn();
     } catch (_) {
       messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(SnackBar(content: Text(l10n.discoverJoinFailed)));
+      messenger.showSnackBar(SnackBar(
+        content: Text(l10n.discoverJoinFailed),
+        action: SnackBarAction(
+          label: l10n.shopRetry,
+          onPressed: () {
+            if (mounted) _join(challenge);
+          },
+        ),
+      ));
     } finally {
       _joining = false;
     }
@@ -79,6 +87,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     final l10n = AppLocalizations.of(context);
     final palette = AppPalette.of(context);
     ref.watch(currentUserProvider); // keep the auth state loaded
+    final loading = [
+      ref.watch(challengesProvider),
+      ref.watch(programsProvider),
+      ref.watch(articlesProvider),
+    ].any((a) => a.isLoading && !a.hasValue);
     final challenges = ref.watch(challengesProvider).valueOrNull ?? const [];
     final programs = ref.watch(programsProvider).valueOrNull ?? const [];
     final articles = ref.watch(articlesProvider).valueOrNull ?? const [];
@@ -113,7 +126,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
               child: PillSelector<_Cat>(
                 items: _Cat.values,
                 selected: _cat,
@@ -129,6 +142,16 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                   padding: const EdgeInsets.only(
                       top: AppSpacing.md, bottom: AppSpacing.lg),
                   children: [
+                    if (loading)
+                      const Padding(
+                        padding: EdgeInsets.all(AppSpacing.md),
+                        child: Center(
+                          child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2)),
+                        ),
+                      ),
                     if (_show(_Cat.challenges) && challenges.isNotEmpty)
                       Padding(
                         padding: pad,
@@ -154,7 +177,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                           padding: pad,
                           itemCount: programs.length,
                           separatorBuilder: (_, __) =>
-                              const SizedBox(width: AppSpacing.xs),
+                              const SizedBox(width: AppSpacing.sm),
                           itemBuilder: (_, i) =>
                               _ProgramCard(program: programs[i]),
                         ),
@@ -258,7 +281,7 @@ class _ChallengeHero extends StatelessWidget {
             style: joined ? AppButtonStyle.secondary : AppButtonStyle.primary,
             size: AppButtonSize.large,
             expand: true,
-            onPressed: joined ? () {} : onJoin,
+            onPressed: joined ? null : onJoin,
           ),
         ],
       ),

@@ -28,9 +28,6 @@ class ArticleScreen extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(
             AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.lg),
         children: [
-          Text(article.tag.toUpperCase(),
-              style: AppText.captionStrong.copyWith(color: palette.accent)),
-          const SizedBox(height: AppSpacing.xs),
           Text(article.title,
               style: AppText.headingL.copyWith(color: palette.textPrimary)),
           const SizedBox(height: AppSpacing.xxs),
@@ -60,7 +57,7 @@ class ArticleScreen extends ConsumerWidget {
         bottom: false,
         child: Column(
           children: [
-            const ScreenTitle(''),
+            ScreenTitle(article?.tag ?? l10n.discoverArticles),
             Expanded(child: body),
           ],
         ),

@@ -167,7 +167,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String shopCartLabel(int n) {
-    return 'Carrito, $n artículos';
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Carrito, $n artículos',
+      one: 'Carrito, 1 artículo',
+      zero: 'Carrito vacío',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -250,4 +257,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get shopRetry => 'Reintentar';
+
+  @override
+  String get shopNoProducts => 'Aún no hay productos';
 }

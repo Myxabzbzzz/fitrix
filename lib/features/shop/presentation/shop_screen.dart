@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -35,11 +33,12 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
   static const _all = '';
   final _search = TextEditingController();
   String _category = _all;
-  bool _ordering = false;
+  final _busy = ValueNotifier<bool>(false);
 
   @override
   void dispose() {
     _search.dispose();
+    _busy.dispose();
     super.dispose();
   }
 
@@ -51,10 +50,11 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
         _ => c.isEmpty ? c : c[0].toUpperCase() + c.substring(1),
       };
 
-  Future<void> _openCart() async {
-    final order = await showCartSheet(context);
-    if (order == true && mounted) await _placeOrder();
-  }
+  Future<void> _openCart() => showCartSheet(
+        context,
+        busy: _busy,
+        onPlaceOrder: _placeOrder,
+      );
 
   void _snack(SnackBar bar) {
     final m = ScaffoldMessenger.of(context);
@@ -63,7 +63,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
   }
 
   Future<void> _placeOrder() async {
-    if (_ordering) return;
+    if (_busy.value) return;
     final l10n = AppLocalizations.of(context);
     final router = GoRouter.of(context);
 
@@ -80,18 +80,24 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     }
     final catalog = ref.read(productsProvider).valueOrNull ?? const [];
     final ids = {for (final p in catalog) p.id};
-    final cart = ref.read(cartProvider);
+    final cartNotifier = ref.read(cartProvider.notifier);
     // The cart can hold products that left the catalog: don't order them.
     final lines = {
-      for (final e in cart.entries)
+      for (final e in ref.read(cartProvider).entries)
         if (ids.contains(e.key)) e.key: e.value,
     };
     if (lines.isEmpty) return;
+    final repo = ref.read(shopRepositoryProvider);
 
-    _ordering = true;
+    _busy.value = true;
     try {
-      await ref.read(shopRepositoryProvider).placeOrder(lines);
-      ref.read(cartProvider.notifier).clear();
+      await repo.placeOrder(lines);
+      // Remove only what was ordered: items added meanwhile stay.
+      for (final e in lines.entries) {
+        for (var i = 0; i < e.value; i++) {
+          cartNotifier.remove(e.key);
+        }
+      }
       if (mounted) _snack(SnackBar(content: Text(l10n.shopOrderPlaced)));
     } on SignInRequired {
       if (mounted) promptSignIn();
@@ -99,12 +105,10 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
       if (mounted) {
         _snack(SnackBar(content: Text(l10n.shopOrderRejected(e.message))));
       }
-    } on SocketException {
-      if (mounted) _retryBar(l10n);
     } catch (_) {
       if (mounted) _retryBar(l10n);
     } finally {
-      _ordering = false;
+      _busy.value = false;
     }
   }
 
@@ -154,7 +158,30 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     final products = async.valueOrNull ?? const <Product>[];
     ref.watch(currentUserProvider); // keep the auth state loaded
     final cart = ref.watch(cartProvider);
-    final count = cart.values.fold<int>(0, (a, b) => a + b);
+    final catalogIds = {for (final p in products) p.id};
+    // Ids no longer in the catalog are neither counted nor kept.
+    final stale = products.isEmpty
+        ? const <String, int>{}
+        : {
+            for (final e in cart.entries)
+              if (!catalogIds.contains(e.key)) e.key: e.value,
+          };
+    if (stale.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final notifier = ref.read(cartProvider.notifier);
+        for (final e in stale.entries) {
+          for (var i = 0; i < e.value; i++) {
+            notifier.remove(e.key);
+          }
+        }
+      });
+    }
+    final count = products.isEmpty
+        ? cart.values.fold<int>(0, (a, b) => a + b)
+        : cart.entries
+            .where((e) => catalogIds.contains(e.key))
+            .fold<int>(0, (a, e) => a + e.value);
 
     final categories = [
       _all,
@@ -207,7 +234,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
             ),
             const SizedBox(height: AppSpacing.sm),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
               child: PillSelector<String>(
                 items: categories,
                 selected: category,
@@ -231,7 +258,10 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                     if (items.isEmpty && !async.isLoading)
                       Padding(
                         padding: const EdgeInsets.only(top: AppSpacing.md),
-                        child: Text(l10n.shopNothingFound(_search.text.trim()),
+                        child: Text(
+                            query.isEmpty
+                                ? l10n.shopNoProducts
+                                : l10n.shopNothingFound(_search.text.trim()),
                             style: AppText.bodyRegular
                                 .copyWith(color: palette.textSecondary)),
                       )

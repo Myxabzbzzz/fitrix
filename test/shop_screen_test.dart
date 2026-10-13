@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -60,6 +61,7 @@ Future<ProviderContainer> _pump(
   bool signedIn = false,
   Size size = const Size(390, 844),
   Locale locale = const Locale('en'),
+  double textScale = 1,
   Map<String, Object> prefsInit = const {},
 }) async {
   tester.view.physicalSize = size * 3;
@@ -81,6 +83,11 @@ Future<ProviderContainer> _pump(
     ],
     child: MaterialApp.router(
       routerConfig: router,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(textScale)),
+        child: child!,
+      ),
       locale: locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -103,6 +110,18 @@ Future<void> _add(WidgetTester tester, String id) async {
 Future<void> _openCart(WidgetTester tester) async {
   await tester.tap(find.byKey(const Key('cart-button')));
   await tester.pumpAndSettle();
+}
+
+class _SlowSource extends FakeContentSource {
+  final gate = Completer<void>();
+  int calls = 0;
+
+  @override
+  Future<String> placeOrder(Map<String, int> quantities) async {
+    calls++;
+    await gate.future;
+    return super.placeOrder(quantities);
+  }
 }
 
 void main() {
@@ -252,10 +271,68 @@ void main() {
     expect(c.read(cartProvider), {'whey': 1});
   });
 
+  testWidgets('stale ids are not counted and get pruned', (tester) async {
+    final c = await _pump(tester, _source(),
+        prefsInit: {'cart': '{"whey":1,"gone":3}'});
+    await tester.pumpAndSettle();
+    expect(
+        find.descendant(
+            of: find.byKey(const Key('cart-count')), matching: find.text('1')),
+        findsOneWidget);
+    expect(c.read(cartProvider), {'whey': 1});
+    await _openCart(tester);
+    expect(find.byKey(const Key('cart-dec-whey')), findsOneWidget);
+  });
+
+  testWidgets('a cart with only stale ids shows no badge', (tester) async {
+    final c = await _pump(tester, _source(), prefsInit: {'cart': '{"gone":2}'});
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('cart-count')), findsNothing);
+    expect(c.read(cartProvider), isEmpty);
+  });
+
+  testWidgets('empty catalog says no products yet', (tester) async {
+    await _pump(tester, FakeContentSource());
+    expect(find.text('No products yet'), findsOneWidget);
+  });
+
+  testWidgets('in flight: button disabled, one call, new items survive',
+      (tester) async {
+    final source = _SlowSource();
+    source.productTable = _source().productTable;
+    final c = await _pump(tester, source, signedIn: true);
+    await _add(tester, 'whey');
+    await _openCart(tester);
+    await tester.tap(find.text('Place order'));
+    await tester.pump();
+    expect(find.byKey(const Key('order-progress')), findsOneWidget);
+    await tester.tap(find.text('Place order'), warnIfMissed: false);
+    await tester.pump();
+    c.read(cartProvider.notifier).add('bands'); // added during the request
+    source.gate.complete();
+    await tester.pumpAndSettle();
+    expect(source.calls, 1);
+    expect(source.lastOrder, {'whey': 1});
+    expect(c.read(cartProvider), {'bands': 1});
+    expect(find.text('Place order'), findsNothing); // sheet closed
+  });
+
   for (final code in ['en', 'ru', 'uz', 'es']) {
     testWidgets('no overflow on iPhone SE ($code)', (tester) async {
       await _pump(tester, _source(),
           size: const Size(375, 667), locale: Locale(code));
+      expect(tester.takeException(), isNull);
+      await _add(tester, 'whey');
+      await _openCart(tester);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final code in ['en', 'ru']) {
+    testWidgets('no overflow at 1.3x text on iPhone SE ($code)',
+        (tester) async {
+      await _pump(tester, _source(),
+          size: const Size(375, 667), locale: Locale(code), textScale: 1.3);
       expect(tester.takeException(), isNull);
       await _add(tester, 'whey');
       await _openCart(tester);

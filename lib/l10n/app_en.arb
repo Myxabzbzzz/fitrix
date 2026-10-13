@@ -80,7 +80,7 @@
   },
   "discoverArticleMissing": "This article isn’t available.",
   "shopTitle": "Shop",
-  "shopCartLabel": "Cart, {n} items",
+  "shopCartLabel": "{n, plural, =0{Cart, empty} one{Cart, 1 item} other{Cart, {n} items}}",
   "@shopCartLabel": {
     "placeholders": {
       "n": {
@@ -136,5 +136,6 @@
       }
     }
   },
-  "shopRetry": "Retry"
+  "shopRetry": "Retry",
+  "shopNoProducts": "No products yet"
 }
