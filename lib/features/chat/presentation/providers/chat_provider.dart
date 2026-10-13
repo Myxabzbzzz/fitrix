@@ -109,8 +109,10 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   /// Whether a message sent now would be accepted.
   bool get canSend => state.valueOrNull != null && !_isReplying;
 
-  Future<void> sendMessage(String content, {bool isQuickReply = false}) =>
-      _begin(content, isQuickReply: isQuickReply) ?? Future.value();
+  Future<void> sendMessage(String content,
+          {bool isQuickReply = false, String? imagePath}) =>
+      _begin(content, isQuickReply: isQuickReply, imagePath: imagePath) ??
+      Future.value();
 
   /// Starts sending without waiting for the reply. Returns whether the
   /// message was accepted (false while loading or while Felix replies).
@@ -122,7 +124,8 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   }
 
   /// Null when the message is rejected; otherwise the reply, already started.
-  Future<void>? _begin(String content, {bool isQuickReply = false}) {
+  Future<void>? _begin(String content,
+      {bool isQuickReply = false, String? imagePath}) {
     final messages = state.valueOrNull;
     if (messages == null || _isReplying || content.trim().isEmpty) return null;
 
@@ -132,6 +135,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       sender: MessageSender.user,
       timestamp: DateTime.now(),
       isQuickReply: isQuickReply,
+      imagePath: imagePath,
     );
 
     final history = [...messages.where((m) => !m.isFailed), userMessage];
@@ -156,6 +160,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   /// [promptIndex]. Everything before that message is sent as context.
   Future<void> _reply(List<ChatMessage> history, int promptIndex) async {
     final prompt = history[promptIndex].content;
+    final imagePath = history[promptIndex].imagePath;
     final context = history.sublist(0, promptIndex);
     _isReplying = true;
     final reply = ChatMessage(
@@ -171,7 +176,8 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
     final text = StringBuffer();
     try {
       await for (final delta
-          in _repository.streamMessage(prompt, context: context)) {
+          in _repository.streamMessage(prompt,
+              context: context, imagePath: imagePath)) {
         if (!mounted) return;
         text.write(delta);
         _updateReply(reply.id, (m) => m.copyWith(content: text.toString()));

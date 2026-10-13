@@ -687,5 +687,16 @@
         "type": "int"
       }
     }
-  }
+  },
+  "chatAddPhoto": "Add photo",
+  "chatTakePhoto": "Take photo",
+  "chatChooseFromLibrary": "Choose from library",
+  "chatRemovePhoto": "Remove photo",
+  "chatPhotoTooLarge": "That photo is too large. Try another one.",
+  "chatPhotoFailed": "Couldn't get the photo. Check camera and photo permissions in Settings.",
+  "chatPhotoPrompt": "What do you think of this photo?",
+  "chatMicStart": "Dictate a message",
+  "chatMicStop": "Stop dictation",
+  "chatMicDenied": "Felix can't hear you yet. Open Settings and allow microphone and speech recognition for FITRIX.",
+  "chatPhotoViewer": "Photo"
 }

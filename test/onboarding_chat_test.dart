@@ -29,6 +29,7 @@ class _FakeApi extends ChatApiService {
     Map<String, Object>? profile,
     List<Map<String, String>>? history,
     String? language,
+    List<String>? images,
   }) async* {
     profiles.add(profile);
     sent.add(message);

@@ -56,6 +56,8 @@ class ChatApiService {
   ///   so the chat stored on the device is the source of truth.
   /// - [language]: the app's language code; Felix uses it when the user's
   ///   own language isn't clear from the message.
+  /// - [images]: at most one base64 JPEG (<= 1.5 MB decoded) for this turn
+  ///   only; the backend then answers with its vision model.
   Stream<String> streamMessage(
     String message,
     String conversationId, {
@@ -63,6 +65,7 @@ class ChatApiService {
     Map<String, Object>? profile,
     List<Map<String, String>>? history,
     String? language,
+    List<String>? images,
   }) async* {
     final token = await _currentToken();
     final Response<ResponseBody> response;
@@ -76,6 +79,7 @@ class ChatApiService {
           if (profile != null && profile.isNotEmpty) 'profile': profile,
           if (history != null) 'history': history,
           if (language != null) 'language': language,
+          if (images != null && images.isNotEmpty) 'images': images,
         },
         options: Options(
           headers: {

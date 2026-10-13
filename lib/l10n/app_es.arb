@@ -267,5 +267,16 @@
   "programLevelBeginner": "Principiante",
   "programLevelMedium": "Intermedio",
   "programLevelAdvanced": "Avanzado",
-  "shopOrderUnavailable": "Algunos artículos ya no están disponibles. Actualiza tu carrito e inténtalo de nuevo."
+  "shopOrderUnavailable": "Algunos artículos ya no están disponibles. Actualiza tu carrito e inténtalo de nuevo.",
+  "chatAddPhoto": "Añadir foto",
+  "chatTakePhoto": "Hacer foto",
+  "chatChooseFromLibrary": "Elegir de la galería",
+  "chatRemovePhoto": "Quitar foto",
+  "chatPhotoTooLarge": "La foto es demasiado grande. Prueba con otra.",
+  "chatPhotoFailed": "No se pudo obtener la foto. Revisa los permisos de cámara y fotos en Ajustes.",
+  "chatPhotoPrompt": "¿Qué opinas de esta foto?",
+  "chatMicStart": "Dictar un mensaje",
+  "chatMicStop": "Detener dictado",
+  "chatMicDenied": "Felix aún no te oye. Abre Ajustes y permite a FITRIX el micrófono y el reconocimiento de voz.",
+  "chatPhotoViewer": "Foto"
 }

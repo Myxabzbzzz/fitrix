@@ -267,5 +267,16 @@
   "programLevelBeginner": "Начинающий",
   "programLevelMedium": "Средний",
   "programLevelAdvanced": "Продвинутый",
-  "shopOrderUnavailable": "Некоторые товары больше недоступны. Обновите корзину и попробуйте снова."
+  "shopOrderUnavailable": "Некоторые товары больше недоступны. Обновите корзину и попробуйте снова.",
+  "chatAddPhoto": "Добавить фото",
+  "chatTakePhoto": "Сделать фото",
+  "chatChooseFromLibrary": "Выбрать из галереи",
+  "chatRemovePhoto": "Убрать фото",
+  "chatPhotoTooLarge": "Фото слишком большое. Попробуйте другое.",
+  "chatPhotoFailed": "Не удалось получить фото. Проверьте доступ к камере и фото в настройках.",
+  "chatPhotoPrompt": "Что скажешь об этом фото?",
+  "chatMicStart": "Надиктовать сообщение",
+  "chatMicStop": "Остановить диктовку",
+  "chatMicDenied": "Felix пока вас не слышит. Откройте Настройки и разрешите FITRIX микрофон и распознавание речи.",
+  "chatPhotoViewer": "Фото"
 }

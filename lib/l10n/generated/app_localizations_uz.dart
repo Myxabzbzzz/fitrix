@@ -959,4 +959,39 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get shopOrderUnavailable =>
       'Ba’zi mahsulotlar endi mavjud emas. Savatni yangilang va qayta urinib ko‘ring.';
+
+  @override
+  String get chatAddPhoto => 'Rasm qo‘shish';
+
+  @override
+  String get chatTakePhoto => 'Rasmga olish';
+
+  @override
+  String get chatChooseFromLibrary => 'Galereyadan tanlash';
+
+  @override
+  String get chatRemovePhoto => 'Rasmni olib tashlash';
+
+  @override
+  String get chatPhotoTooLarge => 'Rasm juda katta. Boshqasini sinab ko‘ring.';
+
+  @override
+  String get chatPhotoFailed =>
+      'Rasmni olib bo‘lmadi. Sozlamalarda kamera va rasmlarga ruxsatni tekshiring.';
+
+  @override
+  String get chatPhotoPrompt => 'Bu rasm haqida nima deysiz?';
+
+  @override
+  String get chatMicStart => 'Xabarni ovozda aytish';
+
+  @override
+  String get chatMicStop => 'Diktovkani to‘xtatish';
+
+  @override
+  String get chatMicDenied =>
+      'Felix sizni hali eshitmayapti. Sozlamalarni oching va FITRIX uchun mikrofon va nutqni tanishga ruxsat bering.';
+
+  @override
+  String get chatPhotoViewer => 'Rasm';
 }

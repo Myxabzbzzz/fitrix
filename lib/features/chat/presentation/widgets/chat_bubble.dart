@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -57,10 +59,22 @@ class ChatBubble extends StatelessWidget {
     } else if (message.isFailed) {
       content = ChatFailedContent(message: message.content, color: textColor);
     } else {
-      content = Text(
+      final text = Text(
         message.content,
         style: AppText.body14.copyWith(color: textColor),
       );
+      final imagePath = message.imagePath;
+      content = imagePath == null
+          ? text
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ChatPhotoThumb(path: imagePath),
+                const SizedBox(height: AppSpacing.xs),
+                text,
+              ],
+            );
     }
 
     final bubble = GestureDetector(
@@ -132,6 +146,73 @@ class ChatFailedContent extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+/// A photo sent with a message; tap to view it full screen.
+class ChatPhotoThumb extends StatelessWidget {
+  final String path;
+
+  const ChatPhotoThumb({super.key, required this.path});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => ChatPhotoViewer(path: path)),
+      ),
+      child: ClipRRect(
+        key: const ValueKey('chat-bubble-image'),
+        borderRadius: AppRadius.smAll,
+        child: Image.file(
+          File(path),
+          width: 160,
+          height: 160,
+          fit: BoxFit.cover,
+          cacheWidth: 480,
+          errorBuilder: (_, __, ___) => Container(
+            width: 160,
+            height: 160,
+            color: palette.tile,
+            child: Icon(Icons.image_not_supported_outlined,
+                color: palette.textSecondary),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ChatPhotoViewer extends StatelessWidget {
+  final String path;
+
+  const ChatPhotoViewer({super.key, required this.path});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Scaffold(
+      key: const ValueKey('chat-photo-viewer'),
+      backgroundColor: palette.background,
+      appBar: AppBar(
+        backgroundColor: palette.background,
+        foregroundColor: palette.textPrimary,
+        elevation: 0,
+        title: Text(AppLocalizations.of(context).chatPhotoViewer),
+      ),
+      body: Center(
+        child: InteractiveViewer(
+          child: Image.file(
+            File(path),
+            fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) => Icon(
+                Icons.image_not_supported_outlined,
+                color: palette.textSecondary),
+          ),
+        ),
+      ),
     );
   }
 }

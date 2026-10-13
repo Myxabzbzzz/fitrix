@@ -5,6 +5,7 @@ import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
+import 'package:fitrix/features/chat/data/services/photo_service.dart';
 import 'package:fitrix/features/profile/data/models/user_profile.dart';
 import 'package:fitrix/features/profile/data/repositories/profile_repository.dart';
 
@@ -94,10 +95,18 @@ class ChatRepository {
   /// [context] is the chat as shown before [message] (without it); its
   /// recent completed turns are sent along with this chat's topic and the
   /// user's profile, so Felix keeps context even if the backend restarted.
+  /// [imagePath] is a photo sent with this turn only.
   Stream<String> streamMessage(
     String message, {
     List<ChatMessage> context = const [],
+    String? imagePath,
   }) async* {
+    final images = <String>[];
+    if (imagePath != null) {
+      final encoded = await encodeChatPhoto(imagePath);
+      if (encoded == null) throw ChatException(photoUnavailableMessage);
+      images.add(encoded);
+    }
     final conversationId = await getOrCreateConversationId();
     yield* _apiService.streamMessage(
       message,
@@ -106,8 +115,12 @@ class ChatRepository {
       profile: await _loadProfile(),
       history: ChatMessage.toApiHistory(context),
       language: _language?.call(),
+      images: images,
     );
   }
+
+  static const photoUnavailableMessage =
+      'The photo is missing or too large to send.';
 
   Future<Map<String, Object>> _loadProfile() async {
     final repository = _profileRepository;
