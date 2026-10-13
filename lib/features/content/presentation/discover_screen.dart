@@ -11,6 +11,7 @@ import 'package:fitrix/core/widgets/day_badge.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/core/widgets/section_header.dart';
+import 'package:fitrix/features/auth/presentation/sign_in_prompt.dart';
 import 'package:fitrix/features/content/data/content_repository.dart';
 import 'package:fitrix/features/content/providers.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -38,19 +39,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     await ref.read(challengesProvider.future);
   }
 
-  void _promptSignIn() {
-    final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    final router = GoRouter.of(context);
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(SnackBar(
-      content: Text(l10n.discoverSignInToJoin),
-      action: SnackBarAction(
-        label: l10n.discoverSignIn,
-        onPressed: () => router.push(AppRouter.signIn),
-      ),
-    ));
-  }
+  void _promptSignIn() => showSignInPrompt(
+      context, ref, AppLocalizations.of(context).discoverSignInToJoin);
 
   Future<void> _join(Challenge challenge) async {
     final user = ref.read(currentUserProvider).valueOrNull;
@@ -313,6 +303,13 @@ class _ChallengeHero extends StatelessWidget {
   }
 }
 
+String _levelLabel(AppLocalizations l10n, String level) => switch (level) {
+      'beginner' => l10n.programLevelBeginner,
+      'medium' => l10n.programLevelMedium,
+      'advanced' => l10n.programLevelAdvanced,
+      _ => level,
+    };
+
 class _ProgramCard extends StatelessWidget {
   const _ProgramCard({required this.program});
 
@@ -359,7 +356,7 @@ class _ProgramCard extends StatelessWidget {
                       horizontal: AppSpacing.xs, vertical: AppSpacing.xxs),
                   decoration: BoxDecoration(
                       color: palette.badge, borderRadius: AppRadius.fullAll),
-                  child: Text(program.level,
+                  child: Text(_levelLabel(l10n, program.level),
                       style: AppText.microStrong
                           .copyWith(color: palette.textPrimary)),
                 ),

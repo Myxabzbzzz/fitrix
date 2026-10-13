@@ -41,7 +41,7 @@
   "progressIntake": "Ingesta, media",
   "progressBurn": "Gasto, media",
   "progressKcalPerDay": "kcal / día",
-  "progressSets": "{count} series",
+  "progressSets": "{count, plural, one{{count} serie} other{{count} series}}",
   "nutritionTitle": "Mi nutrición",
   "nutritionOfGoal": "de {goal} kcal",
   "nutritionLeft": "Quedan {kcal} kcal hoy",
@@ -126,7 +126,6 @@
   "shopOrderPlaced": "Pedido realizado",
   "shopSignInToOrder": "Inicia sesión para hacer el pedido",
   "shopOrderFailed": "No se pudo hacer el pedido. Revisa tu conexión.",
-  "shopOrderRejected": "Pedido rechazado: {message}",
   "shopRetry": "Reintentar",
   "shopNoProducts": "Aún no hay productos",
   "mapTitle": "Mapa Fitrix",
@@ -215,7 +214,6 @@
   "chatMessageHint": "Mensaje...",
   "chatAllChats": "Todos los chats",
   "chatTapToRetry": "Toca para reintentar",
-  "comingSoon": "Próximamente",
   "progressWeightTitle": "Mi peso (kg)",
   "progressCaloriesTitle": "Calorías: ingesta y gasto",
   "signInCodeResent": "Hemos enviado un nuevo código a {email}",
@@ -264,5 +262,10 @@
   "profileErrWeightRange": "El peso debe estar entre {min} y {max} kg",
   "profileErrHeightRequired": "Introduce tu altura",
   "profileErrHeightNumber": "Introduce tu altura como número",
-  "profileErrHeightRange": "La altura debe estar entre {min} y {max} cm"
+  "profileErrHeightRange": "La altura debe estar entre {min} y {max} cm",
+  "signInUnavailable": "Las cuentas no están disponibles ahora. Inténtalo más tarde.",
+  "programLevelBeginner": "Principiante",
+  "programLevelMedium": "Intermedio",
+  "programLevelAdvanced": "Avanzado",
+  "shopOrderUnavailable": "Algunos artículos ya no están disponibles. Actualiza tu carrito e inténtalo de nuevo."
 }

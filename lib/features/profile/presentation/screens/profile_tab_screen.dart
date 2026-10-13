@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/router/app_router.dart';
-import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/settings/theme_mode_provider.dart';
-import 'package:fitrix/core/sync/sync_providers.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/auth/data/auth_failure.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
+import 'package:fitrix/features/auth/presentation/sign_in_prompt.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
 import 'package:fitrix/features/profile/domain/streak.dart';
@@ -50,23 +49,7 @@ class ProfileTabScreen extends ConsumerWidget {
     );
     if (confirmed != true || !context.mounted) return;
 
-    // Grab these before signing out: it recreates the provider scope.
-    final router = GoRouter.of(context);
-    final session = ref.read(appSessionProvider);
-    final sync = ref.read(syncEngineProvider);
-    if (sync != null) {
-      // Upload workouts/chats not yet on the server; offline, don't block.
-      try {
-        await sync.sync().timeout(const Duration(seconds: 3));
-      } catch (_) {}
-    }
-    if (account != null) {
-      // Ends the Supabase session (works offline), then clears local data.
-      await account.signOut();
-    } else {
-      await session.signOut();
-    }
-    router.go(AppRouter.intro);
+    await signOutAndGo(ref, GoRouter.of(context), AppRouter.intro);
   }
 
   /// Account deletion (App Store / Google Play requirement): two

@@ -165,11 +165,18 @@ void main() {
     await _pump(tester, source);
     await tester.tap(find.text('Join challenge'));
     await tester.pumpAndSettle();
-    expect(find.text('Sign in to join challenges'), findsOneWidget);
+    // No accounts in this test app: nothing to sign in to.
+    expect(find.text('Accounts are unavailable right now. Try again later.'),
+        findsOneWidget);
+    expect(find.text('Sign in'), findsNothing);
     expect(source.joined, isEmpty);
-    await tester.tap(find.text('Sign in'));
-    await tester.pumpAndSettle();
-    expect(find.text('sign-in page'), findsOneWidget);
+  });
+
+  testWidgets('program levels are localized', (tester) async {
+    await _pump(tester, _source());
+    expect(find.text('Beginner'), findsOneWidget);
+    expect(find.text('Intermediate'), findsOneWidget);
+    expect(find.text('beginner'), findsNothing);
   });
 
   testWidgets('joining while signed in joins and shows Joined', (tester) async {

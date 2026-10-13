@@ -159,8 +159,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get progressKcalPerDay => 'kcal / day';
 
   @override
-  String progressSets(String count) {
-    return '$count sets';
+  String progressSets(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sets',
+      one: '$count set',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -452,11 +458,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get shopOrderFailed =>
       'Couldn’t place the order. Check your connection.';
-
-  @override
-  String shopOrderRejected(String message) {
-    return 'Order rejected: $message';
-  }
 
   @override
   String get shopRetry => 'Retry';
@@ -794,9 +795,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatTapToRetry => 'Tap to retry';
 
   @override
-  String get comingSoon => 'Coming soon';
-
-  @override
   String get progressWeightTitle => 'My weight (kg)';
 
   @override
@@ -970,4 +968,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String profileErrHeightRange(String min, String max) {
     return 'Height must be between $min and $max cm';
   }
+
+  @override
+  String get signInUnavailable =>
+      'Accounts are unavailable right now. Try again later.';
+
+  @override
+  String get programLevelBeginner => 'Beginner';
+
+  @override
+  String get programLevelMedium => 'Intermediate';
+
+  @override
+  String get programLevelAdvanced => 'Advanced';
+
+  @override
+  String get shopOrderUnavailable =>
+      'Some items are no longer available. Update your cart and try again.';
 }

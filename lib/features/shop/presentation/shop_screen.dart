@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/animation/motion.dart';
-import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/auth/presentation/sign_in_prompt.dart';
 import 'package:fitrix/features/content/data/content_repository.dart';
 import 'package:fitrix/features/shop/presentation/cart_sheet.dart';
 import 'package:fitrix/features/shop/providers.dart';
@@ -65,15 +64,8 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
   Future<void> _placeOrder() async {
     if (_busy.value) return;
     final l10n = AppLocalizations.of(context);
-    final router = GoRouter.of(context);
 
-    void promptSignIn() => _snack(SnackBar(
-          content: Text(l10n.shopSignInToOrder),
-          action: SnackBarAction(
-            label: l10n.discoverSignIn,
-            onPressed: () => router.push(AppRouter.signIn),
-          ),
-        ));
+    void promptSignIn() => showSignInPrompt(context, ref, l10n.shopSignInToOrder);
 
     if (ref.read(currentUserProvider).valueOrNull == null) {
       return promptSignIn();
@@ -102,8 +94,9 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     } on SignInRequired {
       if (mounted) promptSignIn();
     } on OrderException catch (e) {
+      debugPrint('Order rejected: ${e.message}');
       if (mounted) {
-        _snack(SnackBar(content: Text(l10n.shopOrderRejected(e.message))));
+        _snack(SnackBar(content: Text(l10n.shopOrderUnavailable)));
       }
     } catch (_) {
       if (mounted) _retryBar(l10n);

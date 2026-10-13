@@ -351,8 +351,8 @@ abstract class AppLocalizations {
   /// No description provided for @progressSets.
   ///
   /// In en, this message translates to:
-  /// **'{count} sets'**
-  String progressSets(String count);
+  /// **'{count, plural, one{{count} set} other{{count} sets}}'**
+  String progressSets(int count);
 
   /// No description provided for @nutritionTitle.
   ///
@@ -857,12 +857,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn’t place the order. Check your connection.'**
   String get shopOrderFailed;
-
-  /// No description provided for @shopOrderRejected.
-  ///
-  /// In en, this message translates to:
-  /// **'Order rejected: {message}'**
-  String shopOrderRejected(String message);
 
   /// No description provided for @shopRetry.
   ///
@@ -1392,12 +1386,6 @@ abstract class AppLocalizations {
   /// **'Tap to retry'**
   String get chatTapToRetry;
 
-  /// No description provided for @comingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Coming soon'**
-  String get comingSoon;
-
   /// No description provided for @progressWeightTitle.
   ///
   /// In en, this message translates to:
@@ -1691,6 +1679,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Height must be between {min} and {max} cm'**
   String profileErrHeightRange(String min, String max);
+
+  /// No description provided for @signInUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts are unavailable right now. Try again later.'**
+  String get signInUnavailable;
+
+  /// No description provided for @programLevelBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get programLevelBeginner;
+
+  /// No description provided for @programLevelMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get programLevelMedium;
+
+  /// No description provided for @programLevelAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get programLevelAdvanced;
+
+  /// No description provided for @shopOrderUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Some items are no longer available. Update your cart and try again.'**
+  String get shopOrderUnavailable;
 }
 
 class _AppLocalizationsDelegate

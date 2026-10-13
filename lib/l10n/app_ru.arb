@@ -41,7 +41,7 @@
   "progressIntake": "Потреблено, в среднем",
   "progressBurn": "Сожжено, в среднем",
   "progressKcalPerDay": "ккал / день",
-  "progressSets": "{count} подх.",
+  "progressSets": "{count, plural, one{{count} подход} few{{count} подхода} many{{count} подходов} other{{count} подхода}}",
   "nutritionTitle": "Моё питание",
   "nutritionOfGoal": "из {goal} ккал",
   "nutritionLeft": "Осталось {kcal} ккал на сегодня",
@@ -126,7 +126,6 @@
   "shopOrderPlaced": "Заказ оформлен",
   "shopSignInToOrder": "Войдите, чтобы оформить заказ",
   "shopOrderFailed": "Не удалось оформить заказ. Проверьте подключение.",
-  "shopOrderRejected": "Заказ отклонён: {message}",
   "shopRetry": "Повторить",
   "shopNoProducts": "Товаров пока нет",
   "mapTitle": "Карта Fitrix",
@@ -215,7 +214,6 @@
   "chatMessageHint": "Сообщение...",
   "chatAllChats": "Все чаты",
   "chatTapToRetry": "Нажмите, чтобы повторить",
-  "comingSoon": "Скоро",
   "progressWeightTitle": "Мой вес (кг)",
   "progressCaloriesTitle": "Калории: потреблено и сожжено",
   "signInCodeResent": "Мы отправили новый код на {email}",
@@ -264,5 +262,10 @@
   "profileErrWeightRange": "Вес должен быть от {min} до {max} кг",
   "profileErrHeightRequired": "Введите рост",
   "profileErrHeightNumber": "Введите рост числом",
-  "profileErrHeightRange": "Рост должен быть от {min} до {max} см"
+  "profileErrHeightRange": "Рост должен быть от {min} до {max} см",
+  "signInUnavailable": "Аккаунты сейчас недоступны. Попробуйте позже.",
+  "programLevelBeginner": "Начинающий",
+  "programLevelMedium": "Средний",
+  "programLevelAdvanced": "Продвинутый",
+  "shopOrderUnavailable": "Некоторые товары больше недоступны. Обновите корзину и попробуйте снова."
 }

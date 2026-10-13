@@ -153,8 +153,13 @@ class AppLocalizationsUz extends AppLocalizations {
   String get progressKcalPerDay => 'kkal / kun';
 
   @override
-  String progressSets(String count) {
-    return '$count yondashuv';
+  String progressSets(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count yondashuv',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -447,11 +452,6 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get shopOrderFailed =>
       'Buyurtma berib bo‘lmadi. Internetni tekshiring.';
-
-  @override
-  String shopOrderRejected(String message) {
-    return 'Buyurtma rad etildi: $message';
-  }
 
   @override
   String get shopRetry => 'Qayta urinish';
@@ -768,9 +768,6 @@ class AppLocalizationsUz extends AppLocalizations {
   String get chatTapToRetry => 'Qayta urinish uchun bosing';
 
   @override
-  String get comingSoon => 'Tez orada';
-
-  @override
   String get progressWeightTitle => 'Mening vaznim (kg)';
 
   @override
@@ -945,4 +942,21 @@ class AppLocalizationsUz extends AppLocalizations {
   String profileErrHeightRange(String min, String max) {
     return 'Bo‘y $min dan $max sm gacha bo‘lishi kerak';
   }
+
+  @override
+  String get signInUnavailable =>
+      'Hisoblar hozir mavjud emas. Keyinroq urinib ko‘ring.';
+
+  @override
+  String get programLevelBeginner => 'Boshlang‘ich';
+
+  @override
+  String get programLevelMedium => 'O‘rta';
+
+  @override
+  String get programLevelAdvanced => 'Ilg‘or';
+
+  @override
+  String get shopOrderUnavailable =>
+      'Ba’zi mahsulotlar endi mavjud emas. Savatni yangilang va qayta urinib ko‘ring.';
 }

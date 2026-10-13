@@ -69,7 +69,7 @@
   "progressIntake": "Intake, avg",
   "progressBurn": "Burn, avg",
   "progressKcalPerDay": "kcal / day",
-  "progressSets": "{count} sets",
+  "progressSets": "{count, plural, one{{count} set} other{{count} sets}}",
   "nutritionTitle": "My Nutrition",
   "nutritionOfGoal": "of {goal} kcal",
   "nutritionLeft": "{kcal} kcal left today",
@@ -120,13 +120,6 @@
   "@progressMonthAgo": {
     "placeholders": {
       "value": {
-        "type": "String"
-      }
-    }
-  },
-  "@progressSets": {
-    "placeholders": {
-      "count": {
         "type": "String"
       }
     }
@@ -277,15 +270,6 @@
   "shopOrderPlaced": "Order placed",
   "shopSignInToOrder": "Sign in to place an order",
   "shopOrderFailed": "Couldn’t place the order. Check your connection.",
-  "shopOrderRejected": "Order rejected: {message}",
-  "@shopOrderRejected": {
-    "placeholders": {
-      "message": {
-        "type": "String",
-        "example": "Out of stock"
-      }
-    }
-  },
   "shopRetry": "Retry",
   "shopNoProducts": "No products yet",
   "mapTitle": "Fitrix map",
@@ -539,7 +523,6 @@
   "chatMessageHint": "Message...",
   "chatAllChats": "All chats",
   "chatTapToRetry": "Tap to retry",
-  "comingSoon": "Coming soon",
   "progressWeightTitle": "My weight (kg)",
   "progressCaloriesTitle": "Calories: intake vs burn",
   "signInCodeResent": "We sent a new code to {email}",
@@ -690,6 +673,18 @@
       "max": {
         "type": "String",
         "example": "260"
+      }
+    }
+  },
+  "signInUnavailable": "Accounts are unavailable right now. Try again later.",
+  "programLevelBeginner": "Beginner",
+  "programLevelMedium": "Intermediate",
+  "programLevelAdvanced": "Advanced",
+  "shopOrderUnavailable": "Some items are no longer available. Update your cart and try again.",
+  "@progressSets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
       }
     }
   }

@@ -41,7 +41,7 @@
   "progressIntake": "Iste’mol, o‘rtacha",
   "progressBurn": "Sarf, o‘rtacha",
   "progressKcalPerDay": "kkal / kun",
-  "progressSets": "{count} yondashuv",
+  "progressSets": "{count, plural, other{{count} yondashuv}}",
   "nutritionTitle": "Mening ovqatlanishim",
   "nutritionOfGoal": "{goal} kkaldan",
   "nutritionLeft": "Bugun {kcal} kkal qoldi",
@@ -126,7 +126,6 @@
   "shopOrderPlaced": "Buyurtma qabul qilindi",
   "shopSignInToOrder": "Buyurtma berish uchun hisobga kiring",
   "shopOrderFailed": "Buyurtma berib bo‘lmadi. Internetni tekshiring.",
-  "shopOrderRejected": "Buyurtma rad etildi: {message}",
   "shopRetry": "Qayta urinish",
   "shopNoProducts": "Hozircha mahsulotlar yo‘q",
   "mapTitle": "Fitrix xaritasi",
@@ -215,7 +214,6 @@
   "chatMessageHint": "Xabar...",
   "chatAllChats": "Barcha chatlar",
   "chatTapToRetry": "Qayta urinish uchun bosing",
-  "comingSoon": "Tez orada",
   "progressWeightTitle": "Mening vaznim (kg)",
   "progressCaloriesTitle": "Kaloriya: qabul va sarf",
   "signInCodeResent": "Yangi kodni {email} manziliga yubordik",
@@ -264,5 +262,10 @@
   "profileErrWeightRange": "Vazn {min} dan {max} kg gacha bo‘lishi kerak",
   "profileErrHeightRequired": "Bo‘yingizni kiriting",
   "profileErrHeightNumber": "Bo‘yingizni son bilan kiriting",
-  "profileErrHeightRange": "Bo‘y {min} dan {max} sm gacha bo‘lishi kerak"
+  "profileErrHeightRange": "Bo‘y {min} dan {max} sm gacha bo‘lishi kerak",
+  "signInUnavailable": "Hisoblar hozir mavjud emas. Keyinroq urinib ko‘ring.",
+  "programLevelBeginner": "Boshlang‘ich",
+  "programLevelMedium": "O‘rta",
+  "programLevelAdvanced": "Ilg‘or",
+  "shopOrderUnavailable": "Ba’zi mahsulotlar endi mavjud emas. Savatni yangilang va qayta urinib ko‘ring."
 }

@@ -52,7 +52,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final fmt = NumberFormat.decimalPattern('en');
+    final fmt = NumberFormat.decimalPattern(
+        Localizations.localeOf(context).toString());
     final palette = AppPalette.of(context);
     final sectionStyle = AppText.headingS.copyWith(color: palette.textPrimary);
     final noteStyle = AppText.caption.copyWith(color: palette.textSecondary);
@@ -234,7 +235,7 @@ class _HistoryTile extends StatelessWidget {
               ),
               Text(
                 AppLocalizations.of(context)
-                    .progressSets('${workout.setCount}'),
+                    .progressSets(workout.setCount),
                 style: AppText.caption.copyWith(color: palette.textSecondary),
               ),
             ],

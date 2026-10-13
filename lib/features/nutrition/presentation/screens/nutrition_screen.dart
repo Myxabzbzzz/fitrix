@@ -85,7 +85,8 @@ class _NutritionScreenState extends State<NutritionScreen>
   Widget _build(BuildContext context) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
-    final fmt = NumberFormat.decimalPattern('en');
+    final fmt = NumberFormat.decimalPattern(
+        Localizations.localeOf(context).toString());
     const left = _goal - _consumed;
 
     return Scaffold(

@@ -231,12 +231,12 @@ void main() {
     await _openCart(tester);
     await tester.tap(find.text('Place order'));
     await tester.pumpAndSettle();
-    expect(find.text('Sign in to place an order'), findsOneWidget);
+    // No accounts in this test app: nothing to sign in to.
+    expect(find.text('Accounts are unavailable right now. Try again later.'),
+        findsOneWidget);
+    expect(find.text('Sign in'), findsNothing);
     expect(source.lastOrder, isNull);
     expect(c.read(cartProvider), {'whey': 1});
-    await tester.tap(find.text('Sign in'));
-    await tester.pumpAndSettle();
-    expect(find.text('sign-in page'), findsOneWidget);
   });
 
   testWidgets('network error keeps the cart and Retry places the order',
@@ -267,7 +267,11 @@ void main() {
     source.error = OrderException('Out of stock');
     await tester.tap(find.text('Place order'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Out of stock'), findsOneWidget);
+    expect(find.textContaining('Out of stock'), findsNothing); // server text
+    expect(
+        find.text(
+            'Some items are no longer available. Update your cart and try again.'),
+        findsOneWidget);
     expect(c.read(cartProvider), {'whey': 1});
   });
 

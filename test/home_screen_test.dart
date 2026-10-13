@@ -44,6 +44,7 @@ Future<ProviderContainer> _pump(
         AppRouter.felix,
         AppRouter.shop,
         AppRouter.fitrixMap,
+        AppRouter.aboutMe,
       ])
         GoRoute(path: p, builder: (_, __) => Scaffold(body: Text('page $p'))),
     ],
@@ -128,5 +129,14 @@ void main() {
     expect(tester.takeException(), isNull);
     await _pump(tester, size: const Size(375, 667), active: true);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('drawer About me opens the About me page', (tester) async {
+    await _pump(tester);
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('About me'));
+    await tester.pumpAndSettle();
+    expect(find.text('page ${AppRouter.aboutMe}'), findsOneWidget);
   });
 }

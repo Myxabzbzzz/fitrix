@@ -161,8 +161,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get progressKcalPerDay => 'ккал / день';
 
   @override
-  String progressSets(String count) {
-    return '$count подх.';
+  String progressSets(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count подхода',
+      many: '$count подходов',
+      few: '$count подхода',
+      one: '$count подход',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -459,11 +467,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get shopOrderFailed =>
       'Не удалось оформить заказ. Проверьте подключение.';
-
-  @override
-  String shopOrderRejected(String message) {
-    return 'Заказ отклонён: $message';
-  }
 
   @override
   String get shopRetry => 'Повторить';
@@ -812,9 +815,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get chatTapToRetry => 'Нажмите, чтобы повторить';
 
   @override
-  String get comingSoon => 'Скоро';
-
-  @override
   String get progressWeightTitle => 'Мой вес (кг)';
 
   @override
@@ -989,4 +989,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String profileErrHeightRange(String min, String max) {
     return 'Рост должен быть от $min до $max см';
   }
+
+  @override
+  String get signInUnavailable =>
+      'Аккаунты сейчас недоступны. Попробуйте позже.';
+
+  @override
+  String get programLevelBeginner => 'Начинающий';
+
+  @override
+  String get programLevelMedium => 'Средний';
+
+  @override
+  String get programLevelAdvanced => 'Продвинутый';
+
+  @override
+  String get shopOrderUnavailable =>
+      'Некоторые товары больше недоступны. Обновите корзину и попробуйте снова.';
 }

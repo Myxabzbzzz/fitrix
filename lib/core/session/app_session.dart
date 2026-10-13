@@ -16,6 +16,9 @@ class AppSession extends ChangeNotifier {
   /// different account signing in clears the local data first.
   static const String keyAccountUserId = 'account_user_id';
 
+  /// Where the theme choice is stored (see themeModeProvider).
+  static const String keyThemeMode = 'theme_mode';
+
   bool get onboardingComplete =>
       _prefs.getBool(AppConstants.keyOnboardingComplete) ?? false;
 
@@ -50,6 +53,7 @@ class AppSession extends ChangeNotifier {
     for (final key in _prefs.getKeys().toList()) {
       if (isAuthStorageKey(key)) continue;
       if (keepLanguage && key == AppConstants.keyLanguage) continue;
+      if (key == keyThemeMode) continue;
       await _prefs.remove(key);
     }
   }
@@ -61,8 +65,11 @@ class AppSession extends ChangeNotifier {
   }
 
   /// Clears everything stored on this device and starts over.
+  /// The theme choice belongs to the device, not the account, so it survives.
   Future<void> signOut() async {
+    final theme = _prefs.getString(keyThemeMode);
     await _prefs.clear();
+    if (theme != null) await _prefs.setString(keyThemeMode, theme);
     reload();
   }
 }
