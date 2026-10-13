@@ -13,6 +13,9 @@ const {
   sanitizeLanguage,
   buildSystemPrompt,
 } = require('./prompt');
+const { createActionFilter, parseAction, extractAction, SPORTS } = require('./actions');
+const { looksLikePlan, extractPlanAction } = require('./fallback');
+const { validateImages } = require('./images');
 const { createPlainTextFilter, toPlainText } = require('./plainText');
 const { authConfigFromEnv, requireUser, rateLimitPerUser } = require('./auth');
 
@@ -29,6 +32,8 @@ if (require.main === module) {
 const PORT = process.env.PORT || 3000;
 const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'qwen3:8b';
+// Used instead of OLLAMA_MODEL only for requests that carry a photo.
+const OLLAMA_VISION_MODEL = process.env.OLLAMA_VISION_MODEL || 'qwen2.5vl:7b';
 // Reasoning ("thinking") models like qwen3 take ~20s per reply with it on
 // vs ~2-3s off. Set OLLAMA_THINK=true to re-enable.
 const OLLAMA_THINK = process.env.OLLAMA_THINK === 'true';
@@ -46,6 +51,12 @@ const OLLAMA_TIMEOUT_MS = parseWholeNumber(
   'OLLAMA_TIMEOUT_MS',
   process.env.OLLAMA_TIMEOUT_MS,
   120000
+);
+// Budget for the one structured "convert this plan to JSON" call.
+const FALLBACK_TIMEOUT_MS = parseWholeNumber(
+  'FALLBACK_TIMEOUT_MS',
+  process.env.FALLBACK_TIMEOUT_MS,
+  20000
 );
 // Chat messages and replies are users' personal data (age, weight, health),
 // so logs only carry their length unless this is turned on for debugging.
@@ -84,9 +95,12 @@ function createApp({
 
   // Middleware
   app.use(cors());
-  // History can carry 20 turns of non-ASCII text, so allow more than
-  // body-parser's 100kb default.
-  app.use(bodyParser.json({ limit: '1mb' }));
+  // JSON bodies are parsed per route, AFTER authentication, so unauthenticated
+  // callers can't make the server buffer large bodies. History can carry 20
+  // turns of non-ASCII text (1mb); a chat request may also carry one base64
+  // photo (<= 1.5 MB decoded = 2 MB), so chat routes allow 3mb.
+  const smallJson = bodyParser.json({ limit: '1mb' });
+  const chatJson = bodyParser.json({ limit: '3mb' });
 
   // Conversation turns per user and conversationId, for clients that don't
   // send `history`. Requests that do send `history` neither read nor write
@@ -104,28 +118,45 @@ function createApp({
   });
 
   // Chat endpoint
-  app.post('/chat', user, limit, async (req, res) => {
+  app.post('/chat', user, limit, chatJson, async (req, res) => {
     const turn = prepareTurn(req.body, req.user.id, conversations);
     if (turn.error) {
-      return res.status(400).json({ error: turn.error, message: turn.error });
+      return res
+        .status(turn.status || 400)
+        .json({ error: turn.error, message: turn.error });
     }
+
+    const controller = new AbortController();
+    res.on('close', () => {
+      if (!res.writableEnded) controller.abort();
+    });
 
     try {
       const ollamaResponse = await axios.post(
         `${OLLAMA_URL}/api/chat`,
-        ollamaRequest(turn.messages, false),
+        ollamaRequest(turn.messages, false, turn.model),
         { timeout: OLLAMA_TIMEOUT_MS }
       );
 
-      const assistantMessage = toPlainText(
-        ollamaResponse.data?.message?.content || ''
+      const extracted = extractAction(
+        ollamaResponse.data?.message?.content || '',
+        { defaultSport: turn.defaultSport }
       );
+      const assistantMessage = toPlainText(extracted.text);
+      logAction(turn.tag, extracted.hadBlock, extracted.action);
+      const action =
+        extracted.action ||
+        (await fallbackAction(turn, assistantMessage, controller.signal));
       turn.finish(assistantMessage);
 
-      res.json({ reply: assistantMessage });
+      res.json(
+        action
+          ? { reply: assistantMessage, action }
+          : { reply: assistantMessage }
+      );
     } catch (error) {
       turn.abort();
-      const { status, body } = describeOllamaError(error);
+      const { status, body } = describeOllamaError(error, turn.model);
       console.error('Error calling Ollama:', error.message);
       res.status(status).json(body);
     }
@@ -133,13 +164,16 @@ function createApp({
 
   // Streaming chat endpoint: responds with NDJSON lines
   //   {"delta":"text"}  … as tokens arrive
+  //   {"action":{…}}    at most once, after the last delta (validated)
   //   {"done":true}     when the reply is complete
   //   {"error":"…"}     if Ollama fails mid-stream
   // Errors before the first token are returned as a normal JSON error status.
-  app.post('/chat/stream', user, limit, async (req, res) => {
+  app.post('/chat/stream', user, limit, chatJson, async (req, res) => {
     const turn = prepareTurn(req.body, req.user.id, conversations);
     if (turn.error) {
-      return res.status(400).json({ error: turn.error, message: turn.error });
+      return res
+        .status(turn.status || 400)
+        .json({ error: turn.error, message: turn.error });
     }
     const { conversationId } = turn;
 
@@ -162,10 +196,11 @@ function createApp({
 
     let reply = '';
     const plain = createPlainTextFilter();
+    const actions = createActionFilter();
     try {
       const ollamaResponse = await axios.post(
         `${OLLAMA_URL}/api/chat`,
-        ollamaRequest(turn.messages, true),
+        ollamaRequest(turn.messages, true, turn.model),
         {
           responseType: 'stream',
           signal: controller.signal,
@@ -190,20 +225,28 @@ function createApp({
           }
           if (data.error) throw new Error(data.error);
 
-          const delta = plain.push(data.message?.content || '');
+          const delta = plain.push(actions.push(data.message?.content || ''));
           if (delta) {
             reply += delta;
             send({ delta });
           }
         }
       }
-      const tail = plain.flush();
+      const tail = plain.push(actions.flush()) + plain.flush();
       if (tail) {
         reply += tail;
         send({ delta: tail });
       }
 
+      let action = parseAction(actions.block(), {
+        defaultSport: turn.defaultSport,
+      });
+      logAction(turn.tag, actions.sawBlock(), action);
+      if (!action) {
+        action = await fallbackAction(turn, reply, controller.signal);
+      }
       turn.finish(reply);
+      if (action) send({ action });
       send({ done: true });
       res.end();
     } catch (error) {
@@ -212,7 +255,7 @@ function createApp({
         console.log(`[${conversationId}] Client disconnected, generation stopped`);
         return;
       }
-      const { status, body } = describeOllamaError(error);
+      const { status, body } = describeOllamaError(error, turn.model);
       console.error('Error calling Ollama:', error.message);
       if (!res.headersSent) {
         res.status(status).json(body);
@@ -224,7 +267,7 @@ function createApp({
   });
 
   // Reset conversation endpoint (optional)
-  app.post('/chat/reset', user, (req, res) => {
+  app.post('/chat/reset', user, smallJson, (req, res) => {
     const key = memoryKey(req.user.id, req.body?.conversationId);
 
     if (key && conversations.has(key)) {
@@ -257,12 +300,15 @@ function createApp({
   return app;
 }
 
-function ollamaRequest(messages, stream) {
+function ollamaRequest(messages, stream, model = OLLAMA_MODEL) {
   return {
-    model: OLLAMA_MODEL,
+    model,
     messages,
     stream,
-    think: OLLAMA_THINK,
+    // The vision model may not support `think`; only the text model gets it.
+    ...(model === OLLAMA_VISION_MODEL && model !== OLLAMA_MODEL
+      ? {}
+      : { think: OLLAMA_THINK }),
     keep_alive: OLLAMA_KEEP_ALIVE,
     options: {
       temperature: 0.7,
@@ -273,9 +319,12 @@ function ollamaRequest(messages, stream) {
 
 /**
  * Validates a chat request body and returns what one turn needs:
- *   { conversationId, messages, finish(reply), abort() }  or  { error }.
+ *   { conversationId, messages, model, tag, finish(reply), abort() }  or
+ *   { error, status? }.
  *
- * Body: { message, conversationId, topic?, profile?, history?, language? }.
+ * Body: { message, conversationId, topic?, profile?, history?, language?,
+ * images? }. `images` (<= 1 base64 JPEG) goes on the current user message
+ * only, and switches this request to OLLAMA_VISION_MODEL.
  * The system prompt is built per request from `topic` and `profile`.
  * With `history` (an array, even an empty one) the app is the source of
  * truth: the context is exactly what it sent and server memory is untouched.
@@ -301,6 +350,10 @@ function prepareTurn(body, userId, conversations) {
     return { error: 'conversationId is too long' };
   }
 
+  const checked = validateImages(body.images);
+  if (checked.error) return { error: checked.error, status: checked.status };
+  const { images } = checked;
+
   const topic = sanitizeTopic(body.topic);
   const profile = sanitizeProfile(body.profile);
   const history = sanitizeHistory(body.history);
@@ -314,11 +367,22 @@ function prepareTurn(body, userId, conversations) {
     (history ? ` history:${history.length}` : '') + ']';
 
   logChat(`\n${tag}`, 'User', user.content);
+  if (images.length) console.log(`${tag} image attached (vision model)`);
+  const model = images.length ? OLLAMA_VISION_MODEL : OLLAMA_MODEL;
+  // Only the request to Ollama carries the photo; history and server memory
+  // keep plain text.
+  const withImages = (turns) =>
+    images.length
+      ? [...turns.slice(0, -1), { ...turns[turns.length - 1], images }]
+      : turns;
 
   if (history) {
     return {
       conversationId,
-      messages: [system, ...history, user],
+      messages: [system, ...withImages([...history, user])],
+      model,
+      tag,
+      defaultSport: SPORTS.includes(topic) ? topic : undefined,
       finish: (reply) => logChat(tag, 'Felix', reply),
       abort: () => {},
     };
@@ -328,7 +392,10 @@ function prepareTurn(body, userId, conversations) {
   const turns = startTurn(conversations, key, user.content);
   return {
     conversationId,
-    messages: [system, ...turns],
+    messages: [system, ...withImages([...turns])],
+    model,
+    tag,
+    defaultSport: SPORTS.includes(topic) ? topic : undefined,
     finish: (reply) => finishTurn(conversations, key, reply, tag),
     abort: () => abortTurn(conversations, key),
   };
@@ -425,7 +492,36 @@ function abortTurn(conversations, key) {
   }
 }
 
-function describeOllamaError(error) {
+// When the model wrote a plan but no (valid) block, ask once for the action
+// in structured form. Any failure just means no button.
+async function fallbackAction(turn, visibleText, signal) {
+  const kind = looksLikePlan(visibleText);
+  if (!kind) return null;
+  const action = await extractPlanAction({
+    post: axios.post,
+    url: OLLAMA_URL,
+    model: OLLAMA_MODEL,
+    kind,
+    text: visibleText,
+    defaultSport: turn.defaultSport,
+    timeout: FALLBACK_TIMEOUT_MS,
+    signal,
+  });
+  console.log(
+    `${turn.tag} action fallback: ${action ? `${action.type} (valid)` : 'none'}`
+  );
+  return action;
+}
+
+// Logs only whether an action block appeared and its type, never content.
+function logAction(tag, hadBlock, action) {
+  if (!hadBlock) return;
+  console.log(
+    `${tag} action: ${action ? `${action.type} (valid)` : 'dropped (invalid)'}`
+  );
+}
+
+function describeOllamaError(error, model = OLLAMA_MODEL) {
   if (error.code === 'ECONNREFUSED') {
     return {
       status: 503,
@@ -449,7 +545,7 @@ function describeOllamaError(error) {
       status: 502,
       body: {
         error: 'Model not found',
-        message: `Ollama has no model "${OLLAMA_MODEL}". Run: ollama pull ${OLLAMA_MODEL} (or set OLLAMA_MODEL)`,
+        message: `Ollama has no model "${model}". Run: ollama pull ${model} (or set ${model === OLLAMA_VISION_MODEL ? 'OLLAMA_VISION_MODEL' : 'OLLAMA_MODEL'})`,
       },
     };
   }

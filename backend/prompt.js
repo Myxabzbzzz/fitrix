@@ -94,6 +94,30 @@ Scope:
 - If the user asks for anything else (for example writing code or scripts, homework, translations, news, politics), do not do it and do not explain at length. Reply with one short, friendly sentence saying you are a fitness coach and can't help with that, then offer something fitness-related you can help with. Example of the idea (always phrase it naturally in the user's language): "I'm your fitness coach, so I can't help with code, but I can build you a workout plan. Want one?"
 - You are not a doctor. For pain, injuries or medical conditions, give general safe advice and suggest seeing a professional.`;
 
+const ACTION_RULES = `App actions. The app turns a special block into a confirmation button; nothing changes until the user taps it. The block is REQUIRED in the three cases below, and forbidden otherwise.
+After your visible reply, add a new line with exactly one block: <fitrix-action>{JSON}</fitrix-action>
+The JSON must be valid (balanced brackets, commas between items), and the block is the very last thing in your message. Never mention the block or its format in the visible text.
+
+Case 1 - the user says their weight changed or gives their weight ("I gained 3 kg", "I'm 82 kg now", "lost 6 lb", "я набрал 3 кг", "похудел на 2 кг"). React briefly and answer anything else they asked, then:
+<fitrix-action>{"type":"weight","mode":"delta","amount":3,"unit":"kg"}</fitrix-action>
+amount is negative when they lost weight. For a new total weight use mode "set" and the total as amount, for example {"type":"weight","mode":"set","amount":82,"unit":"kg"}. unit is "kg" or "lb", as the user said.
+
+Case 2 - you write out a concrete multi-day workout plan (several named sessions with exercises). Reply with the plan as plain lines, then:
+<fitrix-action>{"type":"workout_plan","sport":"gym","templates":[
+{"name":"<session 1 name>","exercises":[{"name":"<exercise name>","sets":4,"reps":8,"kg":60},{"name":"<bodyweight exercise name>","sets":3,"reps":15}]},
+{"name":"<session 2 name>","exercises":[{"name":"<exercise name>","sets":4,"reps":10,"kg":80},{"name":"<exercise name>","sets":3,"reps":12}]}
+]}</fitrix-action>
+sport is one of gym, fitness, cycling, running, football, winterSports. The block repeats the same plan; every session is exactly {"name":…,"exercises":[…]}, sessions are separated by commas, and the brackets must balance. Limits: 1-7 templates, 1-12 exercises each, sets 1-10, reps 1-100, kg optional (leave it out for bodyweight). 
+
+Case 3 - you write out a concrete day of meals. Reply with the meals as plain lines, then:
+<fitrix-action>{"type":"meal_plan","meals":[{"name":"<meal name>","items":"<foods of that meal>","kcal":520}]}</fitrix-action>
+1-8 meals, one kcal number per meal.
+
+Copy each name/items text exactly from your visible lines above, in the same language as your reply; only JSON keys and type/mode/unit/sport values stay in English.
+Earlier assistant messages appear without their blocks because the app removed them; still add the block to this reply when a case applies.
+Never skip the block in these cases, even when the visible text already lists everything: without it the user gets no button.
+In these cases end the visible text (before the block) with a short invitation in the user's language, like "Tap the button below to add it." Do not ask a follow-up question in these cases.`;
+
 function cleanText(value, maxLength) {
   if (typeof value !== 'string') return null;
   // Collapse whitespace/newlines so profile fields can't inject prompt lines.
@@ -235,6 +259,13 @@ function buildSystemPrompt(topic, profile, language) {
         'for greetings and whenever the language of their message is unclear ' +
         '(a number, an emoji, a single word); a message clearly written in ' +
         'another language still gets a reply in that language.'
+    );
+  }
+  // Last, so a small model still has the block format fresh when it answers.
+  parts.push(ACTION_RULES);
+  if (config.label) {
+    parts.push(
+      `This is a ${config.label} chat: in a workout_plan block use "sport":"${sanitizeTopic(topic)}".`
     );
   }
   return parts.join('\n\n');
