@@ -1,10 +1,19 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// "My Nutrition": today's calories ring and macro progress. The ring and
 /// bars fill from zero when the screen opens.
+enum _Macro { protein, carbs, fat }
+
+enum _Meal { breakfast, lunch, snack }
+
 class NutritionScreen extends StatefulWidget {
   const NutritionScreen({super.key});
 
@@ -12,9 +21,15 @@ class NutritionScreen extends StatefulWidget {
   static const int _goal = 2400;
 
   static const _macros = [
-    (label: 'Protein', grams: 120, goal: 160),
-    (label: 'Carbs', grams: 180, goal: 260),
-    (label: 'Fat', grams: 55, goal: 80),
+    (id: _Macro.protein, grams: 120, goal: 160),
+    (id: _Macro.carbs, grams: 180, goal: 260),
+    (id: _Macro.fat, grams: 55, goal: 80),
+  ];
+
+  static const _meals = [
+    (id: _Meal.breakfast, kcal: 520),
+    (id: _Meal.lunch, kcal: 780),
+    (id: _Meal.snack, kcal: 400),
   ];
 
   @override
@@ -69,11 +84,9 @@ class _NutritionScreenState extends State<NutritionScreen>
 
   Widget _build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final labelStyle = TextStyle(
-      fontSize: 13,
-      fontWeight: FontWeight.w600,
-      color: palette.textPrimary,
-    );
+    final l10n = AppLocalizations.of(context);
+    final fmt = NumberFormat.decimalPattern('en');
+    const left = _goal - _consumed;
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -82,50 +95,47 @@ class _NutritionScreenState extends State<NutritionScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const ScreenTitle('My Nutrition'),
+            ScreenTitle(l10n.nutritionTitle),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(28, 12, 28, 24),
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.lg),
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    padding: const EdgeInsets.all(AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: palette.chartCard,
-                      borderRadius: BorderRadius.circular(8),
+                      color: palette.tile,
+                      borderRadius: AppRadius.smAll,
                     ),
-                    child: Column(
+                    child: Row(
                       children: [
                         SizedBox(
-                          width: 126,
-                          height: 126,
+                          key: const ValueKey('calorie-ring'),
+                          width: 132,
+                          height: 132,
                           child: Stack(
                             fit: StackFit.expand,
                             children: [
-                              CircularProgressIndicator(
-                                value: _consumed / _goal * _progress(0),
-                                strokeWidth: 10,
-                                strokeCap: StrokeCap.round,
-                                color: palette.accent,
-                                backgroundColor: palette.border,
+                              CustomPaint(
+                                painter: _RingPainter(
+                                  fraction: _consumed / _goal * _progress(0),
+                                  track: palette.buttonMuted,
+                                  arc: palette.accent,
+                                ),
                               ),
                               Center(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      '$_consumed',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w600,
-                                        color: palette.textPrimary,
-                                      ),
+                                      fmt.format(_consumed),
+                                      style: AppText.displayMedium
+                                          .copyWith(color: palette.textPrimary),
                                     ),
                                     Text(
-                                      'of $_goal kcal',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: palette.textSecondary,
-                                      ),
+                                      l10n.nutritionOfGoal(fmt.format(_goal)),
+                                      style: AppText.micro.copyWith(
+                                          color: palette.textSecondary),
                                     ),
                                   ],
                                 ),
@@ -133,60 +143,197 @@ class _NutritionScreenState extends State<NutritionScreen>
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 54),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: LinearProgressIndicator(
-                              value: _consumed / _goal * _progress(0),
-                              minHeight: 8,
-                              color: palette.accent,
-                              backgroundColor: palette.border,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '${_goal - _consumed} kcal left today',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: palette.textSecondary,
+                        const SizedBox(width: AppSpacing.lg),
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              for (final (i, macro) in _macros.indexed) ...[
+                                if (i > 0)
+                                  const SizedBox(height: AppSpacing.sm),
+                                _MacroRow(
+                                  label: switch (macro.id) {
+                                    _Macro.protein => l10n.nutritionProtein,
+                                    _Macro.carbs => l10n.nutritionCarbs,
+                                    _Macro.fat => l10n.nutritionFat,
+                                  },
+                                  grams: macro.grams,
+                                  goal: macro.goal,
+                                  progress: _progress(i + 1),
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  for (final (i, macro) in _macros.indexed) ...[
-                    Row(
-                      children: [
-                        Expanded(child: Text(macro.label, style: labelStyle)),
-                        Text(
-                          '${macro.grams} / ${macro.goal} g',
-                          style: labelStyle.copyWith(
-                            color: palette.textSecondary,
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    left > 0
+                        ? l10n.nutritionLeft(fmt.format(left))
+                        : l10n.nutritionGoalReached,
+                    style:
+                        AppText.bodyStrong.copyWith(color: palette.textPrimary),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  for (final meal in NutritionScreen._meals) ...[
+                    _MealRow(
+                      name: switch (meal.id) {
+                        _Meal.breakfast => l10n.nutritionBreakfast,
+                        _Meal.lunch => l10n.nutritionLunch,
+                        _Meal.snack => l10n.nutritionSnack,
+                      },
+                      items: switch (meal.id) {
+                        _Meal.breakfast => l10n.nutritionBreakfastItems,
+                        _Meal.lunch => l10n.nutritionLunchItems,
+                        _Meal.snack => l10n.nutritionSnackItems,
+                      },
+                      trailing: l10n.nutritionKcal('${meal.kcal}'),
                     ),
-                    const SizedBox(height: 6),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: macro.grams / macro.goal * _progress(i + 1),
-                        minHeight: 8,
-                        color: palette.accent,
-                        backgroundColor: palette.tile,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.xs),
                   ],
+                  _MealRow(
+                    name: l10n.nutritionDinner,
+                    items: l10n.nutritionNotLogged,
+                    trailing: '—',
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  CoachCard(
+                    eyebrow: l10n.nutritionTipEyebrow,
+                    title: l10n.nutritionTipTitle,
+                    message: l10n.nutritionTipMessage,
+                    imageAsset: 'assets/images/felix_avatar.png',
+                    imageWidth: 44,
+                    imageHeight: 44,
+                  ),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _RingPainter extends CustomPainter {
+  final double fraction;
+  final Color track;
+  final Color arc;
+
+  _RingPainter({
+    required this.fraction,
+    required this.track,
+    required this.arc,
+  });
+
+  static const double _stroke = 12;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = (Offset.zero & size).deflate(_stroke / 2);
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = _stroke
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(rect, 0, math.pi * 2, false, paint..color = track);
+    final f = fraction.clamp(0.0, 1.0);
+    if (f > 0) {
+      canvas.drawArc(
+          rect, -math.pi / 2, math.pi * 2 * f, false, paint..color = arc);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_RingPainter old) =>
+      old.fraction != fraction || old.track != track || old.arc != arc;
+}
+
+class _MacroRow extends StatelessWidget {
+  final String label;
+  final int grams;
+  final int goal;
+  final double progress;
+
+  const _MacroRow({
+    required this.label,
+    required this.grams,
+    required this.goal,
+    required this.progress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(label,
+                  style: AppText.captionStrong
+                      .copyWith(color: palette.textPrimary)),
+            ),
+            Text('$grams / $goal g',
+                style: AppText.caption.copyWith(color: palette.textSecondary)),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xxs),
+        ClipRRect(
+          borderRadius: AppRadius.fullAll,
+          child: LinearProgressIndicator(
+            value: (grams / goal).clamp(0.0, 1.0) * progress,
+            minHeight: 6,
+            color: palette.accent,
+            backgroundColor: palette.buttonMuted,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MealRow extends StatelessWidget {
+  final String name;
+  final String items;
+  final String trailing;
+
+  const _MealRow({
+    required this.name,
+    required this.items,
+    required this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      decoration:
+          BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name,
+                    style: AppText.bodyStrong
+                        .copyWith(color: palette.textPrimary)),
+                Text(items,
+                    style:
+                        AppText.caption.copyWith(color: palette.textSecondary)),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          Text(trailing,
+              style:
+                  AppText.captionStrong.copyWith(color: palette.textPrimary)),
+        ],
       ),
     );
   }

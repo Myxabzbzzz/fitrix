@@ -107,4 +107,123 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get homeContinue => 'Continuar';
+
+  @override
+  String get progressTitle => 'Mi progreso';
+
+  @override
+  String get progressStrength => 'Fuerza';
+
+  @override
+  String progressNoWorkouts(String sport) {
+    return 'Aún no hay entrenamientos de $sport. Termina uno con al menos una serie marcada y tu progreso aparecerá aquí.';
+  }
+
+  @override
+  String get progressRecentWorkouts => 'Entrenamientos recientes';
+
+  @override
+  String get progressBody => 'Cuerpo';
+
+  @override
+  String get progressSampleNote =>
+      'Datos de ejemplo: el seguimiento llegará pronto.';
+
+  @override
+  String progressFirst(String value) {
+    return 'Primero: $value';
+  }
+
+  @override
+  String progressLatest(String value) {
+    return 'Último: $value';
+  }
+
+  @override
+  String progressCurrent(String value) {
+    return 'Actual: $value';
+  }
+
+  @override
+  String progressMonthAgo(String value) {
+    return 'Hace un mes: $value';
+  }
+
+  @override
+  String get progressIntake => 'Ingesta, media';
+
+  @override
+  String get progressBurn => 'Gasto, media';
+
+  @override
+  String get progressKcalPerDay => 'kcal / día';
+
+  @override
+  String progressSets(String count) {
+    return '$count series';
+  }
+
+  @override
+  String get nutritionTitle => 'Mi nutrición';
+
+  @override
+  String nutritionOfGoal(String goal) {
+    return 'de $goal kcal';
+  }
+
+  @override
+  String nutritionLeft(String kcal) {
+    return 'Quedan $kcal kcal hoy';
+  }
+
+  @override
+  String get nutritionGoalReached => 'Objetivo de hoy cumplido';
+
+  @override
+  String get nutritionProtein => 'Proteína';
+
+  @override
+  String get nutritionCarbs => 'Carbohidratos';
+
+  @override
+  String get nutritionFat => 'Grasas';
+
+  @override
+  String get nutritionBreakfast => 'Desayuno';
+
+  @override
+  String get nutritionBreakfastItems => 'Avena, plátano, café';
+
+  @override
+  String get nutritionLunch => 'Almuerzo';
+
+  @override
+  String get nutritionLunchItems => 'Pollo, arroz, ensalada';
+
+  @override
+  String get nutritionSnack => 'Merienda';
+
+  @override
+  String get nutritionSnackItems => 'Yogur y frutos secos';
+
+  @override
+  String get nutritionDinner => 'Cena';
+
+  @override
+  String get nutritionNotLogged => 'Aún sin registrar';
+
+  @override
+  String nutritionKcal(String kcal) {
+    return '$kcal kcal';
+  }
+
+  @override
+  String get nutritionTipEyebrow => 'Consejo de Felix';
+
+  @override
+  String get nutritionTipTitle => 'Proteína en la cena';
+
+  @override
+  String get nutritionTipMessage =>
+      'En la cena apunta a unos 40 g de proteína. Pollo, arroz y verduras encajan en tu plan.';
 }
