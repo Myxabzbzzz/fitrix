@@ -15,6 +15,10 @@ class ChatMessage {
   /// Assistant reply that failed; tapping it retries. Not persisted.
   final bool isFailed;
 
+  /// Photo the user attached (file in the app's documents dir). Kept on this
+  /// device only: not synced and never part of the history sent to Felix.
+  final String? imagePath;
+
   ChatMessage({
     required this.id,
     required this.content,
@@ -23,6 +27,7 @@ class ChatMessage {
     this.isQuickReply = false,
     this.isStreaming = false,
     this.isFailed = false,
+    this.imagePath,
   });
 
   ChatMessage copyWith({
@@ -38,6 +43,7 @@ class ChatMessage {
       isQuickReply: isQuickReply,
       isStreaming: isStreaming ?? this.isStreaming,
       isFailed: isFailed ?? this.isFailed,
+      imagePath: imagePath,
     );
   }
 
@@ -48,6 +54,7 @@ class ChatMessage {
       'sender': sender.name,
       'timestamp': timestamp.toIso8601String(),
       'isQuickReply': isQuickReply,
+      if (imagePath != null) 'imagePath': imagePath,
     };
   }
 
@@ -60,6 +67,7 @@ class ChatMessage {
       ),
       timestamp: DateTime.parse(json['timestamp']),
       isQuickReply: json['isQuickReply'] ?? false,
+      imagePath: json['imagePath'] as String?,
     );
   }
 

@@ -1829,6 +1829,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Just track my progress'**
   String get aboutGoalTrack;
+
+  /// No description provided for @chatAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get chatAddPhoto;
+
+  /// No description provided for @chatTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get chatTakePhoto;
+
+  /// No description provided for @chatChooseFromLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from library'**
+  String get chatChooseFromLibrary;
+
+  /// No description provided for @chatRemovePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get chatRemovePhoto;
+
+  /// No description provided for @chatPhotoTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo is too large. Try another one.'**
+  String get chatPhotoTooLarge;
+
+  /// No description provided for @chatPhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t get the photo. Check camera and photo permissions in Settings.'**
+  String get chatPhotoFailed;
+
+  /// No description provided for @chatPhotoPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you think of this photo?'**
+  String get chatPhotoPrompt;
+
+  /// No description provided for @chatMicStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictate a message'**
+  String get chatMicStart;
+
+  /// No description provided for @chatMicStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop dictation'**
+  String get chatMicStop;
+
+  /// No description provided for @chatMicDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix can\'t hear you yet. Open Settings and allow microphone and speech recognition for FITRIX.'**
+  String get chatMicDenied;
+
+  /// No description provided for @chatPhotoViewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get chatPhotoViewer;
+
+  /// No description provided for @chatPhotoUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo is missing or too large to send.'**
+  String get chatPhotoUnavailable;
+
+  /// No description provided for @chatMicListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening'**
+  String get chatMicListening;
+
+  /// No description provided for @chatMicStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped listening'**
+  String get chatMicStopped;
 }
 
 class _AppLocalizationsDelegate

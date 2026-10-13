@@ -1,9 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/chat/data/services/photo_service.dart';
+import 'package:fitrix/features/chat/data/services/speech_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
+import 'package:fitrix/features/chat/presentation/providers/dictation_controller.dart';
+import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
@@ -23,13 +31,59 @@ class FelixChatScreen extends ConsumerStatefulWidget {
   ConsumerState<FelixChatScreen> createState() => _FelixChatScreenState();
 }
 
-class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
+class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
+    with WidgetsBindingObserver {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final ChatEntranceTracker _entrance = ChatEntranceTracker();
+  late final DictationController _dictation = DictationController(
+    ref.read(speechServiceProvider),
+    _controller,
+    language: () => ref.read(selectedLanguageProvider),
+  );
+
+  /// Photo picked for the next message (stored path, see photo_service).
+  String? _pendingPhoto;
+  bool _wasListening = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _dictation.addListener(_announceDictation);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Tabs keep their state: an offstage tab has its tickers off.
+    if (!TickerMode.of(context)) _dictation.stop();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) _dictation.stop();
+  }
+
+  void _announceDictation() {
+    if (_dictation.listening == _wasListening || !mounted) return;
+    _wasListening = _dictation.listening;
+    final l10n = AppLocalizations.of(context);
+    SemanticsService.sendAnnouncement(
+      View.of(context),
+      _wasListening ? l10n.chatMicListening : l10n.chatMicStopped,
+      Directionality.of(context),
+    );
+  }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _dictation.removeListener(_announceDictation);
+    _dictation.dispose();
+    // A picked photo that was never sent is not kept.
+    final unsent = _pendingPhoto;
+    if (unsent != null) deleteChatPhoto(unsent);
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -37,10 +91,83 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
 
   void _send(AssistantTopic topic) {
     final notifier = ref.read(chatMessagesProviderFor(topic).notifier);
-    final text = _controller.text.trim();
-    if (text.isEmpty || notifier.isReplying) return;
-    notifier.sendMessage(text);
+    // Stop first so a late dictation result can't refill the cleared field.
+    _dictation.stop();
+    final photo = _pendingPhoto;
+    var text = _controller.text.trim();
+    if (text.isEmpty && photo != null) {
+      text = AppLocalizations.of(context).chatPhotoPrompt;
+    }
+    if (text.isEmpty || !notifier.canSend) return;
+    if (!notifier.startSend(text, imagePath: photo)) return;
     _controller.clear();
+    setState(() => _pendingPhoto = null);
+  }
+
+  void _snack(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _toggleDictation() async {
+    final ok = await _dictation.toggle();
+    if (!ok && mounted) _snack(AppLocalizations.of(context).chatMicDenied);
+  }
+
+  Future<void> _addPhoto() async {
+    final l10n = AppLocalizations.of(context);
+    final source = await showModalBottomSheet<PhotoSource>(
+      context: context,
+      backgroundColor: AppPalette.of(context).sheet,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              key: const ValueKey('photo-source-camera'),
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: Text(l10n.chatTakePhoto),
+              onTap: () => Navigator.of(context).pop(PhotoSource.camera),
+            ),
+            ListTile(
+              key: const ValueKey('photo-source-library'),
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(l10n.chatChooseFromLibrary),
+              onTap: () => Navigator.of(context).pop(PhotoSource.library),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source == null || !mounted) return;
+    final String? path;
+    try {
+      path = await ref.read(photoServiceProvider).pick(source);
+    } on PhotoTooLargeException {
+      if (mounted) _snack(l10n.chatPhotoTooLarge);
+      return;
+    } catch (_) {
+      if (mounted) _snack(l10n.chatPhotoFailed);
+      return;
+    }
+    if (path == null || !mounted) return;
+    final docs = await chatDocsDir();
+    if (File(resolveChatPhoto(docs, path)).lengthSync() > maxChatPhotoBytes) {
+      await deleteChatPhoto(path);
+      if (mounted) _snack(l10n.chatPhotoTooLarge);
+      return;
+    }
+    if (!mounted) return;
+    final previous = _pendingPhoto;
+    setState(() => _pendingPhoto = path);
+    if (previous != null) await deleteChatPhoto(previous);
+  }
+
+  Future<void> _removePhoto() async {
+    final path = _pendingPhoto;
+    setState(() => _pendingPhoto = null);
+    if (path != null) await deleteChatPhoto(path);
   }
 
   @override
@@ -105,7 +232,8 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Center(
-                  child: Text(AppLocalizations.of(context).chatError('$error'))),
+                    child:
+                        Text(AppLocalizations.of(context).chatError('$error'))),
               ),
             ),
             Column(
@@ -127,6 +255,11 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen> {
                   controller: _controller,
                   enabled: !isReplying,
                   onSend: () => _send(topic),
+                  dictation: _dictation,
+                  onMic: _toggleDictation,
+                  onAdd: _addPhoto,
+                  pendingPhoto: _pendingPhoto,
+                  onRemovePhoto: _removePhoto,
                 ),
               ],
             ),
@@ -190,70 +323,250 @@ class _Composer extends StatelessWidget {
   final TextEditingController controller;
   final bool enabled;
   final VoidCallback onSend;
+  final DictationController dictation;
+  final VoidCallback onMic;
+  final VoidCallback onAdd;
+  final String? pendingPhoto;
+  final VoidCallback onRemovePhoto;
 
   const _Composer({
     required this.controller,
     required this.enabled,
     required this.onSend,
+    required this.dictation,
+    required this.onMic,
+    required this.onAdd,
+    required this.pendingPhoto,
+    required this.onRemovePhoto,
   });
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
           AppSpacing.sm, AppSpacing.xxs, AppSpacing.md, 0),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconButton(
-            icon: const Icon(Icons.add_circle_outline, size: 28),
-            color: palette.textPrimary,
-            onPressed: () {},
-          ),
-          Expanded(
-            child: Container(
-              height: 37,
+          if (pendingPhoto != null)
+            Padding(
               padding: const EdgeInsets.only(
-                  left: AppSpacing.sm, right: AppSpacing.xxs),
-              decoration: BoxDecoration(
-                color: palette.background,
-                borderRadius: AppRadius.mdAll,
-                border: Border.all(color: palette.border),
+                  left: AppSpacing.xs, bottom: AppSpacing.xs),
+              child: _PendingPhoto(
+                path: pendingPhoto!,
+                removeLabel: l10n.chatRemovePhoto,
+                onRemove: onRemovePhoto,
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: controller,
-                      textInputAction: TextInputAction.send,
-                      onSubmitted: (_) {
-                        if (enabled) onSend();
-                      },
-                      style: AppText.bodyRegular
-                          .copyWith(color: palette.textPrimary),
-                      decoration: InputDecoration.collapsed(
-                        hintText: AppLocalizations.of(context).chatMessageHint,
-                        filled: false,
-                        hintStyle:
-                            AppText.bodyRegular.copyWith(color: palette.chartLabel),
+            ),
+          Row(
+            children: [
+              IconButton(
+                key: const ValueKey('chat-add'),
+                icon: const Icon(Icons.add_circle_outline, size: 28),
+                color: palette.textPrimary,
+                tooltip: l10n.chatAddPhoto,
+                onPressed: onAdd,
+              ),
+              Expanded(
+                child: Container(
+                  height: 37,
+                  padding: const EdgeInsets.only(
+                      left: AppSpacing.sm, right: AppSpacing.xxs),
+                  decoration: BoxDecoration(
+                    color: palette.background,
+                    borderRadius: AppRadius.mdAll,
+                    border: Border.all(color: palette.border),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: (_) {
+                            if (enabled) onSend();
+                          },
+                          style: AppText.bodyRegular
+                              .copyWith(color: palette.textPrimary),
+                          decoration: InputDecoration.collapsed(
+                            hintText:
+                                AppLocalizations.of(context).chatMessageHint,
+                            filled: false,
+                            hintStyle: AppText.bodyRegular
+                                .copyWith(color: palette.chartLabel),
+                          ),
+                        ),
                       ),
-                    ),
+                      ListenableBuilder(
+                        listenable: dictation,
+                        builder: (context, _) => _MicButton(
+                          listening: dictation.listening,
+                          tooltip: dictation.listening
+                              ? l10n.chatMicStop
+                              : l10n.chatMicStart,
+                          onTap: onMic,
+                        ),
+                      ),
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 32),
+                        icon: const Icon(Icons.arrow_circle_up, size: 28),
+                        color: palette.textPrimary,
+                        disabledColor: palette.border,
+                        onPressed: enabled ? onSend : null,
+                      ),
+                    ],
                   ),
-                  Icon(Icons.mic_none, size: 22, color: palette.textPrimary),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 32),
-                    icon: const Icon(Icons.arrow_circle_up, size: 28),
-                    color: palette.textPrimary,
-                    disabledColor: palette.border,
-                    onPressed: enabled ? onSend : null,
-                  ),
-                ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Thumbnail of the photo about to be sent, with a remove button. The
+/// button's 44x44 hit area lies inside the widget's bounds.
+class _PendingPhoto extends StatelessWidget {
+  final String path;
+  final String removeLabel;
+  final VoidCallback onRemove;
+
+  const _PendingPhoto({
+    required this.path,
+    required this.removeLabel,
+    required this.onRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return SizedBox(
+      key: const ValueKey('chat-pending-photo'),
+      width: 84,
+      height: 84,
+      child: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            bottom: 0,
+            width: 72,
+            height: 72,
+            child: ClipRRect(
+              borderRadius: AppRadius.smAll,
+              child: ChatPhotoImage(path: path, fit: BoxFit.cover),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            width: 44,
+            height: 44,
+            child: IconButton(
+              key: const ValueKey('chat-remove-photo'),
+              padding: EdgeInsets.zero,
+              tooltip: removeLabel,
+              onPressed: onRemove,
+              icon: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: palette.textPrimary,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.close, size: 16, color: palette.background),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Mic button; pulses while listening (a static highlight with reduced
+/// motion).
+class _MicButton extends StatefulWidget {
+  final bool listening;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  const _MicButton({
+    required this.listening,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  @override
+  State<_MicButton> createState() => _MicButtonState();
+}
+
+class _MicButtonState extends State<_MicButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse = AnimationController(
+    vsync: this,
+    duration: Motion.slow,
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _sync();
+  }
+
+  @override
+  void didUpdateWidget(_MicButton old) {
+    super.didUpdateWidget(old);
+    _sync();
+  }
+
+  void _sync() {
+    if (widget.listening && !Motion.reduced(context)) {
+      if (!_pulse.isAnimating) _pulse.repeat(reverse: true);
+    } else {
+      _pulse.stop();
+      _pulse.value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return IconButton(
+      key: const ValueKey('chat-mic'),
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+      tooltip: widget.tooltip,
+      onPressed: widget.onTap,
+      icon: AnimatedBuilder(
+        animation: _pulse,
+        builder: (context, _) => Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: widget.listening
+                ? palette.accent.withValues(alpha: 0.2 + 0.3 * _pulse.value)
+                : Colors.transparent,
+          ),
+          child: Icon(
+            widget.listening ? Icons.mic : Icons.mic_none,
+            size: 22,
+            color: widget.listening ? palette.accent : palette.textPrimary,
+          ),
+        ),
       ),
     );
   }
@@ -284,7 +597,8 @@ class _AllChatsDrawer extends StatelessWidget {
                   Expanded(
                     child: Text(
                       AppLocalizations.of(context).chatAllChats,
-                      style: AppText.headingS.copyWith(color: palette.textPrimary),
+                      style:
+                          AppText.headingS.copyWith(color: palette.textPrimary),
                     ),
                   ),
                   IconButton(
@@ -299,7 +613,8 @@ class _AllChatsDrawer extends StatelessWidget {
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 17),
                 itemCount: AssistantTopic.all.length,
-                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: AppSpacing.md),
                 itemBuilder: (context, index) {
                   final topic = AssistantTopic.all[index];
                   final isSelected = topic == selected;
@@ -311,8 +626,8 @@ class _AllChatsDrawer extends StatelessWidget {
                       onTap: () => onSelected(topic),
                       child: Container(
                         height: 36,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md),
                         alignment: Alignment.centerLeft,
                         child: Text(
                           topic.menuLabel,

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
+import 'package:fitrix/features/chat/data/services/photo_service.dart';
 import 'package:fitrix/features/chat/presentation/widgets/typing_indicator.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -57,10 +60,22 @@ class ChatBubble extends StatelessWidget {
     } else if (message.isFailed) {
       content = ChatFailedContent(message: message.content, color: textColor);
     } else {
-      content = Text(
+      final text = Text(
         message.content,
         style: AppText.body14.copyWith(color: textColor),
       );
+      final imagePath = message.imagePath;
+      content = imagePath == null
+          ? text
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ChatPhotoThumb(path: imagePath),
+                const SizedBox(height: AppSpacing.xs),
+                text,
+              ],
+            );
     }
 
     final bubble = GestureDetector(
@@ -132,6 +147,107 @@ class ChatFailedContent extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+/// A stored chat photo (see photo_service), resolved against the current
+/// documents directory. Decoded at <= 480 px so landscape photos stay sharp.
+class ChatPhotoImage extends StatelessWidget {
+  final String path;
+  final BoxFit fit;
+  final double? width;
+  final double? height;
+  final bool full;
+
+  const ChatPhotoImage({
+    super.key,
+    required this.path,
+    this.fit = BoxFit.cover,
+    this.width,
+    this.height,
+    this.full = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final placeholder = Container(
+      width: width,
+      height: height,
+      color: palette.tile,
+      child: Icon(Icons.image_not_supported_outlined,
+          color: palette.textSecondary),
+    );
+    return FutureBuilder<String>(
+      future: chatDocsDir(),
+      builder: (context, snapshot) {
+        final docs = snapshot.data;
+        if (docs == null) return placeholder;
+        final ImageProvider file = FileImage(File(resolveChatPhoto(docs, path)));
+        return Image(
+          image: full
+              ? file
+              : ResizeImage(file,
+                  width: 480, height: 480, policy: ResizeImagePolicy.fit),
+          width: width,
+          height: height,
+          fit: fit,
+          errorBuilder: (_, __, ___) => placeholder,
+        );
+      },
+    );
+  }
+}
+
+/// A photo sent with a message; tap to view it full screen.
+class ChatPhotoThumb extends StatelessWidget {
+  final String path;
+
+  const ChatPhotoThumb({super.key, required this.path});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      image: true,
+      label: AppLocalizations.of(context).chatPhotoViewer,
+      child: GestureDetector(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => ChatPhotoViewer(path: path)),
+        ),
+        child: ClipRRect(
+          key: const ValueKey('chat-bubble-image'),
+          borderRadius: AppRadius.smAll,
+          child: ChatPhotoImage(path: path, width: 160, height: 160),
+        ),
+      ),
+    );
+  }
+}
+
+class ChatPhotoViewer extends StatelessWidget {
+  final String path;
+
+  const ChatPhotoViewer({super.key, required this.path});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Scaffold(
+      key: const ValueKey('chat-photo-viewer'),
+      backgroundColor: palette.background,
+      appBar: AppBar(
+        backgroundColor: palette.background,
+        foregroundColor: palette.textPrimary,
+        elevation: 0,
+        title: Text(AppLocalizations.of(context).chatPhotoViewer),
+      ),
+      body: Center(
+        child: InteractiveViewer(
+          child: ChatPhotoImage(path: path, fit: BoxFit.contain, full: true),
+        ),
+      ),
     );
   }
 }

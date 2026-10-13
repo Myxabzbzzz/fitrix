@@ -1046,4 +1046,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutGoalTrack => 'Just track my progress';
+
+  @override
+  String get chatAddPhoto => 'Add photo';
+
+  @override
+  String get chatTakePhoto => 'Take photo';
+
+  @override
+  String get chatChooseFromLibrary => 'Choose from library';
+
+  @override
+  String get chatRemovePhoto => 'Remove photo';
+
+  @override
+  String get chatPhotoTooLarge => 'That photo is too large. Try another one.';
+
+  @override
+  String get chatPhotoFailed =>
+      'Couldn\'t get the photo. Check camera and photo permissions in Settings.';
+
+  @override
+  String get chatPhotoPrompt => 'What do you think of this photo?';
+
+  @override
+  String get chatMicStart => 'Dictate a message';
+
+  @override
+  String get chatMicStop => 'Stop dictation';
+
+  @override
+  String get chatMicDenied =>
+      'Felix can\'t hear you yet. Open Settings and allow microphone and speech recognition for FITRIX.';
+
+  @override
+  String get chatPhotoViewer => 'Photo';
+
+  @override
+  String get chatPhotoUnavailable =>
+      'The photo is missing or too large to send.';
+
+  @override
+  String get chatMicListening => 'Listening';
+
+  @override
+  String get chatMicStopped => 'Stopped listening';
 }

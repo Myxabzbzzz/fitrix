@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show Locale;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/session/session_providers.dart';
@@ -8,6 +9,8 @@ import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
+import 'package:fitrix/features/chat/data/services/photo_service.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 
@@ -28,6 +31,10 @@ final chatApiServiceProvider = Provider<ChatApiService>((ref) {
   );
 });
 
+String _photoUnavailableText(Ref ref) => lookupAppLocalizations(
+      Locale(ref.read(selectedLanguageProvider)),
+    ).chatPhotoUnavailable;
+
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
   return ChatRepository(
     ref.read(chatApiServiceProvider),
@@ -36,6 +43,7 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
     prefs: ref.read(sharedPreferencesProvider),
     onSaved: ref.read(localChangesProvider).notify,
     language: () => ref.read(selectedLanguageProvider),
+    photoUnavailable: () => _photoUnavailableText(ref),
   );
 });
 
@@ -59,6 +67,7 @@ final topicChatMessagesProvider = StateNotifierProvider.family<ChatNotifier,
       prefs: ref.read(sharedPreferencesProvider),
       onSaved: ref.read(localChangesProvider).notify,
       language: () => ref.read(selectedLanguageProvider),
+      photoUnavailable: () => _photoUnavailableText(ref),
     ),
   );
 });
@@ -109,20 +118,25 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   /// Whether a message sent now would be accepted.
   bool get canSend => state.valueOrNull != null && !_isReplying;
 
-  Future<void> sendMessage(String content, {bool isQuickReply = false}) =>
-      _begin(content, isQuickReply: isQuickReply) ?? Future.value();
+  Future<void> sendMessage(String content,
+          {bool isQuickReply = false, String? imagePath}) =>
+      _begin(content, isQuickReply: isQuickReply, imagePath: imagePath) ??
+      Future.value();
 
   /// Starts sending without waiting for the reply. Returns whether the
   /// message was accepted (false while loading or while Felix replies).
-  bool startSend(String content, {bool isQuickReply = false}) {
-    final future = _begin(content, isQuickReply: isQuickReply);
+  bool startSend(String content,
+      {bool isQuickReply = false, String? imagePath}) {
+    final future =
+        _begin(content, isQuickReply: isQuickReply, imagePath: imagePath);
     if (future == null) return false;
     unawaited(future);
     return true;
   }
 
   /// Null when the message is rejected; otherwise the reply, already started.
-  Future<void>? _begin(String content, {bool isQuickReply = false}) {
+  Future<void>? _begin(String content,
+      {bool isQuickReply = false, String? imagePath}) {
     final messages = state.valueOrNull;
     if (messages == null || _isReplying || content.trim().isEmpty) return null;
 
@@ -132,6 +146,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       sender: MessageSender.user,
       timestamp: DateTime.now(),
       isQuickReply: isQuickReply,
+      imagePath: imagePath,
     );
 
     final history = [...messages.where((m) => !m.isFailed), userMessage];
@@ -156,6 +171,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   /// [promptIndex]. Everything before that message is sent as context.
   Future<void> _reply(List<ChatMessage> history, int promptIndex) async {
     final prompt = history[promptIndex].content;
+    final imagePath = history[promptIndex].imagePath;
     final context = history.sublist(0, promptIndex);
     _isReplying = true;
     final reply = ChatMessage(
@@ -170,8 +186,8 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
     final text = StringBuffer();
     try {
-      await for (final delta
-          in _repository.streamMessage(prompt, context: context)) {
+      await for (final delta in _repository.streamMessage(prompt,
+          context: context, imagePath: imagePath)) {
         if (!mounted) return;
         text.write(delta);
         _updateReply(reply.id, (m) => m.copyWith(content: text.toString()));
@@ -206,6 +222,10 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   }
 
   Future<void> clearMessages() async {
+    for (final m in state.valueOrNull ?? const <ChatMessage>[]) {
+      final photo = m.imagePath;
+      if (photo != null) await deleteChatPhoto(photo);
+    }
     await _repository.saveMessages([]);
     await _loadMessages();
   }

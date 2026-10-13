@@ -56,6 +56,8 @@ class ChatApiService {
   ///   so the chat stored on the device is the source of truth.
   /// - [language]: the app's language code; Felix uses it when the user's
   ///   own language isn't clear from the message.
+  /// - [images]: at most one base64 JPEG (<= 1.5 MB decoded) for this turn
+  ///   only; the backend then answers with its vision model.
   Stream<String> streamMessage(
     String message,
     String conversationId, {
@@ -63,6 +65,7 @@ class ChatApiService {
     Map<String, Object>? profile,
     List<Map<String, String>>? history,
     String? language,
+    List<String>? images,
   }) async* {
     final token = await _currentToken();
     final Response<ResponseBody> response;
@@ -76,6 +79,7 @@ class ChatApiService {
           if (profile != null && profile.isNotEmpty) 'profile': profile,
           if (history != null) 'history': history,
           if (language != null) 'language': language,
+          if (images != null && images.isNotEmpty) 'images': images,
         },
         options: Options(
           headers: {
@@ -169,15 +173,18 @@ class ChatApiService {
 
     if (lowerMessage.contains('muscle') || lowerMessage.contains('strength')) {
       return 'Nice choice! I like that.\n\nWhich sports or activities do you enjoy (or plan to do)?\nYou can pick more than one 👇';
-    } else if (lowerMessage.contains('endurance') || lowerMessage.contains('stamina')) {
+    } else if (lowerMessage.contains('endurance') ||
+        lowerMessage.contains('stamina')) {
       return 'Great goal! Building endurance is key to overall fitness.\n\nWhich sports or activities do you enjoy (or plan to do)?';
-    } else if (lowerMessage.contains('weight') || lowerMessage.contains('toned')) {
+    } else if (lowerMessage.contains('weight') ||
+        lowerMessage.contains('toned')) {
       return 'Excellent! Let\'s work on getting you toned.\n\nWhich sports or activities do you enjoy (or plan to do)?';
     } else if (lowerMessage.contains('gym')) {
       return 'I see you\'ve chosen Gym, Running, and Skiing — nice combo! Let\'s fine-tune your plan a bit.\n\nHow often do you usually hit the gym?';
     } else if (lowerMessage.contains('week')) {
       return 'Nice! And how would you describe your experience level?';
-    } else if (lowerMessage.contains('intermediate') || lowerMessage.contains('beginner')) {
+    } else if (lowerMessage.contains('intermediate') ||
+        lowerMessage.contains('beginner')) {
       return 'Got it. Are you focusing more on strength, muscle growth, fat loss, or just general fitness?';
     } else {
       return 'Thanks for sharing! I\'ll help you create a personalized plan based on your goals.';

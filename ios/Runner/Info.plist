@@ -71,5 +71,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>FITRIX uses the microphone so you can dictate messages to Felix.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>FITRIX turns your voice into text for Felix.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>FITRIX uses the camera so you can show Felix your meal or your form.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>FITRIX lets you pick photos to show Felix.</string>
 </dict>
 </plist>

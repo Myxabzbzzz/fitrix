@@ -1066,4 +1066,49 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get aboutGoalTrack => 'Просто следить за прогрессом';
+
+  @override
+  String get chatAddPhoto => 'Добавить фото';
+
+  @override
+  String get chatTakePhoto => 'Сделать фото';
+
+  @override
+  String get chatChooseFromLibrary => 'Выбрать из галереи';
+
+  @override
+  String get chatRemovePhoto => 'Убрать фото';
+
+  @override
+  String get chatPhotoTooLarge => 'Фото слишком большое. Попробуйте другое.';
+
+  @override
+  String get chatPhotoFailed =>
+      'Не удалось получить фото. Проверьте доступ к камере и фото в настройках.';
+
+  @override
+  String get chatPhotoPrompt => 'Что скажешь об этом фото?';
+
+  @override
+  String get chatMicStart => 'Надиктовать сообщение';
+
+  @override
+  String get chatMicStop => 'Остановить диктовку';
+
+  @override
+  String get chatMicDenied =>
+      'Felix пока вас не слышит. Откройте Настройки и разрешите FITRIX микрофон и распознавание речи.';
+
+  @override
+  String get chatPhotoViewer => 'Фото';
+
+  @override
+  String get chatPhotoUnavailable =>
+      'Фото не найдено или слишком большое для отправки.';
+
+  @override
+  String get chatMicListening => 'Слушаю';
+
+  @override
+  String get chatMicStopped => 'Прослушивание остановлено';
 }

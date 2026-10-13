@@ -287,5 +287,19 @@
   "aboutGoalEndurance": "Mejorar la resistencia",
   "aboutGoalLose": "Perder peso y tonificar",
   "aboutGoalHealthy": "Sentirme más sano y equilibrado",
-  "aboutGoalTrack": "Solo seguir mi progreso"
+  "aboutGoalTrack": "Solo seguir mi progreso",
+  "chatAddPhoto": "Añadir foto",
+  "chatTakePhoto": "Hacer foto",
+  "chatChooseFromLibrary": "Elegir de la galería",
+  "chatRemovePhoto": "Quitar foto",
+  "chatPhotoTooLarge": "La foto es demasiado grande. Prueba con otra.",
+  "chatPhotoFailed": "No se pudo obtener la foto. Revisa los permisos de cámara y fotos en Ajustes.",
+  "chatPhotoPrompt": "¿Qué opinas de esta foto?",
+  "chatMicStart": "Dictar un mensaje",
+  "chatMicStop": "Detener dictado",
+  "chatMicDenied": "Felix aún no te oye. Abre Ajustes y permite a FITRIX el micrófono y el reconocimiento de voz.",
+  "chatPhotoViewer": "Foto",
+  "chatPhotoUnavailable": "La foto no está disponible o es demasiado grande para enviarla.",
+  "chatMicListening": "Escuchando",
+  "chatMicStopped": "Escucha detenida"
 }

@@ -287,5 +287,19 @@
   "aboutGoalEndurance": "Chidamlilikni oshirish",
   "aboutGoalLose": "Ozish va tarang tana",
   "aboutGoalHealthy": "Sog‘lom va muvozanatli bo‘lish",
-  "aboutGoalTrack": "Shunchaki natijani kuzatish"
+  "aboutGoalTrack": "Shunchaki natijani kuzatish",
+  "chatAddPhoto": "Rasm qo‘shish",
+  "chatTakePhoto": "Rasmga olish",
+  "chatChooseFromLibrary": "Galereyadan tanlash",
+  "chatRemovePhoto": "Rasmni olib tashlash",
+  "chatPhotoTooLarge": "Rasm juda katta. Boshqasini sinab ko‘ring.",
+  "chatPhotoFailed": "Rasmni olib bo‘lmadi. Sozlamalarda kamera va rasmlarga ruxsatni tekshiring.",
+  "chatPhotoPrompt": "Bu rasm haqida nima deysiz?",
+  "chatMicStart": "Xabarni ovozda aytish",
+  "chatMicStop": "Diktovkani to‘xtatish",
+  "chatMicDenied": "Felix sizni hali eshitmayapti. Sozlamalarni oching va FITRIX uchun mikrofon va nutqni tanishga ruxsat bering.",
+  "chatPhotoViewer": "Rasm",
+  "chatPhotoUnavailable": "Rasm topilmadi yoki yuborish uchun juda katta.",
+  "chatMicListening": "Tinglayapman",
+  "chatMicStopped": "Tinglash to‘xtatildi"
 }

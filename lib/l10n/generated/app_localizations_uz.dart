@@ -1020,4 +1020,49 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get aboutGoalTrack => 'Shunchaki natijani kuzatish';
+
+  @override
+  String get chatAddPhoto => 'Rasm qo‘shish';
+
+  @override
+  String get chatTakePhoto => 'Rasmga olish';
+
+  @override
+  String get chatChooseFromLibrary => 'Galereyadan tanlash';
+
+  @override
+  String get chatRemovePhoto => 'Rasmni olib tashlash';
+
+  @override
+  String get chatPhotoTooLarge => 'Rasm juda katta. Boshqasini sinab ko‘ring.';
+
+  @override
+  String get chatPhotoFailed =>
+      'Rasmni olib bo‘lmadi. Sozlamalarda kamera va rasmlarga ruxsatni tekshiring.';
+
+  @override
+  String get chatPhotoPrompt => 'Bu rasm haqida nima deysiz?';
+
+  @override
+  String get chatMicStart => 'Xabarni ovozda aytish';
+
+  @override
+  String get chatMicStop => 'Diktovkani to‘xtatish';
+
+  @override
+  String get chatMicDenied =>
+      'Felix sizni hali eshitmayapti. Sozlamalarni oching va FITRIX uchun mikrofon va nutqni tanishga ruxsat bering.';
+
+  @override
+  String get chatPhotoViewer => 'Rasm';
+
+  @override
+  String get chatPhotoUnavailable =>
+      'Rasm topilmadi yoki yuborish uchun juda katta.';
+
+  @override
+  String get chatMicListening => 'Tinglayapman';
+
+  @override
+  String get chatMicStopped => 'Tinglash to‘xtatildi';
 }
