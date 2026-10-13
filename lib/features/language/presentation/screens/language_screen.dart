@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
@@ -23,7 +24,7 @@ class LanguageScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             children: [
               if (onContinue != null)
@@ -36,12 +37,12 @@ class LanguageScreen extends ConsumerWidget {
                     onPressed: onContinue,
                   ),
                 ),
-              SizedBox(height: onContinue != null ? 0 : 40),
+              SizedBox(height: onContinue != null ? 0 : AppSpacing.xl),
 
               // FITRIX Logo
               const FitrixLogo(fontSize: 36),
 
-              const SizedBox(height: 60),
+              const SizedBox(height: AppSpacing.xl),
 
               // Globe Icon
               Container(
@@ -49,7 +50,7 @@ class LanguageScreen extends ConsumerWidget {
                 height: 100,
                 decoration: BoxDecoration(
                   color: palette.textPrimary,
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: AppRadius.fullAll,
                 ),
                 child: Icon(
                   Icons.language,
@@ -58,14 +59,14 @@ class LanguageScreen extends ConsumerWidget {
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: AppSpacing.xl),
 
               // Language Selection Card
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
                   color: palette.background,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: AppRadius.mdAll,
                   border: Border.all(color: palette.border),
                   boxShadow: [
                     BoxShadow(
@@ -79,7 +80,7 @@ class LanguageScreen extends ConsumerWidget {
                   children: AppConstants.languages.entries.map((entry) {
                     final isSelected = selectedLanguage == entry.key;
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                       child: _buildLanguageButton(
                         context,
                         ref,
@@ -98,7 +99,7 @@ class LanguageScreen extends ConsumerWidget {
               // it's the device default nobody tapped.
               _buildContinueButton(context, ref, selectedLanguage),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: AppSpacing.xl),
             ],
           ),
         ),
@@ -124,16 +125,15 @@ class LanguageScreen extends ConsumerWidget {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: isSelected ? palette.accent : palette.tile,
-          foregroundColor: isSelected ? Colors.white : palette.textPrimary,
+          foregroundColor: isSelected ? palette.onAccent : palette.textPrimary,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: AppRadius.lgAll,
           ),
         ),
         child: Text(
           label,
-          style: TextStyle(
-            fontSize: 16,
+          style: AppText.headingS.copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           ),
         ),

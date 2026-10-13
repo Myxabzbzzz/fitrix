@@ -7,6 +7,7 @@ import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_colors.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/features/auth/data/account_service.dart';
 import 'package:fitrix/features/auth/data/auth_failure.dart';
@@ -301,7 +302,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 250),
             child: _step == _Step.email
@@ -322,27 +323,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   Widget _title(AppPalette palette, String title, String subtitle) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 40),
+          const SizedBox(height: AppSpacing.xl),
           const Center(child: FitrixLogo(fontSize: 36)),
-          const SizedBox(height: 60),
+          const SizedBox(height: AppSpacing.xl),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
-              color: palette.textPrimary,
-            ),
+            style: AppText.headingL.copyWith(color: palette.textPrimary),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: palette.textSecondary,
-              height: 1.4,
-            ),
+            style: AppText.bodyRegular.copyWith(color: palette.textSecondary),
             textAlign: TextAlign.center,
           ),
         ],
@@ -353,16 +345,12 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         child: error == null
             ? const SizedBox(width: double.infinity)
             : Padding(
-                padding: const EdgeInsets.only(top: 12),
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
                 child: Text(
                   error,
                   key: const Key('sign-in-error'),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.error,
-                    height: 1.4,
-                  ),
+                  style: AppText.bodyRegular.copyWith(color: AppColors.error),
                 ),
               ),
       );
@@ -399,7 +387,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 'Your session has ended. Enter your email to continue.')
             : _title(palette, 'Create an account',
                 'Enter your email to sign up for this app'),
-        const SizedBox(height: 40),
+        const SizedBox(height: AppSpacing.xl),
         AutofillGroup(
           child: TextField(
             key: const Key('email-input'),
@@ -418,7 +406,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           ),
         ),
         _errorText(_error),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.lg),
         if (profileLoadFailed)
           _primaryButton(
             'Try again',
@@ -435,21 +423,21 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             ref.watch(authGatewayProvider) == null ? 'Continue' : 'Get code',
             _continueWithEmail,
           ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
         Row(
           children: [
             Expanded(child: Divider(color: palette.border)),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               child: Text(
                 'or',
-                style: TextStyle(fontSize: 14, color: palette.textSecondary),
+                style: AppText.bodyRegular.copyWith(color: palette.textSecondary),
               ),
             ),
             Expanded(child: Divider(color: palette.border)),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
         _socialButton(
           palette,
           key: const Key('google-sign-in'),
@@ -459,7 +447,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         ),
         // Sign in with Apple only exists on Apple devices.
         if (social.showAppleButton) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm),
           _socialButton(
             palette,
             key: const Key('apple-sign-in'),
@@ -468,11 +456,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             enabled: !profileLoadFailed,
           ),
         ],
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
         Text.rich(
           textAlign: TextAlign.center,
           TextSpan(
-            style: TextStyle(fontSize: 12, color: palette.textSecondary),
+            style: AppText.caption.copyWith(color: palette.textSecondary),
             children: const [
               TextSpan(text: 'By clicking continue, you agree to our '),
               TextSpan(
@@ -507,7 +495,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           style: OutlinedButton.styleFrom(
             side: BorderSide(color: palette.border),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AppRadius.smAll,
             ),
           ),
           icon: _socialBusy == provider
@@ -519,9 +507,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               : Icon(icon, size: 24, color: palette.textPrimary),
           label: Text(
             'Continue with ${provider.label}',
-            style: TextStyle(
+            style: AppText.headingS.copyWith(
               color: palette.textPrimary,
-              fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -543,7 +530,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           'Check your email',
           'Enter the ${SignInScreen.codeLength}-digit code we sent to\n$_email',
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: AppSpacing.xl),
         CodeInput(
           controller: _codeController,
           focusNode: _codeFocus,
@@ -554,7 +541,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           onCompleted: _verify,
         ),
         _errorText(_error),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.lg),
         if (profileLoadFailed)
           _primaryButton(
             'Try again',
@@ -575,7 +562,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   : null,
             ),
           ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         if (!profileLoadFailed)
           TextButton(
             onPressed: _busy || cooldown != null
@@ -589,11 +576,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           onPressed: _busy ? null : _changeEmail,
           child: const Text('Change email'),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           "Can't find it? Check your spam folder.",
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: palette.textSecondary),
+          style: AppText.caption.copyWith(color: palette.textSecondary),
         ),
       ],
     );

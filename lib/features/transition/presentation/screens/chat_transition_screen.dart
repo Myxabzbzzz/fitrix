@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 
@@ -109,6 +111,7 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final size = MediaQuery.of(context).size;
     final diagonal = sqrt(size.width * size.width + size.height * size.height);
 
@@ -119,21 +122,16 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
           // Typewriter text + button
           Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     _displayedText,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      height: 1.3,
-                    ),
+                    style: AppText.headingXL.copyWith(color: palette.onAccent),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: AppSpacing.xl),
                   AnimatedOpacity(
                     opacity: _showButton ? 1.0 : 0.0,
                     duration: const Duration(milliseconds: 400),
@@ -142,20 +140,16 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
                       child: Container(
                         key: _buttonKey,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 14,
+                          horizontal: AppSpacing.xl,
+                          vertical: AppSpacing.md,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
+                          color: palette.onAccent,
+                          borderRadius: AppRadius.lgAll,
                         ),
-                        child: const Text(
+                        child: Text(
                           'I am ready',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppText.headingS.copyWith(color: Colors.black),
                         ),
                       ),
                     ),
@@ -175,7 +169,7 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
                   size: size,
                   painter: _CirclePainter(
                     progress: _whiteCircleAnimation.value,
-                    color: Colors.white,
+                    color: palette.onAccent,
                     center: _buttonCenter ??
                         Offset(size.width / 2, size.height / 2 + 50),
                     maxRadius: diagonal,

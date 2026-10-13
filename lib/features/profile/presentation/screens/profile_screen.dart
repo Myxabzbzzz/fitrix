@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
@@ -101,15 +102,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: AppSpacing.xl),
 
               // FITRIX Logo
               const FitrixLogo(fontSize: 36),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: AppSpacing.xl),
 
               // Avatar
               Container(
@@ -126,19 +127,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
 
               // Username
               Text(
                 '@theboss',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: palette.textPrimary,
-                ),
+                style: AppText.headingM.copyWith(color: palette.textPrimary),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: AppSpacing.xl),
 
               // Name Input
               _buildInputField(
@@ -147,7 +144,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 field: 'name',
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
 
               // Surname Input
               _buildInputField(
@@ -156,7 +153,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 field: 'surname',
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
 
               // Age Input
               _buildInputField(
@@ -166,7 +163,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 keyboardType: TextInputType.number,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
 
               // Weight Input
               _buildInputField(
@@ -176,7 +173,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
 
               // Height Input
               _buildInputField(
@@ -186,7 +183,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: AppSpacing.xl),
 
               // Continue Button
               SizedBox(
@@ -198,7 +195,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: AppSpacing.xl),
             ],
           ),
         ),
@@ -223,9 +220,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         hintText: label,
         errorText: _errors[field],
         errorMaxLines: 2,
-        hintStyle: TextStyle(
+        hintStyle: AppText.headingS.copyWith(
+          fontWeight: FontWeight.w400,
           color: AppPalette.of(context).textSecondary,
-          fontSize: 16,
         ),
       ),
     );

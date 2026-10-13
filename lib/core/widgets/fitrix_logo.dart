@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 
 /// FITRIX wordmark as drawn in the design: the two "I"s and the "F" are
 /// highlighted with the brand accent ("FI" + "TR" + "I" + "X").
@@ -11,9 +12,8 @@ class FitrixLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final base = TextStyle(
+    final base = AppText.headingS.copyWith(
       fontSize: fontSize,
-      fontWeight: FontWeight.w600,
       color: palette.textPrimary,
     );
     final accent = base.copyWith(color: palette.accent);

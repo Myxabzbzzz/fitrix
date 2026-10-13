@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -13,7 +14,7 @@ class IntroScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -22,7 +23,7 @@ class IntroScreen extends StatelessWidget {
               // FITRIX Logo
               const FitrixLogo(fontSize: 48),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
 
               // Subtitle
               _buildSubtitle(context),
@@ -32,7 +33,7 @@ class IntroScreen extends StatelessWidget {
               // Start Button
               _buildStartButton(context),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: AppSpacing.xl),
             ],
           ),
         ),
@@ -42,8 +43,7 @@ class IntroScreen extends StatelessWidget {
 
   Widget _buildSubtitle(BuildContext context) {
     final palette = AppPalette.of(context);
-    final base = TextStyle(
-      fontSize: 16,
+    final base = AppText.headingS.copyWith(
       color: palette.textPrimary,
       fontWeight: FontWeight.w400,
     );
@@ -64,7 +64,7 @@ class IntroScreen extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.xxs),
         Text.rich(
           textAlign: TextAlign.center,
           style: base,
