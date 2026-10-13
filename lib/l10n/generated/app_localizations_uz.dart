@@ -77,7 +77,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get undo => 'Bekor qilish';
+  String get undo => 'Qaytarish';
 
   @override
   String workoutDeleted(String name) {
@@ -87,4 +87,123 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get syncFailed =>
       'Sinxronlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.';
+
+  @override
+  String get progressTitle => 'Mening yutuqlarim';
+
+  @override
+  String get progressStrength => 'Kuch';
+
+  @override
+  String progressNoWorkouts(String sport) {
+    return 'Hozircha $sport mashg‘ulotlari yo‘q. Kamida bitta yondashuvni belgilab, birini yakunlang — yutuqlaringiz shu yerda ko‘rinadi.';
+  }
+
+  @override
+  String get progressRecentWorkouts => 'So‘nggi mashg‘ulotlar';
+
+  @override
+  String get progressBody => 'Tana';
+
+  @override
+  String get progressSampleNote =>
+      'Namunaviy ma’lumotlar — kuzatuv tez orada qo‘shiladi.';
+
+  @override
+  String progressFirst(String value) {
+    return 'Birinchi: $value';
+  }
+
+  @override
+  String progressLatest(String value) {
+    return 'Oxirgi: $value';
+  }
+
+  @override
+  String progressCurrent(String value) {
+    return 'Hozir: $value';
+  }
+
+  @override
+  String progressMonthAgo(String value) {
+    return 'Bir oy oldin: $value';
+  }
+
+  @override
+  String get progressIntake => 'Iste’mol, o‘rtacha';
+
+  @override
+  String get progressBurn => 'Sarf, o‘rtacha';
+
+  @override
+  String get progressKcalPerDay => 'kkal / kun';
+
+  @override
+  String progressSets(String count) {
+    return '$count yondashuv';
+  }
+
+  @override
+  String get nutritionTitle => 'Mening ovqatlanishim';
+
+  @override
+  String nutritionOfGoal(String goal) {
+    return '$goal kkaldan';
+  }
+
+  @override
+  String nutritionLeft(String kcal) {
+    return 'Bugun $kcal kkal qoldi';
+  }
+
+  @override
+  String get nutritionGoalReached => 'Bugungi maqsadga erishildi';
+
+  @override
+  String get nutritionProtein => 'Oqsil';
+
+  @override
+  String get nutritionCarbs => 'Uglevodlar';
+
+  @override
+  String get nutritionFat => 'Yog‘lar';
+
+  @override
+  String get nutritionBreakfast => 'Nonushta';
+
+  @override
+  String get nutritionBreakfastItems => 'Suli bo‘tqasi, banan, qahva';
+
+  @override
+  String get nutritionLunch => 'Tushlik';
+
+  @override
+  String get nutritionLunchItems => 'Tovuq, guruch, salat';
+
+  @override
+  String get nutritionSnack => 'Gazak';
+
+  @override
+  String get nutritionSnackItems => 'Yogurt va yong‘oq';
+
+  @override
+  String get nutritionDinner => 'Kechki ovqat';
+
+  @override
+  String get nutritionNotLogged => 'Hali kiritilmagan';
+
+  @override
+  String nutritionKcal(String kcal) {
+    return '$kcal kkal';
+  }
+
+  @override
+  String get nutritionTipEyebrow => 'Felix maslahati';
+
+  @override
+  String get nutritionTipTitle => 'Kechki ovqatda oqsil';
+
+  @override
+  String get nutritionTipMessage =>
+      'Kechki ovqatga taxminan 40 g oqsil oling. Tovuq, guruch va ko‘kat rejangizga mos.';
 }

@@ -39,5 +39,101 @@
         "example": "Push day"
       }
     }
+  },
+  "progressTitle": "My progress",
+  "progressStrength": "Strength",
+  "progressNoWorkouts": "No {sport} workouts yet. Finish one with at least one set checked off and your progress will show up here.",
+  "progressRecentWorkouts": "Recent workouts",
+  "progressBody": "Body",
+  "progressSampleNote": "Sample data — tracking is coming soon.",
+  "progressFirst": "First: {value}",
+  "progressLatest": "Latest: {value}",
+  "progressCurrent": "Current: {value}",
+  "progressMonthAgo": "One month ago: {value}",
+  "progressIntake": "Intake, avg",
+  "progressBurn": "Burn, avg",
+  "progressKcalPerDay": "kcal / day",
+  "progressSets": "{count} sets",
+  "nutritionTitle": "My Nutrition",
+  "nutritionOfGoal": "of {goal} kcal",
+  "nutritionLeft": "{kcal} kcal left today",
+  "nutritionGoalReached": "Goal reached for today",
+  "nutritionProtein": "Protein",
+  "nutritionCarbs": "Carbs",
+  "nutritionFat": "Fat",
+  "nutritionBreakfast": "Breakfast",
+  "nutritionBreakfastItems": "Oatmeal, banana, coffee",
+  "nutritionLunch": "Lunch",
+  "nutritionLunchItems": "Chicken, rice, salad",
+  "nutritionSnack": "Snack",
+  "nutritionSnackItems": "Yogurt and nuts",
+  "nutritionDinner": "Dinner",
+  "nutritionNotLogged": "Not logged yet",
+  "nutritionKcal": "{kcal} kcal",
+  "nutritionTipEyebrow": "Felix tip",
+  "nutritionTipTitle": "Protein at dinner",
+  "nutritionTipMessage": "For dinner, aim for about 40 g of protein. Chicken, rice and greens fit your plan.",
+  "@progressNoWorkouts": {
+    "placeholders": {
+      "sport": {
+        "type": "String"
+      }
+    }
+  },
+  "@progressFirst": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@progressLatest": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@progressCurrent": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@progressMonthAgo": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@progressSets": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@nutritionOfGoal": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "@nutritionLeft": {
+    "placeholders": {
+      "kcal": {
+        "type": "String"
+      }
+    }
+  },
+  "@nutritionKcal": {
+    "placeholders": {
+      "kcal": {
+        "type": "String"
+      }
+    }
   }
 }

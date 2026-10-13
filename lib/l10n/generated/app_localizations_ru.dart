@@ -87,4 +87,123 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get syncFailed =>
       'Не удалось синхронизировать. Проверьте подключение и попробуйте ещё раз.';
+
+  @override
+  String get progressTitle => 'Мой прогресс';
+
+  @override
+  String get progressStrength => 'Сила';
+
+  @override
+  String progressNoWorkouts(String sport) {
+    return 'Тренировок ($sport) пока нет. Завершите одну, отметив хотя бы один подход, и здесь появится ваш прогресс.';
+  }
+
+  @override
+  String get progressRecentWorkouts => 'Последние тренировки';
+
+  @override
+  String get progressBody => 'Тело';
+
+  @override
+  String get progressSampleNote =>
+      'Пример данных — отслеживание скоро появится.';
+
+  @override
+  String progressFirst(String value) {
+    return 'Первое: $value';
+  }
+
+  @override
+  String progressLatest(String value) {
+    return 'Последнее: $value';
+  }
+
+  @override
+  String progressCurrent(String value) {
+    return 'Сейчас: $value';
+  }
+
+  @override
+  String progressMonthAgo(String value) {
+    return 'Месяц назад: $value';
+  }
+
+  @override
+  String get progressIntake => 'Потреблено, в среднем';
+
+  @override
+  String get progressBurn => 'Сожжено, в среднем';
+
+  @override
+  String get progressKcalPerDay => 'ккал / день';
+
+  @override
+  String progressSets(String count) {
+    return '$count подх.';
+  }
+
+  @override
+  String get nutritionTitle => 'Моё питание';
+
+  @override
+  String nutritionOfGoal(String goal) {
+    return 'из $goal ккал';
+  }
+
+  @override
+  String nutritionLeft(String kcal) {
+    return 'Осталось $kcal ккал на сегодня';
+  }
+
+  @override
+  String get nutritionGoalReached => 'Цель на сегодня достигнута';
+
+  @override
+  String get nutritionProtein => 'Белки';
+
+  @override
+  String get nutritionCarbs => 'Углеводы';
+
+  @override
+  String get nutritionFat => 'Жиры';
+
+  @override
+  String get nutritionBreakfast => 'Завтрак';
+
+  @override
+  String get nutritionBreakfastItems => 'Овсянка, банан, кофе';
+
+  @override
+  String get nutritionLunch => 'Обед';
+
+  @override
+  String get nutritionLunchItems => 'Курица, рис, салат';
+
+  @override
+  String get nutritionSnack => 'Перекус';
+
+  @override
+  String get nutritionSnackItems => 'Йогурт и орехи';
+
+  @override
+  String get nutritionDinner => 'Ужин';
+
+  @override
+  String get nutritionNotLogged => 'Пока не записано';
+
+  @override
+  String nutritionKcal(String kcal) {
+    return '$kcal ккал';
+  }
+
+  @override
+  String get nutritionTipEyebrow => 'Совет Феликса';
+
+  @override
+  String get nutritionTipTitle => 'Белок на ужин';
+
+  @override
+  String get nutritionTipMessage =>
+      'На ужин возьмите около 40 г белка. Курица, рис и зелень подойдут вашему плану.';
 }

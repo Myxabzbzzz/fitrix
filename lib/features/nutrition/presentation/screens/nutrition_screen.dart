@@ -6,9 +6,14 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// "My Nutrition": today's calories ring and macro progress. The ring and
 /// bars fill from zero when the screen opens.
+enum _Macro { protein, carbs, fat }
+
+enum _Meal { breakfast, lunch, snack }
+
 class NutritionScreen extends StatefulWidget {
   const NutritionScreen({super.key});
 
@@ -16,15 +21,15 @@ class NutritionScreen extends StatefulWidget {
   static const int _goal = 2400;
 
   static const _macros = [
-    (label: 'Protein', grams: 120, goal: 160),
-    (label: 'Carbs', grams: 180, goal: 260),
-    (label: 'Fat', grams: 55, goal: 80),
+    (id: _Macro.protein, grams: 120, goal: 160),
+    (id: _Macro.carbs, grams: 180, goal: 260),
+    (id: _Macro.fat, grams: 55, goal: 80),
   ];
 
   static const _meals = [
-    (name: 'Breakfast', items: 'Oatmeal, banana, coffee', kcal: 520),
-    (name: 'Lunch', items: 'Chicken, rice, salad', kcal: 780),
-    (name: 'Snack', items: 'Yogurt and nuts', kcal: 400),
+    (id: _Meal.breakfast, kcal: 520),
+    (id: _Meal.lunch, kcal: 780),
+    (id: _Meal.snack, kcal: 400),
   ];
 
   @override
@@ -79,6 +84,7 @@ class _NutritionScreenState extends State<NutritionScreen>
 
   Widget _build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
     final fmt = NumberFormat.decimalPattern('en');
     const left = _goal - _consumed;
 
@@ -89,7 +95,7 @@ class _NutritionScreenState extends State<NutritionScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const ScreenTitle('My Nutrition'),
+            ScreenTitle(l10n.nutritionTitle),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(
@@ -127,7 +133,7 @@ class _NutritionScreenState extends State<NutritionScreen>
                                           .copyWith(color: palette.textPrimary),
                                     ),
                                     Text(
-                                      'of ${fmt.format(_goal)} kcal',
+                                      l10n.nutritionOfGoal(fmt.format(_goal)),
                                       style: AppText.micro.copyWith(
                                           color: palette.textSecondary),
                                     ),
@@ -146,7 +152,11 @@ class _NutritionScreenState extends State<NutritionScreen>
                                 if (i > 0)
                                   const SizedBox(height: AppSpacing.sm),
                                 _MacroRow(
-                                  label: macro.label,
+                                  label: switch (macro.id) {
+                                    _Macro.protein => l10n.nutritionProtein,
+                                    _Macro.carbs => l10n.nutritionCarbs,
+                                    _Macro.fat => l10n.nutritionFat,
+                                  },
                                   grams: macro.grams,
                                   goal: macro.goal,
                                   progress: _progress(i + 1),
@@ -161,31 +171,38 @@ class _NutritionScreenState extends State<NutritionScreen>
                   const SizedBox(height: AppSpacing.md),
                   Text(
                     left > 0
-                        ? '${fmt.format(left)} kcal left today'
-                        : 'Goal reached for today',
+                        ? l10n.nutritionLeft(fmt.format(left))
+                        : l10n.nutritionGoalReached,
                     style:
                         AppText.bodyStrong.copyWith(color: palette.textPrimary),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   for (final meal in NutritionScreen._meals) ...[
                     _MealRow(
-                      name: meal.name,
-                      items: meal.items,
-                      trailing: '${meal.kcal} kcal',
+                      name: switch (meal.id) {
+                        _Meal.breakfast => l10n.nutritionBreakfast,
+                        _Meal.lunch => l10n.nutritionLunch,
+                        _Meal.snack => l10n.nutritionSnack,
+                      },
+                      items: switch (meal.id) {
+                        _Meal.breakfast => l10n.nutritionBreakfastItems,
+                        _Meal.lunch => l10n.nutritionLunchItems,
+                        _Meal.snack => l10n.nutritionSnackItems,
+                      },
+                      trailing: l10n.nutritionKcal('${meal.kcal}'),
                     ),
                     const SizedBox(height: AppSpacing.xs),
                   ],
-                  const _MealRow(
-                    name: 'Dinner',
-                    items: 'Not logged yet',
+                  _MealRow(
+                    name: l10n.nutritionDinner,
+                    items: l10n.nutritionNotLogged,
                     trailing: '—',
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  const CoachCard(
-                    eyebrow: 'Felix tip',
-                    title: 'Dinner',
-                    message: 'For dinner, aim for about 40 g of protein. '
-                        'Chicken, rice and greens fit your plan.',
+                  CoachCard(
+                    eyebrow: l10n.nutritionTipEyebrow,
+                    title: l10n.nutritionTipTitle,
+                    message: l10n.nutritionTipMessage,
                     imageAsset: 'assets/images/felix_avatar.png',
                     imageWidth: 44,
                     imageHeight: 44,

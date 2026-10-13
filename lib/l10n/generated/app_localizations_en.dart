@@ -88,4 +88,122 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get syncFailed =>
       'Couldn\'t sync. Check your connection and try again.';
+
+  @override
+  String get progressTitle => 'My progress';
+
+  @override
+  String get progressStrength => 'Strength';
+
+  @override
+  String progressNoWorkouts(String sport) {
+    return 'No $sport workouts yet. Finish one with at least one set checked off and your progress will show up here.';
+  }
+
+  @override
+  String get progressRecentWorkouts => 'Recent workouts';
+
+  @override
+  String get progressBody => 'Body';
+
+  @override
+  String get progressSampleNote => 'Sample data — tracking is coming soon.';
+
+  @override
+  String progressFirst(String value) {
+    return 'First: $value';
+  }
+
+  @override
+  String progressLatest(String value) {
+    return 'Latest: $value';
+  }
+
+  @override
+  String progressCurrent(String value) {
+    return 'Current: $value';
+  }
+
+  @override
+  String progressMonthAgo(String value) {
+    return 'One month ago: $value';
+  }
+
+  @override
+  String get progressIntake => 'Intake, avg';
+
+  @override
+  String get progressBurn => 'Burn, avg';
+
+  @override
+  String get progressKcalPerDay => 'kcal / day';
+
+  @override
+  String progressSets(String count) {
+    return '$count sets';
+  }
+
+  @override
+  String get nutritionTitle => 'My Nutrition';
+
+  @override
+  String nutritionOfGoal(String goal) {
+    return 'of $goal kcal';
+  }
+
+  @override
+  String nutritionLeft(String kcal) {
+    return '$kcal kcal left today';
+  }
+
+  @override
+  String get nutritionGoalReached => 'Goal reached for today';
+
+  @override
+  String get nutritionProtein => 'Protein';
+
+  @override
+  String get nutritionCarbs => 'Carbs';
+
+  @override
+  String get nutritionFat => 'Fat';
+
+  @override
+  String get nutritionBreakfast => 'Breakfast';
+
+  @override
+  String get nutritionBreakfastItems => 'Oatmeal, banana, coffee';
+
+  @override
+  String get nutritionLunch => 'Lunch';
+
+  @override
+  String get nutritionLunchItems => 'Chicken, rice, salad';
+
+  @override
+  String get nutritionSnack => 'Snack';
+
+  @override
+  String get nutritionSnackItems => 'Yogurt and nuts';
+
+  @override
+  String get nutritionDinner => 'Dinner';
+
+  @override
+  String get nutritionNotLogged => 'Not logged yet';
+
+  @override
+  String nutritionKcal(String kcal) {
+    return '$kcal kcal';
+  }
+
+  @override
+  String get nutritionTipEyebrow => 'Felix tip';
+
+  @override
+  String get nutritionTipTitle => 'Protein at dinner';
+
+  @override
+  String get nutritionTipMessage =>
+      'For dinner, aim for about 40 g of protein. Chicken, rice and greens fit your plan.';
 }

@@ -10,6 +10,7 @@ import 'package:fitrix/features/progress/data/progress_data.dart';
 import 'package:fitrix/features/progress/presentation/widgets/progress_chart.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// "My progress": strength charts and recent sessions from saved workouts,
 /// plus body weight and calories (sample data for now), filtered by sport.
@@ -48,6 +49,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final fmt = NumberFormat.decimalPattern('en');
     final palette = AppPalette.of(context);
     final sectionStyle = AppText.headingS.copyWith(color: palette.textPrimary);
     final noteStyle = AppText.caption.copyWith(color: palette.textSecondary);
@@ -66,7 +69,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const ScreenTitle('My progress'),
+            ScreenTitle(l10n.progressTitle),
             PillSelector<Sport>(
               items: Sport.values,
               selected: _sport,
@@ -80,15 +83,13 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                   padding: const EdgeInsets.fromLTRB(AppSpacing.md,
                       AppSpacing.sm, AppSpacing.md, AppSpacing.lg),
                   children: [
-                    Text('Strength', style: sectionStyle),
+                    Text(l10n.progressStrength, style: sectionStyle),
                     const SizedBox(height: AppSpacing.sm),
                     if (strength.isEmpty)
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                         child: Text(
-                          'No ${_sport.label.toLowerCase()} workouts yet. '
-                          'Finish one with at least one set checked off and '
-                          'your progress will show up here.',
+                          l10n.progressNoWorkouts(_sport.label.toLowerCase()),
                           style: noteStyle,
                         ),
                       ),
@@ -97,47 +98,48 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                         series,
                         delta: series.values.length > 1 ? _delta(series) : null,
                         left: series.values.length > 1
-                            ? 'First: ${formatKg(series.values.first)}'
+                            ? l10n.progressFirst(formatKg(series.values.first))
                             : null,
-                        right: 'Latest: ${formatKg(series.values.last)}',
+                        right:
+                            l10n.progressLatest(formatKg(series.values.last)),
                       ),
                       const SizedBox(height: AppSpacing.sm),
                     ],
                     if (history.isNotEmpty) ...[
                       const SizedBox(height: AppSpacing.xs),
-                      Text('Recent workouts', style: sectionStyle),
+                      Text(l10n.progressRecentWorkouts, style: sectionStyle),
                       const SizedBox(height: AppSpacing.xs),
                       for (final workout in history.take(10))
                         _HistoryTile(workout: workout),
                     ],
                     const SizedBox(height: AppSpacing.md),
-                    Text('Body', style: sectionStyle),
+                    Text(l10n.progressBody, style: sectionStyle),
                     const SizedBox(height: AppSpacing.xxs),
-                    Text('Sample data — tracking is coming soon.',
-                        style: noteStyle),
+                    Text(l10n.progressSampleNote, style: noteStyle),
                     const SizedBox(height: AppSpacing.sm),
                     _chart(
                       weight,
                       delta: _delta(weight),
-                      left: 'One month ago: ${formatKg(weight.values.first)}',
-                      right: 'Current: ${formatKg(weight.values.last)}',
+                      left:
+                          l10n.progressMonthAgo(formatKg(weight.values.first)),
+                      right: l10n.progressCurrent(formatKg(weight.values.last)),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     _chart(ProgressData.calories),
                     const SizedBox(height: AppSpacing.sm),
-                    const Row(
+                    Row(
                       children: [
                         Expanded(
                           child: _StatTile(
-                            label: 'Intake',
-                            value: '${ProgressData.caloriesIntake}',
+                            label: l10n.progressIntake,
+                            value: fmt.format(ProgressData.caloriesIntake),
                           ),
                         ),
-                        SizedBox(width: AppSpacing.sm),
+                        const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: _StatTile(
-                            label: 'Burn',
-                            value: '${ProgressData.caloriesBurn}',
+                            label: l10n.progressBurn,
+                            value: fmt.format(ProgressData.caloriesBurn),
                           ),
                         ),
                       ],
@@ -174,7 +176,7 @@ class _StatTile extends StatelessWidget {
           Text(value,
               style:
                   AppText.displayMedium.copyWith(color: palette.textPrimary)),
-          Text('kcal / day',
+          Text(AppLocalizations.of(context).progressKcalPerDay,
               style: AppText.micro.copyWith(color: palette.textSecondary)),
         ],
       ),
@@ -227,7 +229,8 @@ class _HistoryTile extends StatelessWidget {
                     AppText.captionStrong.copyWith(color: palette.textPrimary),
               ),
               Text(
-                '${workout.setCount} sets',
+                AppLocalizations.of(context)
+                    .progressSets('${workout.setCount}'),
                 style: AppText.caption.copyWith(color: palette.textSecondary),
               ),
             ],

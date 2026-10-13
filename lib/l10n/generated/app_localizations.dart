@@ -245,6 +245,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t sync. Check your connection and try again.'**
   String get syncFailed;
+
+  /// No description provided for @progressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My progress'**
+  String get progressTitle;
+
+  /// No description provided for @progressStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength'**
+  String get progressStrength;
+
+  /// No description provided for @progressNoWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'No {sport} workouts yet. Finish one with at least one set checked off and your progress will show up here.'**
+  String progressNoWorkouts(String sport);
+
+  /// No description provided for @progressRecentWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent workouts'**
+  String get progressRecentWorkouts;
+
+  /// No description provided for @progressBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Body'**
+  String get progressBody;
+
+  /// No description provided for @progressSampleNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample data — tracking is coming soon.'**
+  String get progressSampleNote;
+
+  /// No description provided for @progressFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'First: {value}'**
+  String progressFirst(String value);
+
+  /// No description provided for @progressLatest.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest: {value}'**
+  String progressLatest(String value);
+
+  /// No description provided for @progressCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current: {value}'**
+  String progressCurrent(String value);
+
+  /// No description provided for @progressMonthAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'One month ago: {value}'**
+  String progressMonthAgo(String value);
+
+  /// No description provided for @progressIntake.
+  ///
+  /// In en, this message translates to:
+  /// **'Intake, avg'**
+  String get progressIntake;
+
+  /// No description provided for @progressBurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Burn, avg'**
+  String get progressBurn;
+
+  /// No description provided for @progressKcalPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'kcal / day'**
+  String get progressKcalPerDay;
+
+  /// No description provided for @progressSets.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} sets'**
+  String progressSets(String count);
+
+  /// No description provided for @nutritionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Nutrition'**
+  String get nutritionTitle;
+
+  /// No description provided for @nutritionOfGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'of {goal} kcal'**
+  String nutritionOfGoal(String goal);
+
+  /// No description provided for @nutritionLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{kcal} kcal left today'**
+  String nutritionLeft(String kcal);
+
+  /// No description provided for @nutritionGoalReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal reached for today'**
+  String get nutritionGoalReached;
+
+  /// No description provided for @nutritionProtein.
+  ///
+  /// In en, this message translates to:
+  /// **'Protein'**
+  String get nutritionProtein;
+
+  /// No description provided for @nutritionCarbs.
+  ///
+  /// In en, this message translates to:
+  /// **'Carbs'**
+  String get nutritionCarbs;
+
+  /// No description provided for @nutritionFat.
+  ///
+  /// In en, this message translates to:
+  /// **'Fat'**
+  String get nutritionFat;
+
+  /// No description provided for @nutritionBreakfast.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakfast'**
+  String get nutritionBreakfast;
+
+  /// No description provided for @nutritionBreakfastItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Oatmeal, banana, coffee'**
+  String get nutritionBreakfastItems;
+
+  /// No description provided for @nutritionLunch.
+  ///
+  /// In en, this message translates to:
+  /// **'Lunch'**
+  String get nutritionLunch;
+
+  /// No description provided for @nutritionLunchItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Chicken, rice, salad'**
+  String get nutritionLunchItems;
+
+  /// No description provided for @nutritionSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Snack'**
+  String get nutritionSnack;
+
+  /// No description provided for @nutritionSnackItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Yogurt and nuts'**
+  String get nutritionSnackItems;
+
+  /// No description provided for @nutritionDinner.
+  ///
+  /// In en, this message translates to:
+  /// **'Dinner'**
+  String get nutritionDinner;
+
+  /// No description provided for @nutritionNotLogged.
+  ///
+  /// In en, this message translates to:
+  /// **'Not logged yet'**
+  String get nutritionNotLogged;
+
+  /// No description provided for @nutritionKcal.
+  ///
+  /// In en, this message translates to:
+  /// **'{kcal} kcal'**
+  String nutritionKcal(String kcal);
+
+  /// No description provided for @nutritionTipEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix tip'**
+  String get nutritionTipEyebrow;
+
+  /// No description provided for @nutritionTipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Protein at dinner'**
+  String get nutritionTipTitle;
+
+  /// No description provided for @nutritionTipMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'For dinner, aim for about 40 g of protein. Chicken, rice and greens fit your plan.'**
+  String get nutritionTipMessage;
 }
 
 class _AppLocalizationsDelegate
