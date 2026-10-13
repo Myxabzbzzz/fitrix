@@ -1,7 +1,7 @@
 -- pgTAP tests for the shop / content / places schema.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(41);
+select plan(48);
 
 -- Fixtures (as the table owner) ---------------------------------------------
 insert into auth.users (id, aud, role) values
@@ -122,6 +122,20 @@ select is((select count(*)::int from public.orders where user_id = 'aaaaaaaa-000
   'deleting the user deletes their orders');
 select is((select count(*)::int from public.challenge_participants where user_id = 'aaaaaaaa-0000-0000-0000-00000000000a'), 0,
   'deleting the user deletes their participations');
+
+-- Onboarding answers on profiles ----------------------------------------------
+select has_column('public', 'profiles', 'goal', 'profiles.goal exists');
+select has_column('public', 'profiles', 'experience', 'profiles.experience exists');
+select has_column('public', 'profiles', 'sports', 'profiles.sports exists');
+insert into public.profiles (id) values ('bbbbbbbb-0000-0000-0000-00000000000b');
+select is((select sports from public.profiles where id = 'bbbbbbbb-0000-0000-0000-00000000000b'),
+  '{}'::text[], 'sports defaults to an empty array');
+select throws_ok($$update public.profiles set sports = array['a','b','c','d','e','f','g']$$,
+  '23514', null, 'seven sports are rejected');
+select throws_ok($$update public.profiles set goal = repeat('x', 121)$$,
+  '23514', null, 'a 121-character goal is rejected');
+select lives_ok($$update public.profiles set goal = repeat('x', 120), sports = array['a','b','c','d','e','f']$$,
+  '120-character goal and six sports are accepted');
 
 select * from finish();
 rollback;

@@ -19,6 +19,7 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 class _FakeApi extends ChatApiService {
   final profiles = <Map<String, Object>?>[];
+  final sent = <String>[];
 
   @override
   Stream<String> streamMessage(
@@ -30,6 +31,7 @@ class _FakeApi extends ChatApiService {
     String? language,
   }) async* {
     profiles.add(profile);
+    sent.add(message);
     yield 'Sure';
   }
 }
@@ -76,7 +78,10 @@ void main() {
   }
 
   Future<void> tapReply(WidgetTester tester, String label) async {
-    await tester.tap(find.widgetWithText(QuickReplyChip, label));
+    final chip = find.widgetWithText(QuickReplyChip, label);
+    await tester.ensureVisible(chip);
+    await tester.pumpAndSettle();
+    await tester.tap(chip);
     await tester.pumpAndSettle();
   }
 
@@ -187,5 +192,64 @@ void main() {
     await tester.pump(const Duration(milliseconds: 900));
     await tester.pumpAndSettle();
     expect(find.text('transition-screen'), findsOneWidget);
+  });
+
+  testWidgets('double-tapping a chip sends one goal message, step moves on',
+      (tester) async {
+    await pumpChat(tester);
+    final chip =
+        find.widgetWithText(QuickReplyChip, AppConstants.fitnessGoals.first);
+    await tester.tap(chip);
+    await tester.tap(chip, warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    expect(api.sent, [AppConstants.fitnessGoals.first]);
+    expect(find.widgetWithText(QuickReplyChip, 'Gym'), findsOneWidget);
+    final profile = await ProfileRepository().getProfile();
+    expect(profile!.goal, AppConstants.fitnessGoals.first);
+  });
+
+  testWidgets('a typed question is sent but is not an answer', (tester) async {
+    await pumpChat(tester);
+    await tester.enterText(input, 'What is a macro?');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+
+    expect(api.sent, ['What is a macro?']);
+    expect((await ProfileRepository().getProfile())?.goal ?? '', '');
+    expect(find.widgetWithText(QuickReplyChip, AppConstants.fitnessGoals.first),
+        findsOneWidget);
+  });
+
+  testWidgets('resumes from the saved profile after a restart', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'user_name': 'M',
+      'user_goal': 'Just track my progress',
+    });
+    await pumpChat(tester);
+    expect(find.widgetWithText(QuickReplyChip, 'Gym'), findsOneWidget);
+  });
+
+  testWidgets('resumes at Start once the level is saved', (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'user_name': 'M',
+      'user_goal': 'Just track my progress',
+      'user_sports': ['Gym'],
+      'user_experience': 'Beginner',
+    });
+    await pumpChat(tester);
+    expect(startKey, findsOneWidget);
+    expect(input, findsNothing);
+  });
+
+  testWidgets('a non-muscle goal with level Advanced reaches Start',
+      (tester) async {
+    await pumpChat(tester);
+    await tapReply(tester, AppConstants.fitnessGoals[4]);
+    await tapReply(tester, 'Gym');
+    await tapReply(tester, 'Once a week or less');
+    await tapReply(tester, 'Advanced');
+    expect(startKey, findsOneWidget);
+    expect((await ProfileRepository().getProfile())!.experience, 'Advanced');
   });
 }

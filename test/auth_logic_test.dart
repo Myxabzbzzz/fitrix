@@ -93,9 +93,6 @@ void main() {
         'surname': 'Smith',
         'age': 30,
         'weight_kg': 72.5,
-        'goal': null,
-        'experience': null,
-        'sports': <String>[],
         'height_cm': 180.0,
         'language': 'ru',
       });
@@ -182,6 +179,14 @@ void main() {
       expect(back.goal, 'Lose weight and get toned');
       expect(back.experience, 'Intermediate');
       expect(back.sports, ['Gym', 'Running']);
+    });
+
+    test('blank answers are left out of the upload', () {
+      final json =
+          ProfileRow.fromLocal(id: 'u1', profile: _profile()).toUpsert();
+      expect(json.containsKey('goal'), isFalse);
+      expect(json.containsKey('experience'), isFalse);
+      expect(json.containsKey('sports'), isFalse);
     });
 
     test('answers are clipped to the database limits', () {

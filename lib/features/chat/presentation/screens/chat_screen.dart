@@ -73,19 +73,81 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   /// Which onboarding question the quick replies currently answer.
   _OnboardingStep _step = _OnboardingStep.goal;
 
+  bool _sending = false;
+
   Future<void> _sendMessage(String content, {bool isQuickReply = false}) async {
     final notifier = ref.read(chatMessagesProvider.notifier);
-    if (content.trim().isEmpty || notifier.isReplying) return;
-
-    final answered = _step;
-    _messageController.clear();
-    _advance();
-
-    // Saved before sending so Felix gets the answer with this very message.
-    await _saveAnswer(answered, content.trim());
-    if (!mounted) return;
-    notifier.sendMessage(content, isQuickReply: isQuickReply);
+    final text = content.trim();
+    if (text.isEmpty || _sending || !notifier.canSend) return;
+    _sending = true;
+    try {
+      _messageController.clear();
+      // A question isn't an answer: send it, stay on this step.
+      final isAnswer = !text.endsWith('?');
+      final answered = _step;
+      // Saved before sending so Felix gets the answer with this very message.
+      if (isAnswer) await _saveAnswer(answered, text);
+      if (!mounted) return;
+      final accepted = notifier.startSend(content, isQuickReply: isQuickReply);
+      if (accepted && isAnswer) _advance();
+    } finally {
+      _sending = false;
+    }
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_resumed) {
+      _resumed = true;
+      unawaited(_resume());
+    }
+  }
+
+  bool _resumed = false;
+
+  /// After a restart, continues from what the saved profile already has.
+  Future<void> _resume() async {
+    final saved = await ref.read(profileRepositoryProvider).getProfile();
+    if (saved == null || !mounted || _sending) return;
+    if (_step != _OnboardingStep.goal) return;
+    final _OnboardingStep step;
+    if (saved.experience.isNotEmpty) {
+      step = _OnboardingStep.done;
+    } else if (saved.sports.isNotEmpty) {
+      step = _OnboardingStep.frequency;
+    } else if (saved.goal.isNotEmpty) {
+      step = _OnboardingStep.sports;
+    } else {
+      return;
+    }
+    setState(() {
+      _step = step;
+      _quickReplies = _repliesFor(step);
+      _showQuickReplies = step != _OnboardingStep.done;
+    });
+  }
+
+  static List<String> _repliesFor(_OnboardingStep step) => switch (step) {
+        _OnboardingStep.goal => AppConstants.fitnessGoals,
+        _OnboardingStep.sports => const [
+            'Gym',
+            'Fitness',
+            'Cycling',
+            'Skiing',
+            'Snowboarding',
+            'Football',
+            'Running'
+          ],
+        _OnboardingStep.frequency => const [
+            'Once a week or less',
+            'Almost every day',
+            'A few times a week',
+            'Just starting out'
+          ],
+        _OnboardingStep.level => const ['Beginner', 'Intermediate', 'Advanced'],
+        _OnboardingStep.done => const [],
+      };
 
   /// Keeps the goal, sport and level in the profile (not just in the chat
   /// history), so every Felix chat knows them. Quick replies are English
@@ -110,37 +172,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   }
 
   void _advance() {
+    if (_step == _OnboardingStep.done) return;
     setState(() {
-      switch (_step) {
-        case _OnboardingStep.goal:
-          _step = _OnboardingStep.sports;
-          _quickReplies = [
-            'Gym',
-            'Fitness',
-            'Cycling',
-            'Skiing',
-            'Snowboarding',
-            'Football',
-            'Running'
-          ];
-        case _OnboardingStep.sports:
-          _step = _OnboardingStep.frequency;
-          _quickReplies = [
-            'Once a week or less',
-            'Almost every day',
-            'A few times a week',
-            'Just starting out'
-          ];
-        case _OnboardingStep.frequency:
-          _step = _OnboardingStep.level;
-          _quickReplies = ['Beginner', 'Intermediate', 'Advanced'];
-        case _OnboardingStep.level:
-          _step = _OnboardingStep.done;
-          _quickReplies = [];
-          _showQuickReplies = false;
-        case _OnboardingStep.done:
-          break;
-      }
+      _step = _OnboardingStep.values[_step.index + 1];
+      _quickReplies = _repliesFor(_step);
+      _showQuickReplies = _step != _OnboardingStep.done;
     });
   }
 
@@ -216,8 +252,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
                         final message = messages[index];
-                        final showTimestamp = index == 0 ||
-                            _showsTimestamp(messages, index);
+                        final showTimestamp =
+                            index == 0 || _showsTimestamp(messages, index);
 
                         final next = index + 1 < messages.length
                             ? messages[index + 1]
@@ -234,9 +270,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                             children: [
                               if (showTimestamp)
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: AppSpacing.sm),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: AppSpacing.sm),
                                   child: Text(
                                     DateFormat('MMM dd, yyyy, h:mm a')
                                         .format(message.timestamp),
@@ -260,7 +295,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   error: (error, stack) => Center(
-                    child: Text(AppLocalizations.of(context).chatError('$error')),
+                    child:
+                        Text(AppLocalizations.of(context).chatError('$error')),
                   ),
                 ),
               ),
@@ -314,7 +350,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
 
   static bool _showsTimestamp(List<ChatMessage> messages, int index) =>
       index == 0 ||
-      messages[index].timestamp
+      messages[index]
+              .timestamp
               .difference(messages[index - 1].timestamp)
               .inMinutes >
           5;

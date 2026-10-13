@@ -295,9 +295,11 @@ class ProfileRow {
           'age': age,
           'weight_kg': weightKg,
           'height_cm': heightCm,
-          'goal': goal,
-          'experience': experience,
-          'sports': sports,
+          // Left out when blank so a device that never answered doesn't
+          // wipe answers given on another device.
+          if (goal != null) 'goal': goal,
+          if (experience != null) 'experience': experience,
+          if (sports.isNotEmpty) 'sports': sports,
         },
         'language': normalizeLanguage(language),
         if (onboardingComplete) 'onboarding_complete': true,

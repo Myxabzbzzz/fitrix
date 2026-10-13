@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/session/session_providers.dart';
@@ -105,9 +106,25 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   /// True while Felix's reply is streaming in; new sends are ignored.
   bool get isReplying => _isReplying;
 
-  Future<void> sendMessage(String content, {bool isQuickReply = false}) async {
+  /// Whether a message sent now would be accepted.
+  bool get canSend => state.valueOrNull != null && !_isReplying;
+
+  Future<void> sendMessage(String content, {bool isQuickReply = false}) =>
+      _begin(content, isQuickReply: isQuickReply) ?? Future.value();
+
+  /// Starts sending without waiting for the reply. Returns whether the
+  /// message was accepted (false while loading or while Felix replies).
+  bool startSend(String content, {bool isQuickReply = false}) {
+    final future = _begin(content, isQuickReply: isQuickReply);
+    if (future == null) return false;
+    unawaited(future);
+    return true;
+  }
+
+  /// Null when the message is rejected; otherwise the reply, already started.
+  Future<void>? _begin(String content, {bool isQuickReply = false}) {
     final messages = state.valueOrNull;
-    if (messages == null || _isReplying || content.trim().isEmpty) return;
+    if (messages == null || _isReplying || content.trim().isEmpty) return null;
 
     final userMessage = ChatMessage(
       id: _uuid.v4(),
@@ -118,7 +135,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
     );
 
     final history = [...messages.where((m) => !m.isFailed), userMessage];
-    await _reply(history, history.length - 1);
+    return _reply(history, history.length - 1);
   }
 
   /// Re-asks Felix for the last user message after a failed reply.
