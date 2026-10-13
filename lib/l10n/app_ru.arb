@@ -267,5 +267,7 @@
   "programLevelBeginner": "Начинающий",
   "programLevelMedium": "Средний",
   "programLevelAdvanced": "Продвинутый",
-  "shopOrderUnavailable": "Некоторые товары больше недоступны. Обновите корзину и попробуйте снова."
+  "shopOrderUnavailable": "Некоторые товары больше недоступны. Обновите корзину и попробуйте снова.",
+  "workoutKeyboardDone": "Готово",
+  "workoutEditLabel": "Редактировать тренировку"
 }

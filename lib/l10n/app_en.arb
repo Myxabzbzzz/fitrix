@@ -687,5 +687,7 @@
         "type": "int"
       }
     }
-  }
+  },
+  "workoutKeyboardDone": "Done",
+  "workoutEditLabel": "Edit workout"
 }

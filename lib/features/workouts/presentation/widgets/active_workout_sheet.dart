@@ -66,10 +66,12 @@ class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
       duration: Motion.medium,
       value: ref.read(activeWorkoutExpandedProvider) ? 1 : 0,
     );
+    FocusManager.instance.addListener(_onFocusChange);
   }
 
   @override
   void dispose() {
+    FocusManager.instance.removeListener(_onFocusChange);
     _position.dispose();
     super.dispose();
   }
@@ -112,6 +114,19 @@ class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
         ? velocity < 0
         : _position.value >= 0.5;
     _setExpanded(open);
+  }
+
+  bool _fieldFocused = false;
+
+  /// True while a set field of this sheet has the keyboard.
+  void _onFocusChange() {
+    final focusContext = FocusManager.instance.primaryFocus?.context;
+    final focused = focusContext != null &&
+        focusContext.findAncestorStateOfType<_ActiveWorkoutSheetState>() ==
+            this;
+    if (focused != _fieldFocused && mounted) {
+      setState(() => _fieldFocused = focused);
+    }
   }
 
   @override
@@ -221,11 +236,52 @@ class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
                     ),
                   ),
                 ),
+                if (_fieldFocused)
+                  Positioned(
+                    key: const ValueKey('keyboardDone'),
+                    left: 0,
+                    right: 0,
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                    child: const _KeyboardDoneBar(),
+                  ),
               ],
             );
           },
         );
       },
+    );
+  }
+}
+
+/// Height of the Done bar above the keyboard.
+const double kDoneBarHeight = 44;
+
+/// Bar pinned to the top of the keyboard with a right-aligned Done button;
+/// the numeric keypad has no return key on iOS.
+class _KeyboardDoneBar extends StatelessWidget {
+  const _KeyboardDoneBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    return Material(
+      color: palette.sheet,
+      child: Container(
+        height: kDoneBarHeight,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: palette.border)),
+        ),
+        child: TextButton(
+          onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Text(
+            l10n.workoutKeyboardDone,
+            style: AppText.bodyStrong.copyWith(color: palette.accent),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -339,94 +395,100 @@ class _SetsTable extends ConsumerWidget {
     final total = workout.totalSets;
     final done = workout.completedSets;
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-          AppSpacing.md, 0, AppSpacing.md, AppSpacing.lg),
-      children: [
-        Center(
-          child: Text(
-            l10n.workoutSetsProgress(done, total),
-            key: ActiveWorkoutSheet.captionKey,
-            style: AppText.caption.copyWith(
-              color: palette.textSecondary,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        _ProgressBar(fraction: total == 0 ? 0 : done / total),
-        const SizedBox(height: AppSpacing.md),
-        if (workout.exercises.isEmpty)
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+    // Tapping empty space drops the keyboard; buttons inside still win.
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md, 0, AppSpacing.md, AppSpacing.lg),
+        children: [
+          Center(
             child: Text(
-              l10n.workoutNoExercises,
-              textAlign: TextAlign.center,
-              style: AppText.body14.copyWith(color: palette.textSecondary),
+              l10n.workoutSetsProgress(done, total),
+              key: ActiveWorkoutSheet.captionKey,
+              style: AppText.caption.copyWith(
+                color: palette.textSecondary,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
             ),
           ),
-        for (var e = 0; e < workout.exercises.length; e++) ...[
-          Container(
-            margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            decoration: BoxDecoration(
-              color: palette.sheet,
-              borderRadius: AppRadius.mdAll,
+          const SizedBox(height: AppSpacing.xs),
+          _ProgressBar(fraction: total == 0 ? 0 : done / total),
+          const SizedBox(height: AppSpacing.md),
+          if (workout.exercises.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Text(
+                l10n.workoutNoExercises,
+                textAlign: TextAlign.center,
+                style: AppText.body14.copyWith(color: palette.textSecondary),
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        workout.exercises[e].name,
-                        style: AppText.headingS
-                            .copyWith(color: palette.textPrimary),
+          for (var e = 0; e < workout.exercises.length; e++) ...[
+            Container(
+              margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: palette.sheet,
+                borderRadius: AppRadius.mdAll,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          workout.exercises[e].name,
+                          style: AppText.headingS
+                              .copyWith(color: palette.textPrimary),
+                        ),
+                      ),
+                      Text(
+                        l10n.workoutSetCount(workout.exercises[e].sets.length),
+                        style: AppText.caption
+                            .copyWith(color: palette.textSecondary),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  const _TableHeader(),
+                  for (var s = 0; s < workout.exercises[e].sets.length; s++)
+                    _SetRow(
+                      key: ValueKey('set-$e-$s'),
+                      index: s,
+                      set: workout.exercises[e].sets[s],
+                      onToggle: () => notifier.toggleSet(e, s),
+                      onKgChanged: (kg) => notifier.setKg(e, s, kg),
+                      onRepsChanged: (reps) => notifier.setReps(e, s, reps),
+                    ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed: () => notifier.addSet(e),
+                      icon: const Icon(Icons.add, size: 16),
+                      label: Text(l10n.workoutAddSet),
+                      style: TextButton.styleFrom(
+                        foregroundColor: palette.accent,
+                        textStyle: AppText.captionStrong,
                       ),
                     ),
-                    Text(
-                      l10n.workoutSetCount(workout.exercises[e].sets.length),
-                      style: AppText.caption
-                          .copyWith(color: palette.textSecondary),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                const _TableHeader(),
-                for (var s = 0; s < workout.exercises[e].sets.length; s++)
-                  _SetRow(
-                    key: ValueKey('set-$e-$s'),
-                    index: s,
-                    set: workout.exercises[e].sets[s],
-                    onToggle: () => notifier.toggleSet(e, s),
-                    onKgChanged: (kg) => notifier.setKg(e, s, kg),
-                    onRepsChanged: (reps) => notifier.setReps(e, s, reps),
                   ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    onPressed: () => notifier.addSet(e),
-                    icon: const Icon(Icons.add, size: 16),
-                    label: Text(l10n.workoutAddSet),
-                    style: TextButton.styleFrom(
-                      foregroundColor: palette.accent,
-                      textStyle: AppText.captionStrong,
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ],
+          const SizedBox(height: AppSpacing.xs),
+          AppButton(
+            label: l10n.workoutFinishButton,
+            size: AppButtonSize.large,
+            expand: true,
+            onPressed: () => _finish(context, ref),
           ),
         ],
-        const SizedBox(height: AppSpacing.xs),
-        AppButton(
-          label: l10n.workoutFinishButton,
-          size: AppButtonSize.large,
-          expand: true,
-          onPressed: () => _finish(context, ref),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -751,6 +813,7 @@ class _NumberFieldState extends State<_NumberField> {
       focusNode: _focusNode,
       textAlign: TextAlign.center,
       style: widget.style,
+      scrollPadding: const EdgeInsets.fromLTRB(20, 20, 20, 20 + kDoneBarHeight),
       keyboardType: TextInputType.numberWithOptions(decimal: widget.decimal),
       inputFormatters: [
         FilteringTextInputFormatter.allow(

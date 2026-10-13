@@ -267,5 +267,7 @@
   "programLevelBeginner": "Boshlang‘ich",
   "programLevelMedium": "O‘rta",
   "programLevelAdvanced": "Ilg‘or",
-  "shopOrderUnavailable": "Ba’zi mahsulotlar endi mavjud emas. Savatni yangilang va qayta urinib ko‘ring."
+  "shopOrderUnavailable": "Ba’zi mahsulotlar endi mavjud emas. Savatni yangilang va qayta urinib ko‘ring.",
+  "workoutKeyboardDone": "Tayyor",
+  "workoutEditLabel": "Mashg‘ulotni tahrirlash"
 }

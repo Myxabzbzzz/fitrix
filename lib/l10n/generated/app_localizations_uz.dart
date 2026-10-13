@@ -959,4 +959,10 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get shopOrderUnavailable =>
       'Ba’zi mahsulotlar endi mavjud emas. Savatni yangilang va qayta urinib ko‘ring.';
+
+  @override
+  String get workoutKeyboardDone => 'Tayyor';
+
+  @override
+  String get workoutEditLabel => 'Mashg‘ulotni tahrirlash';
 }
