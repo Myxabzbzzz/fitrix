@@ -1,0 +1,2354 @@
+[
+ {
+  "id": "bench-press",
+  "name": "Bench press",
+  "group": "chest",
+  "primary": [
+   "Chest"
+  ],
+  "secondary": [
+   "Front delts",
+   "Triceps"
+  ],
+  "equipment": "barbell",
+  "pattern": "Horizontal push",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "chest",
+   "arms",
+   "shoulders"
+  ],
+  "steps": [
+   "Eyes under the bar. Squeeze shoulder blades together and down, feet planted.",
+   "Grip so forearms are vertical at the bottom.",
+   "Lower under control to the lower chest, touch, press up and slightly back.",
+   "Brace and hold your breath for each rep. Glutes stay on the bench."
+  ],
+  "mistakes": [
+   "Bouncing the bar off the chest",
+   "Elbows flared to 90°: shoulder stress",
+   "Hips lifting off the bench"
+  ],
+  "similar": [
+   "dumbbell-bench-press",
+   "incline-bench",
+   "push-ups",
+   "machine-chest-press"
+  ],
+  "aliases": [
+   "Barbell bench press",
+   "Flat bench press"
+  ]
+ },
+ {
+  "id": "incline-bench",
+  "name": "Incline bench",
+  "group": "chest",
+  "primary": [
+   "Upper chest"
+  ],
+  "secondary": [
+   "Front delts",
+   "Triceps"
+  ],
+  "equipment": "barbell",
+  "pattern": "Incline push",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "chest",
+   "arms",
+   "shoulders"
+  ],
+  "steps": [
+   "Set the bench at 30 degrees and plant your feet.",
+   "Lower the bar to the upper chest with elbows about 45 degrees from the torso.",
+   "Press up until your arms are straight over the shoulders."
+  ],
+  "mistakes": [
+   "Bench set too steep, turning it into a shoulder press",
+   "Lifting the head off the bench"
+  ],
+  "similar": [
+   "incline-dumbbell-press",
+   "bench-press",
+   "dumbbell-bench-press"
+  ],
+  "aliases": [
+   "Incline bench press"
+  ]
+ },
+ {
+  "id": "dumbbell-bench-press",
+  "name": "Dumbbell bench press",
+  "group": "chest",
+  "primary": [
+   "Chest"
+  ],
+  "secondary": [
+   "Front delts",
+   "Triceps"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Horizontal push",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "chest",
+   "arms"
+  ],
+  "steps": [
+   "Sit with dumbbells on your thighs, then lie back and kick them up.",
+   "Lower until the elbows are just below the bench, wrists over elbows.",
+   "Press up and slightly in, keeping shoulder blades pinned."
+  ],
+  "mistakes": [
+   "Letting the dumbbells drift wide",
+   "Dropping too deep and straining the shoulders"
+  ],
+  "similar": [
+   "bench-press",
+   "incline-dumbbell-press",
+   "machine-chest-press",
+   "push-ups"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "incline-dumbbell-press",
+  "name": "Incline dumbbell press",
+  "group": "chest",
+  "primary": [
+   "Upper chest"
+  ],
+  "secondary": [
+   "Front delts",
+   "Triceps"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Incline push",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "chest",
+   "arms",
+   "shoulders"
+  ],
+  "steps": [
+   "Set the bench at 30 degrees and start with dumbbells at chest height.",
+   "Press up until the arms are straight, palms facing forward.",
+   "Lower slowly to a deep stretch without losing tension."
+  ],
+  "mistakes": [
+   "Bench too steep",
+   "Banging the dumbbells together at the top"
+  ],
+  "similar": [
+   "incline-bench",
+   "dumbbell-bench-press",
+   "dumbbell-fly"
+  ],
+  "aliases": [
+   "Incline dumbbell bench"
+  ]
+ },
+ {
+  "id": "machine-chest-press",
+  "name": "Machine chest press",
+  "group": "chest",
+  "primary": [
+   "Chest"
+  ],
+  "secondary": [
+   "Front delts",
+   "Triceps"
+  ],
+  "equipment": "machine",
+  "pattern": "Horizontal push",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "chest",
+   "arms"
+  ],
+  "steps": [
+   "Set the seat so the handles line up with the middle of your chest.",
+   "Press forward until the arms are almost straight.",
+   "Return slowly until you feel a stretch across the chest."
+  ],
+  "mistakes": [
+   "Seat set too low or too high",
+   "Locking the elbows hard at the top"
+  ],
+  "similar": [
+   "bench-press",
+   "dumbbell-bench-press",
+   "push-ups"
+  ],
+  "aliases": [
+   "Chest press machine"
+  ]
+ },
+ {
+  "id": "push-ups",
+  "name": "Push-ups",
+  "group": "chest",
+  "primary": [
+   "Chest"
+  ],
+  "secondary": [
+   "Front delts",
+   "Triceps",
+   "Core"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Horizontal push",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "chest",
+   "arms"
+  ],
+  "steps": [
+   "Hands just wider than the shoulders, body in one straight line.",
+   "Lower until the chest nearly touches the floor.",
+   "Press back up without letting the hips sag."
+  ],
+  "mistakes": [
+   "Hips sagging towards the floor",
+   "Half reps with the head dropping first"
+  ],
+  "similar": [
+   "bench-press",
+   "dumbbell-bench-press",
+   "dips"
+  ],
+  "aliases": [
+   "Push-up",
+   "Pushups"
+  ]
+ },
+ {
+  "id": "cable-fly",
+  "name": "Cable fly",
+  "group": "chest",
+  "primary": [
+   "Chest"
+  ],
+  "secondary": [
+   "Front delts"
+  ],
+  "equipment": "cable",
+  "pattern": "Fly",
+  "level": "intermediate",
+  "compound": false,
+  "loads": [
+   "chest"
+  ],
+  "steps": [
+   "Set the pulleys at chest height and step forward with one foot ahead.",
+   "With a slight elbow bend, bring the hands together in front of the chest.",
+   "Open slowly until you feel a stretch, keeping the elbow angle fixed."
+  ],
+  "mistakes": [
+   "Bending and straightening the elbows like a press",
+   "Leaning on the cables with the whole body"
+  ],
+  "similar": [
+   "dumbbell-fly",
+   "machine-chest-press"
+  ],
+  "aliases": [
+   "Cable crossover"
+  ]
+ },
+ {
+  "id": "dumbbell-fly",
+  "name": "Dumbbell fly",
+  "group": "chest",
+  "primary": [
+   "Chest"
+  ],
+  "secondary": [
+   "Front delts"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Fly",
+  "level": "intermediate",
+  "compound": false,
+  "loads": [
+   "chest",
+   "shoulders"
+  ],
+  "steps": [
+   "Lie on a bench with dumbbells over the chest and a soft bend in the elbows.",
+   "Lower the arms out wide in an arc until you feel a chest stretch.",
+   "Squeeze the chest to bring them back together over the chest."
+  ],
+  "mistakes": [
+   "Going too heavy and turning it into a press",
+   "Lowering below shoulder level"
+  ],
+  "similar": [
+   "cable-fly",
+   "dumbbell-bench-press"
+  ],
+  "aliases": [
+   "Dumbbell flye"
+  ]
+ },
+ {
+  "id": "close-grip-bench-press",
+  "name": "Close-grip bench press",
+  "group": "arms",
+  "primary": [
+   "Triceps"
+  ],
+  "secondary": [
+   "Chest",
+   "Front delts"
+  ],
+  "equipment": "barbell",
+  "pattern": "Horizontal push",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "arms",
+   "chest"
+  ],
+  "steps": [
+   "Grip the bar just inside shoulder width, shoulder blades pinned.",
+   "Lower to the lower chest with elbows tucked close to the ribs.",
+   "Press up until the elbows lock out."
+  ],
+  "mistakes": [
+   "Hands too narrow, straining the wrists",
+   "Elbows flaring out"
+  ],
+  "similar": [
+   "bench-press",
+   "skull-crushers",
+   "triceps-pushdown"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "dips",
+  "name": "Dips",
+  "group": "chest",
+  "primary": [
+   "Chest",
+   "Triceps"
+  ],
+  "secondary": [
+   "Front delts"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Vertical push",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "chest",
+   "arms",
+   "shoulders"
+  ],
+  "steps": [
+   "Support yourself on the bars with straight arms and a slight forward lean.",
+   "Lower until the upper arms are parallel to the floor.",
+   "Press back up to straight arms."
+  ],
+  "mistakes": [
+   "Dropping too deep and loading the shoulders",
+   "Swinging the legs for momentum"
+  ],
+  "similar": [
+   "push-ups",
+   "close-grip-bench-press"
+  ],
+  "aliases": [
+   "Parallel bar dips"
+  ]
+ },
+ {
+  "id": "barbell-row",
+  "name": "Barbell row",
+  "group": "back",
+  "primary": [
+   "Lats",
+   "Mid back"
+  ],
+  "secondary": [
+   "Biceps",
+   "Rear delts",
+   "Lower back"
+  ],
+  "equipment": "barbell",
+  "pattern": "Horizontal pull",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "back",
+   "legs"
+  ],
+  "steps": [
+   "Hinge at the hips until the torso is near parallel, back flat.",
+   "Pull the bar to the lower ribs, elbows close to the body.",
+   "Lower under control without letting the back round."
+  ],
+  "mistakes": [
+   "Standing up with every rep to cheat the weight",
+   "Rounding the lower back"
+  ],
+  "similar": [
+   "chest-supported-row",
+   "dumbbell-row",
+   "seated-cable-row",
+   "t-bar-row"
+  ],
+  "aliases": [
+   "Bent-over row",
+   "Barbell bent-over row"
+  ]
+ },
+ {
+  "id": "chest-supported-row",
+  "name": "Chest-supported row",
+  "group": "back",
+  "primary": [
+   "Mid back",
+   "Lats"
+  ],
+  "secondary": [
+   "Biceps",
+   "Rear delts"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Horizontal pull",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "back"
+  ],
+  "steps": [
+   "Lie chest-down on an incline bench with a dumbbell in each hand.",
+   "Row the dumbbells towards the hips, squeezing the shoulder blades.",
+   "Lower to a full stretch without lifting the chest."
+  ],
+  "mistakes": [
+   "Shrugging the shoulders up to the ears",
+   "Lifting the chest off the pad"
+  ],
+  "similar": [
+   "barbell-row",
+   "dumbbell-row",
+   "seated-cable-row",
+   "machine-row"
+  ],
+  "aliases": [
+   "Chest supported row",
+   "Incline dumbbell row"
+  ]
+ },
+ {
+  "id": "dumbbell-row",
+  "name": "Dumbbell row",
+  "group": "back",
+  "primary": [
+   "Lats"
+  ],
+  "secondary": [
+   "Biceps",
+   "Rear delts"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Horizontal pull",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "back"
+  ],
+  "steps": [
+   "Brace one hand and knee on a bench, back flat.",
+   "Pull the dumbbell to the hip, leading with the elbow.",
+   "Lower until the arm is straight and the lat is stretched."
+  ],
+  "mistakes": [
+   "Twisting the torso to swing the weight",
+   "Pulling towards the chest instead of the hip"
+  ],
+  "similar": [
+   "chest-supported-row",
+   "barbell-row",
+   "seated-cable-row"
+  ],
+  "aliases": [
+   "One-arm dumbbell row",
+   "Single-arm row"
+  ]
+ },
+ {
+  "id": "lat-pulldown",
+  "name": "Lat pulldown",
+  "group": "back",
+  "primary": [
+   "Lats"
+  ],
+  "secondary": [
+   "Biceps",
+   "Rear delts"
+  ],
+  "equipment": "cable",
+  "pattern": "Vertical pull",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "back",
+   "arms"
+  ],
+  "steps": [
+   "Grip the bar just wider than the shoulders and lock the thighs under the pad.",
+   "Pull the bar to the upper chest, driving the elbows down.",
+   "Return slowly until the arms are fully extended."
+  ],
+  "mistakes": [
+   "Leaning far back and swinging",
+   "Pulling the bar behind the neck"
+  ],
+  "similar": [
+   "pull-ups",
+   "straight-arm-pulldown",
+   "seated-cable-row"
+  ],
+  "aliases": [
+   "Lat pull-down",
+   "Pulldown"
+  ]
+ },
+ {
+  "id": "pull-ups",
+  "name": "Pull-ups",
+  "group": "back",
+  "primary": [
+   "Lats"
+  ],
+  "secondary": [
+   "Biceps",
+   "Rear delts",
+   "Core"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Vertical pull",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "back",
+   "arms"
+  ],
+  "steps": [
+   "Hang from the bar with an overhand grip a little wider than the shoulders.",
+   "Pull until the chin clears the bar, driving the elbows down.",
+   "Lower to a full hang under control."
+  ],
+  "mistakes": [
+   "Kipping or swinging for momentum",
+   "Stopping short of a full hang"
+  ],
+  "similar": [
+   "chin-ups",
+   "lat-pulldown"
+  ],
+  "aliases": [
+   "Pull-up",
+   "Pullups"
+  ]
+ },
+ {
+  "id": "chin-ups",
+  "name": "Chin-ups",
+  "group": "back",
+  "primary": [
+   "Lats",
+   "Biceps"
+  ],
+  "secondary": [
+   "Rear delts",
+   "Core"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Vertical pull",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "back",
+   "arms"
+  ],
+  "steps": [
+   "Hang with an underhand grip at shoulder width.",
+   "Pull until the chin clears the bar, elbows tight to the sides.",
+   "Lower to a full hang."
+  ],
+  "mistakes": [
+   "Swinging the legs",
+   "Shrugging instead of pulling with the back"
+  ],
+  "similar": [
+   "pull-ups",
+   "lat-pulldown"
+  ],
+  "aliases": [
+   "Chin-up"
+  ]
+ },
+ {
+  "id": "seated-cable-row",
+  "name": "Seated cable row",
+  "group": "back",
+  "primary": [
+   "Mid back",
+   "Lats"
+  ],
+  "secondary": [
+   "Biceps",
+   "Rear delts"
+  ],
+  "equipment": "cable",
+  "pattern": "Horizontal pull",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "back"
+  ],
+  "steps": [
+   "Sit tall with knees soft and the handle at the chest.",
+   "Pull the handle to the stomach, squeezing the shoulder blades.",
+   "Stretch forward under control without rounding the back."
+  ],
+  "mistakes": [
+   "Rocking the torso back and forth",
+   "Shrugging the shoulders"
+  ],
+  "similar": [
+   "barbell-row",
+   "chest-supported-row",
+   "lat-pulldown"
+  ],
+  "aliases": [
+   "Cable row",
+   "Seated row"
+  ]
+ },
+ {
+  "id": "straight-arm-pulldown",
+  "name": "Straight-arm pulldown",
+  "group": "back",
+  "primary": [
+   "Lats"
+  ],
+  "secondary": [
+   "Triceps"
+  ],
+  "equipment": "cable",
+  "pattern": "Vertical pull",
+  "level": "intermediate",
+  "compound": false,
+  "loads": [
+   "back"
+  ],
+  "steps": [
+   "Stand facing the cable with a slight hip hinge and arms straight.",
+   "Sweep the bar down to the thighs, keeping the arms nearly straight.",
+   "Return slowly until you feel the lats stretch."
+  ],
+  "mistakes": [
+   "Bending the elbows into a pushdown",
+   "Using the lower back to swing"
+  ],
+  "similar": [
+   "lat-pulldown",
+   "pull-ups"
+  ],
+  "aliases": [
+   "Straight arm pulldown"
+  ]
+ },
+ {
+  "id": "face-pull",
+  "name": "Face pull",
+  "group": "back",
+  "primary": [
+   "Rear delts",
+   "Upper back"
+  ],
+  "secondary": [
+   "Rotator cuff"
+  ],
+  "equipment": "cable",
+  "pattern": "Horizontal pull",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "back",
+   "shoulders"
+  ],
+  "steps": [
+   "Set a rope at face height and step back with arms extended.",
+   "Pull the rope to the face, elbows high and wide.",
+   "Squeeze the shoulder blades, then return slowly."
+  ],
+  "mistakes": [
+   "Pulling too low towards the chest",
+   "Leaning back to move heavy weight"
+  ],
+  "similar": [
+   "rear-delt-fly",
+   "seated-cable-row"
+  ],
+  "aliases": [
+   "Face pulls"
+  ]
+ },
+ {
+  "id": "deadlift",
+  "name": "Deadlift",
+  "group": "back",
+  "primary": [
+   "Lower back",
+   "Glutes",
+   "Hamstrings"
+  ],
+  "secondary": [
+   "Lats",
+   "Traps",
+   "Forearms"
+  ],
+  "equipment": "barbell",
+  "pattern": "Hinge",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "back",
+   "legs"
+  ],
+  "steps": [
+   "Stand with the bar over mid-foot, grip just outside the knees.",
+   "Brace, pull the slack out and push the floor away.",
+   "Lock out with the hips and knees together, then lower along the legs."
+  ],
+  "mistakes": [
+   "Rounding the lower back",
+   "Jerking the bar off the floor",
+   "Bar drifting away from the legs"
+  ],
+  "similar": [
+   "romanian-deadlift",
+   "sumo-deadlift",
+   "barbell-row"
+  ],
+  "aliases": [
+   "Conventional deadlift",
+   "Barbell deadlift"
+  ]
+ },
+ {
+  "id": "t-bar-row",
+  "name": "T-bar row",
+  "group": "back",
+  "primary": [
+   "Mid back",
+   "Lats"
+  ],
+  "secondary": [
+   "Biceps",
+   "Rear delts"
+  ],
+  "equipment": "barbell",
+  "pattern": "Horizontal pull",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "back",
+   "legs"
+  ],
+  "steps": [
+   "Straddle the bar with a hip hinge and a flat back.",
+   "Pull the handle towards the chest, elbows close.",
+   "Lower slowly to a full stretch."
+  ],
+  "mistakes": [
+   "Using the hips to heave the weight",
+   "Rounding the upper back"
+  ],
+  "similar": [
+   "barbell-row",
+   "machine-row",
+   "seated-cable-row"
+  ],
+  "aliases": [
+   "T bar row"
+  ]
+ },
+ {
+  "id": "machine-row",
+  "name": "Machine row",
+  "group": "back",
+  "primary": [
+   "Mid back",
+   "Lats"
+  ],
+  "secondary": [
+   "Biceps",
+   "Rear delts"
+  ],
+  "equipment": "machine",
+  "pattern": "Horizontal pull",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "back"
+  ],
+  "steps": [
+   "Set the seat so the handles are at chest height and press the chest to the pad.",
+   "Pull the handles back, squeezing the shoulder blades.",
+   "Return slowly until the arms are straight."
+  ],
+  "mistakes": [
+   "Shrugging the shoulders",
+   "Letting the chest come off the pad"
+  ],
+  "similar": [
+   "chest-supported-row",
+   "seated-cable-row"
+  ],
+  "aliases": [
+   "Seated machine row"
+  ]
+ },
+ {
+  "id": "overhead-press",
+  "name": "Overhead press",
+  "group": "shoulders",
+  "primary": [
+   "Front delts",
+   "Side delts"
+  ],
+  "secondary": [
+   "Triceps",
+   "Upper chest",
+   "Core"
+  ],
+  "equipment": "barbell",
+  "pattern": "Vertical push",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "shoulders",
+   "arms"
+  ],
+  "steps": [
+   "Grip just outside the shoulders with the bar on the upper chest and squeeze the glutes.",
+   "Press straight up, moving the head through as the bar passes.",
+   "Lock out over the mid-foot and lower back to the chest."
+  ],
+  "mistakes": [
+   "Leaning back and turning it into an incline press",
+   "Pressing the bar out in front"
+  ],
+  "similar": [
+   "dumbbell-shoulder-press",
+   "machine-shoulder-press"
+  ],
+  "aliases": [
+   "Barbell shoulder press",
+   "Military press",
+   "Shoulder press"
+  ]
+ },
+ {
+  "id": "dumbbell-shoulder-press",
+  "name": "Dumbbell shoulder press",
+  "group": "shoulders",
+  "primary": [
+   "Front delts",
+   "Side delts"
+  ],
+  "secondary": [
+   "Triceps"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Vertical push",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "shoulders",
+   "arms"
+  ],
+  "steps": [
+   "Sit with the back supported and dumbbells at shoulder height.",
+   "Press up until the arms are straight over the shoulders.",
+   "Lower to ear height under control."
+  ],
+  "mistakes": [
+   "Arching the lower back off the pad",
+   "Clanging the dumbbells together at the top"
+  ],
+  "similar": [
+   "overhead-press",
+   "machine-shoulder-press"
+  ],
+  "aliases": [
+   "Dumbbell press",
+   "Seated dumbbell press"
+  ]
+ },
+ {
+  "id": "machine-shoulder-press",
+  "name": "Machine shoulder press",
+  "group": "shoulders",
+  "primary": [
+   "Front delts",
+   "Side delts"
+  ],
+  "secondary": [
+   "Triceps"
+  ],
+  "equipment": "machine",
+  "pattern": "Vertical push",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "shoulders",
+   "arms"
+  ],
+  "steps": [
+   "Adjust the seat so the handles start at shoulder height.",
+   "Press up without locking the elbows.",
+   "Lower slowly to the start."
+  ],
+  "mistakes": [
+   "Seat too low",
+   "Shrugging towards the ears"
+  ],
+  "similar": [
+   "overhead-press",
+   "dumbbell-shoulder-press"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "lateral-raise",
+  "name": "Lateral raise",
+  "group": "shoulders",
+  "primary": [
+   "Side delts"
+  ],
+  "secondary": [
+   "Traps"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Isolation",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "shoulders"
+  ],
+  "steps": [
+   "Stand with dumbbells at the sides and a slight elbow bend.",
+   "Raise the arms out to shoulder height, leading with the elbows.",
+   "Lower slowly without swinging."
+  ],
+  "mistakes": [
+   "Swinging the body to lift the weight",
+   "Raising the hands above the elbows"
+  ],
+  "similar": [
+   "cable-lateral-raise",
+   "rear-delt-fly"
+  ],
+  "aliases": [
+   "Side raise",
+   "Dumbbell lateral raise"
+  ]
+ },
+ {
+  "id": "cable-lateral-raise",
+  "name": "Cable lateral raise",
+  "group": "shoulders",
+  "primary": [
+   "Side delts"
+  ],
+  "secondary": [],
+  "equipment": "cable",
+  "pattern": "Isolation",
+  "level": "intermediate",
+  "compound": false,
+  "loads": [
+   "shoulders"
+  ],
+  "steps": [
+   "Stand side-on to a low pulley and grip the handle with the far hand.",
+   "Raise the arm out to shoulder height.",
+   "Lower slowly, keeping tension on the delt."
+  ],
+  "mistakes": [
+   "Leaning away to cheat the weight",
+   "Shrugging the shoulder"
+  ],
+  "similar": [
+   "lateral-raise"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "rear-delt-fly",
+  "name": "Rear delt fly",
+  "group": "shoulders",
+  "primary": [
+   "Rear delts"
+  ],
+  "secondary": [
+   "Mid back"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Isolation",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "shoulders",
+   "back"
+  ],
+  "steps": [
+   "Hinge forward with a flat back and dumbbells hanging down.",
+   "Raise the arms out to the sides with a soft elbow bend.",
+   "Lower slowly under control."
+  ],
+  "mistakes": [
+   "Using momentum from the torso",
+   "Pinching the shoulder blades instead of leading with the arms"
+  ],
+  "similar": [
+   "face-pull",
+   "lateral-raise"
+  ],
+  "aliases": [
+   "Reverse fly",
+   "Rear delt raise"
+  ]
+ },
+ {
+  "id": "front-raise",
+  "name": "Front raise",
+  "group": "shoulders",
+  "primary": [
+   "Front delts"
+  ],
+  "secondary": [],
+  "equipment": "dumbbell",
+  "pattern": "Isolation",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "shoulders"
+  ],
+  "steps": [
+   "Stand tall with dumbbells in front of the thighs.",
+   "Raise one or both arms to shoulder height.",
+   "Lower slowly without swinging."
+  ],
+  "mistakes": [
+   "Swinging the torso",
+   "Raising above shoulder height"
+  ],
+  "similar": [
+   "lateral-raise",
+   "dumbbell-shoulder-press"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "barbell-shrug",
+  "name": "Barbell shrug",
+  "group": "shoulders",
+  "primary": [
+   "Traps"
+  ],
+  "secondary": [
+   "Forearms"
+  ],
+  "equipment": "barbell",
+  "pattern": "Isolation",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "shoulders",
+   "back"
+  ],
+  "steps": [
+   "Hold the bar in front of the thighs, arms straight.",
+   "Lift the shoulders straight up towards the ears.",
+   "Pause, then lower slowly."
+  ],
+  "mistakes": [
+   "Rolling the shoulders in circles",
+   "Bending the elbows to lift"
+  ],
+  "similar": [
+   "deadlift",
+   "face-pull"
+  ],
+  "aliases": [
+   "Shrug",
+   "Shrugs"
+  ]
+ },
+ {
+  "id": "curl-ez-bar",
+  "name": "Curl, EZ bar",
+  "group": "arms",
+  "primary": [
+   "Biceps"
+  ],
+  "secondary": [
+   "Forearms"
+  ],
+  "equipment": "barbell",
+  "pattern": "Elbow flexion",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "arms"
+  ],
+  "steps": [
+   "Grip the angled parts of the bar with elbows by your sides.",
+   "Curl up until the forearms are vertical, squeezing the biceps.",
+   "Lower slowly to full extension."
+  ],
+  "mistakes": [
+   "Swinging the hips to lift",
+   "Letting the elbows drift forward"
+  ],
+  "similar": [
+   "biceps-curl",
+   "hammer-curl",
+   "preacher-curl"
+  ],
+  "aliases": [
+   "EZ bar curl",
+   "Barbell curl",
+   "EZ curl"
+  ]
+ },
+ {
+  "id": "biceps-curl",
+  "name": "Biceps curl",
+  "group": "arms",
+  "primary": [
+   "Biceps"
+  ],
+  "secondary": [
+   "Forearms"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Elbow flexion",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "arms"
+  ],
+  "steps": [
+   "Stand tall with dumbbells at your sides, palms forward.",
+   "Curl up without moving the elbows.",
+   "Lower slowly to a full stretch."
+  ],
+  "mistakes": [
+   "Swinging the torso",
+   "Cutting the range short at the bottom"
+  ],
+  "similar": [
+   "hammer-curl",
+   "curl-ez-bar",
+   "concentration-curl"
+  ],
+  "aliases": [
+   "Dumbbell curl",
+   "Bicep curl"
+  ]
+ },
+ {
+  "id": "hammer-curl",
+  "name": "Hammer curl",
+  "group": "arms",
+  "primary": [
+   "Biceps",
+   "Brachialis"
+  ],
+  "secondary": [
+   "Forearms"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Elbow flexion",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "arms"
+  ],
+  "steps": [
+   "Hold dumbbells with palms facing each other.",
+   "Curl up keeping the thumbs pointing up.",
+   "Lower slowly with the elbows pinned to the sides."
+  ],
+  "mistakes": [
+   "Swinging the weights up",
+   "Moving the elbows forward"
+  ],
+  "similar": [
+   "biceps-curl",
+   "curl-ez-bar"
+  ],
+  "aliases": [
+   "Hammer curls"
+  ]
+ },
+ {
+  "id": "concentration-curl",
+  "name": "Concentration curl",
+  "group": "arms",
+  "primary": [
+   "Biceps"
+  ],
+  "secondary": [],
+  "equipment": "dumbbell",
+  "pattern": "Elbow flexion",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "arms"
+  ],
+  "steps": [
+   "Sit and rest the elbow against the inner thigh.",
+   "Curl the dumbbell towards the shoulder.",
+   "Lower slowly to full extension."
+  ],
+  "mistakes": [
+   "Leaning back to swing the weight",
+   "Lifting the elbow off the thigh"
+  ],
+  "similar": [
+   "biceps-curl",
+   "preacher-curl"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "preacher-curl",
+  "name": "Preacher curl",
+  "group": "arms",
+  "primary": [
+   "Biceps"
+  ],
+  "secondary": [],
+  "equipment": "machine",
+  "pattern": "Elbow flexion",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "arms"
+  ],
+  "steps": [
+   "Set the pad so the upper arms lie flat on it.",
+   "Curl up without lifting the elbows.",
+   "Lower slowly, stopping just short of lockout."
+  ],
+  "mistakes": [
+   "Dropping fast at the bottom",
+   "Lifting the chest off the pad"
+  ],
+  "similar": [
+   "curl-ez-bar",
+   "concentration-curl"
+  ],
+  "aliases": [
+   "Preacher curl machine"
+  ]
+ },
+ {
+  "id": "cable-curl",
+  "name": "Cable curl",
+  "group": "arms",
+  "primary": [
+   "Biceps"
+  ],
+  "secondary": [
+   "Forearms"
+  ],
+  "equipment": "cable",
+  "pattern": "Elbow flexion",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "arms"
+  ],
+  "steps": [
+   "Stand facing a low pulley with the bar or rope in both hands.",
+   "Curl up with the elbows fixed by your sides.",
+   "Lower slowly and keep tension on the cable."
+  ],
+  "mistakes": [
+   "Leaning back as you curl",
+   "Letting the elbows drift"
+  ],
+  "similar": [
+   "biceps-curl",
+   "curl-ez-bar"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "triceps-pushdown",
+  "name": "Triceps pushdown",
+  "group": "arms",
+  "primary": [
+   "Triceps"
+  ],
+  "secondary": [],
+  "equipment": "cable",
+  "pattern": "Elbow extension",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "arms"
+  ],
+  "steps": [
+   "Stand close to the high pulley, elbows pinned to your sides.",
+   "Push the bar or rope down until the arms are straight.",
+   "Return until the forearms are just past parallel."
+  ],
+  "mistakes": [
+   "Leaning over the bar to push with the body",
+   "Letting the elbows flare"
+  ],
+  "similar": [
+   "overhead-extension",
+   "skull-crushers",
+   "close-grip-bench-press"
+  ],
+  "aliases": [
+   "Tricep pushdown",
+   "Cable pushdown"
+  ]
+ },
+ {
+  "id": "overhead-extension",
+  "name": "Overhead extension",
+  "group": "arms",
+  "primary": [
+   "Triceps"
+  ],
+  "secondary": [],
+  "equipment": "cable",
+  "pattern": "Elbow extension",
+  "level": "intermediate",
+  "compound": false,
+  "loads": [
+   "arms"
+  ],
+  "steps": [
+   "Face away from a high pulley and hold the rope behind the head.",
+   "Extend the arms forward and up until straight.",
+   "Return slowly to a deep stretch."
+  ],
+  "mistakes": [
+   "Flaring the elbows wide",
+   "Arching the lower back"
+  ],
+  "similar": [
+   "triceps-pushdown",
+   "skull-crushers"
+  ],
+  "aliases": [
+   "Overhead triceps extension",
+   "Cable overhead extension"
+  ]
+ },
+ {
+  "id": "skull-crushers",
+  "name": "Skull crushers",
+  "group": "arms",
+  "primary": [
+   "Triceps"
+  ],
+  "secondary": [],
+  "equipment": "barbell",
+  "pattern": "Elbow extension",
+  "level": "intermediate",
+  "compound": false,
+  "loads": [
+   "arms"
+  ],
+  "steps": [
+   "Lie on a bench with an EZ bar held over the chest.",
+   "Bend only the elbows to lower the bar towards the forehead.",
+   "Extend back up without moving the upper arms."
+  ],
+  "mistakes": [
+   "Elbows flaring wide",
+   "Letting the upper arms drift back"
+  ],
+  "similar": [
+   "triceps-pushdown",
+   "overhead-extension",
+   "close-grip-bench-press"
+  ],
+  "aliases": [
+   "Skull crusher",
+   "Lying triceps extension"
+  ]
+ },
+ {
+  "id": "dumbbell-kickback",
+  "name": "Dumbbell kickback",
+  "group": "arms",
+  "primary": [
+   "Triceps"
+  ],
+  "secondary": [],
+  "equipment": "dumbbell",
+  "pattern": "Elbow extension",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "arms"
+  ],
+  "steps": [
+   "Hinge forward with the upper arm parallel to the floor.",
+   "Extend the elbow until the arm is straight.",
+   "Return slowly without moving the shoulder."
+  ],
+  "mistakes": [
+   "Swinging the arm",
+   "Dropping the elbow"
+  ],
+  "similar": [
+   "triceps-pushdown",
+   "overhead-extension"
+  ],
+  "aliases": [
+   "Triceps kickback"
+  ]
+ },
+ {
+  "id": "back-squat",
+  "name": "Back squat",
+  "group": "legs",
+  "primary": [
+   "Quads",
+   "Glutes"
+  ],
+  "secondary": [
+   "Adductors",
+   "Lower back",
+   "Core"
+  ],
+  "equipment": "barbell",
+  "pattern": "Squat",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "legs",
+   "back"
+  ],
+  "steps": [
+   "Set the bar on the upper back, feet shoulder width, toes slightly out.",
+   "Brace and sit down between the hips, knees tracking over the toes.",
+   "Drive up through the whole foot to stand tall."
+  ],
+  "mistakes": [
+   "Knees caving inwards",
+   "Heels lifting off the floor",
+   "Rounding the lower back at the bottom"
+  ],
+  "similar": [
+   "front-squat",
+   "leg-press",
+   "goblet-squat",
+   "hack-squat"
+  ],
+  "aliases": [
+   "Squat",
+   "Barbell squat"
+  ]
+ },
+ {
+  "id": "front-squat",
+  "name": "Front squat",
+  "group": "legs",
+  "primary": [
+   "Quads"
+  ],
+  "secondary": [
+   "Glutes",
+   "Core",
+   "Upper back"
+  ],
+  "equipment": "barbell",
+  "pattern": "Squat",
+  "level": "advanced",
+  "compound": true,
+  "loads": [
+   "legs",
+   "back"
+  ],
+  "steps": [
+   "Rest the bar on the front delts with elbows high.",
+   "Squat down keeping the torso upright.",
+   "Stand up, keeping the elbows up the whole way."
+  ],
+  "mistakes": [
+   "Elbows dropping so the bar rolls forward",
+   "Rounding the upper back"
+  ],
+  "similar": [
+   "back-squat",
+   "goblet-squat"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "leg-press",
+  "name": "Leg press",
+  "group": "legs",
+  "primary": [
+   "Quads",
+   "Glutes"
+  ],
+  "secondary": [
+   "Hamstrings"
+  ],
+  "equipment": "machine",
+  "pattern": "Squat",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Sit with the back flat on the pad and feet shoulder width on the platform.",
+   "Lower until the knees reach about 90 degrees.",
+   "Press up without locking the knees."
+  ],
+  "mistakes": [
+   "Lower back rounding off the pad at the bottom",
+   "Locking the knees at the top"
+  ],
+  "similar": [
+   "back-squat",
+   "hack-squat"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "hack-squat",
+  "name": "Hack squat",
+  "group": "legs",
+  "primary": [
+   "Quads"
+  ],
+  "secondary": [
+   "Glutes"
+  ],
+  "equipment": "machine",
+  "pattern": "Squat",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Place the shoulders under the pads, feet shoulder width.",
+   "Lower until the thighs are parallel to the platform.",
+   "Drive up through the mid-foot."
+  ],
+  "mistakes": [
+   "Heels lifting",
+   "Cutting the depth short"
+  ],
+  "similar": [
+   "leg-press",
+   "back-squat"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "romanian-deadlift",
+  "name": "Romanian deadlift",
+  "group": "legs",
+  "primary": [
+   "Hamstrings",
+   "Glutes"
+  ],
+  "secondary": [
+   "Lower back"
+  ],
+  "equipment": "barbell",
+  "pattern": "Hinge",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "legs",
+   "back"
+  ],
+  "steps": [
+   "Stand with the bar at the thighs and soft knees.",
+   "Push the hips back, sliding the bar down the legs until you feel a hamstring stretch.",
+   "Drive the hips forward to stand tall."
+  ],
+  "mistakes": [
+   "Rounding the back",
+   "Bending the knees into a squat"
+  ],
+  "similar": [
+   "deadlift",
+   "good-morning",
+   "hip-thrust"
+  ],
+  "aliases": [
+   "Romanian DL",
+   "RDL"
+  ]
+ },
+ {
+  "id": "bulgarian-split-squat",
+  "name": "Bulgarian split squat",
+  "group": "legs",
+  "primary": [
+   "Quads",
+   "Glutes"
+  ],
+  "secondary": [
+   "Hamstrings",
+   "Core"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Lunge",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Put the rear foot on a bench and step the front foot forward.",
+   "Lower straight down until the front thigh is parallel.",
+   "Push through the front heel to stand."
+  ],
+  "mistakes": [
+   "Front foot too close to the bench",
+   "Leaning the torso far forward"
+  ],
+  "similar": [
+   "walking-lunge",
+   "step-up",
+   "goblet-squat"
+  ],
+  "aliases": [
+   "Split squat"
+  ]
+ },
+ {
+  "id": "walking-lunge",
+  "name": "Walking lunge",
+  "group": "legs",
+  "primary": [
+   "Quads",
+   "Glutes"
+  ],
+  "secondary": [
+   "Hamstrings"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Lunge",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Hold dumbbells at the sides and take a long step forward.",
+   "Lower the back knee towards the floor.",
+   "Push through the front foot and step into the next lunge."
+  ],
+  "mistakes": [
+   "Short steps that push the knee past the toes",
+   "Torso collapsing forward"
+  ],
+  "similar": [
+   "bulgarian-split-squat",
+   "step-up"
+  ],
+  "aliases": [
+   "Lunge",
+   "Lunges",
+   "Dumbbell lunge"
+  ]
+ },
+ {
+  "id": "step-up",
+  "name": "Step-up",
+  "group": "legs",
+  "primary": [
+   "Quads",
+   "Glutes"
+  ],
+  "secondary": [],
+  "equipment": "dumbbell",
+  "pattern": "Lunge",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Place one foot fully on a box about knee height.",
+   "Drive through that heel to stand on the box.",
+   "Lower slowly with the same leg."
+  ],
+  "mistakes": [
+   "Pushing off the back foot",
+   "Box too high for control"
+  ],
+  "similar": [
+   "walking-lunge",
+   "bulgarian-split-squat"
+  ],
+  "aliases": [
+   "Step-ups"
+  ]
+ },
+ {
+  "id": "goblet-squat",
+  "name": "Goblet squat",
+  "group": "legs",
+  "primary": [
+   "Quads",
+   "Glutes"
+  ],
+  "secondary": [
+   "Core"
+  ],
+  "equipment": "dumbbell",
+  "pattern": "Squat",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Hold a dumbbell against the chest with elbows pointing down.",
+   "Sit down between the knees, chest tall.",
+   "Stand up through the whole foot."
+  ],
+  "mistakes": [
+   "Heels lifting",
+   "Chest dropping forward"
+  ],
+  "similar": [
+   "back-squat",
+   "front-squat"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "leg-extension",
+  "name": "Leg extension",
+  "group": "legs",
+  "primary": [
+   "Quads"
+  ],
+  "secondary": [],
+  "equipment": "machine",
+  "pattern": "Isolation",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Adjust the pad to sit just above the ankles.",
+   "Extend the knees until the legs are straight.",
+   "Lower slowly without letting the stack drop."
+  ],
+  "mistakes": [
+   "Swinging the weight up",
+   "Lifting the hips off the seat"
+  ],
+  "similar": [
+   "leg-press",
+   "leg-curl"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "leg-curl",
+  "name": "Leg curl",
+  "group": "legs",
+  "primary": [
+   "Hamstrings"
+  ],
+  "secondary": [
+   "Calves"
+  ],
+  "equipment": "machine",
+  "pattern": "Isolation",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Set the pad just above the heels and the knee in line with the machine pivot.",
+   "Curl the heels towards the glutes.",
+   "Return slowly to a full stretch."
+  ],
+  "mistakes": [
+   "Lifting the hips off the pad",
+   "Dropping the weight fast"
+  ],
+  "similar": [
+   "romanian-deadlift",
+   "leg-extension"
+  ],
+  "aliases": [
+   "Lying leg curl",
+   "Hamstring curl"
+  ]
+ },
+ {
+  "id": "calf-raise",
+  "name": "Calf raise",
+  "group": "legs",
+  "primary": [
+   "Calves"
+  ],
+  "secondary": [],
+  "equipment": "machine",
+  "pattern": "Isolation",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Place the balls of the feet on the platform edge.",
+   "Rise as high as possible on the toes and pause.",
+   "Lower to a deep heel stretch."
+  ],
+  "mistakes": [
+   "Bouncing out of the bottom",
+   "Short range of motion"
+  ],
+  "similar": [
+   "leg-press"
+  ],
+  "aliases": [
+   "Calf raises",
+   "Standing calf raise"
+  ]
+ },
+ {
+  "id": "hip-thrust",
+  "name": "Hip thrust",
+  "group": "glutes",
+  "primary": [
+   "Glutes"
+  ],
+  "secondary": [
+   "Hamstrings"
+  ],
+  "equipment": "barbell",
+  "pattern": "Hinge",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "legs",
+   "back"
+  ],
+  "steps": [
+   "Sit with the upper back on a bench and the bar over the hips.",
+   "Drive through the heels until the hips are fully extended.",
+   "Pause, squeeze the glutes and lower under control."
+  ],
+  "mistakes": [
+   "Overarching the lower back at the top",
+   "Feet too far from the body"
+  ],
+  "similar": [
+   "glute-bridge",
+   "romanian-deadlift"
+  ],
+  "aliases": [
+   "Barbell hip thrust"
+  ]
+ },
+ {
+  "id": "glute-bridge",
+  "name": "Glute bridge",
+  "group": "glutes",
+  "primary": [
+   "Glutes"
+  ],
+  "secondary": [
+   "Hamstrings"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Hinge",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Lie on your back with knees bent and feet flat.",
+   "Lift the hips until the body forms a straight line.",
+   "Squeeze at the top and lower slowly."
+  ],
+  "mistakes": [
+   "Arching the lower back",
+   "Pushing up through the toes"
+  ],
+  "similar": [
+   "hip-thrust"
+  ],
+  "aliases": [
+   "Bridge"
+  ]
+ },
+ {
+  "id": "sumo-deadlift",
+  "name": "Sumo deadlift",
+  "group": "glutes",
+  "primary": [
+   "Glutes",
+   "Adductors",
+   "Quads"
+  ],
+  "secondary": [
+   "Lower back",
+   "Hamstrings"
+  ],
+  "equipment": "barbell",
+  "pattern": "Hinge",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "legs",
+   "back"
+  ],
+  "steps": [
+   "Take a wide stance with toes out and grip inside the knees.",
+   "Push the floor apart, keeping the chest up.",
+   "Stand tall and lower along the legs."
+  ],
+  "mistakes": [
+   "Hips shooting up before the chest",
+   "Knees caving in"
+  ],
+  "similar": [
+   "deadlift",
+   "romanian-deadlift"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "good-morning",
+  "name": "Good morning",
+  "group": "glutes",
+  "primary": [
+   "Hamstrings",
+   "Glutes"
+  ],
+  "secondary": [
+   "Lower back"
+  ],
+  "equipment": "barbell",
+  "pattern": "Hinge",
+  "level": "advanced",
+  "compound": true,
+  "loads": [
+   "legs",
+   "back"
+  ],
+  "steps": [
+   "Place the bar on the upper back with soft knees.",
+   "Push the hips back until the torso is near parallel.",
+   "Drive the hips forward to stand."
+  ],
+  "mistakes": [
+   "Rounding the back",
+   "Going too heavy too soon"
+  ],
+  "similar": [
+   "romanian-deadlift",
+   "deadlift"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "cable-kickback",
+  "name": "Cable kickback",
+  "group": "glutes",
+  "primary": [
+   "Glutes"
+  ],
+  "secondary": [
+   "Hamstrings"
+  ],
+  "equipment": "cable",
+  "pattern": "Isolation",
+  "level": "beginner",
+  "compound": false,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Attach an ankle strap and face the pulley, holding the frame.",
+   "Kick the leg back, squeezing the glute.",
+   "Return slowly without arching the back."
+  ],
+  "mistakes": [
+   "Swinging the leg",
+   "Arching the lower back"
+  ],
+  "similar": [
+   "glute-bridge",
+   "hip-thrust"
+  ],
+  "aliases": [
+   "Glute kickback"
+  ]
+ },
+ {
+  "id": "kettlebell-swing",
+  "name": "Kettlebell swing",
+  "group": "glutes",
+  "primary": [
+   "Glutes",
+   "Hamstrings"
+  ],
+  "secondary": [
+   "Core",
+   "Shoulders"
+  ],
+  "equipment": "kettlebell",
+  "pattern": "Hinge",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "legs",
+   "back"
+  ],
+  "steps": [
+   "Stand over the kettlebell and hike it back between the legs.",
+   "Snap the hips forward to float the bell to chest height.",
+   "Let it fall and hinge back for the next rep."
+  ],
+  "mistakes": [
+   "Squatting instead of hinging",
+   "Lifting with the arms"
+  ],
+  "similar": [
+   "romanian-deadlift",
+   "hip-thrust"
+  ],
+  "aliases": [
+   "Kettlebell swings",
+   "KB swing"
+  ]
+ },
+ {
+  "id": "kettlebell-goblet-squat",
+  "name": "Kettlebell goblet squat",
+  "group": "legs",
+  "primary": [
+   "Quads",
+   "Glutes"
+  ],
+  "secondary": [
+   "Core"
+  ],
+  "equipment": "kettlebell",
+  "pattern": "Squat",
+  "level": "beginner",
+  "compound": true,
+  "loads": [
+   "legs"
+  ],
+  "steps": [
+   "Hold the kettlebell by the horns at the chest.",
+   "Squat down between the knees, elbows inside the knees.",
+   "Stand up, keeping the chest tall."
+  ],
+  "mistakes": [
+   "Heels lifting",
+   "Rounding the upper back"
+  ],
+  "similar": [
+   "goblet-squat",
+   "back-squat"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "plank",
+  "name": "Plank",
+  "group": "core",
+  "primary": [
+   "Abs"
+  ],
+  "secondary": [
+   "Shoulders",
+   "Glutes"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Core",
+  "level": "beginner",
+  "compound": false,
+  "loads": [],
+  "steps": [
+   "Rest on the forearms with elbows under the shoulders.",
+   "Squeeze glutes and abs so the body is a straight line.",
+   "Hold, breathing steadily."
+  ],
+  "mistakes": [
+   "Hips sagging or piking up",
+   "Holding the breath"
+  ],
+  "similar": [
+   "side-plank",
+   "ab-wheel"
+  ],
+  "aliases": [
+   "Plank (sec)",
+   "Planks"
+  ]
+ },
+ {
+  "id": "side-plank",
+  "name": "Side plank",
+  "group": "core",
+  "primary": [
+   "Obliques"
+  ],
+  "secondary": [
+   "Glutes",
+   "Shoulders"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Core",
+  "level": "beginner",
+  "compound": false,
+  "loads": [],
+  "steps": [
+   "Lie on one side with the elbow under the shoulder.",
+   "Lift the hips so the body is a straight line.",
+   "Hold, then switch sides."
+  ],
+  "mistakes": [
+   "Hips dropping",
+   "Rolling forward or back"
+  ],
+  "similar": [
+   "plank"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "crunch",
+  "name": "Crunch",
+  "group": "core",
+  "primary": [
+   "Abs"
+  ],
+  "secondary": [],
+  "equipment": "bodyweight",
+  "pattern": "Core",
+  "level": "beginner",
+  "compound": false,
+  "loads": [],
+  "steps": [
+   "Lie with knees bent and hands by the temples.",
+   "Curl the ribs towards the pelvis.",
+   "Lower slowly without pulling the neck."
+  ],
+  "mistakes": [
+   "Pulling on the neck",
+   "Using momentum"
+  ],
+  "similar": [
+   "cable-crunch",
+   "hanging-leg-raise"
+  ],
+  "aliases": [
+   "Crunches"
+  ]
+ },
+ {
+  "id": "cable-crunch",
+  "name": "Cable crunch",
+  "group": "core",
+  "primary": [
+   "Abs"
+  ],
+  "secondary": [],
+  "equipment": "cable",
+  "pattern": "Core",
+  "level": "intermediate",
+  "compound": false,
+  "loads": [],
+  "steps": [
+   "Kneel below a high pulley holding the rope at the head.",
+   "Curl the ribs towards the hips, keeping the hips still.",
+   "Return slowly."
+  ],
+  "mistakes": [
+   "Pulling with the arms",
+   "Sitting back onto the heels"
+  ],
+  "similar": [
+   "crunch",
+   "hanging-leg-raise"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "hanging-leg-raise",
+  "name": "Hanging leg raise",
+  "group": "core",
+  "primary": [
+   "Abs",
+   "Hip flexors"
+  ],
+  "secondary": [
+   "Forearms"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Core",
+  "level": "intermediate",
+  "compound": false,
+  "loads": [],
+  "steps": [
+   "Hang from a bar with a firm grip and the shoulders engaged.",
+   "Raise the legs together, curling the pelvis up.",
+   "Lower slowly without swinging."
+  ],
+  "mistakes": [
+   "Swinging for momentum",
+   "Lifting only with the hip flexors"
+  ],
+  "similar": [
+   "crunch",
+   "ab-wheel"
+  ],
+  "aliases": [
+   "Leg raise",
+   "Hanging knee raise"
+  ]
+ },
+ {
+  "id": "ab-wheel",
+  "name": "Ab wheel rollout",
+  "group": "core",
+  "primary": [
+   "Abs"
+  ],
+  "secondary": [
+   "Lats",
+   "Shoulders"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Core",
+  "level": "advanced",
+  "compound": false,
+  "loads": [],
+  "steps": [
+   "Kneel with the wheel under the shoulders and ribs pulled down.",
+   "Roll forward as far as you can keep the back flat.",
+   "Pull back using the abs."
+  ],
+  "mistakes": [
+   "Sagging at the lower back",
+   "Rolling out too far too soon"
+  ],
+  "similar": [
+   "plank",
+   "hanging-leg-raise"
+  ],
+  "aliases": [
+   "Ab rollout"
+  ]
+ },
+ {
+  "id": "russian-twist",
+  "name": "Russian twist",
+  "group": "core",
+  "primary": [
+   "Obliques"
+  ],
+  "secondary": [
+   "Abs"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Core",
+  "level": "beginner",
+  "compound": false,
+  "loads": [],
+  "steps": [
+   "Sit leaning back with the knees bent and chest up.",
+   "Rotate the torso to each side, moving the hands with the ribs.",
+   "Keep the movement slow and controlled."
+  ],
+  "mistakes": [
+   "Only swinging the arms",
+   "Rounding the back"
+  ],
+  "similar": [
+   "crunch",
+   "side-plank"
+  ],
+  "aliases": []
+ },
+ {
+  "id": "burpees",
+  "name": "Burpees",
+  "group": "core",
+  "primary": [
+   "Full body"
+  ],
+  "secondary": [
+   "Chest",
+   "Legs"
+  ],
+  "equipment": "bodyweight",
+  "pattern": "Conditioning",
+  "level": "intermediate",
+  "compound": true,
+  "loads": [
+   "legs",
+   "chest"
+  ],
+  "steps": [
+   "From standing, drop the hands to the floor and jump the feet back.",
+   "Do a push-up, then jump the feet in.",
+   "Jump up with the arms overhead."
+  ],
+  "mistakes": [
+   "Sagging hips in the push-up",
+   "Landing with locked knees"
+  ],
+  "similar": [
+   "push-ups",
+   "kettlebell-swing"
+  ],
+  "aliases": [
+   "Burpee"
+  ]
+ }
+]
