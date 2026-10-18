@@ -171,7 +171,7 @@ abstract class AppLocalizations {
   /// No description provided for @signOutAccountBody.
   ///
   /// In en, this message translates to:
-  /// **'Your profile, workouts and chats are saved to your account and will be removed from this device. Sign in with the same email to get them back. Check-ins, plans, food and body weight are kept only on this device and will be deleted.'**
+  /// **'Everything you logged is saved to your account and will be removed from this device. Sign in with the same email to get it back.'**
   String get signOutAccountBody;
 
   /// No description provided for @deleteAccount.

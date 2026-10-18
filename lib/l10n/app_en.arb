@@ -11,7 +11,7 @@
   "signOut": "Sign out",
   "signOutTitle": "Sign out?",
   "signOutLocalBody": "Everything you logged is stored only on this device and will be deleted: profile, workouts, chats, check-ins, plans, food and body weight.",
-  "signOutAccountBody": "Your profile, workouts and chats are saved to your account and will be removed from this device. Sign in with the same email to get them back. Check-ins, plans, food and body weight are kept only on this device and will be deleted.",
+  "signOutAccountBody": "Everything you logged is saved to your account and will be removed from this device. Sign in with the same email to get it back.",
   "deleteAccount": "Delete account",
   "deleteAccountTitle": "Delete account?",
   "deleteAccountBody": "This permanently deletes your FITRIX account and everything in it: your profile, workout plans, workout history and chats with Felix, on all your devices.",

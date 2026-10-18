@@ -511,6 +511,13 @@ email, profile, onboarding status, chat histories, workout plans, the workout
 in progress and workout history, check-ins, week plan, programs and
 nutrition. Sign out deletes all of it.
 
+With an account, this data is also synced to Supabase: workout plans, history
+and chats, plus check-ins, food log and water, body weight, week plan, active
+program, performance profile, nutrition settings and Felix's plans (the
+`user_documents` table). Changes from one device appear on the others, and
+deletions sync too.
+Signing in with another account first clears the previous account's data.
+
 ## Project structure
 
 ```

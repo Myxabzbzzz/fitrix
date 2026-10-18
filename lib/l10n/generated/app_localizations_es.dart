@@ -44,7 +44,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get signOutAccountBody =>
-      'Tu perfil, entrenamientos y chats están guardados en tu cuenta y se eliminarán de este dispositivo. Inicia sesión con el mismo correo para recuperarlos. Los chequeos, planes, comidas y peso se guardan solo en este dispositivo y se eliminarán.';
+      'Todo lo que registraste está guardado en tu cuenta y se eliminará de este dispositivo. Inicia sesión con el mismo correo para recuperar tus datos.';
 
   @override
   String get deleteAccount => 'Eliminar cuenta';

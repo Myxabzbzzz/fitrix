@@ -11,7 +11,7 @@
   "signOut": "Chiqish",
   "signOutTitle": "Hisobdan chiqasizmi?",
   "signOutLocalBody": "Siz yozgan hamma narsa faqat shu qurilmada saqlanadi va o‘chiriladi: profil, mashg‘ulotlar, chatlar, tekshiruvlar, rejalar, ovqatlanish va vazn.",
-  "signOutAccountBody": "Profilingiz, mashg‘ulotlar va chatlar hisobingizda saqlangan va shu qurilmadan o‘chiriladi. Ularni qaytarish uchun o‘sha email bilan kiring. Tekshiruvlar, rejalar, ovqatlanish va vazn faqat shu qurilmada saqlanadi va o‘chiriladi.",
+  "signOutAccountBody": "Siz yozgan hamma narsa hisobingizda saqlangan va shu qurilmadan o‘chiriladi. Ma’lumotlarni qaytarish uchun o‘sha email bilan kiring.",
   "deleteAccount": "Hisobni o‘chirish",
   "deleteAccountTitle": "Hisob o‘chirilsinmi?",
   "deleteAccountBody": "FITRIX hisobingiz va undagi hamma narsa butunlay o‘chiriladi: profil, mashg‘ulot rejalari, mashg‘ulotlar tarixi va Felix bilan chatlar — barcha qurilmalaringizda.",

@@ -20,6 +20,13 @@ import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
+import 'package:fitrix/features/checkin/data/checkin_models.dart';
+import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
+import 'package:fitrix/features/nutrition/data/food_catalog.dart';
+import 'package:fitrix/features/nutrition/data/food_log_store.dart';
+import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
+import 'package:fitrix/features/progress/data/body_weight_store.dart';
+import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -291,6 +298,66 @@ void main() {
             'own rows=${own.length}');
         expect(ofA, isEmpty);
       }
+    },
+    skip: _enabled ? false : 'Set FITRIX_SUPABASE_IT=1 (needs supabase start)',
+    timeout: const Timeout(Duration(minutes: 2)),
+  );
+
+  test(
+    'check-in, food entry and weigh-in sync between devices; a delete too',
+    () async {
+      final felix = FakeFelix();
+      await felix.start();
+      addTearDown(felix.stop);
+      final email = 'docs-${DateTime.now().millisecondsSinceEpoch}@fitrix.test';
+      final now = DateTime.now();
+
+      final a = await Device.signIn('A', email, felix);
+      addTearDown(a.dispose);
+      await a.read(todayCheckInProvider.notifier).save(CheckIn(
+            at: now,
+            sleep: const Duration(hours: 8),
+            quality: SleepQuality.good,
+            soreness: Soreness.none,
+            sore: const {},
+            energy: Level3.high,
+            stress: Level3.low,
+          ));
+      await a.read(foodLogProvider.notifier).add(FoodEntry(
+            id: 'it-food-${now.microsecondsSinceEpoch}',
+            at: now,
+            slot: MealSlot.breakfast,
+            name: 'IT Oats',
+            grams: 100,
+            kcal: 380,
+            protein: 13,
+            carbs: 60,
+            fat: 7,
+          ));
+      await a
+          .read(bodyWeightProvider.notifier)
+          .record(WeighIn(at: now, kg: 71.5));
+      await a.sync();
+
+      final rows = await a.client.from('user_documents').select('kind');
+      print('[A] server kinds: ${[for (final r in rows) r['kind']]}');
+
+      final b = await Device.signIn('B', email, felix);
+      addTearDown(b.dispose);
+      print('[B] food: ${b.read(todayEntriesProvider).map((e) => e.name)}');
+      expect(b.read(todayCheckInProvider), isNotNull);
+      expect(b.read(todayEntriesProvider).map((e) => e.name), ['IT Oats']);
+      expect(b.read(bodyWeightProvider).map((w) => w.kg), [71.5]);
+
+      // B deletes the food entry; A loses it on its next pull.
+      await b
+          .read(foodLogProvider.notifier)
+          .remove(b.read(todayEntriesProvider).single.id);
+      await b.sync();
+      await a.sync();
+      print('[A] food after B delete: ${a.read(todayEntriesProvider)}');
+      expect(a.read(todayEntriesProvider), isEmpty);
+      expect(a.read(todayCheckInProvider), isNotNull);
     },
     skip: _enabled ? false : 'Set FITRIX_SUPABASE_IT=1 (needs supabase start)',
     timeout: const Timeout(Duration(minutes: 2)),

@@ -44,7 +44,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signOutAccountBody =>
-      'Your profile, workouts and chats are saved to your account and will be removed from this device. Sign in with the same email to get them back. Check-ins, plans, food and body weight are kept only on this device and will be deleted.';
+      'Everything you logged is saved to your account and will be removed from this device. Sign in with the same email to get it back.';
 
   @override
   String get deleteAccount => 'Delete account';

@@ -44,7 +44,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get signOutAccountBody =>
-      'Profilingiz, mashg‘ulotlar va chatlar hisobingizda saqlangan va shu qurilmadan o‘chiriladi. Ularni qaytarish uchun o‘sha email bilan kiring. Tekshiruvlar, rejalar, ovqatlanish va vazn faqat shu qurilmada saqlanadi va o‘chiriladi.';
+      'Siz yozgan hamma narsa hisobingizda saqlangan va shu qurilmadan o‘chiriladi. Ma’lumotlarni qaytarish uchun o‘sha email bilan kiring.';
 
   @override
   String get deleteAccount => 'Hisobni o‘chirish';

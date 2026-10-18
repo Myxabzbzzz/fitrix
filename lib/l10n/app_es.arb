@@ -11,7 +11,7 @@
   "signOut": "Cerrar sesión",
   "signOutTitle": "¿Cerrar sesión?",
   "signOutLocalBody": "Todo lo que registraste está guardado solo en este dispositivo y se eliminará: perfil, entrenamientos, chats, chequeos, planes, comidas y peso.",
-  "signOutAccountBody": "Tu perfil, entrenamientos y chats están guardados en tu cuenta y se eliminarán de este dispositivo. Inicia sesión con el mismo correo para recuperarlos. Los chequeos, planes, comidas y peso se guardan solo en este dispositivo y se eliminarán.",
+  "signOutAccountBody": "Todo lo que registraste está guardado en tu cuenta y se eliminará de este dispositivo. Inicia sesión con el mismo correo para recuperar tus datos.",
   "deleteAccount": "Eliminar cuenta",
   "deleteAccountTitle": "¿Eliminar la cuenta?",
   "deleteAccountBody": "Se eliminará para siempre tu cuenta de FITRIX y todo su contenido: tu perfil, planes de entrenamiento, historial de entrenamientos y chats con Felix, en todos tus dispositivos.",

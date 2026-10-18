@@ -457,4 +457,35 @@ void main() {
       expect(col.read(), isEmpty, reason: col.kind);
     }
   });
+  test('another account signing in clears account A data before its pull',
+      () async {
+    final a = await device(remote);
+    await a.c.read(foodLogProvider.notifier).add(entry('mine', noon));
+    await a.c.read(todayCheckInProvider.notifier).save(checkIn(noon));
+    await a.c
+        .read(bodyWeightProvider.notifier)
+        .record(WeighIn(at: noon, kg: 70));
+    await a.sync();
+    expect(a.state.owner, uid);
+
+    // User B has own documents on the server.
+    remote.putDoc('u2', 'food', 'b1', entry('b1', noon).toJson());
+    final engineB = SyncEngine(
+      local: a.local,
+      remote: remote,
+      userId: 'u2',
+      pollInterval: null,
+      pullOverlap: Duration.zero,
+    );
+    addTearDown(engineB.dispose);
+    await engineB.sync();
+
+    expect(a.c.read(todayEntriesProvider).map((e) => e.id), ['b1']);
+    expect(a.c.read(todayCheckInProvider), isNull);
+    expect(a.c.read(bodyWeightProvider), isEmpty);
+    expect(a.state.owner, 'u2');
+    // A's documents were not pushed under B.
+    expect([for (final d in remote.docsOf('u2')) '${d.kind}/${d.docId}'],
+        ['food/b1']);
+  });
 }
