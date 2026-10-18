@@ -1160,6 +1160,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatActionError => 'Couldn’t apply this. Please try again.';
 
   @override
+  String get chatActionUndoError => 'Couldn’t undo this. Please try again.';
+
+  @override
+  String get chatActionWeightChangedSince =>
+      'Weight changed since — nothing undone';
+
+  @override
   String get unitTonnes => 't';
 
   @override

@@ -42,7 +42,7 @@ const _cooking = {
 
 const _synonyms = {'pilaf': 'plov', 'pilau': 'plov', 'osh': 'plov'};
 const _oatWords = {'oat', 'oatmeal', 'porridge', 'овсянка', 'овсянк'};
-const _oatFiller = {..._cooking, 'hot', 'with', 'water', 'milk'};
+const _oatFiller = {..._cooking, 'hot', 'with', 'water'};
 const _drySigns = {'dry', 'raw', 'flakes'};
 
 /// One word that names several foods: the usual one.
@@ -77,7 +77,10 @@ Food? matchFood(String name, FoodCatalog catalog) {
 Food? _lookup(List<String> q, FoodCatalog catalog) {
   if (q.any(_oatWords.contains) || q.contains('oats')) {
     if (q.any(_drySigns.contains)) return catalog.byId('oats_dry');
-    if (q.every((t) => _oatWords.contains(t) || _oatFiller.contains(t))) {
+    // "oats with milk" is porridge; "oat milk" is a drink, not porridge.
+    bool filler(String t) =>
+        _oatFiller.contains(t) || (t == 'milk' && q.contains('with'));
+    if (q.every((t) => _oatWords.contains(t) || filler(t))) {
       return catalog.byId('oatmeal_cooked');
     }
   }

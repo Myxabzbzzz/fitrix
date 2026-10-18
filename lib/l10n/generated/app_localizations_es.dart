@@ -1163,6 +1163,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chatActionError => 'No se pudo aplicar. Inténtalo de nuevo.';
 
   @override
+  String get chatActionUndoError => 'No se pudo deshacer. Inténtalo de nuevo.';
+
+  @override
+  String get chatActionWeightChangedSince =>
+      'El peso cambió desde entonces: no se deshizo nada';
+
+  @override
   String get unitTonnes => 't';
 
   @override

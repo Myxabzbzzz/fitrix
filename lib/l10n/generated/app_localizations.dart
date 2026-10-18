@@ -1992,6 +1992,18 @@ abstract class AppLocalizations {
   /// **'Couldn’t apply this. Please try again.'**
   String get chatActionError;
 
+  /// No description provided for @chatActionUndoError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t undo this. Please try again.'**
+  String get chatActionUndoError;
+
+  /// No description provided for @chatActionWeightChangedSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight changed since — nothing undone'**
+  String get chatActionWeightChangedSince;
+
   /// No description provided for @unitTonnes.
   ///
   /// In en, this message translates to:

@@ -776,6 +776,8 @@
   "chatActionWeightDoneSet": "Weight updated to {to} kg",
   "chatActionNoProfile": "Fill in your profile first, then I can update your weight.",
   "chatActionError": "Couldn’t apply this. Please try again.",
+  "chatActionUndoError": "Couldn’t undo this. Please try again.",
+  "chatActionWeightChangedSince": "Weight changed since — nothing undone",
   "@chatActionWeightDone": {
     "placeholders": {
       "from": {

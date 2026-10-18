@@ -315,6 +315,8 @@
   "chatActionWeightDoneSet": "Вес обновлён: {to} кг",
   "chatActionNoProfile": "Сначала заполните профиль, тогда я смогу обновить вес.",
   "chatActionError": "Не удалось применить. Попробуйте ещё раз.",
+  "chatActionUndoError": "Не удалось отменить. Попробуйте ещё раз.",
+  "chatActionWeightChangedSince": "Вес с тех пор изменился — ничего не отменено",
   "unitTonnes": "т",
   "workoutLiveCaption": "Подход {x} из {y} · поднято {t}",
   "workoutColRpe": "RPE",

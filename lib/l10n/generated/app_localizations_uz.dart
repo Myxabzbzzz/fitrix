@@ -1132,6 +1132,13 @@ class AppLocalizationsUz extends AppLocalizations {
   String get chatActionError => 'Qo‘llab bo‘lmadi. Qayta urinib ko‘ring.';
 
   @override
+  String get chatActionUndoError => 'Qaytarib bo‘lmadi. Qayta urinib ko‘ring.';
+
+  @override
+  String get chatActionWeightChangedSince =>
+      'Vazn o‘shandan beri o‘zgardi — hech narsa qaytarilmadi';
+
+  @override
   String get unitTonnes => 't';
 
   @override
@@ -3619,7 +3626,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get chatFoodEstimateNote => '≈ Feliks bahosi';
+  String get chatFoodEstimateNote => '≈ Felix bahosi';
 
   @override
   String chatFoodTotal(String kcal, String protein) {

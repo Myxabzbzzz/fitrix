@@ -1184,6 +1184,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get chatActionError => 'Не удалось применить. Попробуйте ещё раз.';
 
   @override
+  String get chatActionUndoError => 'Не удалось отменить. Попробуйте ещё раз.';
+
+  @override
+  String get chatActionWeightChangedSince =>
+      'Вес с тех пор изменился — ничего не отменено';
+
+  @override
   String get unitTonnes => 'т';
 
   @override

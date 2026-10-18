@@ -16,6 +16,7 @@ import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
+import 'package:fitrix/features/chat/presentation/chat_action_apply.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_action_card.dart';
@@ -24,6 +25,7 @@ import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/domain/food_match.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/progress/data/body_weight_store.dart';
+import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -179,6 +181,13 @@ void main() {
       expect(matchFood('raw oats', catalog)?.id, 'oats_dry');
     });
 
+    test('oat milk is not porridge; oats with milk still is', () {
+      expect(matchFood('oat milk', catalog)?.id, isNot('oatmeal_cooked'));
+      expect(matchFood('oat milk', catalog)?.id, isNot('oats_dry'));
+      expect(matchFood('oats with milk', catalog)?.id, 'oatmeal_cooked');
+      expect(matchFood('oatmeal with milk', catalog)?.id, 'oatmeal_cooked');
+    });
+
     test('plurals, cooking words and synonyms reach the base food', () {
       expect(matchFood('eggs', catalog)?.id, 'egg_boiled');
       expect(matchFood('fried egg', catalog)?.id, 'egg_boiled');
@@ -253,14 +262,16 @@ void main() {
 
     var routed = <String>[];
 
-    Future<void> pumpFelix(WidgetTester tester, {double scale = 1}) async {
+    Future<void> pumpFelix(WidgetTester tester,
+        {double scale = 1, DateTime Function()? clock}) async {
       tester.view.physicalSize = const Size(375, 667) * 3;
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);
       routed = [];
       container = ProviderContainer(overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        clockProvider.overrideWithValue(() => DateTime(2026, 10, 18, 13, 30)),
+        clockProvider
+            .overrideWithValue(clock ?? () => DateTime(2026, 10, 18, 13, 30)),
         foodCatalogProvider.overrideWith((ref) async => catalog),
         chatMessagesProvider.overrideWith((ref) => ChatNotifier(
             ChatRepository(_FakeApi(), prefs: prefs, greeting: const ['Hi']))),
@@ -371,6 +382,64 @@ void main() {
       weighIns = container.read(bodyWeightStoreProvider).all();
       expect(weighIns, isEmpty);
       expect(container.read(bodyWeightProvider), isEmpty);
+    });
+
+    testWidgets('undo removes the weigh-in when the clock has microseconds',
+        (tester) async {
+      await seed({'type': 'weight', 'mode': 'delta', 'kg': 3});
+      final at = DateTime(2026, 10, 18, 13, 30, 5, 123, 456);
+      await pumpFelix(tester, clock: () => at);
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      expect(container.read(bodyWeightStoreProvider).all(), hasLength(1));
+      await tester.tap(find.text('Undo'));
+      await tester.pumpAndSettle();
+      expect(container.read(bodyWeightStoreProvider).all(), isEmpty);
+      expect(container.read(bodyWeightProvider), isEmpty);
+      expect(prefs.getString(AppConstants.keyUserWeight), '78.4');
+    });
+
+    testWidgets('weight changed since apply: Undo is hidden', (tester) async {
+      await seed({'type': 'weight', 'mode': 'delta', 'kg': 3});
+      await pumpFelix(tester);
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      expect(find.text('Undo'), findsOneWidget);
+      await container.read(profileProvider.notifier).saveWeight('83');
+      await tester.pumpAndSettle();
+      expect(find.text('Undo'), findsNothing);
+
+      // A direct undo is refused too and changes nothing.
+      final ref = tester.element(find.byType(ChatActionCard)) as WidgetRef;
+      final action =
+          ChatAction.tryParse({'type': 'weight', 'mode': 'delta', 'kg': 3})
+              as WeightAction;
+      await expectLater(
+          undoChatAction(ref, action, {
+            'from': 78.4,
+            'to': 81.4,
+            'at': DateTime(2026, 10, 18, 13, 30).millisecondsSinceEpoch,
+          }),
+          throwsA(isA<WeightChangedSince>()));
+      expect(prefs.getString(AppConstants.keyUserWeight), '83');
+      expect(container.read(bodyWeightStoreProvider).all(), hasLength(1));
+    });
+
+    testWidgets('weight changed elsewhere: Undo says so and keeps it',
+        (tester) async {
+      await seed({'type': 'weight', 'mode': 'delta', 'kg': 3});
+      await pumpFelix(tester);
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      // Changed behind the provider's back (e.g. a sync).
+      await prefs.setString(AppConstants.keyUserWeight, '83');
+      await tester.tap(find.text('Undo'));
+      await tester.pumpAndSettle();
+      expect(
+          find.text('Weight changed since — nothing undone'), findsOneWidget);
+      expect(prefs.getString(AppConstants.keyUserWeight), '83');
+      expect(container.read(bodyWeightStoreProvider).all(), hasLength(1));
+      expect(find.text('Undo'), findsNothing);
     });
 
     testWidgets('undo brings back a same-day weigh-in that was replaced',

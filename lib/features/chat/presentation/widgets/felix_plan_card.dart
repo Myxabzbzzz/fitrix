@@ -15,6 +15,9 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 class FelixPlanCard extends ConsumerWidget {
   final WorkoutPlanAction action;
   final bool applied;
+
+  /// Whether Undo is offered once added.
+  final bool canUndo;
   final bool busy;
   final VoidCallback onApply;
   final VoidCallback onUndo;
@@ -24,6 +27,7 @@ class FelixPlanCard extends ConsumerWidget {
     super.key,
     required this.action,
     required this.applied,
+    this.canUndo = true,
     required this.busy,
     required this.onApply,
     required this.onUndo,
@@ -40,9 +44,15 @@ class FelixPlanCard extends ConsumerWidget {
         ? action.templates.first.name
         : l10n.felixPlanTitleCount(count);
 
+    // Only the days the plan is really put on get a chip.
+    final when = action.scheduleWhen;
     String? chipFor(int i) {
-      final d =
-          felixDayOf(i < action.days.length ? action.days[i] : null, today);
+      final d = switch (when) {
+        'today' => today,
+        'week' =>
+          felixDayOf(i < action.days.length ? action.days[i] : null, today),
+        _ => null,
+      };
       if (d == null) return null;
       return d == today ? l10n.homeToday : weekdayShort(context, d);
     }
@@ -121,19 +131,18 @@ class FelixPlanCard extends ConsumerWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: AppSpacing.xs,
             children: [
-              Icon(Icons.check_circle_outline,
-                  size: 18, color: palette.textSecondary),
               Text(l10n.chatActionApplied,
                   style: AppText.captionStrong
                       .copyWith(color: palette.textPrimary)),
               TextButton(onPressed: onOpen, child: Text(l10n.chatActionOpen)),
-              TextButton(
-                  onPressed: busy ? null : onUndo, child: Text(l10n.undo)),
+              if (canUndo)
+                TextButton(
+                    onPressed: busy ? null : onUndo, child: Text(l10n.undo)),
             ],
           )
         else
           AppButton(
-            label: action.when == 'today'
+            label: when == 'today'
                 ? l10n.felixPlanAddToToday
                 : l10n.felixPlanAddToWorkouts,
             size: AppButtonSize.large,

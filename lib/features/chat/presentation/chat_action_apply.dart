@@ -45,7 +45,11 @@ Future<Map<String, num>?> applyChatAction(
           .saveWeight(formatProfileNumber(to));
       if (!saved) return null;
       unawaited(ref.read(accountServiceProvider)?.profileChanged());
-      final at = ref.read(clockProvider)();
+      // Whole milliseconds: the time is stored as milliseconds and Undo
+      // looks the weigh-in up by exactly that time.
+      final now = ref.read(clockProvider)();
+      final at =
+          DateTime.fromMillisecondsSinceEpoch(now.millisecondsSinceEpoch);
       final replaced = await ref
           .read(bodyWeightProvider.notifier)
           .record(WeighIn(at: at, kg: to));
@@ -110,7 +114,7 @@ Future<Map<String, num>?> applyChatAction(
       ];
       final sessions = scheduleFelixPlan(
         created: created,
-        when: action.when,
+        when: action.scheduleWhen,
         days: action.days,
         today: ref.read(todayProvider),
         existing: ref.read(weekPlanProvider),
@@ -146,6 +150,16 @@ Future<Map<String, num>?> applyChatAction(
 String _foodEntryId(DateTime at, int i) =>
     'felix-${at.microsecondsSinceEpoch}-$i';
 
+/// Thrown by [undoChatAction] when the weight is no longer the one the card
+/// set: undoing it would overwrite a newer change.
+class WeightChangedSince implements Exception {
+  const WeightChangedSince();
+}
+
+/// Whether [current] is still the weight a weight card set ([to]).
+bool weightStillSet(double? current, num? to) =>
+    to != null && formatProfileNumber(current) == formatProfileNumber(to);
+
 /// Takes back what [applyChatAction] did for [action], using its [result].
 /// Weight, food and workout plans can be undone.
 Future<void> undoChatAction(
@@ -154,6 +168,10 @@ Future<void> undoChatAction(
     case WeightAction():
       final from = result['from'];
       final at = result['at'];
+      final profile = await ref.read(profileRepositoryProvider).getProfile();
+      if (!weightStillSet(weightKgOf(profile), result['to'])) {
+        throw const WeightChangedSince();
+      }
       // No `from`: the weight was unset before, so it is emptied again.
       await ref
           .read(profileProvider.notifier)

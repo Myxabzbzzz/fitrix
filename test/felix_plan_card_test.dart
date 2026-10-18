@@ -136,7 +136,9 @@ void main() {
     var routed = <String>[];
 
     Future<void> pumpCard(WidgetTester tester, Map<String, dynamic> action,
-        {double scale = 1, bool applied = false}) async {
+        {double scale = 1,
+        bool applied = false,
+        Map<String, num> result = const {'at': 1, 'scheduled': 1}}) async {
       tester.view.physicalSize = const Size(375, 667) * 3;
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);
@@ -155,7 +157,7 @@ void main() {
         timestamp: DateTime(2026, 10, 14, 9),
         action: ChatAction.tryParse(action),
         actionApplied: applied,
-        appliedResult: applied ? {'at': 1, 'scheduled': 1} : null,
+        appliedResult: applied ? result : null,
       );
       final router = GoRouter(routes: [
         GoRoute(
@@ -339,7 +341,64 @@ void main() {
       expect(container.read(workoutTemplatesProvider).length, before);
       expect(find.text('Add to My workouts'), findsNothing);
       expect(
-          find.text('Couldn’t apply this. Please try again.'), findsOneWidget);
+          find.text('Couldn’t undo this. Please try again.'), findsOneWidget);
+    });
+
+    testWidgets('an old card without a batch time offers no Undo',
+        (tester) async {
+      await pumpCard(tester, _plan({}),
+          applied: true, result: const {'scheduled': 0});
+      expect(find.text('Added ✓'), findsOneWidget);
+      expect(find.text('Open'), findsOneWidget);
+      expect(find.text('Undo'), findsNothing);
+    });
+
+    testWidgets('the added row has one check mark', (tester) async {
+      await pumpCard(tester, _plan({}), applied: true);
+      expect(find.text('Added ✓'), findsOneWidget);
+      expect(find.byIcon(Icons.check_circle_outline), findsNothing);
+    });
+
+    testWidgets('days without when: chips shown and the days are planned',
+        (tester) async {
+      // Wednesday 2026-10-14 is today.
+      await pumpCard(
+          tester,
+          _plan({
+            'days': ['wed', 'fri']
+          }));
+      expect(find.text('Today'), findsOneWidget);
+      expect(find.text('Fri'), findsOneWidget);
+      await tester.tap(find.text('Add to My workouts'));
+      await tester.pumpAndSettle();
+      final plan = container.read(weekPlanProvider);
+      expect(plan.map((s) => s.day).toList()..sort(),
+          [DateTime(2026, 10, 14), DateTime(2026, 10, 16)]);
+    });
+
+    testWidgets('no when and no days: no day chips, nothing planned',
+        (tester) async {
+      await pumpCard(tester, _plan({}));
+      expect(find.text('Today'), findsNothing);
+      await tester.tap(find.text('Add to My workouts'));
+      await tester.pumpAndSettle();
+      expect(container.read(weekPlanProvider), isEmpty);
+    });
+
+    testWidgets('when=today shows the day it is planned on, not days',
+        (tester) async {
+      await pumpCard(
+          tester,
+          _plan({
+            'when': 'today',
+            'days': ['fri']
+          }, n: 1));
+      expect(find.text('Fri'), findsNothing);
+      expect(find.text('Today'), findsOneWidget);
+      await tester.tap(find.text('Add to today’s plan'));
+      await tester.pumpAndSettle();
+      expect(
+          container.read(weekPlanProvider).single.day, DateTime(2026, 10, 14));
     });
 
     testWidgets('deleting a Felix plan in the edit sheet drops its id',

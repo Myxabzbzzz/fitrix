@@ -315,6 +315,8 @@
   "chatActionWeightDoneSet": "Peso actualizado a {to} kg",
   "chatActionNoProfile": "Primero completa tu perfil y entonces podré actualizar tu peso.",
   "chatActionError": "No se pudo aplicar. Inténtalo de nuevo.",
+  "chatActionUndoError": "No se pudo deshacer. Inténtalo de nuevo.",
+  "chatActionWeightChangedSince": "El peso cambió desde entonces: no se deshizo nada",
   "unitTonnes": "t",
   "workoutLiveCaption": "Serie {x} de {y} · {t} levantadas",
   "workoutColRpe": "RPE",

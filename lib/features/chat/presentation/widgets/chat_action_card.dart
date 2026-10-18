@@ -46,6 +46,9 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
   bool _busy = false;
   MealSlot? _slot;
 
+  /// A weight Undo was refused because the weight changed since.
+  bool _weightUndoRefused = false;
+
   Future<void> _undo(ChatAction action) async {
     final result = widget.message.appliedResult;
     if (_busy || result == null) return;
@@ -55,8 +58,13 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
     try {
       await undoChatAction(ref, action, result);
       widget.onUndone?.call();
+    } on WeightChangedSince {
+      if (mounted) setState(() => _weightUndoRefused = true);
+      messenger?.showSnackBar(
+          SnackBar(content: Text(l10n.chatActionWeightChangedSince)));
     } catch (_) {
-      messenger?.showSnackBar(SnackBar(content: Text(l10n.chatActionError)));
+      messenger
+          ?.showSnackBar(SnackBar(content: Text(l10n.chatActionUndoError)));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -98,6 +106,7 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
     var canApply = true;
     var loading = false;
     var needsWeight = false;
+    var canUndo = true;
     Widget? foodBody;
     Widget? planBody;
     MealSlot? foodSlot;
@@ -114,6 +123,11 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
                 ? l10n.chatActionWeightDoneSet(n(to))
                 : l10n.chatActionWeightDone(n(from), n(to));
           }
+          // Undo only while the weight is still the one this card set, so
+          // a newer change is never overwritten.
+          canUndo = !_weightUndoRefused &&
+              weightStillSet(
+                  weightKgOf(ref.watch(profileProvider).valueOrNull), to);
           break;
         }
         final profile = ref.watch(profileProvider);
@@ -137,6 +151,8 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
         planBody = FelixPlanCard(
           action: action,
           applied: applied,
+          // Cards from before batches were recorded cannot be undone.
+          canUndo: result?['at'] != null,
           busy: _busy,
           onApply: () => _apply(action),
           onUndo: () => _undo(action),
@@ -267,7 +283,8 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
                         key: const ValueKey('chat-action-applied'),
                         style: AppText.captionStrong
                             .copyWith(color: palette.textPrimary)),
-                    if (action is WeightAction || action is FoodLogAction)
+                    if ((action is WeightAction && canUndo) ||
+                        action is FoodLogAction)
                       Wrap(
                         spacing: AppSpacing.xs,
                         children: [

@@ -112,6 +112,11 @@ class WorkoutPlanAction extends ChatAction {
     this.days = const [],
   });
 
+  /// When the plan is put into the week plan: [when], or `week` when Felix
+  /// named days without saying when. Null: nothing is scheduled.
+  String? get scheduleWhen =>
+      when ?? (days.any((d) => d != null) ? 'week' : null);
+
   static const _dayNames = {
     'today',
     'mon',
