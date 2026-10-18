@@ -1050,6 +1050,16 @@ class _NumberFieldState extends State<_NumberField> {
   }
 
   @override
+  void didUpdateWidget(_NumberField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The row can show another set after warm-ups, a swap or a removal;
+    // follow the model unless the user is typing here.
+    if (!_focusNode.hasFocus && _controller.text != widget.initialValue) {
+      _controller.text = widget.initialValue;
+    }
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();

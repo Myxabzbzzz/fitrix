@@ -84,6 +84,8 @@ void main() {
     expect(tester.getSize(find.byKey(fillKey)).width, 0);
 
     await tester.tap(find.byIcon(Icons.check).first);
+    await tester.pump();
+    await tester.tap(find.text('Skip')); // end the rest so it can settle
     await tester.pumpAndSettle();
     expect(tester.widget<Text>(find.byKey(captionKey)).data,
         startsWith('Set 2 of $total'));
@@ -114,6 +116,7 @@ void main() {
         .value;
     expect(scaleIn(first), lessThan(1.0));
     expect(scaleIn(second), 1.0);
+    await tester.tap(find.text('Skip')); // end the rest so it can settle
     await tester.pumpAndSettle();
     expect(scaleIn(first), 1.0);
     await _unmount(tester);

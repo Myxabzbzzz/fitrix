@@ -8,16 +8,26 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 /// Default rest between sets when the exercise has none of its own.
 const int kDefaultRestSeconds = 120;
 
-/// Countdown between sets. It doesn't run by itself: whoever shows it feeds
-/// it elapsed time with [tick] (the rest bar does, from a frame ticker), so
-/// tests can advance it with `tester.pump(Duration)`.
+/// Countdown between sets. It keeps an end time from [clock], so it stays
+/// right while nothing is listening (sheet collapsed, keyboard open, app in
+/// the background). The rest bar only repaints it, calling [tick] each frame.
 class RestTimerController extends ChangeNotifier {
+  /// [clock] defaults to [DateTime.now]; tests inject their own.
+  RestTimerController({DateTime Function()? clock})
+      : _clock = clock ?? DateTime.now;
+
+  final DateTime Function() _clock;
+  DateTime? _end;
   Duration _total = Duration.zero;
-  Duration _remaining = Duration.zero;
   String? _next;
 
   /// Time left; zero when no rest is running.
-  Duration get remaining => _remaining;
+  Duration get remaining {
+    final end = _end;
+    if (end == null) return Duration.zero;
+    final left = end.difference(_clock());
+    return left > Duration.zero ? left : Duration.zero;
+  }
 
   /// Length of the current rest (grows with [add]), for the progress bar.
   Duration get total => _total;
@@ -25,16 +35,16 @@ class RestTimerController extends ChangeNotifier {
   /// Label of what comes next, e.g. "Set 3 · 72.5 × 8".
   String? get next => _next;
 
-  bool get active => _remaining > Duration.zero;
+  bool get active => remaining > Duration.zero;
 
   /// 0 (just started) to 1 (done).
   double get progress => _total == Duration.zero
       ? 0
-      : (1 - _remaining.inMicroseconds / _total.inMicroseconds).clamp(0.0, 1.0);
+      : (1 - remaining.inMicroseconds / _total.inMicroseconds).clamp(0.0, 1.0);
 
   void start(Duration duration, {String? next}) {
     _total = duration;
-    _remaining = duration;
+    _end = _clock().add(duration);
     _next = next;
     notifyListeners();
   }
@@ -43,28 +53,27 @@ class RestTimerController extends ChangeNotifier {
   /// nothing is left.
   void add(Duration delta) {
     if (!active) return;
-    _remaining += delta;
+    _end = _end!.add(delta);
     _total += delta;
-    if (_remaining <= Duration.zero) _end();
+    if (!active) _finish();
     notifyListeners();
   }
 
   void skip() {
-    if (!active) return;
-    _end();
+    if (_end == null) return;
+    _finish();
     notifyListeners();
   }
 
-  /// Counts [elapsed] down.
-  void tick(Duration elapsed) {
-    if (!active) return;
-    _remaining -= elapsed;
-    if (_remaining <= Duration.zero) _end();
+  /// Called every frame by the rest bar: repaints and ends an expired rest.
+  void tick() {
+    if (_end == null) return;
+    if (!active) _finish();
     notifyListeners();
   }
 
-  void _end() {
-    _remaining = Duration.zero;
+  void _finish() {
+    _end = null;
     _total = Duration.zero;
     _next = null;
   }
@@ -114,17 +123,10 @@ class _RestBarBody extends StatefulWidget {
 class _RestBarBodyState extends State<_RestBarBody>
     with SingleTickerProviderStateMixin {
   late final Ticker _ticker;
-  Duration _last = Duration.zero;
-
   @override
   void initState() {
     super.initState();
-    _ticker = createTicker((elapsed) {
-      final delta = elapsed - _last;
-      _last = elapsed;
-      widget.controller.tick(delta);
-    })
-      ..start();
+    _ticker = createTicker((_) => widget.controller.tick())..start();
   }
 
   @override

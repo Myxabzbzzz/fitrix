@@ -183,6 +183,9 @@ void main() {
       expect(
           tester.widget<ScaleTransition>(scale.first).scale.value, isNot(1.0));
 
+      // The rest countdown ticks on wall-clock time; end it so the pop can
+      // settle.
+      await tester.tap(find.text('Skip'));
       await tester.pumpAndSettle();
       expect(tester.widget<ScaleTransition>(scale.first).scale.value, 1.0);
 

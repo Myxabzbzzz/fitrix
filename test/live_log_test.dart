@@ -77,6 +77,20 @@ ExerciseCatalog _catalog() {
   ]);
 }
 
+/// Plain test clock for the controller unit test.
+class _Clock {
+  DateTime now = DateTime(2026, 10, 18, 12);
+  void advance(Duration d) => now = now.add(d);
+}
+
+/// The rest timer's clock in widget tests: the test binding's fake clock, so
+/// `tester.pump(Duration)` (and pumpAndSettle) move it too.
+DateTime Function() _now = DateTime.now;
+
+/// Moves the (fake) time on.
+Future<void> _wait(WidgetTester tester, int seconds) =>
+    tester.pump(Duration(seconds: seconds));
+
 Future<ProviderContainer> _container({
   List<CompletedWorkout> history = const [],
   Duration elapsed = Duration.zero,
@@ -86,6 +100,11 @@ Future<ProviderContainer> _container({
   final c = ProviderContainer(overrides: [
     sharedPreferencesProvider.overrideWithValue(prefs),
     exerciseCatalogProvider.overrideWith((ref) async => _catalog()),
+    restTimerProvider.overrideWith((ref) {
+      final r = RestTimerController(clock: () => _now());
+      ref.onDispose(r.dispose);
+      return r;
+    }),
   ]);
   addTearDown(c.dispose);
   for (final w in history) {
@@ -151,6 +170,7 @@ Future<void> _open(
   tester.view.physicalSize = size * 3;
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
+  _now = () => tester.binding.clock.now();
   await tester.pumpWidget(_app(c, textScale: textScale));
   await tester.pump();
   c.read(activeWorkoutExpandedProvider.notifier).state = true;
@@ -257,13 +277,14 @@ void main() {
 
   group('RestTimerController', () {
     test('start, add, tick, skip', () {
-      final r = RestTimerController();
+      final clock = _Clock();
+      final r = RestTimerController(clock: () => clock.now);
       expect(r.active, isFalse);
       r.start(const Duration(seconds: 120));
       expect(r.remaining, const Duration(seconds: 120));
       r.add(const Duration(seconds: 15));
       expect(r.remaining, const Duration(seconds: 135));
-      r.tick(const Duration(seconds: 5));
+      clock.advance(const Duration(seconds: 5));
       expect(r.remaining, const Duration(seconds: 130));
       r.add(const Duration(seconds: -200));
       expect(r.active, isFalse); // ran out
@@ -271,6 +292,86 @@ void main() {
       expect(r.next, 'Set 2');
       r.skip();
       expect(r.active, isFalse);
+    });
+  });
+
+  group('rest timer keeps time while the bar is away', () {
+    testWidgets('collapsed sheet: 60 s later 1:00 is left', (tester) async {
+      final c = await _container();
+      await _open(tester, c);
+      await tester.tap(_check(0, 0));
+      await tester.pump();
+      c.read(activeWorkoutExpandedProvider.notifier).state = false;
+      await tester.pumpAndSettle();
+      expect(find.text('Skip'), findsNothing);
+      await _wait(tester, 60);
+      c.read(activeWorkoutExpandedProvider.notifier).state = true;
+      // Not pumpAndSettle: the rest ticker would run the countdown out.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      // ~60 s passed (plus the sheet's animation time), not 0 s.
+      final rest = c.read(restTimerProvider);
+      expect(rest.remaining.inSeconds, inInclusiveRange(55, 60));
+      expect(find.text(formatClock(rest.remaining)), findsOneWidget);
+      await tester.tap(find.text('+15s'));
+      await tester.pump();
+      expect(rest.remaining.inSeconds, inInclusiveRange(70, 75));
+      await tester.tap(find.text('Skip'));
+      await tester.pump();
+      expect(find.text('Skip'), findsNothing);
+      await _leave(tester);
+    });
+
+    testWidgets('focused field hides the bar but not the time', (tester) async {
+      final c = await _container();
+      await _open(tester, c);
+      await tester.tap(_check(0, 0));
+      await tester.pump();
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+      expect(find.text('Skip'), findsNothing);
+      await _wait(tester, 60);
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      final rest = c.read(restTimerProvider);
+      expect(rest.remaining.inSeconds, inInclusiveRange(55, 60));
+      expect(find.text(formatClock(rest.remaining)), findsOneWidget);
+      await _leave(tester);
+    });
+  });
+
+  group('set fields follow the model', () {
+    String fieldText(WidgetTester tester, int row, int field) {
+      final w = tester.widget<EditableText>(find
+          .descendant(
+              of: find.byKey(ValueKey('set-0-$row')),
+              matching: find.byType(EditableText))
+          .at(field));
+      return w.controller.text;
+    }
+
+    testWidgets('after warm-ups, a swap and a removal', (tester) async {
+      final c = await _container();
+      await _open(tester, c);
+      expect(fieldText(tester, 0, 0), '72.5');
+      c.read(activeWorkoutProvider.notifier).addWarmupSets(0);
+      await tester.pumpAndSettle();
+      expect(fieldText(tester, 0, 0), '40');
+      expect(fieldText(tester, 0, 1), '10');
+      expect(fieldText(tester, 1, 0), '55');
+      expect(fieldText(tester, 2, 0), '72.5');
+
+      c.read(activeWorkoutProvider.notifier).replaceExercise(0, 'Dumbbell row');
+      await tester.pumpAndSettle();
+      expect(fieldText(tester, 0, 0), '0');
+      expect(fieldText(tester, 0, 1), '8');
+
+      c.read(activeWorkoutProvider.notifier).removeExercise(0);
+      await tester.pumpAndSettle();
+      expect(fieldText(tester, 0, 0), '30');
+      expect(fieldText(tester, 0, 1), '12');
+      await _leave(tester);
     });
   });
 
@@ -286,7 +387,7 @@ void main() {
       await tester.tap(find.text('+15s'));
       await tester.pump();
       expect(find.text('2:15'), findsOneWidget);
-      await tester.pump(const Duration(seconds: 5));
+      await _wait(tester, 5);
       expect(find.text('2:10'), findsOneWidget);
       await tester.tap(find.text('−15s'));
       await tester.pump();
@@ -304,7 +405,7 @@ void main() {
       await tester.tap(_check(0, 0));
       await tester.pump();
       expect(find.text('0:30'), findsOneWidget);
-      await tester.pump(const Duration(seconds: 31));
+      await _wait(tester, 31);
       await tester.pump();
       expect(find.text('Skip'), findsNothing);
       await _leave(tester);
