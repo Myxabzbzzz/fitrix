@@ -135,8 +135,11 @@ class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
     });
 
     final workout = ref.watch(activeWorkoutProvider);
-    _visible = workout != null;
-    if (workout == null) return const SizedBox.shrink();
+    // A finished workout waiting on "Workout complete" is not editable.
+    final awaitingSave =
+        ref.watch(pendingCompletedWorkoutProvider.select((w) => w != null));
+    _visible = workout != null && !awaitingSave;
+    if (workout == null || awaitingSave) return const SizedBox.shrink();
 
     final palette = AppPalette.of(context);
     final topInset = MediaQuery.of(context).padding.top;

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/sync/local_changes.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/data/workout_storage.dart';
@@ -48,6 +49,7 @@ final activeWorkoutProvider =
   (ref) => ActiveWorkoutNotifier(
     ref.watch(workoutStorageProvider),
     ref.read(workoutHistoryProvider.notifier),
+    now: ref.read(clockProvider),
   ),
 );
 
@@ -206,10 +208,13 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
 class ActiveWorkoutNotifier extends StateNotifier<ActiveWorkout?> {
   final WorkoutStorage _storage;
   final WorkoutHistoryNotifier _history;
+  final DateTime Function() _now;
 
   /// Restores a workout that was in progress when the app was closed.
-  ActiveWorkoutNotifier(this._storage, this._history)
-      : super(_storage.loadActive());
+  ActiveWorkoutNotifier(this._storage, this._history,
+      {DateTime Function() now = DateTime.now})
+      : _now = now,
+        super(_storage.loadActive());
 
   @override
   set state(ActiveWorkout? value) {
@@ -223,7 +228,7 @@ class ActiveWorkoutNotifier extends StateNotifier<ActiveWorkout?> {
     final last = _history.lastFor(template.id);
     state = ActiveWorkout(
       template: template,
-      startedAt: DateTime.now(),
+      startedAt: _now(),
       exercises: [
         for (final e in template.exercises) _withPrevious(e, last),
       ],
@@ -232,7 +237,7 @@ class ActiveWorkoutNotifier extends StateNotifier<ActiveWorkout?> {
 
   /// Ends the workout. It's saved to history if at least one working set was
   /// completed; returns the saved workout, or null when nothing was saved.
-  /// [at] is the finish time (defaults to now).
+  /// [at] is the finish time (defaults to [finishTimeFor] now).
   CompletedWorkout? finish({int? sessionRpe, DateTime? at}) {
     final workout = state;
     if (workout == null) return null;
@@ -240,7 +245,7 @@ class ActiveWorkoutNotifier extends StateNotifier<ActiveWorkout?> {
     if (workout.completedSets > 0) {
       saved = CompletedWorkout.from(
         workout,
-        at ?? DateTime.now(),
+        at ?? finishTimeFor(workout, _now()),
         sessionRpe: sessionRpe,
       );
       _history.add(saved);
@@ -252,8 +257,14 @@ class ActiveWorkoutNotifier extends StateNotifier<ActiveWorkout?> {
   /// Drops the workout without saving it.
   void discard() => state = null;
 
+  /// Ticks the set (noting when) or unticks it.
   void toggleSet(int exerciseIndex, int setIndex) {
-    _updateSet(exerciseIndex, setIndex, (s) => s.copyWith(done: !s.done));
+    _updateSet(
+        exerciseIndex,
+        setIndex,
+        (s) => s.done
+            ? s.copyWith(done: false, clearDoneAt: true)
+            : s.copyWith(done: true, doneAt: _now()));
   }
 
   void setKg(int exerciseIndex, int setIndex, double kg) {

@@ -8,6 +8,7 @@ import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
@@ -133,7 +134,8 @@ class _LiveLogState extends ConsumerState<LiveLog> {
       return;
     }
     ref.read(pendingCompletedWorkoutProvider.notifier).state =
-        CompletedWorkout.from(workout, DateTime.now());
+        CompletedWorkout.from(
+            workout, finishTimeFor(workout, ref.read(clockProvider)()));
     expanded.state = false;
     ref.read(restTimerProvider).skip();
     GoRouter.of(context).go(AppRouter.workoutComplete);

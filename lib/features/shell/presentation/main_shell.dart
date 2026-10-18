@@ -24,9 +24,11 @@ class MainShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // The sheet hides while a finished workout waits for Save.
     final hasActiveWorkout = ref.watch(
-      activeWorkoutProvider.select((w) => w != null),
-    );
+          activeWorkoutProvider.select((w) => w != null),
+        ) &&
+        !ref.watch(pendingCompletedWorkoutProvider.select((w) => w != null));
 
     return Scaffold(
       body: Stack(

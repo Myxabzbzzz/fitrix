@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
@@ -94,11 +95,13 @@ Future<void> _wait(WidgetTester tester, int seconds) =>
 Future<ProviderContainer> _container({
   List<CompletedWorkout> history = const [],
   Duration elapsed = Duration.zero,
+  DateTime Function()? clock,
 }) async {
   SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
   final c = ProviderContainer(overrides: [
     sharedPreferencesProvider.overrideWithValue(prefs),
+    if (clock != null) clockProvider.overrideWithValue(clock),
     exerciseCatalogProvider.overrideWith((ref) async => _catalog()),
     restTimerProvider.overrideWith((ref) {
       final r = RestTimerController(clock: () => _now());
@@ -279,6 +282,89 @@ void main() {
       const e = Exercise(name: 'x', sets: [], note: 'a', restSeconds: 60);
       expect(e.copyWith(clearNote: true).note, isNull);
       expect(e.copyWith(clearNote: true).restSeconds, 60);
+    });
+  });
+
+  group('forgotten workout', () {
+    test('left running overnight: ends 15 min after the last ticked set',
+        () async {
+      var now = DateTime(2026, 10, 18, 18);
+      final c = await _container(clock: () => now);
+      final n = c.read(activeWorkoutProvider.notifier);
+      expect(c.read(activeWorkoutProvider)!.startedAt, now);
+      now = DateTime(2026, 10, 18, 18, 10);
+      n.toggleSet(0, 0);
+      now = DateTime(2026, 10, 18, 18, 30);
+      n.toggleSet(0, 1);
+      now = DateTime(2026, 10, 19, 7);
+      final saved = n.finish()!;
+      expect(saved.finishedAt, DateTime(2026, 10, 18, 18, 45));
+      expect(saved.duration, const Duration(minutes: 45));
+      // The set times only help while logging; history doesn't keep them.
+      expect(saved.exercises.first.sets.every((s) => s.doneAt == null), isTrue);
+    });
+
+    test('finishing within 30 min of the last set keeps the real time',
+        () async {
+      var now = DateTime(2026, 10, 18, 18);
+      final c = await _container(clock: () => now);
+      final n = c.read(activeWorkoutProvider.notifier);
+      now = DateTime(2026, 10, 18, 19);
+      n.toggleSet(0, 0);
+      now = DateTime(2026, 10, 18, 19, 30);
+      expect(n.finish()!.finishedAt, DateTime(2026, 10, 18, 19, 30));
+    });
+
+    test('unticking a set forgets its time', () async {
+      var now = DateTime(2026, 10, 18, 18);
+      final c = await _container(clock: () => now);
+      final n = c.read(activeWorkoutProvider.notifier);
+      now = DateTime(2026, 10, 18, 18, 5);
+      n.toggleSet(0, 0);
+      now = DateTime(2026, 10, 18, 18, 50);
+      n.toggleSet(0, 1);
+      n.toggleSet(0, 1); // unticked again
+      final w = c.read(activeWorkoutProvider)!;
+      expect(w.exercises[0].sets[0].doneAt, DateTime(2026, 10, 18, 18, 5));
+      expect(w.exercises[0].sets[1].doneAt, isNull);
+      // Round-trips through the saved active workout.
+      final back = ActiveWorkout.fromJson(w.toJson());
+      expect(back.exercises[0].sets[0].doneAt, DateTime(2026, 10, 18, 18, 5));
+      now = DateTime(2026, 10, 18, 22);
+      expect(n.finish()!.finishedAt, DateTime(2026, 10, 18, 18, 20));
+    });
+
+    test('a saved workout without set times is capped at 4 h', () {
+      final w = ActiveWorkout(
+        template: _template(),
+        startedAt: DateTime(2026, 10, 18, 8),
+        exercises: [
+          Exercise(name: 'Barbell row', sets: [_set(70, 8, done: true)]),
+        ],
+      );
+      expect(finishTimeFor(w, DateTime(2026, 10, 18, 20)),
+          DateTime(2026, 10, 18, 12));
+      expect(finishTimeFor(w, DateTime(2026, 10, 18, 9, 30)),
+          DateTime(2026, 10, 18, 9, 30));
+    });
+
+    testWidgets('the complete screen shows and saves the capped time',
+        (tester) async {
+      var now = DateTime(2026, 10, 18, 18);
+      final c = await _container(clock: () => now);
+      await _open(tester, c);
+      now = DateTime(2026, 10, 18, 18, 40);
+      await tester.tap(_check(0, 0));
+      await tester.pump();
+      now = DateTime(2026, 10, 19, 7);
+      await tester.tap(find.text('Finish workout'));
+      await tester.pumpAndSettle();
+      expect(find.text('0:55'), findsOneWidget);
+      await tester.tap(find.text('Save workout'));
+      await tester.pumpAndSettle();
+      expect(c.read(workoutHistoryProvider).single.finishedAt,
+          DateTime(2026, 10, 18, 18, 55));
+      await _leave(tester);
     });
   });
 
@@ -614,6 +700,61 @@ void main() {
       expect(find.text('NEXT TIME'), findsOneWidget);
       expect(find.textContaining('75 kg'), findsOneWidget);
       expect(find.textContaining('Energy'), findsNothing);
+      await _leave(tester);
+    });
+
+    testWidgets('Save stores the confirmed summary, not later edits',
+        (tester) async {
+      final c = await _container();
+      await _open(tester, c);
+      await finishWithSet(tester, c);
+      final pending = c.read(pendingCompletedWorkoutProvider)!;
+      // The workout changes behind the complete screen.
+      c.read(activeWorkoutProvider.notifier).toggleSet(1, 0);
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('completeRpe-6')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Save workout'));
+      await tester.pumpAndSettle();
+      final saved = c.read(workoutHistoryProvider).single;
+      expect(saved.id, pending.id);
+      expect(saved.finishedAt, pending.finishedAt);
+      expect(saved.sessionRpe, 6);
+      expect(saved.exercises.map((e) => e.name), ['Barbell row']);
+      expect(saved.setCount, 1);
+      expect(c.read(activeWorkoutProvider), isNull);
+      expect(c.read(pendingCompletedWorkoutProvider), isNull);
+      await _leave(tester);
+    });
+
+    testWidgets('a double tap on Save saves once', (tester) async {
+      final c = await _container();
+      await _open(tester, c);
+      await finishWithSet(tester, c);
+      final save = find.text('Save workout');
+      await tester.tap(save);
+      await tester.tap(save, warnIfMissed: false);
+      await tester.pumpAndSettle();
+      expect(c.read(workoutHistoryProvider), hasLength(1));
+      await _leave(tester);
+    });
+
+    testWidgets('the sheet hides while a finished workout awaits Save',
+        (tester) async {
+      final c = await _container();
+      await _open(tester, c);
+      expect(find.byKey(ActiveWorkoutSheet.headerKey), findsOneWidget);
+      c.read(activeWorkoutProvider.notifier).toggleSet(0, 0);
+      c.read(pendingCompletedWorkoutProvider.notifier).state =
+          CompletedWorkout.from(
+              c.read(activeWorkoutProvider)!, DateTime(2026, 10, 18, 12));
+      await tester.pumpAndSettle();
+      expect(find.byKey(ActiveWorkoutSheet.headerKey), findsNothing);
+      expect(find.text('Finish workout'), findsNothing);
+      // Back from the complete screen without saving: the sheet returns.
+      c.read(pendingCompletedWorkoutProvider.notifier).state = null;
+      await tester.pumpAndSettle();
+      expect(find.byKey(ActiveWorkoutSheet.headerKey), findsOneWidget);
       await _leave(tester);
     });
 

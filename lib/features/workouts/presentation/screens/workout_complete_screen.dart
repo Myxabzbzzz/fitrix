@@ -30,6 +30,9 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
   /// pending workout, go home" check doesn't fight the navigation.
   bool _leaving = false;
 
+  /// Save ran already (a second tap must not store the workout twice).
+  bool _saved = false;
+
   void _go(String location) {
     _leaving = true;
     GoRouter.of(context).go(location);
@@ -46,19 +49,18 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
     }
   }
 
+  /// Stores the summary the user confirmed (with the chosen RPE) once, then
+  /// ends the workout.
   void _save(CompletedWorkout pending) {
+    if (_saved) return;
+    _saved = true;
     final messenger = ScaffoldMessenger.of(context);
     final savedText = AppLocalizations.of(context).workoutSaved;
     _leaving = true;
-    final notifier = ref.read(activeWorkoutProvider.notifier);
-    final saved = ref.read(activeWorkoutProvider) == null
-        ? null
-        : notifier.finish(sessionRpe: _rpe, at: pending.finishedAt);
-    if (saved == null) {
-      ref
-          .read(workoutHistoryProvider.notifier)
-          .add(pending.copyWith(sessionRpe: _rpe));
-    }
+    ref
+        .read(workoutHistoryProvider.notifier)
+        .add(pending.copyWith(sessionRpe: _rpe));
+    ref.read(activeWorkoutProvider.notifier).discard();
     ref.read(pendingCompletedWorkoutProvider.notifier).state = null;
     messenger.showSnackBar(SnackBar(content: Text(savedText)));
     GoRouter.of(context).go(AppRouter.progress);

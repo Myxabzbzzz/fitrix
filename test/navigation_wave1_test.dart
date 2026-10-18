@@ -26,6 +26,9 @@ import 'package:fitrix/features/programs/data/program_store.dart';
 import 'package:fitrix/features/programs/domain/program_catalog.dart';
 import 'package:fitrix/features/progress/data/body_weight_store.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/features/workouts/data/workout_catalog.dart';
+import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
 import 'package:fitrix/main.dart';
 
 /// Wednesday 14 Oct 2026, late afternoon (the dinner idea shows after 15:00).
@@ -193,6 +196,27 @@ void main() {
       await tester.tap(chip);
       await _settle(tester);
       expect(_location(router), AppRouter.nutritionMicros);
+      await _leave(tester);
+    });
+  });
+
+  group('workout complete', () {
+    testWidgets('no live-log bar over the summary', (tester) async {
+      final (c, router) = await _app(tester, {});
+      c.read(activeWorkoutProvider.notifier)
+        ..start(WorkoutCatalog.defaults.first)
+        ..toggleSet(0, 0);
+      await _settle(tester);
+      expect(find.byKey(ActiveWorkoutSheet.headerKey), findsOneWidget);
+      c.read(pendingCompletedWorkoutProvider.notifier).state =
+          CompletedWorkout.from(c.read(activeWorkoutProvider)!, _now);
+      await _open(tester, router, AppRouter.workoutComplete);
+      expect(find.text('Workout complete'), findsOneWidget);
+      expect(find.byKey(ActiveWorkoutSheet.headerKey), findsNothing);
+      await tester.tap(find.text('Save workout'));
+      await _settle(tester);
+      expect(c.read(workoutHistoryProvider), hasLength(1));
+      expect(c.read(activeWorkoutProvider), isNull);
       await _leave(tester);
     });
   });

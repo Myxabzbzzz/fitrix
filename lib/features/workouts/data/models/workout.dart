@@ -34,6 +34,11 @@ class WorkoutSet {
   /// Warm-up sets are logged but never count as volume or records.
   final bool warmup;
 
+  /// When the set was ticked off, while the workout is in progress. Used to
+  /// end a forgotten workout at a sensible time (see [finishTimeFor]); not
+  /// kept in history.
+  final DateTime? doneAt;
+
   const WorkoutSet({
     required this.previousKg,
     required this.previousReps,
@@ -42,6 +47,7 @@ class WorkoutSet {
     this.done = false,
     this.rpe,
     this.warmup = false,
+    this.doneAt,
   });
 
   WorkoutSet copyWith({
@@ -52,6 +58,8 @@ class WorkoutSet {
     bool? done,
     int? rpe,
     bool? warmup,
+    DateTime? doneAt,
+    bool clearDoneAt = false,
   }) =>
       WorkoutSet(
         previousKg: previousKg ?? this.previousKg,
@@ -61,6 +69,7 @@ class WorkoutSet {
         done: done ?? this.done,
         rpe: rpe ?? this.rpe,
         warmup: warmup ?? this.warmup,
+        doneAt: clearDoneAt ? null : doneAt ?? this.doneAt,
       );
 
   Map<String, dynamic> toJson() => {
@@ -71,6 +80,7 @@ class WorkoutSet {
         'done': done,
         if (rpe != null) 'rpe': rpe,
         if (warmup) 'warmup': true,
+        if (doneAt != null) 'doneAt': doneAt!.toIso8601String(),
       };
 
   factory WorkoutSet.fromJson(Map<String, dynamic> json) => WorkoutSet(
@@ -81,6 +91,7 @@ class WorkoutSet {
         done: json['done'] as bool? ?? false,
         rpe: (json['rpe'] as num?)?.toInt(),
         warmup: json['warmup'] as bool? ?? false,
+        doneAt: _parseDate(json['doneAt']),
       );
 }
 
@@ -254,6 +265,29 @@ class ActiveWorkout {
       );
 }
 
+/// When a workout finished at [now] counts as finished. A workout left
+/// running (its last ticked set more than 30 min before [now]) ends 15 min
+/// after that set. Without set times (a workout saved by an older version)
+/// it lasts at most 4 h.
+DateTime finishTimeFor(ActiveWorkout workout, DateTime now) {
+  DateTime? last;
+  for (final e in workout.exercises) {
+    for (final s in e.sets) {
+      final at = s.doneAt;
+      if (s.done && at != null && (last == null || at.isAfter(last))) {
+        last = at;
+      }
+    }
+  }
+  if (last != null) {
+    return now.difference(last) > const Duration(minutes: 30)
+        ? last.add(const Duration(minutes: 15))
+        : now;
+  }
+  final cap = workout.startedAt.add(const Duration(hours: 4));
+  return now.isAfter(cap) ? cap : now;
+}
+
 /// A finished workout kept in history. Only completed sets are stored.
 class CompletedWorkout {
   /// Unique id (a UUID), used to sync history between devices.
@@ -311,7 +345,10 @@ class CompletedWorkout {
       exercises: [
         for (final e in workout.exercises)
           if (e.sets.any((s) => s.done))
-            e.copyWith(sets: e.sets.where((s) => s.done).toList()),
+            e.copyWith(sets: [
+              for (final s in e.sets)
+                if (s.done) s.copyWith(clearDoneAt: true),
+            ]),
       ],
       sessionRpe: sessionRpe,
     );
