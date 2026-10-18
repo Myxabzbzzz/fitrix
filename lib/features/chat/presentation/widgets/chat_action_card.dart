@@ -10,6 +10,11 @@ import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/chat_action_apply.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
+import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/nutrition/data/food_catalog.dart';
+import 'package:fitrix/features/nutrition/domain/food_match.dart';
+import 'package:fitrix/features/nutrition/presentation/widgets/nutrition_cards.dart'
+    show slotLabel;
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -23,10 +28,14 @@ class ChatActionCard extends ConsumerStatefulWidget {
   /// it on the message.
   final ValueChanged<Map<String, num>> onApplied;
 
+  /// Called after the user undid a weight or food action.
+  final VoidCallback? onUndone;
+
   const ChatActionCard({
     super.key,
     required this.message,
     required this.onApplied,
+    this.onUndone,
   });
 
   @override
@@ -35,6 +44,23 @@ class ChatActionCard extends ConsumerStatefulWidget {
 
 class _ChatActionCardState extends ConsumerState<ChatActionCard> {
   bool _busy = false;
+  MealSlot? _slot;
+
+  Future<void> _undo(ChatAction action) async {
+    final result = widget.message.appliedResult;
+    if (_busy || result == null) return;
+    setState(() => _busy = true);
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = AppLocalizations.of(context);
+    try {
+      await undoChatAction(ref, action, result);
+      widget.onUndone?.call();
+    } catch (_) {
+      messenger?.showSnackBar(SnackBar(content: Text(l10n.chatActionError)));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   Future<void> _apply(ChatAction action) async {
     if (_busy || widget.message.actionApplied) return;
@@ -43,7 +69,7 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
     final router = GoRouter.maybeOf(context);
     final l10n = AppLocalizations.of(context);
     try {
-      final result = await applyChatAction(ref, action);
+      final result = await applyChatAction(ref, action, slot: _slot);
       if (result == null) {
         messenger?.showSnackBar(SnackBar(content: Text(l10n.chatActionError)));
         return;
@@ -85,6 +111,10 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
     List<String> lines = const [];
     var canApply = true;
     var loading = false;
+    var needsWeight = false;
+    Widget? foodBody;
+    MealSlot? foodSlot;
+    var foodKcal = 0;
     switch (action) {
       case WeightAction():
         final result = widget.message.appliedResult;
@@ -106,11 +136,10 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
           loading = profile.isLoading;
           title = loading ? null : l10n.chatActionNoProfile;
           canApply = false;
-        } else if (next == null) {
-          title = l10n.chatActionWeightUnknown(_signed(action.kg, n));
+        } else if (next == null || current == null) {
+          title = l10n.chatActionWeightSetFirst;
           canApply = false;
-        } else if (current == null) {
-          title = l10n.chatActionWeightSet(n(next));
+          needsWeight = true;
         } else {
           title = l10n.chatActionWeightChange(n(current), n(next));
         }
@@ -121,6 +150,62 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
           for (final t in action.templates)
             '${t.name} · ${l10n.chatActionWorkoutExercises(t.exercises.length)}',
         ];
+      case FoodLogAction():
+        final result = widget.message.appliedResult;
+        final now = ref.read(clockProvider)();
+        final slot = applied && result?['slot'] != null
+            ? MealSlot.values[result!['slot']!.toInt().clamp(0, 3)]
+            : _slot ?? action.slot ?? slotForTime(now);
+        final catalog = ref.watch(foodCatalogProvider);
+        final foods = [
+          for (final i in action.items)
+            catalog.valueOrNull == null
+                ? null
+                : matchFood(i.name, catalog.valueOrNull!),
+        ];
+        final entries = [
+          for (final (i, item) in action.items.indexed)
+            entryFor(item, foods[i], slot, now, id: 'preview'),
+        ];
+        final kcal = entries.fold(0, (sum, e) => sum + e.kcal);
+        final protein = entries.fold(0.0, (sum, e) => sum + e.protein);
+        loading = catalog.isLoading;
+        canApply = catalog.hasValue;
+        foodSlot = slot;
+        foodKcal = kcal;
+        foodBody = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final e in entries)
+              Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.xxs),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        e.estimate ? l10n.chatFoodEstimateName(e.name) : e.name,
+                        style: AppText.caption
+                            .copyWith(color: palette.textPrimary)),
+                    Text(l10n.chatFoodItemMeta(n(e.grams), n(e.kcal)),
+                        style: AppText.caption
+                            .copyWith(color: palette.textSecondary)),
+                  ],
+                ),
+              ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(l10n.chatFoodTotal(n(kcal), n(protein.round())),
+                style:
+                    AppText.captionStrong.copyWith(color: palette.textPrimary)),
+            if (entries.any((e) => e.estimate))
+              Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.xxs),
+                child: Text(l10n.chatFoodEstimateNote,
+                    style:
+                        AppText.caption.copyWith(color: palette.textSecondary)),
+              ),
+          ],
+        );
       case MealPlanAction():
         title = l10n.chatActionMealTitle;
         lines = [
@@ -156,6 +241,13 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
                   height: 16,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
+              if (foodSlot != null)
+                _FoodHeader(
+                  slot: foodSlot,
+                  fixed: applied,
+                  onPick: (s) => setState(() => _slot = s),
+                ),
+              if (foodBody != null) foodBody,
               if (title != null)
                 Text(title,
                     style: AppText.bodyStrong
@@ -169,14 +261,43 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
                 ),
               if (applied) ...[
                 const SizedBox(height: AppSpacing.xs),
-                Text(l10n.chatActionApplied,
+                Text(
+                    foodSlot != null
+                        ? l10n.chatFoodAdded(slotLabel(l10n, foodSlot))
+                        : l10n.chatActionApplied,
                     key: const ValueKey('chat-action-applied'),
                     style: AppText.captionStrong
                         .copyWith(color: palette.textPrimary)),
+                if (action is WeightAction || action is FoodLogAction)
+                  Wrap(
+                    spacing: AppSpacing.xs,
+                    children: [
+                      TextButton(
+                        onPressed: _busy ? null : () => _undo(action),
+                        child: Text(l10n.undo),
+                      ),
+                      if (action is FoodLogAction)
+                        TextButton(
+                          onPressed: () => GoRouter.maybeOf(context)
+                              ?.go(AppRouter.nutrition),
+                          child: Text(l10n.chatActionOpen),
+                        ),
+                    ],
+                  ),
+              ] else if (needsWeight) ...[
+                const SizedBox(height: AppSpacing.xs),
+                AppButton(
+                  label: l10n.chatActionSetWeight,
+                  size: AppButtonSize.large,
+                  onPressed: () =>
+                      GoRouter.maybeOf(context)?.push(AppRouter.editProfile),
+                ),
               ] else if (canApply) ...[
                 const SizedBox(height: AppSpacing.xs),
                 AppButton(
-                  label: l10n.chatActionConfirm,
+                  label: foodSlot != null
+                      ? l10n.chatFoodAdd(n(foodKcal))
+                      : l10n.chatActionConfirm,
                   // Large is 48 px tall: a comfortable tap target.
                   size: AppButtonSize.large,
                   onPressed: _busy ? null : () => _apply(action),
@@ -188,7 +309,44 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
       ),
     );
   }
+}
 
-  static String _signed(double kg, String Function(num) n) =>
-      '${kg > 0 ? '+' : ''}${n(kg)}';
+/// "Log to Lunch" with a menu to pick another slot. Fixed once added.
+class _FoodHeader extends StatelessWidget {
+  final MealSlot slot;
+  final bool fixed;
+  final ValueChanged<MealSlot> onPick;
+
+  const _FoodHeader(
+      {required this.slot, required this.fixed, required this.onPick});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final label = Text(l10n.chatFoodLogTo(slotLabel(l10n, slot)),
+        style: AppText.bodyStrong.copyWith(color: palette.textPrimary));
+    if (fixed) return label;
+    return PopupMenuButton<MealSlot>(
+      key: const ValueKey('food-slot-picker'),
+      tooltip: '',
+      padding: EdgeInsets.zero,
+      onSelected: onPick,
+      itemBuilder: (context) => [
+        for (final s in MealSlot.values)
+          PopupMenuItem(value: s, child: Text(slotLabel(l10n, s))),
+      ],
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 44),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(child: label),
+            const SizedBox(width: AppSpacing.xxs),
+            Icon(Icons.expand_more, size: 20, color: palette.textSecondary),
+          ],
+        ),
+      ),
+    );
+  }
 }

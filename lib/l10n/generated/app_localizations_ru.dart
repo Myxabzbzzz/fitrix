@@ -710,11 +710,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get gymFinishCurrentTitle => 'Завершить текущую тренировку?';
+  String get gymFinishCurrentTitle => 'Отбросить текущую тренировку?';
 
   @override
   String gymFinishCurrentBody(String current, String next) {
-    return '«$current» ещё не завершена. Начать «$next» вместо неё?';
+    return '«$current» ещё идёт и не будет сохранена. Начать «$next» вместо неё?';
   }
 
   @override
@@ -1122,16 +1122,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String chatActionWeightChange(String from, String to) {
     return 'Обновить вес: $from → $to кг';
-  }
-
-  @override
-  String chatActionWeightSet(String to) {
-    return 'Обновить вес до $to кг';
-  }
-
-  @override
-  String chatActionWeightUnknown(String delta) {
-    return 'Изменение веса: $delta кг. Сначала укажите текущий вес в профиле.';
   }
 
   @override
@@ -3738,4 +3728,46 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get homeNothingNext => 'Больше ничего не запланировано';
+
+  @override
+  String chatFoodLogTo(String slot) {
+    return 'Записать в: $slot';
+  }
+
+  @override
+  String chatFoodItemMeta(String grams, String kcal) {
+    return '$grams г · $kcal ккал';
+  }
+
+  @override
+  String chatFoodEstimateName(String name) {
+    return '≈ $name';
+  }
+
+  @override
+  String get chatFoodEstimateNote => '≈ оценка Феликса';
+
+  @override
+  String chatFoodTotal(String kcal, String protein) {
+    return '$kcal ккал · $protein г белка';
+  }
+
+  @override
+  String chatFoodAdd(String kcal) {
+    return 'Добавить в Моё питание · $kcal ккал';
+  }
+
+  @override
+  String chatFoodAdded(String slot) {
+    return 'Добавлено: $slot';
+  }
+
+  @override
+  String get chatActionWeightSetFirst => 'Сначала укажите свой вес';
+
+  @override
+  String get chatActionSetWeight => 'Указать вес';
+
+  @override
+  String get gymDiscardAndStart => 'Сбросить и начать';
 }

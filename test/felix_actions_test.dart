@@ -408,7 +408,7 @@ void main() {
         (tester) async {
       await seed(action: _weightDelta, weight: '');
       await pumpFelix(tester);
-      expect(find.textContaining('Weight change: +3 kg'), findsOneWidget);
+      expect(find.text('Set your weight first'), findsOneWidget);
       expect(find.text('Confirm'), findsNothing);
     });
 

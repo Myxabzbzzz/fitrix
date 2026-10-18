@@ -246,6 +246,14 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
     await _repository.saveMessages(state.requireValue);
   }
 
+  /// Takes the applied mark off message [id] after the user undid the
+  /// action, so its card offers the button again.
+  Future<void> markActionUndone(String id) async {
+    if (state.valueOrNull == null) return;
+    _updateReply(id, (m) => m.copyWith(actionApplied: false));
+    await _repository.saveMessages(state.requireValue);
+  }
+
   Future<void> clearMessages() async {
     for (final m in state.valueOrNull ?? const <ChatMessage>[]) {
       final photo = m.imagePath;

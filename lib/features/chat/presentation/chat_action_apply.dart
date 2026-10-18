@@ -3,7 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
+import 'package:fitrix/features/nutrition/domain/food_match.dart';
+import 'package:fitrix/features/progress/data/body_weight_store.dart';
+import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
 import 'package:fitrix/features/nutrition/data/meal_slots.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/profile/data/models/profile_row.dart';
@@ -17,10 +21,15 @@ double? weightKgOf(UserProfile? profile) =>
     profile == null ? null : parseProfileNumber(profile.weight);
 
 /// Applies a confirmed [action] to the app's own data. Returns what was
-/// changed (weight: `{from, to}`; empty for other actions), or null when
-/// nothing was applied.
+/// changed, or null when nothing was applied. Weight: `{from, to, at}` plus
+/// `prevKg`/`prevAt` for a same-day weigh-in it replaced. Food: `{at, count,
+/// slot}` (entry ids are derived from `at`). Empty for other actions.
+/// [slot] is the slot the user picked on a food card.
 Future<Map<String, num>?> applyChatAction(
-    WidgetRef ref, ChatAction action) async {
+  WidgetRef ref,
+  ChatAction action, {
+  MealSlot? slot,
+}) async {
   switch (action) {
     case WeightAction():
       final profile = await ref.read(profileRepositoryProvider).getProfile();
@@ -28,13 +37,45 @@ Future<Map<String, num>?> applyChatAction(
       if (profile == null) return null;
       final from = weightKgOf(profile);
       final to = action.resultFrom(from);
-      if (to == null) return null;
+      if (from == null || to == null) return null;
       final saved = await ref
           .read(profileProvider.notifier)
           .saveWeight(formatProfileNumber(to));
       if (!saved) return null;
       unawaited(ref.read(accountServiceProvider)?.profileChanged());
-      return {if (from != null) 'from': from, 'to': to};
+      final at = ref.read(clockProvider)();
+      final replaced = await ref
+          .read(bodyWeightProvider.notifier)
+          .record(WeighIn(at: at, kg: to));
+      return {
+        'from': from,
+        'to': to,
+        'at': at.millisecondsSinceEpoch,
+        if (replaced != null) ...{
+          'prevKg': replaced.kg,
+          'prevAt': replaced.at.millisecondsSinceEpoch,
+        },
+      };
+    case FoodLogAction():
+      final catalog = await ref.read(foodCatalogProvider.future);
+      final at = ref.read(clockProvider)();
+      final target = slot ?? action.slot ?? slotForTime(at);
+      final log = ref.read(foodLogProvider.notifier);
+      for (final (i, item) in action.items.indexed) {
+        // Distinct times keep the order of the meal.
+        await log.add(entryFor(
+          item,
+          matchFood(item.name, catalog),
+          target,
+          at.add(Duration(microseconds: i)),
+          id: _foodEntryId(at, i),
+        ));
+      }
+      return {
+        'at': at.microsecondsSinceEpoch,
+        'count': action.items.length,
+        'slot': target.index,
+      };
     case WorkoutPlanAction():
       ref.read(workoutTemplatesProvider.notifier).addAll(action.sport, [
         for (final t in action.templates)
@@ -76,5 +117,48 @@ Future<Map<String, num>?> applyChatAction(
           ),
       ]);
       return const {};
+  }
+}
+
+String _foodEntryId(DateTime at, int i) =>
+    'felix-${at.microsecondsSinceEpoch}-$i';
+
+/// Takes back what [applyChatAction] did for [action], using its [result].
+/// Only weight and food can be undone.
+Future<void> undoChatAction(
+    WidgetRef ref, ChatAction action, Map<String, num> result) async {
+  switch (action) {
+    case WeightAction():
+      final from = result['from'];
+      final at = result['at'];
+      if (from != null) {
+        await ref
+            .read(profileProvider.notifier)
+            .saveWeight(formatProfileNumber(from.toDouble()));
+        unawaited(ref.read(accountServiceProvider)?.profileChanged());
+      }
+      if (at != null) {
+        final prevKg = result['prevKg'];
+        final prevAt = result['prevAt'];
+        await ref.read(bodyWeightProvider.notifier).unrecord(
+              DateTime.fromMillisecondsSinceEpoch(at.toInt()),
+              replaced: prevKg == null || prevAt == null
+                  ? null
+                  : WeighIn(
+                      at: DateTime.fromMillisecondsSinceEpoch(prevAt.toInt()),
+                      kg: prevKg.toDouble()),
+            );
+      }
+    case FoodLogAction():
+      final at = result['at'];
+      final count = result['count'];
+      if (at == null || count == null) return;
+      final time = DateTime.fromMicrosecondsSinceEpoch(at.toInt());
+      for (var i = 0; i < count; i++) {
+        await ref.read(foodLogProvider.notifier).remove(_foodEntryId(time, i));
+      }
+    case WorkoutPlanAction():
+    case MealPlanAction():
+      break;
   }
 }

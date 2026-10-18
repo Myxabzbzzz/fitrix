@@ -33,6 +33,9 @@ class FoodEntry {
   final double protein, carbs, fat;
   final Map<String, double> micros;
 
+  /// The numbers are Felix's estimate, not from the food base.
+  final bool estimate;
+
   const FoodEntry({
     required this.id,
     required this.at,
@@ -45,6 +48,7 @@ class FoodEntry {
     required this.carbs,
     required this.fat,
     this.micros = const {},
+    this.estimate = false,
   });
 
   factory FoodEntry.fromFood(
@@ -80,6 +84,7 @@ class FoodEntry {
         'carbs': carbs,
         'fat': fat,
         if (micros.isNotEmpty) 'micros': micros,
+        if (estimate) 'estimate': true,
       };
 
   /// Throws on a malformed entry; the store skips those.
@@ -98,6 +103,7 @@ class FoodEntry {
           for (final e in ((j['micros'] as Map?) ?? const {}).entries)
             if (e.value is num) e.key as String: (e.value as num).toDouble(),
         },
+        estimate: j['estimate'] == true,
       );
 }
 

@@ -1,3 +1,4 @@
+import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/profile/data/models/profile_row.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
@@ -17,6 +18,7 @@ sealed class ChatAction {
         'weight' => WeightAction.parse(raw),
         'workout_plan' => WorkoutPlanAction.parse(raw),
         'meal_plan' => MealPlanAction.parse(raw),
+        'food_log' => FoodLogAction.parse(raw),
         _ => null,
       };
     } catch (_) {
@@ -95,7 +97,31 @@ class WorkoutPlanAction extends ChatAction {
   final Sport sport;
   final List<PlannedWorkout> templates;
 
-  const WorkoutPlanAction({required this.sport, required this.templates});
+  /// `today` or `week` when Felix says when to do the plan; null otherwise
+  /// (older plans).
+  final String? when;
+
+  /// One entry per template: `today`, `mon`..`sun`, or null. Empty for
+  /// older plans.
+  final List<String?> days;
+
+  const WorkoutPlanAction({
+    required this.sport,
+    required this.templates,
+    this.when,
+    this.days = const [],
+  });
+
+  static const _dayNames = {
+    'today',
+    'mon',
+    'tue',
+    'wed',
+    'thu',
+    'fri',
+    'sat',
+    'sun'
+  };
 
   static WorkoutPlanAction? parse(Map raw) {
     final sportName = raw['sport'];
@@ -103,7 +129,9 @@ class WorkoutPlanAction extends ChatAction {
     final list = raw['templates'];
     if (sport == null || list is! List || list.isEmpty) return null;
     final templates = <PlannedWorkout>[];
-    for (final t in list.take(7)) {
+    final rawDays = raw['days'] is List ? raw['days'] as List : const [];
+    final days = <String?>[];
+    for (final (i, t) in list.take(7).indexed) {
       if (t is! Map) continue;
       final name = _text(t['name'], 100);
       final exercises = <PlannedExercise>[];
@@ -127,9 +155,17 @@ class WorkoutPlanAction extends ChatAction {
       }
       if (name.isEmpty || exercises.isEmpty) continue;
       templates.add(PlannedWorkout(name: name, exercises: exercises));
+      final day = i < rawDays.length ? rawDays[i] : null;
+      days.add(day is String && _dayNames.contains(day) ? day : null);
     }
     if (templates.isEmpty) return null;
-    return WorkoutPlanAction(sport: sport, templates: templates);
+    final when = raw['when'];
+    return WorkoutPlanAction(
+      sport: sport,
+      templates: templates,
+      when: when == 'today' || when == 'week' ? when as String : null,
+      days: rawDays.isEmpty ? const [] : days,
+    );
   }
 
   @override
@@ -137,6 +173,8 @@ class WorkoutPlanAction extends ChatAction {
         'type': 'workout_plan',
         'sport': sport.name,
         'templates': [for (final t in templates) t.toJson()],
+        if (when != null) 'when': when,
+        if (days.isNotEmpty) 'days': days,
       };
 }
 
@@ -182,6 +220,92 @@ class MealPlanAction extends ChatAction {
   Map<String, dynamic> toJson() => {
         'type': 'meal_plan',
         'meals': [for (final m in meals) m.toJson()],
+      };
+}
+
+class FoodLogItem {
+  final String name;
+  final int grams;
+  final int kcal;
+  final double protein, carbs, fat;
+
+  const FoodLogItem({
+    required this.name,
+    required this.grams,
+    required this.kcal,
+    required this.protein,
+    required this.carbs,
+    required this.fat,
+  });
+
+  static FoodLogItem? parse(Object? raw) {
+    if (raw is! Map) return null;
+    final name = _text(raw['name'], 100);
+    if (name.isEmpty) return null;
+    double? num_(String key, double max) {
+      final v = raw[key];
+      if (v is! num || !v.isFinite || v < 0 || v > max) return null;
+      return v.toDouble();
+    }
+
+    final grams = raw['grams'];
+    if (grams is! num || !grams.isFinite || grams < 1 || grams > 3000) {
+      return null;
+    }
+    final kcal = num_('kcal', 3000);
+    final protein = num_('protein', 500);
+    final carbs = num_('carbs', 500);
+    final fat = num_('fat', 500);
+    if (kcal == null || protein == null || carbs == null || fat == null) {
+      return null;
+    }
+    return FoodLogItem(
+      name: name,
+      grams: grams.round(),
+      kcal: kcal.round(),
+      protein: protein,
+      carbs: carbs,
+      fat: fat,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'grams': grams,
+        'kcal': kcal,
+        'protein': protein,
+        'carbs': carbs,
+        'fat': fat,
+      };
+}
+
+/// Felix logs what the user ate. Rejected as a whole when any item is
+/// invalid, so a meal is never logged half-way.
+class FoodLogAction extends ChatAction {
+  final MealSlot? slot;
+  final List<FoodLogItem> items;
+
+  const FoodLogAction({this.slot, required this.items});
+
+  static FoodLogAction? parse(Map raw) {
+    final list = raw['items'];
+    if (list is! List || list.isEmpty || list.length > 15) return null;
+    final items = <FoodLogItem>[];
+    for (final e in list) {
+      final item = FoodLogItem.parse(e);
+      if (item == null) return null;
+      items.add(item);
+    }
+    final slotName = raw['slot'];
+    final slot = MealSlot.values.where((s) => s.name == slotName).firstOrNull;
+    return FoodLogAction(slot: slot, items: items);
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': 'food_log',
+        'slot': slot?.name,
+        'items': [for (final i in items) i.toJson()],
       };
 }
 

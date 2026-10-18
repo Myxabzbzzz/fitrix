@@ -663,11 +663,11 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get gymFinishCurrentTitle => 'Joriy mashg‘ulotni yakunlaysizmi?';
+  String get gymFinishCurrentTitle => 'Joriy mashg‘ulotni bekor qilasizmi?';
 
   @override
   String gymFinishCurrentBody(String current, String next) {
-    return '“$current” hali davom etmoqda. Uning o‘rniga “$next” ni boshlaysizmi?';
+    return '“$current” hali davom etmoqda va saqlanmaydi. Uning o‘rniga “$next” ni boshlaysizmi?';
   }
 
   @override
@@ -1076,16 +1076,6 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String chatActionWeightChange(String from, String to) {
     return 'Vaznni yangilash: $from → $to kg';
-  }
-
-  @override
-  String chatActionWeightSet(String to) {
-    return 'Vaznni $to kg ga yangilash';
-  }
-
-  @override
-  String chatActionWeightUnknown(String delta) {
-    return 'Vazn o‘zgarishi: $delta kg. Avval profilda joriy vazningizni kiriting.';
   }
 
   @override
@@ -3612,4 +3602,46 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get homeNothingNext => 'Hozircha boshqa reja yo‘q';
+
+  @override
+  String chatFoodLogTo(String slot) {
+    return 'Yozish: $slot';
+  }
+
+  @override
+  String chatFoodItemMeta(String grams, String kcal) {
+    return '$grams g · $kcal kkal';
+  }
+
+  @override
+  String chatFoodEstimateName(String name) {
+    return '≈ $name';
+  }
+
+  @override
+  String get chatFoodEstimateNote => '≈ Feliks bahosi';
+
+  @override
+  String chatFoodTotal(String kcal, String protein) {
+    return '$kcal kkal · $protein g oqsil';
+  }
+
+  @override
+  String chatFoodAdd(String kcal) {
+    return 'Mening ovqatlanishimga qo‘shish · $kcal kkal';
+  }
+
+  @override
+  String chatFoodAdded(String slot) {
+    return 'Qo‘shildi: $slot';
+  }
+
+  @override
+  String get chatActionWeightSetFirst => 'Avval vazningizni kiriting';
+
+  @override
+  String get chatActionSetWeight => 'Vaznni kiritish';
+
+  @override
+  String get gymDiscardAndStart => 'Bekor qilib boshlash';
 }

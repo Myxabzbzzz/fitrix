@@ -257,6 +257,10 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
                                         chatMessagesProviderFor(topic).notifier)
                                     .markActionApplied(message.id,
                                         result: result),
+                                onUndone: () => ref
+                                    .read(
+                                        chatMessagesProviderFor(topic).notifier)
+                                    .markActionUndone(message.id),
                               ),
                           ],
                         ),

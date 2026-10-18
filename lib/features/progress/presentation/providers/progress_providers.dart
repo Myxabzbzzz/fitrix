@@ -36,4 +36,29 @@ class BodyWeightNotifier extends StateNotifier<List<WeighIn>> {
         );
     unawaited(_ref.read(accountServiceProvider)?.profileChanged());
   }
+
+  /// Stores the weigh-in without touching the profile. Returns the weigh-in
+  /// of the same day it replaced, if any.
+  Future<WeighIn?> record(WeighIn w) async {
+    final store = _ref.read(bodyWeightStoreProvider);
+    final replaced = store
+        .all()
+        .where((e) =>
+            e.at.year == w.at.year &&
+            e.at.month == w.at.month &&
+            e.at.day == w.at.day)
+        .firstOrNull;
+    await store.add(w);
+    state = store.all();
+    return replaced;
+  }
+
+  /// Takes back [record]: removes the weigh-in at [at] and puts [replaced]
+  /// back.
+  Future<void> unrecord(DateTime at, {WeighIn? replaced}) async {
+    final store = _ref.read(bodyWeightStoreProvider);
+    await store.remove(at);
+    if (replaced != null) await store.add(replaced);
+    state = store.all();
+  }
 }

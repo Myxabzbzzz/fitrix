@@ -32,7 +32,7 @@ Future<void> startWorkout(
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text(l10n.gymStart),
+              child: Text(l10n.gymDiscardAndStart),
             ),
           ],
         );

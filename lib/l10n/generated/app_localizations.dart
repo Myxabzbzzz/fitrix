@@ -1185,13 +1185,13 @@ abstract class AppLocalizations {
   /// No description provided for @gymFinishCurrentTitle.
   ///
   /// In en, this message translates to:
-  /// **'Finish current workout?'**
+  /// **'Discard current workout?'**
   String get gymFinishCurrentTitle;
 
   /// No description provided for @gymFinishCurrentBody.
   ///
   /// In en, this message translates to:
-  /// **'“{current}” is still in progress. Start “{next}” instead?'**
+  /// **'“{current}” is still in progress and won\'t be saved. Start “{next}” instead?'**
   String gymFinishCurrentBody(String current, String next);
 
   /// No description provided for @gymMyWorkouts.
@@ -1931,18 +1931,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update weight: {from} → {to} kg'**
   String chatActionWeightChange(String from, String to);
-
-  /// No description provided for @chatActionWeightSet.
-  ///
-  /// In en, this message translates to:
-  /// **'Update weight to {to} kg'**
-  String chatActionWeightSet(String to);
-
-  /// No description provided for @chatActionWeightUnknown.
-  ///
-  /// In en, this message translates to:
-  /// **'Weight change: {delta} kg. Enter your current weight in your profile first.'**
-  String chatActionWeightUnknown(String delta);
 
   /// No description provided for @chatActionWorkoutTitle.
   ///
@@ -5960,6 +5948,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nothing else planned yet'**
   String get homeNothingNext;
+
+  /// No description provided for @chatFoodLogTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Log to {slot}'**
+  String chatFoodLogTo(String slot);
+
+  /// No description provided for @chatFoodItemMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'{grams} g · {kcal} kcal'**
+  String chatFoodItemMeta(String grams, String kcal);
+
+  /// No description provided for @chatFoodEstimateName.
+  ///
+  /// In en, this message translates to:
+  /// **'≈ {name}'**
+  String chatFoodEstimateName(String name);
+
+  /// No description provided for @chatFoodEstimateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'≈ Felix estimate'**
+  String get chatFoodEstimateNote;
+
+  /// No description provided for @chatFoodTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{kcal} kcal · {protein} g protein'**
+  String chatFoodTotal(String kcal, String protein);
+
+  /// No description provided for @chatFoodAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to My nutrition · {kcal} kcal'**
+  String chatFoodAdd(String kcal);
+
+  /// No description provided for @chatFoodAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to {slot}'**
+  String chatFoodAdded(String slot);
+
+  /// No description provided for @chatActionWeightSetFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your weight first'**
+  String get chatActionWeightSetFirst;
+
+  /// No description provided for @chatActionSetWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Set weight'**
+  String get chatActionSetWeight;
+
+  /// No description provided for @gymDiscardAndStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard and start'**
+  String get gymDiscardAndStart;
 }
 
 class _AppLocalizationsDelegate

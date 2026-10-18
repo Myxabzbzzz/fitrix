@@ -690,11 +690,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get gymFinishCurrentTitle => 'Finish current workout?';
+  String get gymFinishCurrentTitle => 'Discard current workout?';
 
   @override
   String gymFinishCurrentBody(String current, String next) {
-    return '“$current” is still in progress. Start “$next” instead?';
+    return '“$current” is still in progress and won\'t be saved. Start “$next” instead?';
   }
 
   @override
@@ -1102,16 +1102,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String chatActionWeightChange(String from, String to) {
     return 'Update weight: $from → $to kg';
-  }
-
-  @override
-  String chatActionWeightSet(String to) {
-    return 'Update weight to $to kg';
-  }
-
-  @override
-  String chatActionWeightUnknown(String delta) {
-    return 'Weight change: $delta kg. Enter your current weight in your profile first.';
   }
 
   @override
@@ -3669,4 +3659,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeNothingNext => 'Nothing else planned yet';
+
+  @override
+  String chatFoodLogTo(String slot) {
+    return 'Log to $slot';
+  }
+
+  @override
+  String chatFoodItemMeta(String grams, String kcal) {
+    return '$grams g · $kcal kcal';
+  }
+
+  @override
+  String chatFoodEstimateName(String name) {
+    return '≈ $name';
+  }
+
+  @override
+  String get chatFoodEstimateNote => '≈ Felix estimate';
+
+  @override
+  String chatFoodTotal(String kcal, String protein) {
+    return '$kcal kcal · $protein g protein';
+  }
+
+  @override
+  String chatFoodAdd(String kcal) {
+    return 'Add to My nutrition · $kcal kcal';
+  }
+
+  @override
+  String chatFoodAdded(String slot) {
+    return 'Added to $slot';
+  }
+
+  @override
+  String get chatActionWeightSetFirst => 'Set your weight first';
+
+  @override
+  String get chatActionSetWeight => 'Set weight';
+
+  @override
+  String get gymDiscardAndStart => 'Discard and start';
 }

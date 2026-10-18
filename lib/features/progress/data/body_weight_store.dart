@@ -55,4 +55,13 @@ class BodyWeightStore {
     return _prefs.setString(
         key, jsonEncode([for (final e in next) e.toJson()]));
   }
+
+  /// Removes the weigh-in taken at exactly [at].
+  Future<void> remove(DateTime at) => _prefs.setString(
+        key,
+        jsonEncode([
+          for (final e in all())
+            if (e.at != at) e.toJson(),
+        ]),
+      );
 }

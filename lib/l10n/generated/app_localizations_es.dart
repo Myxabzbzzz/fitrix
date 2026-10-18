@@ -692,11 +692,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get gymFinishCurrentTitle => '¿Terminar el entrenamiento actual?';
+  String get gymFinishCurrentTitle => '¿Descartar el entrenamiento actual?';
 
   @override
   String gymFinishCurrentBody(String current, String next) {
-    return '«$current» sigue en curso. ¿Empezar «$next» en su lugar?';
+    return '«$current» sigue en curso y no se guardará. ¿Empezar «$next» en su lugar?';
   }
 
   @override
@@ -1105,16 +1105,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String chatActionWeightChange(String from, String to) {
     return 'Actualizar peso: $from → $to kg';
-  }
-
-  @override
-  String chatActionWeightSet(String to) {
-    return 'Actualizar peso a $to kg';
-  }
-
-  @override
-  String chatActionWeightUnknown(String delta) {
-    return 'Cambio de peso: $delta kg. Primero indica tu peso actual en el perfil.';
   }
 
   @override
@@ -3680,4 +3670,46 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get homeNothingNext => 'No hay nada más planificado';
+
+  @override
+  String chatFoodLogTo(String slot) {
+    return 'Registrar en: $slot';
+  }
+
+  @override
+  String chatFoodItemMeta(String grams, String kcal) {
+    return '$grams g · $kcal kcal';
+  }
+
+  @override
+  String chatFoodEstimateName(String name) {
+    return '≈ $name';
+  }
+
+  @override
+  String get chatFoodEstimateNote => '≈ estimación de Felix';
+
+  @override
+  String chatFoodTotal(String kcal, String protein) {
+    return '$kcal kcal · $protein g de proteína';
+  }
+
+  @override
+  String chatFoodAdd(String kcal) {
+    return 'Añadir a Mi nutrición · $kcal kcal';
+  }
+
+  @override
+  String chatFoodAdded(String slot) {
+    return 'Añadido a: $slot';
+  }
+
+  @override
+  String get chatActionWeightSetFirst => 'Primero indica tu peso';
+
+  @override
+  String get chatActionSetWeight => 'Indicar peso';
+
+  @override
+  String get gymDiscardAndStart => 'Descartar y empezar';
 }

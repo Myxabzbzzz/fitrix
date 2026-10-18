@@ -252,13 +252,17 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(inCard(find.text('Start')));
         await tester.pumpAndSettle();
-        expect(find.text('Finish current workout?'), findsOneWidget);
+        expect(find.text('Discard current workout?'), findsOneWidget);
+        expect(
+            find.text('“Legs” is still in progress and won\'t be saved. '
+                'Start “Back and Triceps” instead?'),
+            findsOneWidget);
         await tester.tap(find.text('Cancel'));
         await tester.pumpAndSettle();
         expect(c.read(activeWorkoutProvider)!.template.id, 'gym-legs');
         await tester.tap(inCard(find.text('Start')));
         await tester.pumpAndSettle();
-        await tester.tap(find.widgetWithText(TextButton, 'Start'));
+        await tester.tap(find.widgetWithText(TextButton, 'Discard and start'));
         await tester.pumpAndSettle();
         expect(c.read(activeWorkoutProvider)!.template.id, 'gym-back-triceps');
       });
