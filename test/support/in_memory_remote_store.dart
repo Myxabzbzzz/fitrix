@@ -140,6 +140,9 @@ class InMemoryRemoteStore implements RemoteStore {
     return {for (final r in messages) r.message.id};
   }
 
+  /// The `since` of every fetchDocs call.
+  final fetchDocsSince = <DateTime?>[];
+
   final _docs = <String, Map<String, RemoteDoc>>{};
 
   /// While set, document pushes wait for it (a slow network).
@@ -179,6 +182,7 @@ class InMemoryRemoteStore implements RemoteStore {
 
   @override
   Future<List<RemoteDoc>> fetchDocs(String userId, {DateTime? since}) async {
+    fetchDocsSince.add(since);
     _request();
     return _since(docsOf(userId), (d) => d.updatedAt, since);
   }

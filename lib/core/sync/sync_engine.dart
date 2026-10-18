@@ -449,11 +449,12 @@ class SyncEngine {
         for (final e in agreed.entries) {
           state.docs[_key(kind, e.key)] = e.value;
         }
-        // A full fetch saw everything up to its newest row.
-        final newest = _latest(cursor, mine.map((r) => r.updatedAt)) ??
+        // The request started at or before every kind's cursor, so it saw
+        // everything up to its newest row, whatever the kind. With no rows
+        // at all a kind without a cursor starts at the epoch.
+        final newest = _latest(cursor, seen) ??
             (fullFetch
-                ? _latest(null, seen) ??
-                    DateTime.fromMillisecondsSinceEpoch(0, isUtc: true)
+                ? DateTime.fromMillisecondsSinceEpoch(0, isUtc: true)
                 : null);
         if (newest != null) state.docsCursors[kind] = newest;
       } catch (e) {

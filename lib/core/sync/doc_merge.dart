@@ -42,11 +42,13 @@ DocMergeResult mergeDocs({
     final data = doc.data;
     final tombstone = tombstones.contains(id);
     var dirty = tombstone || (mine != null && isDocDirty(mine, agreed[id]));
-    if (dirty && !tombstone && mine != null && data != null) {
+    if (dirty && !tombstone && mine != null) {
       // Same content on both sides, or never agreed on a full pull and the
-      // server has it: not a local change.
-      dirty =
-          docHash(mine) != docHash(data) && !(fullPull && agreed[id] == null);
+      // server has a version (data or deletion): not a local change.
+      final neverAgreed = fullPull && agreed[id] == null;
+      dirty = data == null
+          ? !neverAgreed
+          : docHash(mine) != docHash(data) && !neverAgreed;
     }
     if (dirty) continue;
     if (data == null) {

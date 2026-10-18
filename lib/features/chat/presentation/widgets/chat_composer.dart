@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';

@@ -418,4 +418,31 @@ void main() {
       expect(r.engine.pendingCount(), 0);
     });
   });
+
+  group('fix round 2', () {
+    test('a quiet kind does not make every sync refetch everything', () async {
+      final program = FakeCollection('program');
+      final r = await rig(remote, [food, program]); // empty server
+      remote.putDoc('u1', 'food', 'a', doc('1'));
+      await r.engine.sync();
+      final newest = remote.docsOf('u1').single.updatedAt;
+      remote.fetchDocsSince.clear();
+      await r.engine.sync();
+      await r.engine.sync();
+      await r.engine.sync();
+      expect(remote.fetchDocsSince, everyElement(isNotNull));
+      for (final since in remote.fetchDocsSince) {
+        expect(newest.difference(since!).abs(),
+            lessThan(const Duration(minutes: 1)));
+      }
+    });
+
+    test('first sync: a remote deletion wins over a never-agreed local doc',
+        () async {
+      remote.putDoc('u1', 'food', 'a', null);
+      food.docs['a'] = doc('stale');
+      await rig(remote, [food]);
+      expect(food.docs, isEmpty);
+    });
+  });
 }
