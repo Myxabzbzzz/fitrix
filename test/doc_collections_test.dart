@@ -362,6 +362,55 @@ void main() {
     expect(a.c.read(felixTemplateIdsProvider), isEmpty);
   });
 
+  test('week plan with a non-list dismissed or sessions still advances',
+      () async {
+    remote.putDoc(uid, 'week_plan', 'current',
+        {'sessions': <Object?>[], 'dismissed': 'x'});
+    final a = await device(remote);
+    expect(a.state.docsCursors['week_plan'], isNotNull);
+    expect(a.c.read(weekPlanProvider), isEmpty);
+
+    final r2 = InMemoryRemoteStore();
+    r2.putDoc(uid, 'week_plan', 'current', {'sessions': 7, 'dismissed': 5});
+    r2.putDoc(uid, 'felix_plans', 'state', {'ids': 'a', 'batches': []});
+    r2.putDoc(uid, 'water', dayKey(today), {'ml': null});
+    final b = await device(r2);
+    expect(b.state.docsCursors['week_plan'], isNotNull);
+    expect(b.state.docsCursors['felix_plans'], isNotNull);
+    expect(b.state.docsCursors['water'], isNotNull);
+  });
+
+  test('a doc whose content does not match its id is skipped', () async {
+    final other = noon.subtract(const Duration(days: 1));
+    remote.putDoc(uid, 'checkin', dayKey(today), checkIn(other).toJson());
+    remote.putDoc(uid, 'food', 'wrong', entry('other', noon).toJson());
+    remote.putDoc(
+        uid, 'weight', dayKey(today), WeighIn(at: other, kg: 70).toJson());
+    final a = await device(remote);
+    expect(a.c.read(checkInStoreProvider).all(), isEmpty);
+    expect(a.c.read(foodLogStoreProvider).allEntries(), isEmpty);
+    expect(a.c.read(bodyWeightStoreProvider).all(), isEmpty);
+  });
+
+  test('a write is stored before it is reported as pending', () async {
+    final a = await device(remote);
+    await a.c.read(weekPlanProvider.notifier).add(PlannedSession(
+        id: 's',
+        day: today,
+        sport: Sport.gym,
+        title: 'T',
+        minutes: 30,
+        intensity: Intensity.easy));
+    var seen = -1;
+    final sub = a.local.changes.listen((_) => seen = a.engine.pendingCount());
+    await a.c.read(dismissedSuggestionsProvider.notifier).dismiss('x', today);
+    await a.c
+        .read(nutritionSettingsProvider.notifier)
+        .save(const NutritionSettings(goal: Goal.leanBulk));
+    expect(seen, 2);
+    await sub.cancel();
+  });
+
   test('applying pulled docs does not ping local changes', () async {
     remote.putDoc(uid, 'food', 'e1', entry('e1', noon).toJson());
     final a = await device(remote);

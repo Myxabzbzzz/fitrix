@@ -73,7 +73,7 @@ class CheckInCollection extends SyncedCollection {
         continue;
       }
       final c = _tryParse(data, CheckIn.fromJson);
-      if (c != null) updates[e.key] = c;
+      if (c != null && dayKey(c.at) == e.key) updates[e.key] = c;
     }
     if (!_ref.read(checkInStoreProvider).applySynced(updates)) return;
     if (_ref.exists(todayCheckInProvider)) {
@@ -120,7 +120,7 @@ class FoodCollection extends SyncedCollection {
         continue;
       }
       final entry = _tryParse(data, FoodEntry.fromJson);
-      if (entry != null) updates[e.key] = entry;
+      if (entry != null && entry.id == e.key) updates[e.key] = entry;
     }
     if (_ref.read(foodLogStoreProvider).applySynced(entries: updates)) {
       _refreshFoodLog(_ref);
@@ -200,7 +200,7 @@ class WeightCollection extends SyncedCollection {
         continue;
       }
       final w = WeighIn.fromJson(data);
-      if (w != null) updates[e.key] = w;
+      if (w != null && dayKey(w.at) == e.key) updates[e.key] = w;
     }
     if (_ref.read(bodyWeightStoreProvider).applySynced(updates)) _refresh();
   }
@@ -256,9 +256,11 @@ class WeekPlanCollection extends SyncedCollection {
       final s = _tryParse(e.cast<String, Object?>(), PlannedSession.fromJson);
       if (s != null) sessions.add(s);
     }
+    final d = data['dismissed'];
     final dismissed = {
-      for (final e in (data['dismissed'] as List? ?? const []))
-        if (e is String) e,
+      if (d is List)
+        for (final e in d)
+          if (e is String) e,
     };
     _store.applySynced(sessions, dismissed);
     _refresh();

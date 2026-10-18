@@ -28,8 +28,9 @@ class ActiveProgramNotifier extends StateNotifier<ActiveProgram?> {
 
   Future<void> set(ActiveProgram p) {
     state = p;
+    final saved = _store.save(p);
     _onChanged?.call();
-    return _store.save(p);
+    return saved;
   }
 
   Future<void> clear() {

@@ -23,8 +23,9 @@ class WeekPlanNotifier extends StateNotifier<List<PlannedSession>> {
 
   Future<void> _set(List<PlannedSession> v) {
     state = v;
+    final saved = _store.save(v);
     _onChanged?.call();
-    return _store.save(v);
+    return saved;
   }
 
   /// The plan pulled from the cloud was stored; show it.
@@ -90,8 +91,9 @@ class DismissedSuggestionsNotifier extends StateNotifier<Set<String>> {
 
   Future<void> dismiss(String sessionId, DateTime today) {
     state = {...state, keyFor(sessionId, today)};
+    final saved = _store.saveDismissed(state);
     _onChanged?.call();
-    return _store.saveDismissed(state);
+    return saved;
   }
 }
 

@@ -107,8 +107,9 @@ class NutritionSettingsNotifier extends StateNotifier<NutritionSettings> {
 
   Future<void> save(NutritionSettings s) {
     state = s;
+    final saved = s.write(_prefs);
     _onChanged?.call();
-    return s.write(_prefs);
+    return saved;
   }
 
   /// Settings pulled from the cloud (not a user change).

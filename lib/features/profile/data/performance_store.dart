@@ -94,8 +94,10 @@ class PerformanceNotifier extends StateNotifier<PerformanceProfile> {
   /// Replaces the whole profile (null fields mean "not set").
   Future<void> save(PerformanceProfile profile) async {
     state = profile;
+    final saved =
+        _prefs.setString(performanceProfileKey, jsonEncode(profile.toJson()));
     _onChanged?.call();
-    await _prefs.setString(performanceProfileKey, jsonEncode(profile.toJson()));
+    await saved;
   }
 
   /// A profile pulled from the cloud (not a user change).
