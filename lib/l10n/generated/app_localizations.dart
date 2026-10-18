@@ -6008,6 +6008,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discard and start'**
   String get gymDiscardAndStart;
+
+  /// No description provided for @chatActionWeightSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Update weight to {to} kg'**
+  String chatActionWeightSet(String to);
 }
 
 class _AppLocalizationsDelegate

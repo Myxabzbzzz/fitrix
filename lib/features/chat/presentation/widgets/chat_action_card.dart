@@ -136,10 +136,12 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
           loading = profile.isLoading;
           title = loading ? null : l10n.chatActionNoProfile;
           canApply = false;
-        } else if (next == null || current == null) {
+        } else if (next == null) {
           title = l10n.chatActionWeightSetFirst;
           canApply = false;
           needsWeight = true;
+        } else if (current == null) {
+          title = l10n.chatActionWeightSet(n(next));
         } else {
           title = l10n.chatActionWeightChange(n(current), n(next));
         }

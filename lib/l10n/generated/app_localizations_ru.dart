@@ -3770,4 +3770,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get gymDiscardAndStart => 'Сбросить и начать';
+
+  @override
+  String chatActionWeightSet(String to) {
+    return 'Обновить вес до $to кг';
+  }
 }

@@ -37,7 +37,7 @@ Future<Map<String, num>?> applyChatAction(
       if (profile == null) return null;
       final from = weightKgOf(profile);
       final to = action.resultFrom(from);
-      if (from == null || to == null) return null;
+      if (to == null) return null;
       final saved = await ref
           .read(profileProvider.notifier)
           .saveWeight(formatProfileNumber(to));
@@ -48,7 +48,7 @@ Future<Map<String, num>?> applyChatAction(
           .read(bodyWeightProvider.notifier)
           .record(WeighIn(at: at, kg: to));
       return {
-        'from': from,
+        if (from != null) 'from': from,
         'to': to,
         'at': at.millisecondsSinceEpoch,
         if (replaced != null) ...{
@@ -131,12 +131,11 @@ Future<void> undoChatAction(
     case WeightAction():
       final from = result['from'];
       final at = result['at'];
-      if (from != null) {
-        await ref
-            .read(profileProvider.notifier)
-            .saveWeight(formatProfileNumber(from.toDouble()));
-        unawaited(ref.read(accountServiceProvider)?.profileChanged());
-      }
+      // No `from`: the weight was unset before, so it is emptied again.
+      await ref
+          .read(profileProvider.notifier)
+          .saveWeight(from == null ? '' : formatProfileNumber(from.toDouble()));
+      unawaited(ref.read(accountServiceProvider)?.profileChanged());
       if (at != null) {
         final prevKg = result['prevKg'];
         final prevAt = result['prevAt'];

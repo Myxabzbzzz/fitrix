@@ -983,5 +983,6 @@
   "chatFoodAdded": "Añadido a: {slot}",
   "chatActionWeightSetFirst": "Primero indica tu peso",
   "chatActionSetWeight": "Indicar peso",
-  "gymDiscardAndStart": "Descartar y empezar"
+  "gymDiscardAndStart": "Descartar y empezar",
+  "chatActionWeightSet": "Actualizar peso a {to} kg"
 }

@@ -983,5 +983,6 @@
   "chatFoodAdded": "Добавлено: {slot}",
   "chatActionWeightSetFirst": "Сначала укажите свой вес",
   "chatActionSetWeight": "Указать вес",
-  "gymDiscardAndStart": "Сбросить и начать"
+  "gymDiscardAndStart": "Сбросить и начать",
+  "chatActionWeightSet": "Обновить вес до {to} кг"
 }

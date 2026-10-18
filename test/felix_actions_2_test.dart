@@ -161,6 +161,32 @@ void main() {
       expect(matchFood('плов', catalog)?.name.toLowerCase(), contains('plov'));
       expect(matchFood('dragonfruit smoothie', catalog), isNull);
       expect(matchFood('   ', catalog), isNull);
+      expect(matchFood('banana', catalog)?.id, 'banana');
+      expect(matchFood('kefir', catalog)?.id, 'kefir');
+      expect(matchFood('cottage cheese', catalog)?.id, 'cottage_cheese');
+    });
+
+    test('ambiguous names are not guessed', () {
+      expect(matchFood('cheese', catalog), isNull);
+      expect(matchFood('oil', catalog), isNull);
+    });
+
+    test('oats mean the cooked porridge unless dry or raw', () {
+      expect(matchFood('oats', catalog)?.id, 'oatmeal_cooked');
+      expect(matchFood('oatmeal', catalog)?.id, 'oatmeal_cooked');
+      expect(matchFood('porridge', catalog)?.id, 'oatmeal_cooked');
+      expect(matchFood('dry oats', catalog)?.id, 'oats_dry');
+      expect(matchFood('raw oats', catalog)?.id, 'oats_dry');
+    });
+
+    test('plurals, cooking words and synonyms reach the base food', () {
+      expect(matchFood('eggs', catalog)?.id, 'egg_boiled');
+      expect(matchFood('fried egg', catalog)?.id, 'egg_boiled');
+      expect(matchFood('pilaf', catalog)?.id, 'tashkent_plov');
+      expect(matchFood('boiled rice', catalog)?.id, 'rice_cooked');
+      expect(
+          matchFood('grilled chicken breast', catalog)?.id, 'chicken_breast');
+      expect(matchFood('курица', catalog)?.id, 'chicken_breast');
     });
 
     test('slotForTime boundaries', () {
@@ -362,6 +388,23 @@ void main() {
       await tester.pumpAndSettle();
       expect(container.read(bodyWeightStoreProvider).all().map((w) => w.kg),
           [78.4]);
+    });
+
+    testWidgets('"set" with no profile weight applies, logs, and undo reverts',
+        (tester) async {
+      await seed({'type': 'weight', 'mode': 'set', 'kg': 82}, weight: '');
+      await pumpFelix(tester);
+      expect(find.text('Set your weight first'), findsNothing);
+      expect(find.text('Update weight to 82 kg'), findsOneWidget);
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      expect(prefs.getString(AppConstants.keyUserWeight), '82');
+      expect(
+          container.read(bodyWeightStoreProvider).all().map((w) => w.kg), [82]);
+      await tester.tap(find.text('Undo'));
+      await tester.pumpAndSettle();
+      expect(prefs.getString(AppConstants.keyUserWeight) ?? '', '');
+      expect(container.read(bodyWeightStoreProvider).all(), isEmpty);
     });
 
     testWidgets('no profile weight asks to set it first', (tester) async {

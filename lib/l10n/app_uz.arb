@@ -983,5 +983,6 @@
   "chatFoodAdded": "Qo‘shildi: {slot}",
   "chatActionWeightSetFirst": "Avval vazningizni kiriting",
   "chatActionSetWeight": "Vaznni kiritish",
-  "gymDiscardAndStart": "Bekor qilib boshlash"
+  "gymDiscardAndStart": "Bekor qilib boshlash",
+  "chatActionWeightSet": "Vaznni {to} kg ga yangilash"
 }

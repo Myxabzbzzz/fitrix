@@ -2986,5 +2986,13 @@
   },
   "chatActionWeightSetFirst": "Set your weight first",
   "chatActionSetWeight": "Set weight",
-  "gymDiscardAndStart": "Discard and start"
+  "gymDiscardAndStart": "Discard and start",
+  "chatActionWeightSet": "Update weight to {to} kg",
+  "@chatActionWeightSet": {
+    "placeholders": {
+      "to": {
+        "type": "String"
+      }
+    }
+  }
 }

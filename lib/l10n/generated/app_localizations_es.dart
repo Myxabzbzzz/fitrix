@@ -3712,4 +3712,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get gymDiscardAndStart => 'Descartar y empezar';
+
+  @override
+  String chatActionWeightSet(String to) {
+    return 'Actualizar peso a $to kg';
+  }
 }
