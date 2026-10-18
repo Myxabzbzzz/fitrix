@@ -228,6 +228,16 @@ class _RevealRoute extends PageRoute<void> {
     );
   }
 
+  /// Opening a deep location (e.g. /home/progress/load) adds the section
+  /// page underneath only once the top page has finished opening. Going back
+  /// before that removes a page that was never installed, and the navigator
+  /// still tells it the page above was popped; there is nothing to update.
+  @override
+  void didPopNext(Route<dynamic> nextRoute) {
+    if (controller == null) return;
+    super.didPopNext(nextRoute);
+  }
+
   @override
   void dispose() {
     _swiping.dispose();

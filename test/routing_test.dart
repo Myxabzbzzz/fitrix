@@ -1,25 +1,146 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fitrix/core/constants/app_constants.dart';
+import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/features/map/routing/router.dart';
+import 'package:fitrix/features/nutrition/data/food_catalog.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/main.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// Every wave-1 screen, by the location the app navigates to. Ids are real
+/// entries of the bundled JSON catalogs.
+final _wave1Routes = <String>[
+  AppRouter.home,
+  AppRouter.workouts,
+  AppRouter.sportWorkouts(Sport.gym),
+  AppRouter.weekPlan,
+  AppRouter.recovery,
+  AppRouter.exerciseLibrary,
+  AppRouter.exercise('bench-press'),
+  AppRouter.addExerciseTo(),
+  AppRouter.addExerciseTo(replace: true, index: 2),
+  AppRouter.workoutComplete,
+  AppRouter.programs,
+  AppRouter.program('upper-lower-4'),
+  AppRouter.programsActive,
+  AppRouter.nutrition,
+  AppRouter.addFood(MealSlot.lunch),
+  AppRouter.foodDetail('chicken_breast', MealSlot.dinner),
+  AppRouter.nutritionMicros,
+  AppRouter.nutritionTargets,
+  AppRouter.progress,
+  AppRouter.progressLoad,
+  AppRouter.progressRecords,
+  AppRouter.progressLift('Bench press'),
+  AppRouter.progressWeight,
+  AppRouter.me,
+  AppRouter.hrZones,
+  AppRouter.editProfile,
+  AppRouter.connectedApps,
+];
+
+/// Where a route may legitimately send an empty app instead.
+const _emptyDataRedirects = {
+  // Nothing to summarise without a finished workout: it goes home.
+  AppRouter.workoutComplete: AppRouter.home,
+};
+
+void _appRoutes() {
+  for (final theme in ['light', 'dark']) {
+    group('every wave-1 route opens on an empty local-only app ($theme)', () {
+      for (final location in _wave1Routes) {
+        testWidgets(location, (tester) async {
+          tester.view.physicalSize = const Size(1170, 2532);
+          tester.view.devicePixelRatio = 3;
+          addTearDown(tester.view.reset);
+          SharedPreferences.setMockInitialValues({
+            AppConstants.keyOnboardingComplete: true,
+            AppSession.keyThemeMode: theme,
+          });
+          final prefs = await SharedPreferences.getInstance();
+          final session = AppSession(prefs);
+          // No auth gateway: signed out, local-only, the real route table.
+          final router = AppRouter.create(session);
+          await tester.pumpWidget(
+              FitrixRoot(prefs: prefs, session: session, router: router));
+          await tester.pump();
+
+          router.go(location);
+          for (var i = 0; i < 10; i++) {
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+
+          expect(tester.takeException(), isNull);
+          expect(find.byType(ErrorWidget), findsNothing);
+          final path = Uri.parse(location).path;
+          expect(router.routerDelegate.currentConfiguration.uri.path,
+              _emptyDataRedirects[location] ?? path);
+          final brightness =
+              Theme.of(tester.element(find.byType(Scaffold).last)).brightness;
+          expect(
+              brightness, theme == 'dark' ? Brightness.dark : Brightness.light);
+
+          // Leave the app idle so nothing is left running at teardown.
+          await tester.pumpWidget(const SizedBox());
+          await tester.pump(const Duration(seconds: 1));
+        });
+      }
+    });
+  }
+}
+
+void _backBeforeOpened() {
+  // A deep location adds the section page underneath only once the top page
+  // has finished opening; going home before that used to trip an assertion
+  // in the circle-reveal route.
+  testWidgets('going home while a deep page is still opening', (tester) async {
+    SharedPreferences.setMockInitialValues(
+        {AppConstants.keyOnboardingComplete: true});
+    final prefs = await SharedPreferences.getInstance();
+    final session = AppSession(prefs);
+    final router = AppRouter.create(session);
+    await tester
+        .pumpWidget(FitrixRoot(prefs: prefs, session: session, router: router));
+    await tester.pump();
+    router.go(AppRouter.progressLoad);
+    await tester.pump();
+    router.go(AppRouter.home);
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(tester.takeException(), isNull);
+    expect(router.routerDelegate.currentConfiguration.uri.path, AppRouter.home);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
+  });
+}
 
 void main() {
+  _appRoutes();
+  _backBeforeOpened();
+
   late RouteGraph graph;
   late RoutePlanner router;
   const me = LatLng(41.3104, 69.2789);
   const pakhtakor = LatLng(41.31549, 69.26028);
 
   setUpAll(() {
-    final json = jsonDecode(File('assets/data/route-graph.json').readAsStringSync())
-        as Map<String, dynamic>;
+    final json =
+        jsonDecode(File('assets/data/route-graph.json').readAsStringSync())
+            as Map<String, dynamic>;
     graph = RouteGraph.fromJson(json);
     router = RoutePlanner(graph);
   });
 
   test('walk to Gogol Alley', () {
-    final p = router.plan(TravelMode.walk, me, const LatLng(41.31604, 69.28675))!;
+    final p =
+        router.plan(TravelMode.walk, me, const LatLng(41.31604, 69.28675))!;
     expect(p.meters, closeTo(1271, 15));
     expect(p.duration.inMinutes, inInclusiveRange(15, 17));
   });
@@ -75,8 +196,10 @@ void main() {
     const a = LatLng(41.0, 69.0);
     const b = LatLng(41.0, 69.001);
     expect(r.plan(TravelMode.car, a, b)!.meters, closeTo(100, 1));
-    expect(r.plan(TravelMode.car, b, a)!.meters, closeTo(200, 1)); // detour via C
-    expect(r.plan(TravelMode.walk, b, a)!.meters, closeTo(100, 1)); // walkers ignore one-way
+    expect(
+        r.plan(TravelMode.car, b, a)!.meters, closeTo(200, 1)); // detour via C
+    expect(r.plan(TravelMode.walk, b, a)!.meters,
+        closeTo(100, 1)); // walkers ignore one-way
   });
 
   test('outside coverage', () {
