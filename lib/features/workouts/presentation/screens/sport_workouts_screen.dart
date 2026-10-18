@@ -133,7 +133,8 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
     final now = widget.now();
     final localeName = Localizations.localeOf(context).toString();
     // Room for a 2-line title at the user's text size.
-    final cellHeight = 128 + MediaQuery.textScalerOf(context).scale(16) * 2 - 32;
+    final cellHeight =
+        128 + MediaQuery.textScalerOf(context).scale(16) * 2 - 32;
     final coach = coachMessage(history, now,
         todayWorkout: workouts.isEmpty ? null : workouts.first.name,
         localeName: localeName);
@@ -167,8 +168,7 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                     GridView(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: AppSpacing.md,
                         crossAxisSpacing: AppSpacing.md,
@@ -193,7 +193,8 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                                 doneLabel: l10n.gymDone,
                                 onStart: () => _start(workouts[i]),
                                 onEdit: () => _edit(workouts[i]),
-                                editLabel: '${l10n.workoutEditLabel}, ${workouts[i].name}',
+                                editLabel:
+                                    '${l10n.workoutEditLabel}, ${workouts[i].name}',
                               ),
                             ),
                           ),
@@ -203,7 +204,8 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                     if (coach != null) ...[
                       const SizedBox(height: AppSpacing.md),
                       CoachCard(
-                        eyebrow: l10n.gymCoachEyebrow(_sport.localizedLabel(l10n)),
+                        eyebrow:
+                            l10n.gymCoachEyebrow(_sport.localizedLabel(l10n)),
                         title: switch (coach.kind) {
                           CoachMessageKind.firstWorkout =>
                             l10n.gymCoachFirstTitle,
@@ -217,8 +219,7 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                             l10n.gymCoachBackMessage(coach.days),
                         },
                         imageAsset: 'assets/images/felix_avatar.png',
-                        primaryLabel:
-                            workouts.isEmpty ? null : l10n.gymStart,
+                        primaryLabel: workouts.isEmpty ? null : l10n.gymStart,
                         onPrimary: workouts.isEmpty
                             ? null
                             : () => _start(workouts.first),

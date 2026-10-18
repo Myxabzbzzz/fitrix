@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
@@ -87,7 +88,8 @@ class CheckInCard extends ConsumerWidget {
     }
 
     final name = ref.watch(profileProvider).valueOrNull?.name.trim() ?? '';
-    final now = ref.watch(checkInClockProvider)();
+    ref.watch(todayProvider);
+    final now = ref.read(clockProvider)();
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
@@ -47,7 +48,7 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
   bool _saving = false;
 
   CheckIn _current() => CheckIn(
-        at: ref.read(checkInClockProvider)(),
+        at: ref.read(clockProvider)(),
         sleep: Duration(minutes: _sleepMinutes),
         quality: _quality,
         soreness: _soreness,

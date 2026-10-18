@@ -304,8 +304,7 @@ class ProfileRow {
           // After an edit on About me they are sent even when blank, so the
           // server clears them too.
           if (goal != null || clearBlankAnswers) 'goal': goal,
-          if (experience != null || clearBlankAnswers)
-            'experience': experience,
+          if (experience != null || clearBlankAnswers) 'experience': experience,
           if (sports.isNotEmpty || clearBlankAnswers) 'sports': sports,
         },
         'language': normalizeLanguage(language),

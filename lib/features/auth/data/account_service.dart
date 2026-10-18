@@ -79,8 +79,7 @@ class AccountService {
       _auth.userId != null && _auth.userId == _session.accountUserId;
 
   /// Whether local profile changes still have to be uploaded.
-  bool get hasPendingUpload =>
-      _prefs.getBool(keyProfileSyncPending) ?? false;
+  bool get hasPendingUpload => _prefs.getBool(keyProfileSyncPending) ?? false;
 
   /// Uploads anything left over from the last run, and again whenever the
   /// account signs in.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
@@ -216,7 +217,7 @@ class _Content extends ConsumerWidget {
           else if (startButton != null)
             startButton,
           const SizedBox(height: AppSpacing.lg),
-          _Last7(now: ref.watch(checkInClockProvider)()),
+          _Last7(now: ref.watch(todayProvider)),
         ],
       ),
     );

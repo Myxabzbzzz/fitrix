@@ -65,7 +65,8 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     if (_busy.value) return;
     final l10n = AppLocalizations.of(context);
 
-    void promptSignIn() => showSignInPrompt(context, ref, l10n.shopSignInToOrder);
+    void promptSignIn() =>
+        showSignInPrompt(context, ref, l10n.shopSignInToOrder);
 
     if (ref.read(currentUserProvider).valueOrNull == null) {
       return promptSignIn();

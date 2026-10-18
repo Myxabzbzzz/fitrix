@@ -225,8 +225,8 @@ class NativeSocialSignIn implements SocialSignIn {
       case GoogleSignInExceptionCode.uiUnavailable:
         return AuthFailure.providerUnavailable(label);
       default:
-        final details = '${e.description ?? ''} ${e.details ?? ''}'
-            .toLowerCase();
+        final details =
+            '${e.description ?? ''} ${e.details ?? ''}'.toLowerCase();
         if (details.contains('network') || details.contains('offline')) {
           return AuthFailure.network;
         }

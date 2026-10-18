@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/data/checkin_store.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
@@ -47,6 +48,8 @@ CompletedWorkout _done(DateTime at, int? rpe) => CompletedWorkout(
       exercises: const [],
       sessionRpe: rpe,
     );
+
+DateTime testNow = DateTime(2026, 10, 17, 7, 45);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -231,12 +234,13 @@ void main() {
       SharedPreferences.setMockInitialValues(prefsValues);
       final prefs = await SharedPreferences.getInstance();
       final clock = now ?? DateTime(2026, 10, 17, 7, 45);
+      testNow = clock;
       if (existing != null) {
         await CheckInStore(prefs, now: () => clock).save(existing);
       }
       final container = ProviderContainer(overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        checkInClockProvider.overrideWithValue(() => clock),
+        clockProvider.overrideWithValue(() => testNow),
         exerciseCatalogProvider.overrideWith((ref) => sharedCatalog),
       ]);
       addTearDown(container.dispose);
@@ -266,10 +270,12 @@ void main() {
         container: container,
         child: MaterialApp.router(
           routerConfig: router,
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context)
-                .copyWith(textScaler: TextScaler.linear(textScale)),
-            child: child!,
+          builder: (context, child) => DayRollover(
+            child: MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: TextScaler.linear(textScale)),
+              child: child!,
+            ),
           ),
           localizationsDelegates: const [
             AppLocalizations.delegate,
@@ -376,6 +382,55 @@ void main() {
               .exercises
               .map((e) => e.name),
           contains('Barbell row'));
+    });
+
+    Future<ProviderContainer> dayRollSetup(WidgetTester tester) async {
+      final backTriceps =
+          WorkoutCatalog.defaults.firstWhere((t) => t.id == 'gym-back-triceps');
+      final container = await pump(
+        tester,
+        home: const HomeScreen(),
+        existing: _checkIn(),
+      );
+      container.read(workoutTemplatesProvider.notifier).state = [
+        backTriceps,
+        ...WorkoutCatalog.defaults.where((t) => t.id != backTriceps.id),
+      ];
+      await container
+          .read(appliedSwapsProvider.notifier)
+          .apply([(from: 'Barbell row', to: 'Chest-supported row')]);
+      await tester.pumpAndSettle();
+      expect(find.text('Check in'), findsNothing);
+      expect(container.read(todayCheckInProvider), isNotNull);
+      return container;
+    }
+
+    void expectNewDay(WidgetTester tester, ProviderContainer container) {
+      expect(container.read(todayCheckInProvider), isNull);
+      expect(container.read(appliedSwapsProvider), isEmpty);
+      expect(find.text('Check in'), findsOneWidget);
+      expect(find.text('Ready to train'), findsNothing);
+    }
+
+    testWidgets('resuming after midnight drops yesterday\'s check-in and swaps',
+        (tester) async {
+      final container = await dayRollSetup(tester);
+      testNow = DateTime(2026, 10, 18, 7, 0);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expectNewDay(tester, container);
+    });
+
+    testWidgets('the midnight timer rolls the day over in the foreground',
+        (tester) async {
+      final container = await dayRollSetup(tester);
+      // Not yet midnight: nothing changes.
+      await tester.pump(const Duration(hours: 10));
+      expect(container.read(todayCheckInProvider), isNotNull);
+      testNow = DateTime(2026, 10, 18, 0, 0, 1);
+      await tester.pump(const Duration(hours: 7));
+      await tester.pumpAndSettle();
+      expectNewDay(tester, container);
     });
 
     for (final scale in [1.0, 1.3]) {

@@ -25,6 +25,7 @@ import 'package:fitrix/core/sync/sync_providers.dart';
 import 'package:fitrix/features/auth/data/account_service.dart';
 import 'package:fitrix/features/auth/data/auth_gateway.dart';
 import 'package:fitrix/features/auth/data/social_sign_in.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/auth/data/social_sign_in_config.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
@@ -191,6 +192,7 @@ class FitrixApp extends ConsumerWidget {
       // Router configuration using go_router
       // Handles all navigation and deep linking
       routerConfig: router,
+      builder: (context, child) => DayRollover(child: child!),
     );
   }
 }

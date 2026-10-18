@@ -52,8 +52,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final fmt = NumberFormat.decimalPattern(
-        Localizations.localeOf(context).toString());
+    final fmt =
+        NumberFormat.decimalPattern(Localizations.localeOf(context).toString());
     final palette = AppPalette.of(context);
     final sectionStyle = AppText.headingS.copyWith(color: palette.textPrimary);
     final noteStyle = AppText.caption.copyWith(color: palette.textSecondary);
@@ -92,7 +92,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                         child: Text(
-                          l10n.progressNoWorkouts(_sport.localizedLabel(l10n).toLowerCase()),
+                          l10n.progressNoWorkouts(
+                              _sport.localizedLabel(l10n).toLowerCase()),
                           style: noteStyle,
                         ),
                       ),
@@ -234,8 +235,7 @@ class _HistoryTile extends StatelessWidget {
                     AppText.captionStrong.copyWith(color: palette.textPrimary),
               ),
               Text(
-                AppLocalizations.of(context)
-                    .progressSets(workout.setCount),
+                AppLocalizations.of(context).progressSets(workout.setCount),
                 style: AppText.caption.copyWith(color: palette.textSecondary),
               ),
             ],

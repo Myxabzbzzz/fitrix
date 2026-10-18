@@ -199,7 +199,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 controller: _weightController,
                 label: l10n.profileFieldWeightKg,
                 field: 'weight',
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
               ),
 
               const SizedBox(height: AppSpacing.md),
@@ -209,7 +210,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 controller: _heightController,
                 label: l10n.profileFieldHeightCm,
                 field: 'height',
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
               ),
 
               const SizedBox(height: AppSpacing.xl),

@@ -86,7 +86,8 @@ class RouteGraph {
   }
 
   factory RouteGraph.fromJson(Map<String, dynamic> g) {
-    final origin = (g['origin'] as List).map((e) => (e as num).toDouble()).toList();
+    final origin =
+        (g['origin'] as List).map((e) => (e as num).toDouble()).toList();
     final scale = (g['scale'] as num).toDouble();
     final flat = g['nodes'] as List;
     final n = flat.length ~/ 2;
@@ -161,7 +162,8 @@ class RouteGraph {
     final comp = Int32List(n)..fillRange(0, n, -1);
     var best = -1, bestSize = 0, c = 0;
     for (var st = 0; st < n; st++) {
-      if (comp[st] >= 0 || !adj[st].any((ei) => speedOf(mode, edges[ei].cls) != 0)) {
+      if (comp[st] >= 0 ||
+          !adj[st].any((ei) => speedOf(mode, edges[ei].cls) != 0)) {
         continue;
       }
       final stack = <int>[st];

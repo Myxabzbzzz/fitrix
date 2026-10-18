@@ -119,7 +119,8 @@ class CodeInput extends StatelessWidget {
     );
   }
 
-  Widget _box(AppPalette palette, {required String digit, required bool active}) {
+  Widget _box(AppPalette palette,
+      {required String digit, required bool active}) {
     final borderColor = hasError
         ? AppColors.error
         : active
@@ -131,7 +132,8 @@ class CodeInput extends StatelessWidget {
       decoration: BoxDecoration(
         color: palette.tile,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: borderColor, width: active || hasError ? 2 : 1),
+        border:
+            Border.all(color: borderColor, width: active || hasError ? 2 : 1),
       ),
       child: Text(
         digit,

@@ -1,17 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/data/checkin_store.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 
-/// The clock the check-in feature uses; tests override it.
-final checkInClockProvider =
-    Provider<DateTime Function()>((ref) => DateTime.now);
-
 final checkInStoreProvider = Provider<CheckInStore>((ref) => CheckInStore(
       ref.watch(sharedPreferencesProvider),
-      now: ref.watch(checkInClockProvider),
+      now: ref.watch(clockProvider),
     ));
 
 class TodayCheckInNotifier extends StateNotifier<CheckIn?> {
@@ -31,18 +28,26 @@ class TodayCheckInNotifier extends StateNotifier<CheckIn?> {
 
 final todayCheckInProvider =
     StateNotifierProvider<TodayCheckInNotifier, CheckIn?>(
-  (ref) => TodayCheckInNotifier(ref.watch(checkInStoreProvider)),
+  (ref) {
+    // A new day rebuilds this, so yesterday's check-in is gone.
+    ref.watch(todayProvider);
+    return TodayCheckInNotifier(ref.watch(checkInStoreProvider));
+  },
 );
 
 /// Check-ins of the last 7 days, oldest first.
 final checkInHistoryProvider = Provider<List<CheckIn>>((ref) {
+  ref.watch(todayProvider);
   ref.watch(todayCheckInProvider);
   return ref.watch(checkInStoreProvider).lastDays(7);
 });
 
 /// Hard days in the 7 days up to now.
-final hardDaysProvider = Provider<int>((ref) => hardDaysLast7(
-    ref.watch(workoutHistoryProvider), ref.watch(checkInClockProvider)()));
+final hardDaysProvider = Provider<int>((ref) {
+  ref.watch(todayProvider);
+  return hardDaysLast7(
+      ref.watch(workoutHistoryProvider), ref.read(clockProvider)());
+});
 
 /// Readiness of today's check-in, null before it.
 final todayReadinessProvider = Provider<Readiness?>((ref) {
@@ -75,7 +80,8 @@ class AppliedSwapsNotifier extends StateNotifier<List<Swap>> {
 
 final appliedSwapsProvider =
     StateNotifierProvider<AppliedSwapsNotifier, List<Swap>>((ref) {
-  // A new check-in resets the swaps; follow it.
+  // A new check-in or a new day resets the swaps; follow them.
+  ref.watch(todayProvider);
   ref.watch(todayCheckInProvider);
   return AppliedSwapsNotifier(ref.watch(checkInStoreProvider));
 });

@@ -90,15 +90,19 @@ class MetroStop {
 }
 
 class MetroLine {
-  const MetroLine({required this.ref, required this.name, required this.colour, required this.stops});
+  const MetroLine(
+      {required this.ref,
+      required this.name,
+      required this.colour,
+      required this.stops});
 
   factory MetroLine.fromJson(Map<String, dynamic> j) => MetroLine(
         ref: (j['ref'] ?? '') as String,
         name: (j['name'] ?? '') as String,
         colour: parseMetroColour(j['colour'] as String?),
         stops: (j['stops'] as List)
-            .map((s) => MetroStop((s[0] ?? '') as String, (s[1] as num).toDouble(),
-                (s[2] as num).toDouble()))
+            .map((s) => MetroStop((s[0] ?? '') as String,
+                (s[1] as num).toDouble(), (s[2] as num).toDouble()))
             .toList(),
       );
 
@@ -287,7 +291,8 @@ class MetroNetwork {
           rides.add(const MetroRide(
               line: '', from: '', to: '', stops: 0, color: metroFallbackColor));
           curIdx = rides.length - 1;
-          legs.add(RouteLeg(kind: 'metro', points: curPts, lineColor: lines[a.li].colour));
+          legs.add(RouteLeg(
+              kind: 'metro', points: curPts, lineColor: lines[a.li].colour));
         } else {
           curTo = b.name;
           curStops++;
@@ -298,7 +303,8 @@ class MetroNetwork {
         curLine = null;
         curIdx = -1;
         legs.add(RouteLeg(
-            kind: 'walk', points: [LatLng(a.lat, a.lon), LatLng(b.lat, b.lon)]));
+            kind: 'walk',
+            points: [LatLng(a.lat, a.lon), LatLng(b.lat, b.lon)]));
       }
     }
     flush();

@@ -23,7 +23,8 @@ class AppConstants {
   // ==========================================================================
 
   /// `--dart-define=API_BASE_URL=...` value, or '' when none was given.
-  static const String _apiBaseUrlDefine = String.fromEnvironment('API_BASE_URL');
+  static const String _apiBaseUrlDefine =
+      String.fromEnvironment('API_BASE_URL');
 
   /// Base URL for the backend API server (see [resolveApiBaseUrl]).
   ///
@@ -168,11 +169,11 @@ class AppConstants {
   /// Users can select one to start their fitness journey
   /// These are the first options Felix presents
   static const List<String> fitnessGoals = [
-    'Build muscle and strength',       // Hypertrophy and strength training
-    'Improve endurance and stamina',    // Cardio and aerobic fitness
-    'Lose weight and get toned',        // Fat loss and body composition
-    'Feel healthier and balanced',      // General wellness and lifestyle
-    'Just track my progress',           // Monitoring without specific goal
+    'Build muscle and strength', // Hypertrophy and strength training
+    'Improve endurance and stamina', // Cardio and aerobic fitness
+    'Lose weight and get toned', // Fat loss and body composition
+    'Feel healthier and balanced', // General wellness and lifestyle
+    'Just track my progress', // Monitoring without specific goal
   ];
 
   // ==========================================================================
@@ -189,9 +190,9 @@ class AppConstants {
   /// 2. Add lib/l10n/app_<code>.arb with every key of app_en.arb
   /// 3. Add the code to CFBundleLocalizations in ios/Runner/Info.plist
   static const Map<String, String> languages = {
-    'ru': 'Русский',      // Russian
-    'en': 'English',      // English
-    'uz': 'O\'zbekcha',   // Uzbek
-    'es': 'Español',      // Spanish
+    'ru': 'Русский', // Russian
+    'en': 'English', // English
+    'uz': 'O\'zbekcha', // Uzbek
+    'es': 'Español', // Spanish
   };
 }

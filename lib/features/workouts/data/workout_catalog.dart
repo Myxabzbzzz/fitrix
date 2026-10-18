@@ -7,7 +7,8 @@ class WorkoutCatalog {
   static List<WorkoutSet> _sets(double kg, int reps, {int count = 4}) =>
       List.generate(
         count,
-        (_) => WorkoutSet(previousKg: kg, previousReps: reps, kg: kg, reps: reps),
+        (_) =>
+            WorkoutSet(previousKg: kg, previousReps: reps, kg: kg, reps: reps),
       );
 
   static final List<WorkoutTemplate> defaults = [

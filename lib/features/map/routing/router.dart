@@ -154,9 +154,11 @@ class RoutePlanner {
     final r = _astar(mode, s, t);
     if (r == null) return null;
     final a = r.pts.first, b = r.pts.last;
-    final access = flatM(from.latitude, from.longitude, a.latitude, a.longitude) +
-        flatM(to.latitude, to.longitude, b.latitude, b.longitude);
-    final sec = r.sec + access / walkSpeed + (mode == TravelMode.car ? parkSec : 0);
+    final access =
+        flatM(from.latitude, from.longitude, a.latitude, a.longitude) +
+            flatM(to.latitude, to.longitude, b.latitude, b.longitude);
+    final sec =
+        r.sec + access / walkSpeed + (mode == TravelMode.car ? parkSec : 0);
     return _Street(sec, r.meters + access, [from, ...r.pts, to]);
   }
 
@@ -173,7 +175,8 @@ class RoutePlanner {
       ...trip.legs,
       if (w2 != null) RouteLeg(kind: 'walk', points: w2.pts),
     ];
-    final sec = (w1?.sec ?? MetroNetwork.walkEstimate(from, trip.firstLat, trip.firstLon)) +
+    final sec = (w1?.sec ??
+            MetroNetwork.walkEstimate(from, trip.firstLat, trip.firstLon)) +
         metroWaitSec +
         trip.rideSec +
         (w2?.sec ?? MetroNetwork.walkEstimate(to, trip.lastLat, trip.lastLon));
