@@ -283,6 +283,87 @@ function validateMealPlan(raw) {
   return { type: 'meal_plan', meals: out };
 }
 
+const DAY_WORDS = [
+  ['mon', 'понедельник|пн|monday|mon|dushanba|lunes'],
+  ['tue', 'вторник|вт|tuesday|tue|seshanba|martes'],
+  ['wed', 'сред[аыуе]?|ср|wednesday|wed|chorshanba|mi[eé]rcoles'],
+  ['thu', 'четверг|чт|thursday|thu|payshanba|jueves'],
+  ['fri', 'пятниц[аыуе]?|пт|friday|fri|juma|viernes'],
+  ['sat', 'суббот[аыуе]?|сб|saturday|sat|shanba|s[aá]bado'],
+  ['sun', 'воскресенье|вс|sunday|sun|yakshanba|domingo'],
+];
+const DAY_RE = new RegExp(
+  '(?<![\\p{L}])(' + DAY_WORDS.map(([k, w]) => `(?<${k}>${w})`).join('|') + ')(?![\\p{L}])',
+  'giu'
+);
+const TODAY_RE = /(?<![\p{L}])(?:сегодня|today|bugun|hoy)(?![\p{L}])/iu;
+const WEEK_RE = /(?<![\p{L}])(?:недел\p{L}*|week|hafta\p{L}*|semana)(?![\p{L}])/iu;
+
+/**
+ * Fills a missing `when`/`days` of a workout_plan from what the USER asked
+ * ("на сегодня", "на неделю, пн ср пт"). Never overrides the model's values;
+ * returns the original action whenever the result would not validate.
+ */
+function inferSchedule(action, userText) {
+  if (!action || action.type !== 'workout_plan' || typeof userText !== 'string') return action;
+  const plan = { ...action };
+  if (plan.when === undefined || plan.when === null) {
+    if (WEEK_RE.test(userText)) plan.when = 'week';
+    else if (TODAY_RE.test(userText) && plan.templates.length === 1) plan.when = 'today';
+  }
+  if (plan.days === undefined) {
+    if (plan.when === 'today') plan.days = ['today'];
+    else if (plan.when === 'week') {
+      const days = [];
+      for (const m of userText.matchAll(DAY_RE)) {
+        const key = Object.keys(m.groups).find((k) => m.groups[k] !== undefined);
+        if (key && !days.includes(key)) days.push(key);
+      }
+      if (days.length === plan.templates.length) plan.days = days;
+    }
+  }
+  return validateAction(plan) || action;
+}
+
+const SLOT_RE = new RegExp(
+  '(?<![\\p{L}])(?:breakfast|lunch|dinner|supper|snack|завтрак\\p{L}*|позавтракал\\p{L}*|обед\\p{L}*|пообедал\\p{L}*|ужин\\p{L}*|поужинал\\p{L}*|перекус\\p{L}*|полдник\\p{L}*|nonushta\\p{L}*|tushlik\\p{L}*|kechki\\p{L}*|kechqurun\\p{L}*|tush\\p{L}*|desayun\\p{L}*|almuerz\\p{L}*|almorc\\p{L}*|comida|cena|cen[eé]|merienda|merend\\p{L}*)(?![\\p{L}])',
+  'iu'
+);
+
+const COUNTS = {
+  2: 'two|ikki|dos|два|две|2', 3: 'three|uch|tres|три|3', 4: 'four|to[\'\u2018\u2019]rt|cuatro|четыре|4', 5: 'five|besh|cinco|пять|5',
+};
+const EGG_WORD = '(?:ta\\s+)?(?:eggs?|tuxum\\p{L}*|huevos?|яйц\\p{L}*|яиц)';
+
+// Small models often log "two eggs" as one 50 g egg; fix the obvious case.
+function fixEggCount(item, userText) {
+  if (!/^eggs?(?![a-z])/i.test(item.name) || item.grams !== 50) return item;
+  for (const [n, words] of Object.entries(COUNTS)) {
+    if (new RegExp('(?<![\\p{L}\\d])(?:' + words + ')\\s+' + EGG_WORD, 'iu').test(userText)) {
+      const k = Number(n);
+      return {
+        ...item,
+        grams: item.grams * k,
+        kcal: Math.round(item.kcal * k),
+        protein: round1(item.protein * k),
+        carbs: round1(item.carbs * k),
+        fat: round1(item.fat * k),
+      };
+    }
+  }
+  return item;
+}
+
+/** Deterministic clean-ups that depend on the user's message. */
+function refineAction(action, userText) {
+  if (!action || typeof userText !== 'string') return action;
+  if (action.type === 'food_log') {
+    const slot = action.slot !== null && !SLOT_RE.test(userText) ? null : action.slot;
+    return { ...action, slot, items: action.items.map((it) => fixEggCount(it, userText)) };
+  }
+  return inferSchedule(action, userText);
+}
+
 /** Non-streaming helper: { text, action, hadBlock } from a full reply. */
 function extractAction(content, opts) {
   const filter = createActionFilter();
@@ -296,5 +377,7 @@ module.exports = {
   parseAction,
   validateAction,
   extractAction,
+  inferSchedule,
+  refineAction,
   SPORTS,
 };

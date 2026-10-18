@@ -14,6 +14,7 @@ function looksLikePlan(text) {
   if (typeof text !== 'string' || !text) return null;
   const lines = text.split('\n');
   const setLines = lines.filter((l) => SET_REP.test(l)).length;
+  if (setLines >= 4) return 'workout_plan';
   if (setLines >= 3) {
     let headers = 0;
     lines.forEach((l, i) => {
@@ -35,6 +36,7 @@ const EAT_VERB = new RegExp(
   [
     '\\b(?:i|i\'ve|ive)\\s+(?:just\\s+|also\\s+)?(?:had|ate|eaten|drank|drunk)\\b',
     '\\b(?:had|ate)\\s+(?:for\\s+)?(?:breakfast|lunch|dinner|supper)\\b',
+    '(?:на\\s+)?(?:завтрак|обед|ужин|перекус)\\p{L}*\\s+(?:был|была|было|были)(?![\\p{L}])',
     '(?:съел|съела|съели|поел|поела|скушал|скушала|выпил|выпила|позавтракал|позавтракала|пообедал|пообедала|поужинал|поужинала|перекусил|перекусила)',
     '\\b(?:yedim|yeb\\s+oldim|ichdim|nonushta\\s+qildim|tushlik\\s+qildim|kechki\\s+ovqat\\s+qildim)',
     '\\b(?:com[ií]|he\\s+comido|desayun[eé]|almorc[eé]|cen[eé]|merend[eé]|beb[ií]|tom[eé])(?![\\p{L}])',
@@ -78,8 +80,31 @@ function looksLikeFoodLog(text) {
   return /\d/.test(text) || NUMBER_WORD.test(text);
 }
 
+// ---- weight statements (from the USER's message) ----
+const WEIGHT_NUM = /\d+(?:[.,]\d+)?\s*(?:kg|kgs|kilo\w*|кг|килограмм\w*|lbs?|pounds?|фунт\w*|funt)(?![\p{L}])/iu;
+const WEIGHT_VERB = new RegExp(
+  L + '(?:gained|lost|put\\s+on|weigh|weighing|i\'m|im|набрал\\p{L}*|поправил\\p{L}*|похудел\\p{L}*|скинул\\p{L}*|сбросил\\p{L}*|вешу|вес|ozdim|semirdim|vaznim|vazn\\p{L}*|subí|bajé|peso|engordé|adelgacé|pesas?)' + R,
+  'iu'
+);
+
+/** True when the user states a weight or weight change with a number and unit. */
+function looksLikeWeightChange(text) {
+  if (typeof text !== 'string' || !text.trim()) return false;
+  if (QUESTION.test(text) || PLAN_OR_RECIPE.test(text)) return false;
+  return WEIGHT_NUM.test(text) && WEIGHT_VERB.test(text);
+}
+
 const str = { type: 'string' };
 const SCHEMAS = {
+  weight: {
+    type: 'object',
+    properties: {
+      mode: { type: 'string', enum: ['set', 'delta'] },
+      amount: { type: 'number' },
+      unit: { type: 'string', enum: ['kg', 'lb'] },
+    },
+    required: ['mode', 'amount', 'unit'],
+  },
   food_log: {
     type: 'object',
     properties: {
@@ -177,8 +202,10 @@ async function extractPlanAction({ post, url, model, kind, text, defaultSport, t
           {
             role: 'system',
             content:
-              (kind === 'food_log' ? 'Convert the user message to JSON. ' : 'Convert this plan to JSON; copy names exactly. Keep the language of the text. ') +
-              (kind === 'food_log'
+              (kind === 'food_log' || kind === 'weight' ? 'Convert the user message to JSON. ' : 'Convert this plan to JSON; copy names exactly. Keep the language of the text. ') +
+              (kind === 'weight'
+                ? 'mode "delta" when the user gained or lost some amount (amount is negative for a loss); mode "set" when they state their total weight now. unit is kg or lb as the user said.'
+                : kind === 'food_log'
                 ? 'The user says what they ate. List each food as one item: name is a short generic food name in ENGLISH; grams is the eaten amount (egg = 50 g, slice of bread = 30 g, a quarter of non/lepyoshka = 60 g); kcal, protein, carbs, fat are totals for that amount. slot is breakfast, lunch, dinner or snack only if the user said it, otherwise null.'
                 : kind === 'workout_plan'
                 ? `One template per training session; sport is one of ${SPORTS.join(', ')}` +
@@ -198,4 +225,4 @@ async function extractPlanAction({ post, url, model, kind, text, defaultSport, t
   }
 }
 
-module.exports = { looksLikePlan, looksLikeFoodLog, extractPlanAction };
+module.exports = { looksLikePlan, looksLikeFoodLog, looksLikeWeightChange, extractPlanAction };

@@ -150,7 +150,7 @@ test('extractAction handles a full non-stream reply', () => {
 
 test('system prompt includes the action rules', () => {
   const p = buildSystemPrompt('gym', null, 'en');
-  for (const s of ['<fitrix-action>', '"type":"weight"', 'workout_plan', 'meal_plan', 'winterSports', 'Tap the button']) {
+  for (const s of ['<fitrix-action>', '"type":"weight"', 'workout_plan', 'meal_plan', 'winterSports', 'confirm it with the button']) {
     assert.ok(p.includes(s), s);
   }
 });
@@ -183,6 +183,7 @@ const ollamaRequests = [];
 const fallbackRequests = [];
 let fallbackMode = 'ok';
 let fallbackFoodMode = false;
+let fallbackWeightMode = false;
 const PLAN_TEXT =
   'Plan:\nDay 1 - Legs\n- Squat 4x10\n- Lunge 3x12\nDay 2 - Upper\n- Bench 4x8\n- Row 3x10\nTap the button below to add it.';
 const ollama = http.createServer((req, res) => {
@@ -195,6 +196,9 @@ const ollama = http.createServer((req, res) => {
       fallbackRequests.push(data);
       if (fallbackMode === 'hang') return;
       res.writeHead(200, { 'Content-Type': 'application/json' });
+      if (fallbackWeightMode) {
+        return res.end(JSON.stringify({ message: { content: JSON.stringify({ mode: 'delta', amount: 3, unit: 'kg' }) } }));
+      }
       if (fallbackFoodMode) {
         return res.end(JSON.stringify({ message: { content: JSON.stringify({
           slot: null,
@@ -413,7 +417,7 @@ test('code fences around a block are removed, also when split', () => {
 
 test('prompt: placeholders, language copy rule and removed-blocks note', () => {
   const p = buildSystemPrompt('app', null, 'ru');
-  assert.ok(p.includes('Copy each name/items text exactly'));
+  assert.ok(p.includes('Copy each session name and meal name/items text exactly'));
   assert.ok(p.includes('without their blocks'));
   assert.ok(p.includes('<session 1 name>'));
 });
@@ -492,6 +496,7 @@ test('looksLikeFoodLog: past-tense eating in en/ru/uz/es', () => {
     'Hoy desayuné 2 huevos',
     'tushlikda 200 g guruch yedim',
     'выпил 300 мл молока',
+    'на обед был плов 300г',
   ]) assert.equal(looksLikeFoodLog(t), true, t);
   for (const t of [
     'what should I eat?',
@@ -522,4 +527,97 @@ test('food_log fallback: user message triggers the schema call', async () => {
   assert.equal(a.type, 'food_log');
   assert.equal(a.slot, null);
   assert.equal(a.items[0].name, 'egg');
+});
+
+// ---- live-test fixes: weight fallback, schedule inference, prompt honesty ----
+
+test('looksLikeWeightChange: statements yes, questions/unrelated no', () => {
+  const { looksLikeWeightChange } = require('./fallback');
+  for (const t of [
+    'я набрал 3 кг', 'похудел на 2 кг', 'я вешу 82 кг', 'скинула 4 кг', 'теперь мой вес 70 кг',
+    'I gained 3 kg', 'I lost 6 lb', "I'm 82 kg now", 'I weigh 80 kg', 'I put on 2 kg',
+    '3 kg ga ozdim', 'vaznim 75 kg', '2 kg semirdim',
+    'subí 3 kg', 'bajé 2 kg', 'mi peso es 70 kg', 'engordé 3 kg',
+  ]) assert.equal(looksLikeWeightChange(t), true, t);
+  for (const t of [
+    'сколько мне весить?', 'how much should I weigh', 'lost my keys', 'I lost my motivation',
+    'как быстро набрать 3 кг?', 'я съел 200 г курицы', 'жим 80 кг', '', null,
+  ]) assert.equal(looksLikeWeightChange(t), false, String(t));
+});
+
+test('inferSchedule: when and days from the user message', () => {
+  const { inferSchedule } = require('./actions');
+  const plan = (n) => ({ type: 'workout_plan', sport: 'gym', templates: Array.from({ length: n }, (_, i) => tpl('S' + i)) });
+  assert.equal(inferSchedule(plan(1), 'составь план тренировки на сегодня').when, 'today');
+  assert.deepEqual(inferSchedule(plan(1), 'plan for today').days, ['today']);
+  for (const t of ['bugun uchun mashq', 'plan para hoy']) assert.equal(inferSchedule(plan(1), t).when, 'today', t);
+  const w = inferSchedule(plan(3), 'составь план тренировок на неделю, пн ср пт');
+  assert.equal(w.when, 'week');
+  assert.deepEqual(w.days, ['mon', 'wed', 'fri']);
+  assert.deepEqual(inferSchedule(plan(2), 'plan for the week: tuesday and saturday').days, ['tue', 'sat']);
+  assert.deepEqual(inferSchedule(plan(2), 'haftaga, dushanba va juma').days, ['mon', 'fri']);
+  assert.deepEqual(inferSchedule(plan(2), 'para la semana, lunes y jueves').days, ['mon', 'thu']);
+  assert.deepEqual(inferSchedule(plan(2), 'на неделю: вторник и воскресенье').days, ['tue', 'sun']);
+  // count mismatch: no days
+  assert.equal(inferSchedule(plan(2), 'на неделю пн ср пт').days, undefined);
+  // today with 2 templates: when stays unset
+  assert.equal(inferSchedule(plan(2), 'на сегодня').when, undefined);
+  // model's own values are kept
+  const own = { ...plan(1), when: 'week' };
+  assert.equal(inferSchedule(own, 'на сегодня').when, 'week');
+  // non-plans pass through
+  const wt = { type: 'weight', mode: 'set', kg: 80 };
+  assert.deepEqual(inferSchedule(wt, 'на сегодня'), wt);
+  assert.equal(inferSchedule(null, 'x'), null);
+});
+
+test('prompt: no English-only invitation, no claims of changes, catalog names, egg math', () => {
+  const p = buildSystemPrompt('gym', null, 'ru');
+  assert.doesNotMatch(p, /Tap the button below/);
+  assert.match(p, /never say .*already/i);
+  assert.match(p, /Bench press/);
+  assert.match(p, /ikki tuxum/);
+  assert.match(p, /100 g/);
+  assert.match(p, /not weekday names/i);
+});
+
+test('weight fallback: user message recovers a missing weight block', async () => {
+  fallbackRequests.length = 0;
+  fallbackWeightMode = true;
+  const events = await ndjson(await post('/chat/stream', { message: 'я набрал 3 кг', conversationId: 'wf1', history: [] }));
+  fallbackWeightMode = false;
+  assert.equal(fallbackRequests.length, 1);
+  assert.deepEqual(events.find((e) => e.action).action, { type: 'weight', mode: 'delta', kg: 3 });
+});
+
+test('refineAction: food slot only when the user said it; schedule still applied', () => {
+  const { refineAction } = require('./actions');
+  assert.equal(refineAction(food({ slot: 'breakfast' }), 'ikki tuxum yedim').slot, null);
+  for (const t of ['на обед был плов 300г', 'for lunch I had rice', 'tushlikda guruch yedim', 'cené arroz', 'позавтракал яйцами'])
+    assert.equal(refineAction(food({ slot: 'lunch' }), t).slot, 'lunch', t);
+  assert.equal(refineAction(food({ slot: null }), 'на обед рис').slot, null);
+  const p = refineAction({ type: 'workout_plan', sport: 'gym', templates: [tpl()] }, 'на сегодня');
+  assert.equal(p.when, 'today');
+  assert.equal(refineAction(null, 'x'), null);
+});
+
+test('looksLikePlan: four set/rep lines without headers is still a workout plan', () => {
+  const { looksLikePlan } = require('./fallback');
+  const t = 'Понедельник, среда, пятница:\n1. Жим лежа – 4 подхода по 8-10 повторений\n2. Тяга штанги – 4 подхода по 8-10\n3. Отжимания – 3 подхода по 12-15\n4. Планка – 3 подхода';
+  assert.equal(looksLikePlan(t), 'workout_plan');
+  assert.equal(looksLikePlan('Сделай 3 подхода приседаний.'), null);
+});
+
+test('refineAction: egg count words multiply a single-egg item', () => {
+  const { refineAction } = require('./actions');
+  const egg = { type: 'food_log', slot: null, items: [{ name: 'egg', grams: 50, kcal: 70, protein: 6.5, carbs: 0.6, fat: 5.4 }] };
+  for (const t of ['ikki tuxum yedim', 'я съел два яйца', 'I had 2 eggs', 'comí dos huevos', '3 ta tuxum yedim']) {
+    const n = /3/.test(t) ? 3 : 2;
+    const it = refineAction(egg, t).items[0];
+    assert.equal(it.grams, 50 * n, t);
+    assert.equal(it.kcal, 70 * n, t);
+  }
+  assert.equal(refineAction(egg, 'I had an egg').items[0].grams, 50);
+  const done = { ...egg, items: [{ ...egg.items[0], grams: 100 }] };
+  assert.equal(refineAction(done, 'I had 2 eggs').items[0].grams, 100);
 });

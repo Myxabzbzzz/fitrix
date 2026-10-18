@@ -13,8 +13,8 @@ const {
   sanitizeLanguage,
   buildSystemPrompt,
 } = require('./prompt');
-const { createActionFilter, parseAction, extractAction, SPORTS } = require('./actions');
-const { looksLikePlan, looksLikeFoodLog, extractPlanAction } = require('./fallback');
+const { refineAction, createActionFilter, parseAction, extractAction, SPORTS } = require('./actions');
+const { looksLikePlan, looksLikeFoodLog, looksLikeWeightChange, extractPlanAction } = require('./fallback');
 const { validateImages } = require('./images');
 const { createPlainTextFilter, toPlainText } = require('./plainText');
 const { authConfigFromEnv, requireUser, rateLimitPerUser } = require('./auth');
@@ -145,7 +145,7 @@ function createApp({
       const assistantMessage = toPlainText(extracted.text);
       logAction(turn.tag, extracted.hadBlock, extracted.action);
       const action =
-        extracted.action ||
+        refineAction(extracted.action, turn.userText) ||
         (await fallbackAction(turn, assistantMessage, controller.signal));
       turn.finish(assistantMessage);
 
@@ -238,9 +238,10 @@ function createApp({
         send({ delta: tail });
       }
 
-      let action = parseAction(actions.block(), {
-        defaultSport: turn.defaultSport,
-      });
+      let action = refineAction(
+        parseAction(actions.block(), { defaultSport: turn.defaultSport }),
+        turn.userText
+      );
       logAction(turn.tag, actions.sawBlock(), action);
       if (!action) {
         action = await fallbackAction(turn, reply, controller.signal);
@@ -503,6 +504,10 @@ async function fallbackAction(turn, visibleText, signal) {
     kind = 'food_log';
     source = turn.userText;
   }
+  if (!kind && looksLikeWeightChange(turn.userText)) {
+    kind = 'weight';
+    source = turn.userText;
+  }
   if (!kind) return null;
   const action = await extractPlanAction({
     post: axios.post,
@@ -517,7 +522,7 @@ async function fallbackAction(turn, visibleText, signal) {
   console.log(
     `${turn.tag} action fallback: ${action ? `${action.type} (valid)` : 'none'}`
   );
-  return action;
+  return refineAction(action, turn.userText);
 }
 
 // Logs only whether an action block appeared and its type, never content.
