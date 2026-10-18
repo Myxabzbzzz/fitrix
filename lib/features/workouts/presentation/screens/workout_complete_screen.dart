@@ -9,8 +9,9 @@ import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
-import 'package:fitrix/features/workouts/presentation/widgets/live_log_widgets.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/features/workouts/presentation/widgets/live_log_format.dart';
+import 'package:fitrix/features/workouts/presentation/widgets/live_log_rpe_sheet.dart';
 
 /// Shown after "Finish workout": the summary of the finished (not yet saved)
 /// workout in [pendingCompletedWorkoutProvider], an overall RPE question,

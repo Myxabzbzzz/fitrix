@@ -14,8 +14,8 @@ import 'package:fitrix/features/exercises/presentation/exercise_widgets.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
-import 'package:fitrix/features/workouts/presentation/widgets/live_log_widgets.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/features/workouts/presentation/widgets/live_log_format.dart';
 
 class ExerciseDetailScreen extends ConsumerWidget {
   final String id;
