@@ -21,7 +21,7 @@ create index user_documents_user_updated_idx
   on public.user_documents (user_id, updated_at);
 
 create trigger user_documents_set_updated_at
-before update on public.user_documents
+before insert or update on public.user_documents
 for each row execute function public.set_updated_at();
 
 alter table public.user_documents enable row level security;
