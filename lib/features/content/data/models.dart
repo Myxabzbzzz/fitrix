@@ -1,3 +1,5 @@
+import 'package:fitrix/core/time/day_key.dart';
+
 class Program {
   const Program({
     required this.id,
@@ -70,7 +72,7 @@ class Challenge {
   /// Calendar dates ('2026-10-12') as local midnight.
   static DateTime _date(String s) {
     final d = DateTime.parse(s.substring(0, 10));
-    return DateTime(d.year, d.month, d.day);
+    return dayOf(d);
   }
 }
 

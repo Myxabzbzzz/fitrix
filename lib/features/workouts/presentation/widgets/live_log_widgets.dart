@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/text/normalize.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -23,8 +24,7 @@ String formatTonnes(BuildContext context, double kg) =>
     NumberFormat('#,##0.0', Localizations.localeOf(context).toString())
         .format(kg / 1000);
 
-bool _sameName(String a, String b) =>
-    a.trim().toLowerCase() == b.trim().toLowerCase();
+bool _sameName(String a, String b) => normalizeName(a) == normalizeName(b);
 
 /// "72.5 × 8" for a set, "BW × 8" for a bodyweight one.
 String formatSetLoad(BuildContext context, WorkoutSet s) {
@@ -154,7 +154,7 @@ class _LiveLogState extends ConsumerState<LiveLog> {
         CompletedWorkout.from(workout, DateTime.now()),
         history,
       ))
-        r.exercise.trim().toLowerCase(),
+        normalizeName(r.exercise),
     };
 
     final caption = l10n.workoutLiveCaption(
@@ -245,7 +245,7 @@ class _LiveLogState extends ConsumerState<LiveLog> {
                             exercise: workout.exercises[e],
                             done: _isDone(workout.exercises[e]),
                             record: records.contains(
-                                workout.exercises[e].name.trim().toLowerCase()),
+                                normalizeName(workout.exercises[e].name)),
                             onTap: () => setState(() => _selected = e),
                           ),
                   ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -67,7 +68,7 @@ String felixSessionId(String templateId) => 'felix-$templateId';
 /// this week when that is today or later, else in the next week. Null for
 /// anything else.
 DateTime? felixDayOf(String? name, DateTime today) {
-  final start = dateOnly(today);
+  final start = dayOf(today);
   if (name == 'today') return start;
   final idx = _weekdayNames.indexOf(name ?? '');
   if (idx < 0) return null;
@@ -94,7 +95,7 @@ List<PlannedSession> scheduleFelixPlan({
   required List<PlannedSession> existing,
 }) {
   if (when == null || created.isEmpty) return const [];
-  final start = dateOnly(today);
+  final start = dayOf(today);
   PlannedSession session(WorkoutTemplate t, DateTime day) => PlannedSession(
         id: felixSessionId(t.id),
         day: day,

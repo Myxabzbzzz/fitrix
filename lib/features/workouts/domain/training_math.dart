@@ -1,3 +1,5 @@
+import 'package:fitrix/core/text/normalize.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
 /// Estimated one-rep max (Epley). One rep is the weight itself; no reps is 0.
@@ -52,7 +54,7 @@ class LoadSummary {
 /// Fatigue is the mean daily load over 7 days ending [today], fitness over 42.
 /// Days without an entry count as 0; several entries on a day add up.
 LoadSummary loadSummary(List<DailyLoad> days, DateTime today) {
-  final end = DateTime(today.year, today.month, today.day);
+  final end = dayOf(today);
   var sum7 = 0;
   var sum42 = 0;
   for (final d in days) {
@@ -100,8 +102,6 @@ class PersonalRecord {
   });
 }
 
-String _key(String name) => name.trim().toLowerCase();
-
 /// Records set in [workout] against everything in [earlier]. An exercise
 /// with no earlier history sets no record.
 List<PersonalRecord> recordsIn(
@@ -111,17 +111,17 @@ List<PersonalRecord> recordsIn(
   final result = <PersonalRecord>[];
   final seen = <String>{};
   for (final ex in workout.exercises) {
-    if (!seen.add(_key(ex.name))) continue;
+    if (!seen.add(normalizeName(ex.name))) continue;
     final sets = [
       for (final e in workout.exercises)
-        if (_key(e.name) == _key(ex.name))
+        if (normalizeName(e.name) == normalizeName(ex.name))
           ...e.sets.where((s) => _isWorking(s, requireDone: false)),
     ];
     if (sets.isEmpty) continue;
     final past = [
       for (final w in earlier)
         for (final e in w.exercises)
-          if (_key(e.name) == _key(ex.name))
+          if (normalizeName(e.name) == normalizeName(ex.name))
             ...e.sets.where((s) => _isWorking(s, requireDone: false)),
     ];
     if (past.isEmpty) continue;

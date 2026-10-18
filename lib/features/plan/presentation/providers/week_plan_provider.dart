@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
@@ -44,7 +45,7 @@ class WeekPlanNotifier extends StateNotifier<List<PlannedSession>> {
   /// that [isDone] reports as done (a gym session finished today).
   Future<void> replaceFutureGym(List<PlannedSession> sessions,
       {bool Function(PlannedSession)? isDone}) {
-    final today = dateOnly(_now());
+    final today = dayOf(_now());
     return _set([
       for (final s in state)
         if (s.sport != Sport.gym ||

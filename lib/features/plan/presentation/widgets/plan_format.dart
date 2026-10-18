@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
@@ -82,6 +83,6 @@ class PlanChip extends StatelessWidget {
 /// The day of an upcoming session: "Friday" within the coming week,
 /// "Wed 21" further out.
 String upcomingDayLabel(BuildContext context, DateTime today, DateTime day) =>
-    addDays(dateOnly(today), 6).isBefore(day)
+    addDays(dayOf(today), 6).isBefore(day)
         ? weekdayAndDate(context, day)
         : weekdayLong(context, day);

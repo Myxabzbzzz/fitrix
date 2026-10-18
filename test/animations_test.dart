@@ -384,8 +384,8 @@ void main() {
         // Home shows underneath while the section slides right.
         expect(find.text('FELIX'), findsOneWidget);
         expect(find.text('My Nutrition'), findsOneWidget);
-        expect(tester.getTopLeft(find.text('My Nutrition')).dx,
-            greaterThan(100));
+        expect(
+            tester.getTopLeft(find.text('My Nutrition')).dx, greaterThan(100));
         await drag.moveBy(const Offset(120, 0));
         await drag.up();
         await tester.pumpAndSettle();

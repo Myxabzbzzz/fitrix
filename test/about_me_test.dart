@@ -62,7 +62,9 @@ void main() {
           ),
         ),
         routes: [
-          GoRoute(path: 'about', builder: (_, __) => const AboutMeScreen(),
+          GoRoute(
+              path: 'about',
+              builder: (_, __) => const AboutMeScreen(),
               onExit: aboutMeOnExit),
         ],
       ),
@@ -75,8 +77,8 @@ void main() {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(textScale)),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(textScale)),
           child: child!,
         ),
       ),
@@ -93,9 +95,11 @@ void main() {
   }
 
   bool saveEnabled(WidgetTester tester) {
-    final s = tester.widget<Semantics>(find.descendant(
-        of: find.byKey(const Key('about-save')),
-        matching: find.byType(Semantics)).first);
+    final s = tester.widget<Semantics>(find
+        .descendant(
+            of: find.byKey(const Key('about-save')),
+            matching: find.byType(Semantics))
+        .first);
     return s.properties.onTap != null;
   }
 
@@ -297,9 +301,9 @@ void main() {
     expect(find.byType(AboutMeScreen), findsNothing);
   });
 
-  testWidgets('legacy formatting does not make the form dirty',
-      (tester) async {
-    await pump(tester, values: {'user_weight': '72,50 ', 'user_name': ' Alex '});
+  testWidgets('legacy formatting does not make the form dirty', (tester) async {
+    await pump(tester,
+        values: {'user_weight': '72,50 ', 'user_name': ' Alex '});
     expect(saveEnabled(tester), isFalse);
   });
 

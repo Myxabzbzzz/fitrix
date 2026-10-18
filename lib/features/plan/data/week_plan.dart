@@ -1,3 +1,4 @@
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
@@ -5,8 +6,6 @@ import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 enum Intensity { easy, normal, hard }
 
 enum SessionStatus { planned, done, missed, today }
-
-DateTime dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
 
 /// Calendar-day arithmetic that is safe across DST changes.
 DateTime addDays(DateTime d, int n) => DateTime(d.year, d.month, d.day + n);
@@ -38,7 +37,7 @@ class PlannedSession {
     this.templateId,
     required this.minutes,
     required this.intensity,
-  }) : day = dateOnly(day);
+  }) : day = dayOf(day);
 
   PlannedSession copyWith({DateTime? day}) => PlannedSession(
         id: id,
@@ -52,9 +51,7 @@ class PlannedSession {
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'day': '${day.year.toString().padLeft(4, '0')}-'
-            '${day.month.toString().padLeft(2, '0')}-'
-            '${day.day.toString().padLeft(2, '0')}',
+        'day': dayKey(day),
         'sport': sport.name,
         'title': title,
         if (templateId != null) 'templateId': templateId,
@@ -99,7 +96,7 @@ CompletedWorkout? completedFor(
 SessionStatus statusOf(
     PlannedSession s, List<CompletedWorkout> history, DateTime now) {
   if (completedFor(s, history) != null) return SessionStatus.done;
-  final today = dateOnly(now);
+  final today = dayOf(now);
   if (s.day.isBefore(today)) return SessionStatus.missed;
   if (s.day == today) return SessionStatus.today;
   return SessionStatus.planned;
@@ -186,7 +183,7 @@ bool _hardOn(List<PlannedSession> week, DateTime day) =>
 PlanSuggestion? suggestPlanChange(
     List<PlannedSession> week, DateTime today, ExerciseCatalog c,
     {List<WorkoutTemplate>? templates, bool Function(PlannedSession)? isDone}) {
-  final from = dateOnly(today);
+  final from = dayOf(today);
   final hardLegs = [
     for (final s in week)
       if (s.intensity == Intensity.hard &&
@@ -216,7 +213,7 @@ PlanSuggestion? suggestPlanChange(
 
 /// Hard sessions today and in the two days after it.
 int hardInNext3Days(List<PlannedSession> week, DateTime today) {
-  final start = dateOnly(today);
+  final start = dayOf(today);
   final end = addDays(start, 2);
   return week
       .where((s) =>
@@ -230,7 +227,7 @@ int hardInNext3Days(List<PlannedSession> week, DateTime today) {
 bool wouldBeThirdHardDayInARow(
     List<PlannedSession> week, DateTime day, Intensity i) {
   if (i != Intensity.hard) return false;
-  final d = dateOnly(day);
+  final d = dayOf(day);
   var run = 1;
   for (var n = 1; _hardOn(week, addDays(d, -n)); n++) {
     run++;
@@ -280,7 +277,7 @@ bool planInUse(List<PlannedSession> plan, DateTime today) {
 /// day first (plan order within a day).
 PlannedSession? nextSessionAfter(List<PlannedSession> plan, DateTime today,
     {bool Function(PlannedSession)? where}) {
-  final day = dateOnly(today);
+  final day = dayOf(today);
   PlannedSession? next;
   for (final s in plan) {
     if (!s.day.isAfter(day) || (where != null && !where(s))) continue;
@@ -293,7 +290,7 @@ PlannedSession? nextSessionAfter(List<PlannedSession> plan, DateTime today,
 /// session; [TodayKind.unplanned] when the plan is not in use.
 TodayPlan todayPlanOf(
     List<PlannedSession> plan, List<CompletedWorkout> history, DateTime today) {
-  final day = dateOnly(today);
+  final day = dayOf(today);
   if (!planInUse(plan, day)) return const TodayPlan(TodayKind.unplanned);
   final todays = [
     for (final s in plan)

@@ -20,8 +20,10 @@ void main() {
 
   test('every place is inside central Tashkent', () {
     for (final p in rows('places')) {
-      expect(p['lat'] as double, inInclusiveRange(41.29, 41.34), reason: '${p['id']}');
-      expect(p['lon'] as double, inInclusiveRange(69.24, 69.31), reason: '${p['id']}');
+      expect(p['lat'] as double, inInclusiveRange(41.29, 41.34),
+          reason: '${p['id']}');
+      expect(p['lon'] as double, inInclusiveRange(69.24, 69.31),
+          reason: '${p['id']}');
     }
   });
 

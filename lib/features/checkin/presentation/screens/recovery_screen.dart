@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/time/today_provider.dart';
@@ -358,7 +359,7 @@ class _Last7 extends ConsumerWidget {
     final history = ref.watch(workoutHistoryProvider);
     final checkIns = ref.watch(checkInHistoryProvider);
 
-    final today = DateTime(now.year, now.month, now.day);
+    final today = dayOf(now);
     final days = [
       for (var i = 6; i >= 0; i--) today.subtract(Duration(days: i)),
     ];

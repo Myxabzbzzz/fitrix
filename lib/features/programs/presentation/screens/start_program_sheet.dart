@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -63,7 +64,7 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
     );
     if (d != null) {
       setState(() {
-        _custom = dateOnly(d);
+        _custom = dayOf(d);
         _choice = _DateChoice.custom;
       });
     }

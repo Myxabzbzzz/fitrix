@@ -1,3 +1,4 @@
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
@@ -132,17 +133,15 @@ Readiness readiness(CheckIn c, {required int hardDaysLast7}) {
   return Readiness(score, factors, label);
 }
 
-DateTime _day(DateTime d) => DateTime(d.year, d.month, d.day);
-
 /// Calendar days (in the 7 days up to and including [now]) with at least
 /// one finished workout whose session RPE is 7 or more. A workout without
 /// an RPE is not a hard day.
 int hardDaysLast7(List<CompletedWorkout> history, DateTime now) {
-  final today = _day(now);
+  final today = dayOf(now);
   final from = today.subtract(const Duration(days: 6));
   final days = <DateTime>{};
   for (final w in history) {
-    final d = _day(w.finishedAt);
+    final d = dayOf(w.finishedAt);
     if (d.isBefore(from) || d.isAfter(today)) continue;
     if ((w.sessionRpe ?? 0) >= 7) days.add(d);
   }

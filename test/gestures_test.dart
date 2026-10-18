@@ -102,8 +102,7 @@ void main() {
       final container = await _pumpGym(tester, remote: remote);
       final requests = remote.requests;
 
-      await tester.fling(
-          find.byType(GridView), const Offset(0, 400), 1000);
+      await tester.fling(find.byType(GridView), const Offset(0, 400), 1000);
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
@@ -117,8 +116,7 @@ void main() {
       final remote = InMemoryRemoteStore()..online = false;
       final container = await _pumpGym(tester, remote: remote);
 
-      await tester.fling(
-          find.byType(GridView), const Offset(0, 400), 1000);
+      await tester.fling(find.byType(GridView), const Offset(0, 400), 1000);
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));

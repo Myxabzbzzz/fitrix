@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -62,7 +63,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
     for (var i = 0; i < 7; i++) {
       final day = DateTime(start.year, start.month, start.day + i);
       for (final w in history) {
-        if (dateOnly(w.finishedAt) == day) {
+        if (dayOf(w.finishedAt) == day) {
           weekDays[i][w.sport] = (weekDays[i][w.sport] ?? 0) + w.load;
         }
       }

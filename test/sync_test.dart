@@ -514,7 +514,8 @@ void main() {
       plans.remove(plan.id);
       plans.restore(plan, index);
       expect(WorkoutStorage(a.prefs).loadDeletedTemplates(), isEmpty);
-      expect(a.read(workoutTemplatesProvider).indexWhere((p) => p.id == plan.id),
+      expect(
+          a.read(workoutTemplatesProvider).indexWhere((p) => p.id == plan.id),
           index);
 
       // Undo after the deletion reached the server and another device.
@@ -531,7 +532,8 @@ void main() {
       );
       await b.sync();
       expect(b.planNames, contains('Chest and Biceps'));
-      expect(a.read(workoutTemplatesProvider).indexWhere((p) => p.id == plan.id),
+      expect(
+          a.read(workoutTemplatesProvider).indexWhere((p) => p.id == plan.id),
           index);
     });
 

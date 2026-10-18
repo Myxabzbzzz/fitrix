@@ -1,3 +1,4 @@
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/programs/data/program_store.dart';
@@ -17,7 +18,7 @@ class ProgramSlot {
 
   /// Done on its day or earlier.
   bool get onTime =>
-      done != null && !dateOnly(done!.finishedAt).isAfter(session.day);
+      done != null && !dayOf(done!.finishedAt).isAfter(session.day);
 }
 
 /// The schedule of [active] with each slot matched to a workout: workouts of
@@ -29,7 +30,7 @@ List<ProgramSlot> programSlots(
       p, active.start, active.weekdays, active.sessionTemplateIds);
   final byTemplate = <String, List<CompletedWorkout>>{};
   for (final w in history) {
-    if (dateOnly(w.finishedAt).isBefore(active.start)) continue;
+    if (dayOf(w.finishedAt).isBefore(active.start)) continue;
     byTemplate.putIfAbsent(w.templateId, () => []).add(w);
   }
   for (final l in byTemplate.values) {
@@ -76,7 +77,7 @@ class ProgramStats {
 
 ProgramStats programStats(List<ProgramSlot> slots, DateTime today,
     List<CompletedWorkout> history, DateTime start) {
-  final t = dateOnly(today);
+  final t = dayOf(today);
   final due = [
     for (final s in slots)
       if (!s.session.day.isAfter(t)) s
@@ -87,9 +88,8 @@ ProgramStats programStats(List<ProgramSlot> slots, DateTime today,
       if (s.isDone || s.session.day.isBefore(t)) s
   ];
   final onTime = judged.where((s) => s.onTime).length;
-  final records = allRecords(history)
-      .where((r) => !dateOnly(r.date).isBefore(start))
-      .length;
+  final records =
+      allRecords(history).where((r) => !dayOf(r.date).isBefore(start)).length;
   return ProgramStats(due.length, done,
       judged.isEmpty ? null : (onTime * 100 / judged.length).round(), records);
 }
@@ -106,7 +106,7 @@ List<ProgramSlot> slotsThisWeek(List<ProgramSlot> slots, DateTime today) {
 
 /// The next session that is not done, today or later.
 ProgramSlot? nextSlot(List<ProgramSlot> slots, DateTime today) {
-  final t = dateOnly(today);
+  final t = dayOf(today);
   for (final s in slots) {
     if (!s.isDone && !s.session.day.isBefore(t)) return s;
   }
@@ -139,7 +139,7 @@ List<LiftProgress> liftProgress(TrainingProgram p, ActiveProgram a,
     List<CompletedWorkout> history, ExerciseCatalog? catalog) {
   final before = [
     for (final w in history)
-      if (dateOnly(w.finishedAt).isBefore(a.start)) w
+      if (dayOf(w.finishedAt).isBefore(a.start)) w
   ];
   return [
     for (final e in mainLifts(p, catalog))
@@ -147,7 +147,7 @@ List<LiftProgress> liftProgress(TrainingProgram p, ActiveProgram a,
         var start = startKg(e.exercise, before, e.repsHigh, catalog: catalog);
         if (start == null) {
           final after = liftSeries(history, e.exercise, catalog)
-              .where((x) => !dateOnly(x.date).isBefore(a.start));
+              .where((x) => !dayOf(x.date).isBefore(a.start));
           if (after.isNotEmpty) {
             final kg = workingKg(after.first.e1rm, e.repsHigh);
             start = kg > 0 ? kg : null;
@@ -176,7 +176,7 @@ NextIncrease? nextIncrease(TrainingProgram p, ActiveProgram a,
     List<CompletedWorkout> history, ExerciseCatalog? catalog) {
   final recent = [
     for (final w in history)
-      if (!dateOnly(w.finishedAt).isBefore(a.start)) w
+      if (!dayOf(w.finishedAt).isBefore(a.start)) w
   ]..sort((x, y) => y.finishedAt.compareTo(x.finishedAt));
   for (final e in mainLifts(p, catalog)) {
     final key = canonicalLift(e.exercise, catalog).key;

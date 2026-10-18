@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
@@ -126,7 +127,7 @@ class ProgramStarter {
     final old = _ref.read(activeProgramProvider);
     if (old == null) return;
     final prefix = programSessionPrefix(old.programId);
-    final today = dateOnly(_ref.read(clockProvider)());
+    final today = dayOf(_ref.read(clockProvider)());
     await _ref.read(weekPlanProvider.notifier).removeWhere((s) =>
         s.id.startsWith(prefix) && !s.day.isBefore(today) && !_isDone(s));
   }

@@ -1,12 +1,12 @@
 import 'dart:math' as math;
 
+import 'package:fitrix/core/text/normalize.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
 import 'package:fitrix/features/progress/data/body_weight_store.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
-
-DateTime dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
 
 /// Whole calendar days from [a] to [b] (DST-safe).
 int daysBetween(DateTime a, DateTime b) => DateTime.utc(b.year, b.month, b.day)
@@ -17,7 +17,7 @@ int daysBetween(DateTime a, DateTime b) => DateTime.utc(b.year, b.month, b.day)
 List<DailyLoad> dailyLoads(List<CompletedWorkout> history) {
   final byDay = <DateTime, int>{};
   for (final w in history) {
-    final day = dateOnly(w.finishedAt);
+    final day = dayOf(w.finishedAt);
     byDay[day] = (byDay[day] ?? 0) + w.load;
   }
   final days = byDay.keys.toList()..sort();
@@ -26,7 +26,7 @@ List<DailyLoad> dailyLoads(List<CompletedWorkout> history) {
 
 /// The Saturday that starts the Sat-Fri week containing [day].
 DateTime weekStart(DateTime day) {
-  final d = dateOnly(day);
+  final d = dayOf(day);
   return DateTime(d.year, d.month, d.day - (d.weekday - DateTime.saturday) % 7);
 }
 
@@ -66,7 +66,7 @@ int? nextWeekAim(List<DailyLoad> days, DateTime today) {
 /// last [weeks] weeks, times 7. Null with fewer than 2 weigh-ins or when
 /// they span less than 7 days.
 double? weeklyTrendKg(List<WeighIn> w, DateTime now, {int weeks = 8}) {
-  final from = dateOnly(now).subtract(Duration(days: weeks * 7));
+  final from = dayOf(now).subtract(Duration(days: weeks * 7));
   final pts = [
     for (final e in w)
       if (!e.at.isBefore(from) &&
@@ -212,8 +212,6 @@ class LiftPoint {
   const LiftPoint(this.date, this.e1rm, this.kg, this.reps);
 }
 
-String liftKey(String name) => name.trim().toLowerCase();
-
 /// Identity of an exercise: its catalog id and name when [raw] resolves
 /// (names and aliases), else the lowercased name.
 ({String key, String name}) canonicalLift(
@@ -221,7 +219,7 @@ String liftKey(String name) => name.trim().toLowerCase();
   final info = catalog?.byName(raw);
   return info != null
       ? (key: info.id, name: info.name)
-      : (key: liftKey(raw), name: raw.trim());
+      : (key: normalizeName(raw), name: raw.trim());
 }
 
 /// Exercises with weighted working sets in [history], most trained first,
@@ -273,7 +271,7 @@ List<LiftPoint> liftSeries(
 /// Weekly e1RM change in kg over the last 90 days (least squares), null when
 /// fewer than 2 sessions spanning at least 7 days.
 double? liftWeeklySlope(List<LiftPoint> points, DateTime today) {
-  final from = dateOnly(today).subtract(const Duration(days: 90));
+  final from = dayOf(today).subtract(const Duration(days: 90));
   final p = [
     for (final e in points)
       if (!e.date.isBefore(from)) e

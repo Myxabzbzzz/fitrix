@@ -145,8 +145,8 @@ void main() {
 
     final code = await _codeFromMailpit(email);
     final userId = await phone.auth.verifyCode(email: email, code: code);
-    expect(await phone.account.completeSignIn(userId),
-        SignInDestination.profile);
+    expect(
+        await phone.account.completeSignIn(userId), SignInDestination.profile);
     print('new account $userId → profile step');
 
     await ProfileRepository().saveProfile(UserProfile(
@@ -236,8 +236,8 @@ void main() {
     // The same email now gets a brand-new account with nothing in it.
     final tablet = await _Device.create();
     addTearDown(tablet.dispose);
-    expect(await tablet.signIn(email, emailNumber: 2),
-        SignInDestination.profile);
+    expect(
+        await tablet.signIn(email, emailNumber: 2), SignInDestination.profile);
     expect(tablet.auth.userId, isNot(userId));
     expect(await tablet.client.from('chat_messages').select(), isEmpty);
     expect(await ProfileRepository().getProfile(), isNull);

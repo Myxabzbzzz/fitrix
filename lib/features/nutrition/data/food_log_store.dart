@@ -1,12 +1,8 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
-
-DateTime _day(DateTime d) => DateTime(d.year, d.month, d.day);
-
-String _dayKey(DateTime d) => '${d.year.toString().padLeft(4, '0')}-'
-    '${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
 DateTime? _parseDayKey(String s) {
   final m = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(s);
@@ -128,7 +124,7 @@ class FoodLogStore {
   }
 
   DateTime get _oldest {
-    final t = _day(_now());
+    final t = dayOf(_now());
     return DateTime(t.year, t.month, t.day - (retentionDays - 1));
   }
 
@@ -155,7 +151,7 @@ class FoodLogStore {
 
   void _prune() {
     final oldest = _oldest;
-    _entries.removeWhere((e) => _day(e.at).isBefore(oldest));
+    _entries.removeWhere((e) => dayOf(e.at).isBefore(oldest));
     _water.removeWhere((k, _) => _parseDayKey(k)!.isBefore(oldest));
   }
 
@@ -181,7 +177,7 @@ class FoodLogStore {
               final m = meals[i] as Map<String, dynamic>;
               final items = (m['items'] as String?) ?? '';
               _entries.add(FoodEntry(
-                id: 'legacy-${_dayKey(day)}-$i',
+                id: 'legacy-${dayKey(day)}-$i',
                 at: DateTime(day.year, day.month, day.day, 12, i),
                 slot: slots[i % slots.length],
                 name: items.isEmpty ? m['name'] as String : items,
@@ -213,26 +209,26 @@ class FoodLogStore {
 
   /// Entries of calendar day [d], oldest first.
   List<FoodEntry> day(DateTime d) {
-    final t = _day(d);
+    final t = dayOf(d);
     return [
       for (final e in _entries)
-        if (_day(e.at) == t) e,
+        if (dayOf(e.at) == t) e,
     ]..sort((a, b) => a.at.compareTo(b.at));
   }
 
   /// Entries from [from] to [to], both included (dates).
   List<FoodEntry> between(DateTime from, DateTime to) {
-    final a = _day(from), b = _day(to);
+    final a = dayOf(from), b = dayOf(to);
     return [
       for (final e in _entries)
-        if (!_day(e.at).isBefore(a) && !_day(e.at).isAfter(b)) e,
+        if (!dayOf(e.at).isBefore(a) && !dayOf(e.at).isAfter(b)) e,
     ]..sort((x, y) => x.at.compareTo(y.at));
   }
 
   /// Ids of foods logged in the last [days] days up to [today], newest
   /// first, without repeats.
   List<String> recentFoodIds(DateTime today, {int days = 7}) {
-    final t = _day(today);
+    final t = dayOf(today);
     final from = DateTime(t.year, t.month, t.day - (days - 1));
     final seen = <String>{};
     return [
@@ -253,16 +249,16 @@ class FoodLogStore {
 
   /// Makes [entries] the whole food log of day [d]. Water stays.
   Future<void> replaceDay(DateTime d, List<FoodEntry> entries) {
-    final t = _day(d);
-    _entries.removeWhere((e) => _day(e.at) == t);
+    final t = dayOf(d);
+    _entries.removeWhere((e) => dayOf(e.at) == t);
     _entries.addAll(entries);
     return _save();
   }
 
-  int waterMl(DateTime d) => _water[_dayKey(d)] ?? 0;
+  int waterMl(DateTime d) => _water[dayKey(d)] ?? 0;
 
   Future<void> addWater(DateTime d, int ml) {
-    final k = _dayKey(d);
+    final k = dayKey(d);
     _water[k] = (_water[k] ?? 0) + ml;
     return _save();
   }

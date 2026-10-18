@@ -108,9 +108,11 @@ void main() {
           kind(GoogleSignInExceptionCode.unknownError,
               'A network error occurred'),
           AuthFailureKind.network);
-      expect(NativeSocialSignIn.googleFailure(const GoogleSignInException(
-              code: GoogleSignInExceptionCode.unknownError))
-          .message, contains('Google'));
+      expect(
+          NativeSocialSignIn.googleFailure(const GoogleSignInException(
+                  code: GoogleSignInExceptionCode.unknownError))
+              .message,
+          contains('Google'));
     });
 
     test('Apple and plugin errors', () {
@@ -152,7 +154,9 @@ void main() {
         code: 'provider_disabled',
       ));
       expect(f.kind, AuthFailureKind.providerDisabled);
-      expect(f.message, "Sign in with Google isn't set up on the server yet. "
+      expect(
+          f.message,
+          "Sign in with Google isn't set up on the server yet. "
           'Please use your email for now.');
     });
 
@@ -166,8 +170,7 @@ void main() {
     });
 
     test('network and rate limits keep their messages', () {
-      expect(map(AuthRetryableFetchException()).kind,
-          AuthFailureKind.network);
+      expect(map(AuthRetryableFetchException()).kind, AuthFailureKind.network);
       expect(
           map(const AuthApiException('slow down',
                   statusCode: '429', code: 'over_request_rate_limit'))

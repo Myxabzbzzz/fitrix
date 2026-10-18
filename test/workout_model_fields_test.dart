@@ -146,8 +146,8 @@ void main() {
         ]),
       ],
     );
-    final w = CompletedWorkout.from(active, DateTime(2026, 10, 1, 11),
-        sessionRpe: 7);
+    final w =
+        CompletedWorkout.from(active, DateTime(2026, 10, 1, 11), sessionRpe: 7);
     expect(w.setCount, 1);
     expect(w.sessionRpe, 7);
   });

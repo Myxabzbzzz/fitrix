@@ -16,8 +16,7 @@ Future<(AppSession, SharedPreferences)> _session() async {
 }
 
 void main() {
-  test('sign-out clears the account data but keeps the theme choice',
-      () async {
+  test('sign-out clears the account data but keeps the theme choice', () async {
     final (session, prefs) = await _session();
     await session.signOut();
     expect(prefs.getString('theme_mode'), 'dark');

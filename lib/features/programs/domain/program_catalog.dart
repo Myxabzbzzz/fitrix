@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/progress/domain/progress_math.dart'
@@ -350,7 +351,7 @@ List<PlannedSession> scheduleProgram(TrainingProgram p, DateTime start,
   final days = weekdays.toSet();
   final total = p.weeks * p.perWeek;
   if (days.isEmpty || total == 0) return const [];
-  final s0 = dateOnly(start);
+  final s0 = dayOf(start);
   final tag = '${s0.year.toString().padLeft(4, '0')}'
       '${s0.month.toString().padLeft(2, '0')}'
       '${s0.day.toString().padLeft(2, '0')}';

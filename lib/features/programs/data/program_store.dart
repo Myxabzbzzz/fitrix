@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fitrix/features/plan/data/week_plan.dart';
+import 'package:fitrix/core/time/day_key.dart';
 
 /// The program the user is following. [sessionTemplateIds] maps a program
 /// session name to the workout template created for it.
@@ -18,13 +18,11 @@ class ActiveProgram {
     required DateTime start,
     required this.weekdays,
     required this.sessionTemplateIds,
-  }) : start = dateOnly(start);
+  }) : start = dayOf(start);
 
   Map<String, dynamic> toJson() => {
         'programId': programId,
-        'start': '${start.year.toString().padLeft(4, '0')}-'
-            '${start.month.toString().padLeft(2, '0')}-'
-            '${start.day.toString().padLeft(2, '0')}',
+        'start': dayKey(start),
         'weekdays': weekdays,
         'sessionTemplateIds': sessionTemplateIds,
       };
