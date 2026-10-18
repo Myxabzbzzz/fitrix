@@ -43,6 +43,16 @@ class WeekPlanStore {
     };
   }
 
+  /// Whether the user ever saved a plan or dismissed a suggestion.
+  bool get isSaved => _prefs.containsKey(key);
+
+  /// Replaces everything with a pulled plan (not a user change).
+  void applySynced(List<PlannedSession> sessions, Set<String> dismissed) {
+    _write(sessions, dismissed);
+  }
+
+  void clearAll() => _prefs.remove(key);
+
   Future<void> save(List<PlannedSession> sessions) =>
       _write(sessions, dismissed());
 

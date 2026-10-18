@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/sync/local_changes.dart';
 
 enum Sex { male, female }
 
@@ -71,9 +72,12 @@ class PerformanceProfile {
 const performanceProfileKey = 'performance_profile_v1';
 
 class PerformanceNotifier extends StateNotifier<PerformanceProfile> {
-  PerformanceNotifier(this._prefs) : super(_read(_prefs));
+  PerformanceNotifier(this._prefs, {void Function()? onChanged})
+      : _onChanged = onChanged,
+        super(_read(_prefs));
 
   final SharedPreferences _prefs;
+  final void Function()? _onChanged;
 
   static PerformanceProfile _read(SharedPreferences prefs) {
     final raw = prefs.getString(performanceProfileKey);
@@ -90,11 +94,21 @@ class PerformanceNotifier extends StateNotifier<PerformanceProfile> {
   /// Replaces the whole profile (null fields mean "not set").
   Future<void> save(PerformanceProfile profile) async {
     state = profile;
+    _onChanged?.call();
     await _prefs.setString(performanceProfileKey, jsonEncode(profile.toJson()));
+  }
+
+  /// A profile pulled from the cloud (not a user change).
+  void applySynced(PerformanceProfile profile) {
+    state = profile;
+    _prefs.setString(performanceProfileKey, jsonEncode(profile.toJson()));
   }
 }
 
 final performanceProfileProvider =
     StateNotifierProvider<PerformanceNotifier, PerformanceProfile>(
-  (ref) => PerformanceNotifier(ref.watch(sharedPreferencesProvider)),
+  (ref) => PerformanceNotifier(
+    ref.watch(sharedPreferencesProvider),
+    onChanged: ref.read(localChangesProvider).notify,
+  ),
 );

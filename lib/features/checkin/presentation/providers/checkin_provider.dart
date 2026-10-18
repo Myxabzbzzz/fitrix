@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/data/checkin_store.dart';
@@ -15,7 +16,10 @@ final checkInStoreProvider = Provider<CheckInStore>((ref) => CheckInStore(
 
 class TodayCheckInNotifier extends StateNotifier<CheckIn?> {
   final CheckInStore _store;
-  TodayCheckInNotifier(this._store) : super(_store.today());
+  final void Function()? _onChanged;
+  TodayCheckInNotifier(this._store, {void Function()? onChanged})
+      : _onChanged = onChanged,
+        super(_store.today());
 
   /// Re-reads the store (e.g. the day changed while the app stayed open).
   void refresh() => state = _store.today();
@@ -25,6 +29,7 @@ class TodayCheckInNotifier extends StateNotifier<CheckIn?> {
     // A new check-in starts the day's plan adjustment from scratch.
     await _store.saveSwaps(const []);
     state = _store.today();
+    _onChanged?.call();
   }
 }
 
@@ -33,7 +38,10 @@ final todayCheckInProvider =
   (ref) {
     // A new day rebuilds this, so yesterday's check-in is gone.
     ref.watch(todayProvider);
-    return TodayCheckInNotifier(ref.watch(checkInStoreProvider));
+    return TodayCheckInNotifier(
+      ref.watch(checkInStoreProvider),
+      onChanged: ref.read(localChangesProvider).notify,
+    );
   },
 );
 

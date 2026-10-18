@@ -2,9 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/sync/collections.dart';
+import 'package:fitrix/core/sync/doc_deletions.dart' as sync_deletions;
 import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/core/sync/synced_collection.dart';
-import 'package:fitrix/core/sync/sync_state.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
@@ -69,15 +70,12 @@ class SyncLocal {
   }
 
   /// The synced document collections (filled in as stores adopt sync).
-  List<SyncedCollection> get collections => const [];
+  List<SyncedCollection> get collections => syncedCollections(_ref);
 
   /// A store calls this when the user deletes a synced document, so the
   /// deletion reaches the server (pruning old data must not call it).
   void recordDocDeleted(String kind, String docId) {
-    final state = SyncState.load(prefs);
-    state.docTombstones['$kind/$docId'] = DateTime.now().millisecondsSinceEpoch;
-    state.save(prefs);
-    _ref.read(localChangesProvider).notify();
+    sync_deletions.recordDocDeleted(_ref, kind, docId);
   }
 
   /// Drops all synced data (it belongs to another account).

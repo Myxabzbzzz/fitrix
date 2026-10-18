@@ -1,6 +1,7 @@
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/plan/data/week_plan_store.dart';
@@ -14,12 +15,20 @@ class WeekPlanNotifier extends StateNotifier<List<PlannedSession>> {
   final WeekPlanStore _store;
   final DateTime Function() _now;
 
-  WeekPlanNotifier(this._store, this._now) : super(_store.all());
+  final void Function()? _onChanged;
+
+  WeekPlanNotifier(this._store, this._now, {void Function()? onChanged})
+      : _onChanged = onChanged,
+        super(_store.all());
 
   Future<void> _set(List<PlannedSession> v) {
     state = v;
+    _onChanged?.call();
     return _store.save(v);
   }
+
+  /// The plan pulled from the cloud was stored; show it.
+  void refresh() => state = _store.all();
 
   Future<void> add(PlannedSession s) => _set([...state, s]);
 
@@ -60,13 +69,19 @@ class WeekPlanNotifier extends StateNotifier<List<PlannedSession>> {
 final weekPlanProvider =
     StateNotifierProvider<WeekPlanNotifier, List<PlannedSession>>((ref) {
   return WeekPlanNotifier(
-      ref.watch(weekPlanStoreProvider), ref.read(clockProvider));
+      ref.watch(weekPlanStoreProvider), ref.read(clockProvider),
+      onChanged: ref.read(localChangesProvider).notify);
 });
 
 /// Suggestions the user kept, as "sessionId@monday" keys.
 class DismissedSuggestionsNotifier extends StateNotifier<Set<String>> {
   final WeekPlanStore _store;
-  DismissedSuggestionsNotifier(this._store) : super(_store.dismissed());
+  final void Function()? _onChanged;
+  DismissedSuggestionsNotifier(this._store, {void Function()? onChanged})
+      : _onChanged = onChanged,
+        super(_store.dismissed());
+
+  void refresh() => state = _store.dismissed();
 
   static String keyFor(String sessionId, DateTime today) {
     final m = weekStartOf(today);
@@ -75,13 +90,17 @@ class DismissedSuggestionsNotifier extends StateNotifier<Set<String>> {
 
   Future<void> dismiss(String sessionId, DateTime today) {
     state = {...state, keyFor(sessionId, today)};
+    _onChanged?.call();
     return _store.saveDismissed(state);
   }
 }
 
 final dismissedSuggestionsProvider =
     StateNotifierProvider<DismissedSuggestionsNotifier, Set<String>>(
-  (ref) => DismissedSuggestionsNotifier(ref.watch(weekPlanStoreProvider)),
+  (ref) => DismissedSuggestionsNotifier(
+    ref.watch(weekPlanStoreProvider),
+    onChanged: ref.read(localChangesProvider).notify,
+  ),
 );
 
 /// Today's sessions that are not done yet, in plan order.

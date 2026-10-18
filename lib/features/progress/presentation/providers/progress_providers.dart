@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/sync/doc_deletions.dart';
+import 'package:fitrix/core/sync/local_changes.dart';
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/profile/data/models/profile_row.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
@@ -27,6 +30,7 @@ class BodyWeightNotifier extends StateNotifier<List<WeighIn>> {
   Future<void> log(WeighIn w) async {
     await _ref.read(bodyWeightStoreProvider).add(w);
     state = _ref.read(bodyWeightStoreProvider).all();
+    _ref.read(localChangesProvider).notify();
     final profile = _ref.read(profileProvider).valueOrNull ??
         await _ref.read(profileRepositoryProvider).getProfile();
     if (profile == null) return;
@@ -50,6 +54,7 @@ class BodyWeightNotifier extends StateNotifier<List<WeighIn>> {
         .firstOrNull;
     await store.add(w);
     state = store.all();
+    _ref.read(localChangesProvider).notify();
     return replaced;
   }
 
@@ -60,5 +65,15 @@ class BodyWeightNotifier extends StateNotifier<List<WeighIn>> {
     await store.remove(at);
     if (replaced != null) await store.add(replaced);
     state = store.all();
+    // The restored weigh-in is the same day's doc with older content; only
+    // without one is the day's doc gone.
+    if (replaced == null) {
+      recordDocDeleted(_ref, 'weight', dayKey(at));
+    } else {
+      _ref.read(localChangesProvider).notify();
+    }
   }
+
+  /// Weigh-ins pulled from the cloud: screens re-read the store.
+  void refresh() => state = _ref.read(bodyWeightStoreProvider).all();
 }

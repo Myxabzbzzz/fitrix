@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WeighIn {
@@ -55,6 +56,28 @@ class BodyWeightStore {
     return _prefs.setString(
         key, jsonEncode([for (final e in next) e.toJson()]));
   }
+
+  /// Applies weigh-ins pulled from the cloud, by day key (null = deleted
+  /// there, matched by the calendar day). Returns whether anything changed.
+  bool applySynced(Map<String, WeighIn?> byDay) {
+    final current = {for (final w in all()) dayKey(w.at): w};
+    var changed = false;
+    for (final e in byDay.entries) {
+      final w = e.value;
+      if (w == null) {
+        if (current.remove(e.key) != null) changed = true;
+      } else {
+        current[dayKey(w.at)] = w;
+        changed = true;
+      }
+    }
+    if (!changed) return false;
+    final list = current.values.toList()..sort((a, b) => a.at.compareTo(b.at));
+    _prefs.setString(key, jsonEncode([for (final e in list) e.toJson()]));
+    return true;
+  }
+
+  void clearAll() => _prefs.remove(key);
 
   /// Removes the weigh-in taken at exactly [at].
   Future<void> remove(DateTime at) => _prefs.setString(

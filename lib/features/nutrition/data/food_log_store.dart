@@ -237,6 +237,67 @@ class FoodLogStore {
     ];
   }
 
+  /// All entries and water days, as stored.
+  List<FoodEntry> allEntries() => List.unmodifiable(_entries);
+  Map<String, int> waterDays() => Map.unmodifiable(_water);
+
+  bool hasEntry(String id) => _entries.any((e) => e.id == id);
+
+  /// Applies entries (by id) and water days pulled from the cloud; a null
+  /// value means deleted there. Days outside the retention window are
+  /// ignored (a full pull re-delivers them and they must not come back).
+  /// Returns whether anything changed; nothing is written otherwise.
+  bool applySynced({
+    Map<String, FoodEntry?> entries = const {},
+    Map<String, int?> water = const {},
+  }) {
+    final oldest = _oldest;
+    var changed = false;
+    for (final e in entries.entries) {
+      final entry = e.value;
+      final i = _entries.indexWhere((x) => x.id == e.key);
+      if (entry == null) {
+        if (i >= 0) {
+          _entries.removeAt(i);
+          changed = true;
+        }
+      } else {
+        if (dayOf(entry.at).isBefore(oldest)) continue;
+        if (i >= 0) {
+          _entries[i] = entry;
+        } else {
+          _entries.add(entry);
+        }
+        changed = true;
+      }
+    }
+    for (final e in water.entries) {
+      final day = _parseDayKey(e.key);
+      if (day == null || day.isBefore(oldest)) continue;
+      final ml = e.value;
+      if (ml == null) {
+        if (_water.remove(e.key) != null) changed = true;
+      } else {
+        _water[e.key] = ml;
+        changed = true;
+      }
+    }
+    if (changed) _save();
+    return changed;
+  }
+
+  /// Drops all entries (water stays); used when another account signs in.
+  void clearEntries() {
+    _entries.clear();
+    _save();
+  }
+
+  /// Drops all water days.
+  void clearWater() {
+    _water.clear();
+    _save();
+  }
+
   Future<void> add(FoodEntry e) {
     _entries.add(e);
     return _save();

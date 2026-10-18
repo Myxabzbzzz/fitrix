@@ -111,21 +111,25 @@ class NutritionSettings {
   Map<String, Object> toJson() =>
       {'goal': goal.name, 'proteinPerKg': proteinPerKg, 'fatPerKg': fatPerKg};
 
+  /// Tolerant: unknown or missing fields fall back to the defaults.
+  factory NutritionSettings.fromJson(Map<String, dynamic> j) {
+    double clamp(Object? v, double lo, double hi, double fallback) =>
+        v is num ? v.toDouble().clamp(lo, hi) : fallback;
+    return NutritionSettings(
+      goal: Goal.values.where((g) => g.name == j['goal']).firstOrNull ??
+          Goal.maintain,
+      proteinPerKg: clamp(
+          j['proteinPerKg'], proteinPerKgRange.min, proteinPerKgRange.max, 1.8),
+      fatPerKg: clamp(j['fatPerKg'], fatPerKgRange.min, fatPerKgRange.max, 1.0),
+    );
+  }
+
   factory NutritionSettings.read(SharedPreferences prefs) {
     final raw = prefs.getString(key);
     if (raw == null) return const NutritionSettings();
     try {
-      final j = jsonDecode(raw) as Map<String, dynamic>;
-      double clamp(Object? v, double lo, double hi, double fallback) =>
-          v is num ? v.toDouble().clamp(lo, hi) : fallback;
-      return NutritionSettings(
-        goal: Goal.values.where((g) => g.name == j['goal']).firstOrNull ??
-            Goal.maintain,
-        proteinPerKg: clamp(j['proteinPerKg'], proteinPerKgRange.min,
-            proteinPerKgRange.max, 1.8),
-        fatPerKg:
-            clamp(j['fatPerKg'], fatPerKgRange.min, fatPerKgRange.max, 1.0),
-      );
+      return NutritionSettings.fromJson(
+          jsonDecode(raw) as Map<String, dynamic>);
     } catch (_) {
       return const NutritionSettings();
     }

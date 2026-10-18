@@ -33,6 +33,41 @@ class CheckInStore {
     }
   }
 
+  /// All stored check-ins, oldest first.
+  List<CheckIn> all() => _all()..sort((a, b) => a.at.compareTo(b.at));
+
+  bool _inRetention(DateTime at) => !dayOf(at)
+      .isBefore(dayOf(_now()).subtract(const Duration(days: keepDays)));
+
+  /// Applies check-ins pulled from the cloud, by day key (null = deleted
+  /// there). Days outside the retention window are ignored: a full pull
+  /// brings every old day back and they must not be stored again. Returns
+  /// whether anything changed (nothing is written otherwise).
+  bool applySynced(Map<String, CheckIn?> byDay) {
+    final current = {for (final c in _all()) dayKey(c.at): c};
+    var changed = false;
+    for (final e in byDay.entries) {
+      final c = e.value;
+      if (c == null) {
+        if (current.remove(e.key) != null) changed = true;
+      } else {
+        if (!_inRetention(c.at)) continue;
+        current[dayKey(c.at)] = c;
+        changed = true;
+      }
+    }
+    if (!changed) return false;
+    final list = current.values.toList()..sort((a, b) => a.at.compareTo(b.at));
+    _prefs.setString(key, jsonEncode([for (final o in list) o.toJson()]));
+    return true;
+  }
+
+  /// Drops every check-in (and swaps).
+  void clearAll() {
+    _prefs.remove(key);
+    _prefs.remove(swapsKey);
+  }
+
   /// Today's check-in (calendar day of the clock), or null.
   CheckIn? today() {
     final t = dayOf(_now());

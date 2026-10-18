@@ -1,6 +1,8 @@
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/sync/doc_deletions.dart';
+import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
@@ -15,22 +17,39 @@ final programStoreProvider = Provider<ProgramStore>(
 
 class ActiveProgramNotifier extends StateNotifier<ActiveProgram?> {
   final ProgramStore _store;
-  ActiveProgramNotifier(this._store) : super(_store.load());
+  final void Function()? _onChanged;
+  final void Function()? _onCleared;
+
+  ActiveProgramNotifier(this._store,
+      {void Function()? onChanged, void Function()? onCleared})
+      : _onChanged = onChanged,
+        _onCleared = onCleared,
+        super(_store.load());
 
   Future<void> set(ActiveProgram p) {
     state = p;
+    _onChanged?.call();
     return _store.save(p);
   }
 
   Future<void> clear() {
+    final had = state != null;
     state = null;
+    if (had) _onCleared?.call();
     return _store.clear();
   }
+
+  /// The program pulled from the cloud was stored (or removed); show it.
+  void refresh() => state = _store.load();
 }
 
 final activeProgramProvider =
     StateNotifierProvider<ActiveProgramNotifier, ActiveProgram?>(
-  (ref) => ActiveProgramNotifier(ref.watch(programStoreProvider)),
+  (ref) => ActiveProgramNotifier(
+    ref.watch(programStoreProvider),
+    onChanged: ref.read(localChangesProvider).notify,
+    onCleared: () => recordDocDeleted(ref, 'program', 'active'),
+  ),
 );
 
 /// The program being followed, resolved in the catalog. Null when none or

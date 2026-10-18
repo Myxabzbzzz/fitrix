@@ -4,6 +4,7 @@ import 'package:fitrix/core/time/day_key.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
@@ -15,12 +16,23 @@ class FelixTemplateIdsNotifier extends StateNotifier<Set<String>> {
 
   final SharedPreferences _prefs;
 
-  FelixTemplateIdsNotifier(this._prefs)
-      : super({...?_prefs.getStringList(key)});
+  final void Function()? _onChanged;
+
+  FelixTemplateIdsNotifier(this._prefs, {void Function()? onChanged})
+      : _onChanged = onChanged,
+        super({...?_prefs.getStringList(key)});
+
+  /// Ids and batches pulled from the cloud (not a user change).
+  void applySynced(List<String> ids, Map<String, dynamic> batches) {
+    state = {...ids};
+    _prefs.setStringList(key, ids);
+    _prefs.setString(batchesKey, jsonEncode(batches));
+  }
 
   void add(Iterable<String> ids) {
     state = {...state, ...ids};
     _prefs.setStringList(key, state.toList());
+    _onChanged?.call();
   }
 
   void remove(Iterable<String> ids) {
@@ -30,6 +42,7 @@ class FelixTemplateIdsNotifier extends StateNotifier<Set<String>> {
         if (!gone.contains(id)) id
     };
     _prefs.setStringList(key, state.toList());
+    _onChanged?.call();
   }
 
   Map<String, dynamic> _batches() {
@@ -49,6 +62,7 @@ class FelixTemplateIdsNotifier extends StateNotifier<Set<String>> {
       all.remove(all.keys.first);
     }
     _prefs.setString(batchesKey, jsonEncode(all));
+    _onChanged?.call();
   }
 
   List<String> batch(int at) {
@@ -59,7 +73,8 @@ class FelixTemplateIdsNotifier extends StateNotifier<Set<String>> {
 
 final felixTemplateIdsProvider =
     StateNotifierProvider<FelixTemplateIdsNotifier, Set<String>>((ref) =>
-        FelixTemplateIdsNotifier(ref.watch(sharedPreferencesProvider)));
+        FelixTemplateIdsNotifier(ref.watch(sharedPreferencesProvider),
+            onChanged: ref.read(localChangesProvider).notify));
 
 /// The id of the planned session [scheduleFelixPlan] makes for a template.
 String felixSessionId(String templateId) => 'felix-$templateId';

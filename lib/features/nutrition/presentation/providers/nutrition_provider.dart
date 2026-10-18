@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/sync/doc_deletions.dart';
+import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
@@ -21,39 +23,66 @@ final foodLogStoreProvider = Provider<FoodLogStore>(
 /// write; read the data through the providers below.
 class FoodLogNotifier extends StateNotifier<int> {
   final FoodLogStore _store;
+  final void Function()? _onChanged;
+  final void Function(String id)? _onRemoved;
 
-  FoodLogNotifier(this._store) : super(0);
+  FoodLogNotifier(this._store,
+      {void Function()? onChanged, void Function(String id)? onRemoved})
+      : _onChanged = onChanged,
+        _onRemoved = onRemoved,
+        super(0);
 
   FoodLogStore get store => _store;
+
+  /// The log changed outside the user's hands (sync): screens re-read it.
+  void refresh() => state++;
 
   Future<void> add(FoodEntry e) async {
     final saved = _store.add(e);
     state++;
+    _onChanged?.call();
     await saved;
   }
 
   Future<void> remove(String id) async {
+    final existed = _store.hasEntry(id);
     final saved = _store.remove(id);
     state++;
+    if (existed) _onRemoved?.call(id);
+    _onChanged?.call();
     await saved;
   }
 
   Future<void> addWater(DateTime day, int ml) async {
     final saved = _store.addWater(day, ml);
     state++;
+    _onChanged?.call();
     await saved;
   }
 
   /// Makes [entries] the whole food log of [day] (a Felix meal plan).
   Future<void> replaceDay(DateTime day, List<FoodEntry> entries) async {
+    final keep = {for (final e in entries) e.id};
+    final removed = [
+      for (final e in _store.day(day))
+        if (!keep.contains(e.id)) e.id,
+    ];
     final saved = _store.replaceDay(day, entries);
     state++;
+    for (final id in removed) {
+      _onRemoved?.call(id);
+    }
+    _onChanged?.call();
     await saved;
   }
 }
 
 final foodLogProvider = StateNotifierProvider<FoodLogNotifier, int>(
-  (ref) => FoodLogNotifier(ref.watch(foodLogStoreProvider)),
+  (ref) => FoodLogNotifier(
+    ref.watch(foodLogStoreProvider),
+    onChanged: ref.read(localChangesProvider).notify,
+    onRemoved: (id) => recordDocDeleted(ref, 'food', id),
+  ),
 );
 
 /// What was logged today, oldest first.
@@ -71,18 +100,30 @@ final todayWaterProvider = Provider<int>((ref) {
 
 class NutritionSettingsNotifier extends StateNotifier<NutritionSettings> {
   final SharedPreferences _prefs;
-  NutritionSettingsNotifier(this._prefs)
-      : super(NutritionSettings.read(_prefs));
+  final void Function()? _onChanged;
+  NutritionSettingsNotifier(this._prefs, {void Function()? onChanged})
+      : _onChanged = onChanged,
+        super(NutritionSettings.read(_prefs));
 
   Future<void> save(NutritionSettings s) {
     state = s;
+    _onChanged?.call();
     return s.write(_prefs);
+  }
+
+  /// Settings pulled from the cloud (not a user change).
+  void applySynced(NutritionSettings s) {
+    state = s;
+    s.write(_prefs);
   }
 }
 
 final nutritionSettingsProvider =
     StateNotifierProvider<NutritionSettingsNotifier, NutritionSettings>(
-  (ref) => NutritionSettingsNotifier(ref.watch(sharedPreferencesProvider)),
+  (ref) => NutritionSettingsNotifier(
+    ref.watch(sharedPreferencesProvider),
+    onChanged: ref.read(localChangesProvider).notify,
+  ),
 );
 
 /// Age, weight and height from the profile; null where missing.
