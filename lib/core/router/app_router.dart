@@ -17,6 +17,9 @@ import 'package:fitrix/features/plan/presentation/screens/week_plan_screen.dart'
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
 import 'package:fitrix/features/shell/presentation/fading_branch_container.dart';
 import 'package:fitrix/features/shell/presentation/main_shell.dart';
+import 'package:fitrix/features/exercises/presentation/add_exercise_screen.dart';
+import 'package:fitrix/features/exercises/presentation/exercise_detail_screen.dart';
+import 'package:fitrix/features/exercises/presentation/exercise_library_screen.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/screens/my_workouts_screen.dart';
 import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_screen.dart';
@@ -48,6 +51,8 @@ class AppRouter {
   // Home sections
   static const String workouts = '/home/workouts';
   static const String workoutComplete = '/home/workouts/complete';
+  static const String exerciseLibrary = '/home/workouts/exercises';
+  static const String addExercise = '/home/workouts/exercises/add';
   static const String progress = '/home/progress';
   static const String nutrition = '/home/nutrition';
   static const String fitrixMap = '/home/map';
@@ -55,6 +60,13 @@ class AppRouter {
   static const String weekPlan = '/home/plan';
 
   static String article(String id) => '$discover/article/$id';
+
+  static String exercise(String id) => '$exerciseLibrary/$id';
+
+  /// The add-exercise picker for the live log; [replace] swaps the exercise
+  /// at [index] instead of adding.
+  static String addExerciseTo({bool replace = false, int index = 0}) =>
+      '$addExercise?mode=${replace ? 'replace' : 'add'}&index=$index';
 
   static String sportWorkouts(Sport sport) => '$workouts/${sport.name}';
 
@@ -223,6 +235,37 @@ class AppRouter {
                             name: 'workoutComplete',
                             builder: (context, state) =>
                                 const WorkoutCompleteScreen(),
+                          ),
+                          GoRoute(
+                            path: 'exercises',
+                            name: 'exerciseLibrary',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              const ExerciseLibraryScreen(),
+                            ),
+                            routes: [
+                              // Before ':id' so "add" isn't read as an id.
+                              GoRoute(
+                                path: 'add',
+                                name: 'addExercise',
+                                builder: (context, state) => AddExerciseScreen(
+                                  replace: state.uri.queryParameters['mode'] ==
+                                      'replace',
+                                  index: int.tryParse(
+                                          state.uri.queryParameters['index'] ??
+                                              '') ??
+                                      0,
+                                ),
+                              ),
+                              GoRoute(
+                                path: ':id',
+                                name: 'exerciseDetail',
+                                builder: (context, state) =>
+                                    ExerciseDetailScreen(
+                                        id: state.pathParameters['id']!),
+                              ),
+                            ],
                           ),
                           GoRoute(
                             path: ':sport',

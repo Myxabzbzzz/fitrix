@@ -3012,6 +3012,348 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Plan next week'**
   String get planPlanNextWeek;
+
+  /// No description provided for @exercisesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercises'**
+  String get exercisesTitle;
+
+  /// No description provided for @exercisesSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search {n} exercises'**
+  String exercisesSearch(int n);
+
+  /// No description provided for @exercisesSearchShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Search exercises'**
+  String get exercisesSearchShort;
+
+  /// No description provided for @exercisesAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get exercisesAll;
+
+  /// No description provided for @exercisesAnyEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Any equipment'**
+  String get exercisesAnyEquipment;
+
+  /// No description provided for @exercisesRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Your recent'**
+  String get exercisesRecent;
+
+  /// No description provided for @exercisesFromWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'from workouts'**
+  String get exercisesFromWorkouts;
+
+  /// No description provided for @exercisesBest.
+  ///
+  /// In en, this message translates to:
+  /// **'best'**
+  String get exercisesBest;
+
+  /// No description provided for @exercisesAZ.
+  ///
+  /// In en, this message translates to:
+  /// **'All · A–Z'**
+  String get exercisesAZ;
+
+  /// No description provided for @exercisesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, one{{n} exercise} other{{n} exercises}}'**
+  String exercisesCount(int n);
+
+  /// No description provided for @exercisesNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No exercises match. Try another filter.'**
+  String get exercisesNoMatch;
+
+  /// No description provided for @muscleChest.
+  ///
+  /// In en, this message translates to:
+  /// **'Chest'**
+  String get muscleChest;
+
+  /// No description provided for @muscleBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get muscleBack;
+
+  /// No description provided for @muscleShoulders.
+  ///
+  /// In en, this message translates to:
+  /// **'Shoulders'**
+  String get muscleShoulders;
+
+  /// No description provided for @muscleArms.
+  ///
+  /// In en, this message translates to:
+  /// **'Arms'**
+  String get muscleArms;
+
+  /// No description provided for @muscleLegs.
+  ///
+  /// In en, this message translates to:
+  /// **'Legs'**
+  String get muscleLegs;
+
+  /// No description provided for @muscleGlutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Glutes'**
+  String get muscleGlutes;
+
+  /// No description provided for @muscleCore.
+  ///
+  /// In en, this message translates to:
+  /// **'Core'**
+  String get muscleCore;
+
+  /// No description provided for @equipBarbell.
+  ///
+  /// In en, this message translates to:
+  /// **'Barbell'**
+  String get equipBarbell;
+
+  /// No description provided for @equipDumbbell.
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbell'**
+  String get equipDumbbell;
+
+  /// No description provided for @equipCable.
+  ///
+  /// In en, this message translates to:
+  /// **'Cable'**
+  String get equipCable;
+
+  /// No description provided for @equipMachine.
+  ///
+  /// In en, this message translates to:
+  /// **'Machine'**
+  String get equipMachine;
+
+  /// No description provided for @equipBodyweight.
+  ///
+  /// In en, this message translates to:
+  /// **'Bodyweight'**
+  String get equipBodyweight;
+
+  /// No description provided for @equipKettlebell.
+  ///
+  /// In en, this message translates to:
+  /// **'Kettlebell'**
+  String get equipKettlebell;
+
+  /// No description provided for @levelBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get levelBeginner;
+
+  /// No description provided for @levelIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get levelIntermediate;
+
+  /// No description provided for @levelAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get levelAdvanced;
+
+  /// No description provided for @exerciseCompound.
+  ///
+  /// In en, this message translates to:
+  /// **'Compound'**
+  String get exerciseCompound;
+
+  /// No description provided for @exerciseDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise'**
+  String get exerciseDetailTitle;
+
+  /// No description provided for @exercisePrimary.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary'**
+  String get exercisePrimary;
+
+  /// No description provided for @exerciseSecondary.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary'**
+  String get exerciseSecondary;
+
+  /// No description provided for @exerciseYourNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Your numbers'**
+  String get exerciseYourNumbers;
+
+  /// No description provided for @exerciseBestSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Best set'**
+  String get exerciseBestSet;
+
+  /// No description provided for @exerciseE1rm.
+  ///
+  /// In en, this message translates to:
+  /// **'e1RM'**
+  String get exerciseE1rm;
+
+  /// No description provided for @exerciseSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get exerciseSessions;
+
+  /// No description provided for @exerciseChangeSince.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct} since {month}'**
+  String exerciseChangeSince(String pct, String month);
+
+  /// No description provided for @exerciseNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Do it once to see your numbers'**
+  String get exerciseNoHistory;
+
+  /// No description provided for @exerciseHowTo.
+  ///
+  /// In en, this message translates to:
+  /// **'How to do it'**
+  String get exerciseHowTo;
+
+  /// No description provided for @exerciseMistakes.
+  ///
+  /// In en, this message translates to:
+  /// **'Common mistakes'**
+  String get exerciseMistakes;
+
+  /// No description provided for @exerciseSimilar.
+  ///
+  /// In en, this message translates to:
+  /// **'Similar'**
+  String get exerciseSimilar;
+
+  /// No description provided for @exerciseAskFelix.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Felix'**
+  String get exerciseAskFelix;
+
+  /// No description provided for @exerciseAskFelixDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I improve my {name}?'**
+  String exerciseAskFelixDraft(String name);
+
+  /// No description provided for @exerciseAddToWorkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to workout'**
+  String get exerciseAddToWorkout;
+
+  /// No description provided for @exerciseAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to your workout'**
+  String get exerciseAdded;
+
+  /// No description provided for @exerciseQuickWorkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick workout'**
+  String get exerciseQuickWorkout;
+
+  /// No description provided for @addExerciseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to {workout}'**
+  String addExerciseTitle(String workout);
+
+  /// No description provided for @addExerciseSwapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap in {workout}'**
+  String addExerciseSwapTitle(String workout);
+
+  /// No description provided for @addExerciseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{group} got {n} sets this week, target is {target}.'**
+  String addExerciseHint(String group, int n, int target);
+
+  /// No description provided for @addExerciseSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested'**
+  String get addExerciseSuggested;
+
+  /// No description provided for @addExerciseSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} selected'**
+  String addExerciseSelected(int n);
+
+  /// No description provided for @addExerciseLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get addExerciseLibrary;
+
+  /// No description provided for @addExerciseInWorkout.
+  ///
+  /// In en, this message translates to:
+  /// **'In this workout'**
+  String get addExerciseInWorkout;
+
+  /// No description provided for @addExerciseButton.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, one{Add {n} exercise} other{Add {n} exercises}}'**
+  String addExerciseButton(int n);
+
+  /// No description provided for @addExerciseSwap.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap'**
+  String get addExerciseSwap;
+
+  /// No description provided for @workoutMenuSwapSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from the library'**
+  String get workoutMenuSwapSub;
+
+  /// No description provided for @gymExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercises'**
+  String get gymExercises;
+
+  /// No description provided for @gymExercisesSub.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} with technique and your best sets'**
+  String gymExercisesSub(int n);
 }
 
 class _AppLocalizationsDelegate

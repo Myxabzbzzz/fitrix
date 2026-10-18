@@ -1381,5 +1381,141 @@
   "planPlanWeek": "Plan my week",
   "planEntryEmpty": "Plan your training week",
   "planNextWeek": "Next week",
-  "planPlanNextWeek": "Plan next week"
+  "planPlanNextWeek": "Plan next week",
+  "exercisesTitle": "Exercises",
+  "exercisesSearch": "Search {n} exercises",
+  "@exercisesSearch": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "exercisesSearchShort": "Search exercises",
+  "exercisesAll": "All",
+  "exercisesAnyEquipment": "Any equipment",
+  "exercisesRecent": "Your recent",
+  "exercisesFromWorkouts": "from workouts",
+  "exercisesBest": "best",
+  "exercisesAZ": "All · A–Z",
+  "exercisesCount": "{n, plural, one{{n} exercise} other{{n} exercises}}",
+  "@exercisesCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "exercisesNoMatch": "No exercises match. Try another filter.",
+  "muscleChest": "Chest",
+  "muscleBack": "Back",
+  "muscleShoulders": "Shoulders",
+  "muscleArms": "Arms",
+  "muscleLegs": "Legs",
+  "muscleGlutes": "Glutes",
+  "muscleCore": "Core",
+  "equipBarbell": "Barbell",
+  "equipDumbbell": "Dumbbell",
+  "equipCable": "Cable",
+  "equipMachine": "Machine",
+  "equipBodyweight": "Bodyweight",
+  "equipKettlebell": "Kettlebell",
+  "levelBeginner": "Beginner",
+  "levelIntermediate": "Intermediate",
+  "levelAdvanced": "Advanced",
+  "exerciseCompound": "Compound",
+  "exerciseDetailTitle": "Exercise",
+  "exercisePrimary": "Primary",
+  "exerciseSecondary": "Secondary",
+  "exerciseYourNumbers": "Your numbers",
+  "exerciseBestSet": "Best set",
+  "exerciseE1rm": "e1RM",
+  "exerciseSessions": "Sessions",
+  "exerciseChangeSince": "{pct} since {month}",
+  "@exerciseChangeSince": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "exerciseNoHistory": "Do it once to see your numbers",
+  "exerciseHowTo": "How to do it",
+  "exerciseMistakes": "Common mistakes",
+  "exerciseSimilar": "Similar",
+  "exerciseAskFelix": "Ask Felix",
+  "exerciseAskFelixDraft": "How do I improve my {name}?",
+  "@exerciseAskFelixDraft": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exerciseAddToWorkout": "Add to workout",
+  "exerciseAdded": "Added to your workout",
+  "exerciseQuickWorkout": "Quick workout",
+  "addExerciseTitle": "Add to {workout}",
+  "@addExerciseTitle": {
+    "placeholders": {
+      "workout": {
+        "type": "String"
+      }
+    }
+  },
+  "addExerciseSwapTitle": "Swap in {workout}",
+  "@addExerciseSwapTitle": {
+    "placeholders": {
+      "workout": {
+        "type": "String"
+      }
+    }
+  },
+  "addExerciseHint": "{group} got {n} sets this week, target is {target}.",
+  "@addExerciseHint": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "addExerciseSuggested": "Suggested",
+  "addExerciseSelected": "{n} selected",
+  "@addExerciseSelected": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "addExerciseLibrary": "Library",
+  "addExerciseInWorkout": "In this workout",
+  "addExerciseButton": "{n, plural, one{Add {n} exercise} other{Add {n} exercises}}",
+  "@addExerciseButton": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "addExerciseSwap": "Swap",
+  "workoutMenuSwapSub": "Choose from the library",
+  "gymExercises": "Exercises",
+  "gymExercisesSub": "{n} with technique and your best sets",
+  "@gymExercisesSub": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  }
 }

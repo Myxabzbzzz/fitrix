@@ -142,6 +142,13 @@ Widget _app(ProviderContainer c, {double textScale = 1}) {
       builder: (_, __) => const Scaffold(body: Text('progress page')),
     ),
     GoRoute(
+      path: AppRouter.addExercise,
+      builder: (_, state) => Scaffold(
+        body: Text('picker mode=${state.uri.queryParameters['mode']} '
+            'index=${state.uri.queryParameters['index']}'),
+      ),
+    ),
+    GoRoute(
       path: AppRouter.home,
       builder: (_, __) => const Scaffold(body: Text('home page')),
     ),
@@ -449,8 +456,7 @@ void main() {
       await _leave(tester);
     });
 
-    testWidgets('menu: swap shows similar exercises and replaces',
-        (tester) async {
+    testWidgets('menu: swap opens the picker in replace mode', (tester) async {
       final c = await _container();
       await _open(tester, c);
       await tester.tap(find.byKey(const ValueKey('exerciseMenu-0')));
@@ -458,9 +464,10 @@ void main() {
       expect(find.text('Similar: Dumbbell row'), findsOneWidget);
       await tester.tap(find.text('Swap exercise'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Dumbbell row'));
-      await tester.pumpAndSettle();
-      expect(c.read(activeWorkoutProvider)!.exercises[0].name, 'Dumbbell row');
+      expect(find.text('picker mode=replace index=0'), findsOneWidget);
+      // The workout stays active and the sheet folds down behind the picker.
+      expect(c.read(activeWorkoutProvider), isNotNull);
+      expect(c.read(activeWorkoutExpandedProvider), isFalse);
       await _leave(tester);
     });
 

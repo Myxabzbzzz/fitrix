@@ -1770,4 +1770,197 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get planPlanNextWeek => 'Keyingi haftani rejalashtirish';
+
+  @override
+  String get exercisesTitle => 'Mashqlar';
+
+  @override
+  String exercisesSearch(int n) {
+    return '$n ta mashq ichidan qidirish';
+  }
+
+  @override
+  String get exercisesSearchShort => 'Mashqlarni qidirish';
+
+  @override
+  String get exercisesAll => 'Hammasi';
+
+  @override
+  String get exercisesAnyEquipment => 'Istalgan jihoz';
+
+  @override
+  String get exercisesRecent => 'So‘nggi mashqlaringiz';
+
+  @override
+  String get exercisesFromWorkouts => 'mashg‘ulotlardan';
+
+  @override
+  String get exercisesBest => 'eng yaxshi';
+
+  @override
+  String get exercisesAZ => 'Hammasi · A–Z';
+
+  @override
+  String exercisesCount(int n) {
+    return '$n ta mashq';
+  }
+
+  @override
+  String get exercisesNoMatch =>
+      'Hech narsa topilmadi. Boshqa filtrni sinab ko‘ring.';
+
+  @override
+  String get muscleChest => 'Ko‘krak';
+
+  @override
+  String get muscleBack => 'Orqa';
+
+  @override
+  String get muscleShoulders => 'Yelka';
+
+  @override
+  String get muscleArms => 'Qo‘llar';
+
+  @override
+  String get muscleLegs => 'Oyoqlar';
+
+  @override
+  String get muscleGlutes => 'Dumba';
+
+  @override
+  String get muscleCore => 'Korpus';
+
+  @override
+  String get equipBarbell => 'Shtanga';
+
+  @override
+  String get equipDumbbell => 'Gantel';
+
+  @override
+  String get equipCable => 'Trenajyor trosi';
+
+  @override
+  String get equipMachine => 'Trenajyor';
+
+  @override
+  String get equipBodyweight => 'O‘z vazni';
+
+  @override
+  String get equipKettlebell => 'Girya';
+
+  @override
+  String get levelBeginner => 'Boshlovchi';
+
+  @override
+  String get levelIntermediate => 'O‘rta';
+
+  @override
+  String get levelAdvanced => 'Yuqori';
+
+  @override
+  String get exerciseCompound => 'Asosiy';
+
+  @override
+  String get exerciseDetailTitle => 'Mashq';
+
+  @override
+  String get exercisePrimary => 'Asosiy';
+
+  @override
+  String get exerciseSecondary => 'Yordamchi';
+
+  @override
+  String get exerciseYourNumbers => 'Sizning natijalaringiz';
+
+  @override
+  String get exerciseBestSet => 'Eng yaxshi yondashuv';
+
+  @override
+  String get exerciseE1rm => 'e1RM';
+
+  @override
+  String get exerciseSessions => 'Mashg‘ulotlar';
+
+  @override
+  String exerciseChangeSince(String pct, String month) {
+    return '${month}dan beri $pct';
+  }
+
+  @override
+  String get exerciseNoHistory =>
+      'Natijalaringizni ko‘rish uchun bir marta bajaring';
+
+  @override
+  String get exerciseHowTo => 'Qanday bajariladi';
+
+  @override
+  String get exerciseMistakes => 'Ko‘p uchraydigan xatolar';
+
+  @override
+  String get exerciseSimilar => 'O‘xshash';
+
+  @override
+  String get exerciseAskFelix => 'Felixdan so‘rash';
+
+  @override
+  String exerciseAskFelixDraft(String name) {
+    return '$name mashqini qanday yaxshilayman?';
+  }
+
+  @override
+  String get exerciseAddToWorkout => 'Mashg‘ulotga qo‘shish';
+
+  @override
+  String get exerciseAdded => 'Mashg‘ulotga qo‘shildi';
+
+  @override
+  String get exerciseQuickWorkout => 'Tezkor mashg‘ulot';
+
+  @override
+  String addExerciseTitle(String workout) {
+    return '«$workout»ga qo‘shish';
+  }
+
+  @override
+  String addExerciseSwapTitle(String workout) {
+    return '«$workout»da almashtirish';
+  }
+
+  @override
+  String addExerciseHint(String group, int n, int target) {
+    return '$group: bu hafta $n yondashuv, maqsad — $target.';
+  }
+
+  @override
+  String get addExerciseSuggested => 'Tavsiya etiladi';
+
+  @override
+  String addExerciseSelected(int n) {
+    return 'Tanlandi: $n';
+  }
+
+  @override
+  String get addExerciseLibrary => 'Kutubxona';
+
+  @override
+  String get addExerciseInWorkout => 'Shu mashg‘ulotda';
+
+  @override
+  String addExerciseButton(int n) {
+    return '$n ta mashq qo‘shish';
+  }
+
+  @override
+  String get addExerciseSwap => 'Almashtirish';
+
+  @override
+  String get workoutMenuSwapSub => 'Kutubxonadan tanlang';
+
+  @override
+  String get gymExercises => 'Mashqlar';
+
+  @override
+  String gymExercisesSub(int n) {
+    return '$n ta mashq: texnika va eng yaxshi natijalar';
+  }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
@@ -35,7 +37,6 @@ class ExerciseMenuSheet extends ConsumerStatefulWidget {
 
 class _ExerciseMenuSheetState extends ConsumerState<ExerciseMenuSheet> {
   late int _index = widget.exerciseIndex;
-  bool _swapping = false;
 
   static const _stepSeconds = 30;
   static const _minRest = 30;
@@ -104,136 +105,116 @@ class _ExerciseMenuSheetState extends ConsumerState<ExerciseMenuSheet> {
       l10n.workoutSetCount(working.length),
     ].join(' · ');
 
-    final Widget body;
-    if (_swapping) {
-      body = Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (final s in similar)
-            _MenuRow(
-              icon: Icons.swap_horiz,
-              title: s.name,
-              subtitle: s.pattern,
-              onTap: () {
-                notifier.replaceExercise(_index, s.name);
-                Navigator.pop(context);
-              },
-            ),
-        ],
-      );
-    } else {
-      body = Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+    final Widget body = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _MenuRow(
+          icon: Icons.swap_horiz,
+          title: l10n.workoutMenuSwap,
+          subtitle: similar.isEmpty
+              ? l10n.workoutMenuSwapSub
+              : l10n.workoutMenuSimilar(
+                  similar.take(3).map((s) => s.name).join(', ')),
+          trailing: const _Chevron(),
+          onTap: () {
+            final index = _index;
+            Navigator.pop(context);
+            openExercisePicker(context, ref, replaceIndex: index);
+          },
+        ),
+        if (canWarmUp)
           _MenuRow(
-            icon: Icons.swap_horiz,
-            title: l10n.workoutMenuSwap,
-            subtitle: similar.isEmpty
-                ? l10n.workoutMenuNoSimilar
-                : l10n.workoutMenuSimilar(
-                    similar.take(3).map((s) => s.name).join(', ')),
-            trailing: similar.isEmpty ? null : const _Chevron(),
-            onTap:
-                similar.isEmpty ? null : () => setState(() => _swapping = true),
+            icon: Icons.local_fire_department_outlined,
+            title: l10n.workoutMenuWarmup,
+            subtitle: l10n.workoutMenuWarmupSub([
+              for (final w in warmupPlan(working.first.kg))
+                '${formatKg(w.kg)} ${l10n.unitKg} × ${w.reps}',
+            ].join(', ')),
+            trailing: Icon(Icons.add, color: palette.textPrimary),
+            onTap: () {
+              notifier.addWarmupSets(_index);
+              Navigator.pop(context);
+            },
           ),
-          if (canWarmUp)
-            _MenuRow(
-              icon: Icons.local_fire_department_outlined,
-              title: l10n.workoutMenuWarmup,
-              subtitle: l10n.workoutMenuWarmupSub([
-                for (final w in warmupPlan(working.first.kg))
-                  '${formatKg(w.kg)} ${l10n.unitKg} × ${w.reps}',
-              ].join(', ')),
-              trailing: Icon(Icons.add, color: palette.textPrimary),
-              onTap: () {
-                notifier.addWarmupSets(_index);
-                Navigator.pop(context);
-              },
-            ),
-          _MenuRow(
-            icon: Icons.timer_outlined,
-            title: l10n.workoutMenuRest,
-            subtitle: l10n.workoutMenuRestSub,
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _RoundButton(
-                  key: const ValueKey('restMinus'),
-                  icon: Icons.remove,
-                  onTap: rest > _minRest
-                      ? () => setRest(rest - _stepSeconds)
-                      : null,
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                  child: Text(
-                    formatClock(Duration(seconds: rest)),
-                    style: AppText.headingS.copyWith(
-                      color: palette.textPrimary,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
+        _MenuRow(
+          icon: Icons.timer_outlined,
+          title: l10n.workoutMenuRest,
+          subtitle: l10n.workoutMenuRestSub,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _RoundButton(
+                key: const ValueKey('restMinus'),
+                icon: Icons.remove,
+                onTap:
+                    rest > _minRest ? () => setRest(rest - _stepSeconds) : null,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                child: Text(
+                  formatClock(Duration(seconds: rest)),
+                  style: AppText.headingS.copyWith(
+                    color: palette.textPrimary,
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
-                _RoundButton(
-                  key: const ValueKey('restPlus'),
-                  icon: Icons.add,
-                  onTap: rest < _maxRest
-                      ? () => setRest(rest + _stepSeconds)
-                      : null,
-                ),
-              ],
-            ),
+              ),
+              _RoundButton(
+                key: const ValueKey('restPlus'),
+                icon: Icons.add,
+                onTap:
+                    rest < _maxRest ? () => setRest(rest + _stepSeconds) : null,
+              ),
+            ],
           ),
-          _MenuRow(
-            icon: Icons.description_outlined,
-            title: l10n.workoutMenuNote,
-            subtitle: exercise.note ?? l10n.workoutMenuNoteEmpty,
-            trailing: const _Chevron(),
-            onTap: () => _editNote(exercise),
+        ),
+        _MenuRow(
+          icon: Icons.description_outlined,
+          title: l10n.workoutMenuNote,
+          subtitle: exercise.note ?? l10n.workoutMenuNoteEmpty,
+          trailing: const _Chevron(),
+          onTap: () => _editNote(exercise),
+        ),
+        _MenuRow(
+          icon: Icons.swap_vert,
+          title: l10n.workoutMenuReorder,
+          subtitle: l10n.workoutMenuReorderSub,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _RoundButton(
+                key: const ValueKey('moveUp'),
+                icon: Icons.keyboard_arrow_up,
+                onTap: _index > 0
+                    ? () {
+                        notifier.moveExercise(_index, _index - 1);
+                        setState(() => _index--);
+                      }
+                    : null,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              _RoundButton(
+                key: const ValueKey('moveDown'),
+                icon: Icons.keyboard_arrow_down,
+                onTap: _index < workout.exercises.length - 1
+                    ? () {
+                        notifier.moveExercise(_index, _index + 1);
+                        setState(() => _index++);
+                      }
+                    : null,
+              ),
+            ],
           ),
-          _MenuRow(
-            icon: Icons.swap_vert,
-            title: l10n.workoutMenuReorder,
-            subtitle: l10n.workoutMenuReorderSub,
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _RoundButton(
-                  key: const ValueKey('moveUp'),
-                  icon: Icons.keyboard_arrow_up,
-                  onTap: _index > 0
-                      ? () {
-                          notifier.moveExercise(_index, _index - 1);
-                          setState(() => _index--);
-                        }
-                      : null,
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                _RoundButton(
-                  key: const ValueKey('moveDown'),
-                  icon: Icons.keyboard_arrow_down,
-                  onTap: _index < workout.exercises.length - 1
-                      ? () {
-                          notifier.moveExercise(_index, _index + 1);
-                          setState(() => _index++);
-                        }
-                      : null,
-                ),
-              ],
-            ),
-          ),
-          _MenuRow(
-            icon: Icons.delete_outline,
-            title: l10n.workoutMenuRemove,
-            danger: true,
-            onTap: _remove,
-          ),
-        ],
-      );
-    }
+        ),
+        _MenuRow(
+          icon: Icons.delete_outline,
+          title: l10n.workoutMenuRemove,
+          danger: true,
+          onTap: _remove,
+        ),
+      ],
+    );
 
     return SafeArea(
       top: false,
@@ -415,4 +396,16 @@ class _NoteDialogState extends State<_NoteDialog> {
       ],
     );
   }
+}
+
+/// Opens the add-exercise screen over the shell. The workout stays active;
+/// the sheet folds down so the screen is visible, and the picker opens it
+/// again when it closes.
+void openExercisePicker(BuildContext context, WidgetRef ref,
+    {int? replaceIndex}) {
+  ref.read(activeWorkoutExpandedProvider.notifier).state = false;
+  GoRouter.of(context).push(AppRouter.addExerciseTo(
+    replace: replaceIndex != null,
+    index: replaceIndex ?? 0,
+  ));
 }

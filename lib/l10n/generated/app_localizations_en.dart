@@ -1809,4 +1809,207 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planPlanNextWeek => 'Plan next week';
+
+  @override
+  String get exercisesTitle => 'Exercises';
+
+  @override
+  String exercisesSearch(int n) {
+    return 'Search $n exercises';
+  }
+
+  @override
+  String get exercisesSearchShort => 'Search exercises';
+
+  @override
+  String get exercisesAll => 'All';
+
+  @override
+  String get exercisesAnyEquipment => 'Any equipment';
+
+  @override
+  String get exercisesRecent => 'Your recent';
+
+  @override
+  String get exercisesFromWorkouts => 'from workouts';
+
+  @override
+  String get exercisesBest => 'best';
+
+  @override
+  String get exercisesAZ => 'All · A–Z';
+
+  @override
+  String exercisesCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n exercises',
+      one: '$n exercise',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get exercisesNoMatch => 'No exercises match. Try another filter.';
+
+  @override
+  String get muscleChest => 'Chest';
+
+  @override
+  String get muscleBack => 'Back';
+
+  @override
+  String get muscleShoulders => 'Shoulders';
+
+  @override
+  String get muscleArms => 'Arms';
+
+  @override
+  String get muscleLegs => 'Legs';
+
+  @override
+  String get muscleGlutes => 'Glutes';
+
+  @override
+  String get muscleCore => 'Core';
+
+  @override
+  String get equipBarbell => 'Barbell';
+
+  @override
+  String get equipDumbbell => 'Dumbbell';
+
+  @override
+  String get equipCable => 'Cable';
+
+  @override
+  String get equipMachine => 'Machine';
+
+  @override
+  String get equipBodyweight => 'Bodyweight';
+
+  @override
+  String get equipKettlebell => 'Kettlebell';
+
+  @override
+  String get levelBeginner => 'Beginner';
+
+  @override
+  String get levelIntermediate => 'Intermediate';
+
+  @override
+  String get levelAdvanced => 'Advanced';
+
+  @override
+  String get exerciseCompound => 'Compound';
+
+  @override
+  String get exerciseDetailTitle => 'Exercise';
+
+  @override
+  String get exercisePrimary => 'Primary';
+
+  @override
+  String get exerciseSecondary => 'Secondary';
+
+  @override
+  String get exerciseYourNumbers => 'Your numbers';
+
+  @override
+  String get exerciseBestSet => 'Best set';
+
+  @override
+  String get exerciseE1rm => 'e1RM';
+
+  @override
+  String get exerciseSessions => 'Sessions';
+
+  @override
+  String exerciseChangeSince(String pct, String month) {
+    return '$pct since $month';
+  }
+
+  @override
+  String get exerciseNoHistory => 'Do it once to see your numbers';
+
+  @override
+  String get exerciseHowTo => 'How to do it';
+
+  @override
+  String get exerciseMistakes => 'Common mistakes';
+
+  @override
+  String get exerciseSimilar => 'Similar';
+
+  @override
+  String get exerciseAskFelix => 'Ask Felix';
+
+  @override
+  String exerciseAskFelixDraft(String name) {
+    return 'How do I improve my $name?';
+  }
+
+  @override
+  String get exerciseAddToWorkout => 'Add to workout';
+
+  @override
+  String get exerciseAdded => 'Added to your workout';
+
+  @override
+  String get exerciseQuickWorkout => 'Quick workout';
+
+  @override
+  String addExerciseTitle(String workout) {
+    return 'Add to $workout';
+  }
+
+  @override
+  String addExerciseSwapTitle(String workout) {
+    return 'Swap in $workout';
+  }
+
+  @override
+  String addExerciseHint(String group, int n, int target) {
+    return '$group got $n sets this week, target is $target.';
+  }
+
+  @override
+  String get addExerciseSuggested => 'Suggested';
+
+  @override
+  String addExerciseSelected(int n) {
+    return '$n selected';
+  }
+
+  @override
+  String get addExerciseLibrary => 'Library';
+
+  @override
+  String get addExerciseInWorkout => 'In this workout';
+
+  @override
+  String addExerciseButton(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Add $n exercises',
+      one: 'Add $n exercise',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addExerciseSwap => 'Swap';
+
+  @override
+  String get workoutMenuSwapSub => 'Choose from the library';
+
+  @override
+  String get gymExercises => 'Exercises';
+
+  @override
+  String gymExercisesSub(int n) {
+    return '$n with technique and your best sets';
+  }
 }

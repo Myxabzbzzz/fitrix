@@ -17,10 +17,6 @@ import 'package:fitrix/features/workouts/presentation/widgets/exercise_menu_shee
 import 'package:fitrix/features/workouts/presentation/widgets/rest_timer.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
-/// Whether the exercise library (Task 6) can be opened from the workout.
-/// Until then the "+ Exercise" button is not drawn.
-const bool kExerciseLibraryReady = false;
-
 /// Tonnes with one decimal in the user's number format: "4.1".
 String formatTonnes(BuildContext context, double kg) =>
     NumberFormat('#,##0.0', Localizations.localeOf(context).toString())
@@ -194,7 +190,6 @@ class _LiveLogState extends ConsumerState<LiveLog> {
   ) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
-    final notifier = ref.read(activeWorkoutProvider.notifier);
     final total = workout.totalSets;
     final done = workout.completedSets;
     return Column(
@@ -267,20 +262,17 @@ class _LiveLogState extends ConsumerState<LiveLog> {
                 AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.md),
             child: Row(
               children: [
-                if (kExerciseLibraryReady) ...[
-                  Expanded(
-                    child: AppButton(
-                      label: l10n.workoutAddExercise,
-                      style: AppButtonStyle.secondary,
-                      size: AppButtonSize.large,
-                      icon: Icons.add,
-                      expand: true,
-                      // Task 6 wires the add-exercise route here.
-                      onPressed: () => notifier.addExercises(const []),
-                    ),
+                Expanded(
+                  child: AppButton(
+                    label: l10n.workoutAddExercise,
+                    style: AppButtonStyle.secondary,
+                    size: AppButtonSize.large,
+                    icon: Icons.add,
+                    expand: true,
+                    onPressed: () => openExercisePicker(context, ref),
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                ],
+                ),
+                const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   flex: 2,
                   child: AppButton(

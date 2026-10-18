@@ -7,6 +7,7 @@ import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/feature_tile.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -26,6 +27,7 @@ class MyWorkoutsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final templates = ref.watch(workoutTemplatesProvider);
     final history = ref.watch(workoutHistoryProvider);
+    final catalog = ref.watch(exerciseCatalogProvider).valueOrNull;
     final weekAgo = DateTime.now().subtract(const Duration(days: 7));
 
     String caption(Sport sport) => l10n.gymTileCaption(
@@ -52,6 +54,18 @@ class MyWorkoutsScreen extends ConsumerWidget {
                     builder: (cardContext) => _WeekPlanCard(
                       onTap: () =>
                           openWithReveal(cardContext, AppRouter.weekPlan),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Builder(
+                    builder: (cardContext) => _EntryCard(
+                      key: const ValueKey('exercises-entry'),
+                      title: l10n.gymExercises,
+                      subtitle: catalog == null
+                          ? null
+                          : l10n.gymExercisesSub(catalog.all.length),
+                      onTap: () => openWithReveal(
+                          cardContext, AppRouter.exerciseLibrary),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -141,6 +155,51 @@ class _WeekPlanCard extends ConsumerWidget {
                       style: AppText.caption
                           .copyWith(color: palette.textSecondary),
                     ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: palette.textSecondary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A tile-coloured row with a title, an optional caption and a chevron.
+class _EntryCard extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final VoidCallback onTap;
+  const _EntryCard(
+      {super.key, required this.title, this.subtitle, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          decoration:
+              BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        style: AppText.headingS
+                            .copyWith(color: palette.textPrimary)),
+                    if (subtitle != null)
+                      Text(subtitle!,
+                          style: AppText.caption
+                              .copyWith(color: palette.textSecondary)),
                   ],
                 ),
               ),
