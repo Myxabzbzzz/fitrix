@@ -6014,6 +6014,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update weight to {to} kg'**
   String chatActionWeightSet(String to);
+
+  /// No description provided for @felixPlanBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix plan'**
+  String get felixPlanBadge;
+
+  /// No description provided for @felixPlanTitleCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} workout} other{{count} workouts}}'**
+  String felixPlanTitleCount(int count);
+
+  /// No description provided for @felixPlanAddToWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to My workouts'**
+  String get felixPlanAddToWorkouts;
+
+  /// No description provided for @felixPlanAddToToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to today’s plan'**
+  String get felixPlanAddToToday;
 }
 
 class _AppLocalizationsDelegate

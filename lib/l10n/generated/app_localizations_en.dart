@@ -3706,4 +3706,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String chatActionWeightSet(String to) {
     return 'Update weight to $to kg';
   }
+
+  @override
+  String get felixPlanBadge => 'Felix plan';
+
+  @override
+  String felixPlanTitleCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count workouts',
+      one: '$count workout',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get felixPlanAddToWorkouts => 'Add to My workouts';
+
+  @override
+  String get felixPlanAddToToday => 'Add to today’s plan';
 }

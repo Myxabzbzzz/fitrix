@@ -984,5 +984,9 @@
   "chatActionWeightSetFirst": "Avval vazningizni kiriting",
   "chatActionSetWeight": "Vaznni kiritish",
   "gymDiscardAndStart": "Bekor qilib boshlash",
-  "chatActionWeightSet": "Vaznni {to} kg ga yangilash"
+  "chatActionWeightSet": "Vaznni {to} kg ga yangilash",
+  "felixPlanBadge": "Felix rejasi",
+  "felixPlanTitleCount": "{count, plural, other{{count} ta mashg‘ulot}}",
+  "felixPlanAddToWorkouts": "Mening mashg‘ulotlarimga qo‘shish",
+  "felixPlanAddToToday": "Bugungi rejaga qo‘shish"
 }

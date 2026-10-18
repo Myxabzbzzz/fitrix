@@ -2994,5 +2994,16 @@
         "type": "String"
       }
     }
+  },
+  "felixPlanBadge": "Felix plan",
+  "felixPlanTitleCount": "{count, plural, one{{count} workout} other{{count} workouts}}",
+  "felixPlanAddToWorkouts": "Add to My workouts",
+  "felixPlanAddToToday": "Add to today’s plan",
+  "@felixPlanTitleCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

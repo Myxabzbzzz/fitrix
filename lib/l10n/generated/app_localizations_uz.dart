@@ -3649,4 +3649,23 @@ class AppLocalizationsUz extends AppLocalizations {
   String chatActionWeightSet(String to) {
     return 'Vaznni $to kg ga yangilash';
   }
+
+  @override
+  String get felixPlanBadge => 'Felix rejasi';
+
+  @override
+  String felixPlanTitleCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ta mashg‘ulot',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get felixPlanAddToWorkouts => 'Mening mashg‘ulotlarimga qo‘shish';
+
+  @override
+  String get felixPlanAddToToday => 'Bugungi rejaga qo‘shish';
 }

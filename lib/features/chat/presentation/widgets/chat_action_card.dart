@@ -10,13 +10,13 @@ import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/chat_action_apply.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
+import 'package:fitrix/features/chat/presentation/widgets/felix_plan_card.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/domain/food_match.dart';
 import 'package:fitrix/features/nutrition/presentation/widgets/nutrition_cards.dart'
     show slotLabel;
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
-import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Confirmation card under a Felix reply that proposes a change. Nothing is
@@ -66,7 +66,6 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
     if (_busy || widget.message.actionApplied) return;
     setState(() => _busy = true);
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final router = GoRouter.maybeOf(context);
     final l10n = AppLocalizations.of(context);
     try {
       final result = await applyChatAction(ref, action, slot: _slot);
@@ -75,19 +74,6 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
         return;
       }
       widget.onApplied(result);
-      if (action is WorkoutPlanAction) {
-        final sport = action.sport;
-        messenger?.showSnackBar(SnackBar(
-          content:
-              Text(l10n.chatActionWorkoutsAdded(sport.localizedLabel(l10n))),
-          action: router == null
-              ? null
-              : SnackBarAction(
-                  label: l10n.chatActionOpen,
-                  onPressed: () => router.go(AppRouter.sportWorkouts(sport)),
-                ),
-        ));
-      }
     } catch (_) {
       messenger?.showSnackBar(SnackBar(content: Text(l10n.chatActionError)));
     } finally {
@@ -113,6 +99,7 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
     var loading = false;
     var needsWeight = false;
     Widget? foodBody;
+    Widget? planBody;
     MealSlot? foodSlot;
     var foodKcal = 0;
     switch (action) {
@@ -146,12 +133,19 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
           title = l10n.chatActionWeightChange(n(current), n(next));
         }
       case WorkoutPlanAction():
-        title = l10n.chatActionWorkoutTitle(
-            action.templates.length, action.sport.localizedLabel(l10n));
-        lines = [
-          for (final t in action.templates)
-            '${t.name} · ${l10n.chatActionWorkoutExercises(t.exercises.length)}',
-        ];
+        final result = widget.message.appliedResult;
+        planBody = FelixPlanCard(
+          action: action,
+          applied: applied,
+          busy: _busy,
+          onApply: () => _apply(action),
+          onUndo: () => _undo(action),
+          // Planned sessions: the week plan; otherwise My workouts.
+          onOpen: () => GoRouter.maybeOf(context)?.go(
+              (result?['scheduled'] ?? 0) > 0
+                  ? AppRouter.weekPlan
+                  : AppRouter.workouts),
+        );
       case FoodLogAction():
         final result = widget.message.appliedResult;
         final now = ref.read(clockProvider)();
@@ -217,6 +211,7 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
         ];
     }
 
+    final child = planBody;
     return Padding(
       // Lines up with the bubble: avatar column (24) + gap.
       padding: const EdgeInsets.only(
@@ -226,87 +221,89 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
         child: Container(
           key: const ValueKey('chat-action-card'),
           constraints: const BoxConstraints(maxWidth: ChatBubble.maxWidth),
-          padding: const EdgeInsets.all(AppSpacing.sm),
+          padding:
+              EdgeInsets.all(child != null ? AppSpacing.md : AppSpacing.sm),
           decoration: BoxDecoration(
             color: palette.tile,
-            borderRadius: AppRadius.smAll,
+            borderRadius: child != null ? AppRadius.mdAll : AppRadius.smAll,
             border: Border.all(color: palette.border),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (loading)
-                const SizedBox(
-                  key: ValueKey('chat-action-loading'),
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              if (foodSlot != null)
-                _FoodHeader(
-                  slot: foodSlot,
-                  fixed: applied,
-                  onPick: (s) => setState(() => _slot = s),
-                ),
-              if (foodBody != null) foodBody,
-              if (title != null)
-                Text(title,
-                    style: AppText.bodyStrong
-                        .copyWith(color: palette.textPrimary)),
-              for (final line in lines)
-                Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.xxs),
-                  child: Text(line,
-                      style: AppText.caption
-                          .copyWith(color: palette.textSecondary)),
-                ),
-              if (applied) ...[
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                    foodSlot != null
-                        ? l10n.chatFoodAdded(slotLabel(l10n, foodSlot))
-                        : l10n.chatActionApplied,
-                    key: const ValueKey('chat-action-applied'),
-                    style: AppText.captionStrong
-                        .copyWith(color: palette.textPrimary)),
-                if (action is WeightAction || action is FoodLogAction)
-                  Wrap(
-                    spacing: AppSpacing.xs,
-                    children: [
-                      TextButton(
-                        onPressed: _busy ? null : () => _undo(action),
-                        child: Text(l10n.undo),
+          child: child ??
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (loading)
+                    const SizedBox(
+                      key: ValueKey('chat-action-loading'),
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  if (foodSlot != null)
+                    _FoodHeader(
+                      slot: foodSlot,
+                      fixed: applied,
+                      onPick: (s) => setState(() => _slot = s),
+                    ),
+                  if (foodBody != null) foodBody,
+                  if (title != null)
+                    Text(title,
+                        style: AppText.bodyStrong
+                            .copyWith(color: palette.textPrimary)),
+                  for (final line in lines)
+                    Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.xxs),
+                      child: Text(line,
+                          style: AppText.caption
+                              .copyWith(color: palette.textSecondary)),
+                    ),
+                  if (applied) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                        foodSlot != null
+                            ? l10n.chatFoodAdded(slotLabel(l10n, foodSlot))
+                            : l10n.chatActionApplied,
+                        key: const ValueKey('chat-action-applied'),
+                        style: AppText.captionStrong
+                            .copyWith(color: palette.textPrimary)),
+                    if (action is WeightAction || action is FoodLogAction)
+                      Wrap(
+                        spacing: AppSpacing.xs,
+                        children: [
+                          TextButton(
+                            onPressed: _busy ? null : () => _undo(action),
+                            child: Text(l10n.undo),
+                          ),
+                          if (action is FoodLogAction)
+                            TextButton(
+                              onPressed: () => GoRouter.maybeOf(context)
+                                  ?.go(AppRouter.nutrition),
+                              child: Text(l10n.chatActionOpen),
+                            ),
+                        ],
                       ),
-                      if (action is FoodLogAction)
-                        TextButton(
-                          onPressed: () => GoRouter.maybeOf(context)
-                              ?.go(AppRouter.nutrition),
-                          child: Text(l10n.chatActionOpen),
-                        ),
-                    ],
-                  ),
-              ] else if (needsWeight) ...[
-                const SizedBox(height: AppSpacing.xs),
-                AppButton(
-                  label: l10n.chatActionSetWeight,
-                  size: AppButtonSize.large,
-                  onPressed: () =>
-                      GoRouter.maybeOf(context)?.push(AppRouter.editProfile),
-                ),
-              ] else if (canApply) ...[
-                const SizedBox(height: AppSpacing.xs),
-                AppButton(
-                  label: foodSlot != null
-                      ? l10n.chatFoodAdd(n(foodKcal))
-                      : l10n.chatActionConfirm,
-                  // Large is 48 px tall: a comfortable tap target.
-                  size: AppButtonSize.large,
-                  onPressed: _busy ? null : () => _apply(action),
-                ),
-              ],
-            ],
-          ),
+                  ] else if (needsWeight) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    AppButton(
+                      label: l10n.chatActionSetWeight,
+                      size: AppButtonSize.large,
+                      onPressed: () => GoRouter.maybeOf(context)
+                          ?.push(AppRouter.editProfile),
+                    ),
+                  ] else if (canApply) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    AppButton(
+                      label: foodSlot != null
+                          ? l10n.chatFoodAdd(n(foodKcal))
+                          : l10n.chatActionConfirm,
+                      // Large is 48 px tall: a comfortable tap target.
+                      size: AppButtonSize.large,
+                      onPressed: _busy ? null : () => _apply(action),
+                    ),
+                  ],
+                ],
+              ),
         ),
       ),
     );

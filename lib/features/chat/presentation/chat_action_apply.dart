@@ -13,6 +13,8 @@ import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provi
 import 'package:fitrix/features/profile/data/models/profile_row.dart';
 import 'package:fitrix/features/profile/data/models/user_profile.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
+import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
+import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 
@@ -77,25 +79,46 @@ Future<Map<String, num>?> applyChatAction(
         'slot': target.index,
       };
     case WorkoutPlanAction():
-      ref.read(workoutTemplatesProvider.notifier).addAll(action.sport, [
-        for (final t in action.templates)
-          (
-            name: t.name,
-            exercises: [
-              for (final e in t.exercises)
-                Exercise(name: e.name, sets: [
-                  for (var i = 0; i < e.sets; i++)
-                    WorkoutSet(
-                      previousKg: e.kg,
-                      previousReps: e.reps,
-                      kg: e.kg,
-                      reps: e.reps,
-                    ),
-                ]),
-            ],
-          ),
-      ]);
-      return const {};
+      final ids = ref.read(workoutTemplatesProvider.notifier).addAll(
+        action.sport,
+        [
+          for (final t in action.templates)
+            (
+              name: t.name,
+              exercises: [
+                for (final e in t.exercises)
+                  Exercise(name: e.name, sets: [
+                    for (var i = 0; i < e.sets; i++)
+                      WorkoutSet(
+                        previousKg: e.kg,
+                        previousReps: e.reps,
+                        kg: e.kg,
+                        reps: e.reps,
+                      ),
+                  ]),
+              ],
+            ),
+        ],
+      );
+      final at = ref.read(clockProvider)().microsecondsSinceEpoch;
+      final felix = ref.read(felixTemplateIdsProvider.notifier);
+      felix.add(ids);
+      felix.recordBatch(at, ids);
+      final created = [
+        for (final t in ref.read(workoutTemplatesProvider))
+          if (ids.contains(t.id)) t,
+      ];
+      final sessions = scheduleFelixPlan(
+        created: created,
+        when: action.when,
+        days: action.days,
+        today: ref.read(todayProvider),
+        existing: ref.read(weekPlanProvider),
+      );
+      if (sessions.isNotEmpty) {
+        await ref.read(weekPlanProvider.notifier).addAll(sessions);
+      }
+      return {'at': at, 'scheduled': sessions.length};
     case MealPlanAction():
       // A meal plan is a whole day: it replaces what was logged today.
       final now = ref.read(clockProvider)();
@@ -124,7 +147,7 @@ String _foodEntryId(DateTime at, int i) =>
     'felix-${at.microsecondsSinceEpoch}-$i';
 
 /// Takes back what [applyChatAction] did for [action], using its [result].
-/// Only weight and food can be undone.
+/// Weight, food and workout plans can be undone.
 Future<void> undoChatAction(
     WidgetRef ref, ChatAction action, Map<String, num> result) async {
   switch (action) {
@@ -157,6 +180,16 @@ Future<void> undoChatAction(
         await ref.read(foodLogProvider.notifier).remove(_foodEntryId(time, i));
       }
     case WorkoutPlanAction():
+      final at = result['at'];
+      if (at == null) return;
+      final ids = ref.read(felixTemplateIdsProvider.notifier).batch(at.toInt());
+      for (final id in ids) {
+        ref.read(workoutTemplatesProvider.notifier).remove(id);
+      }
+      await ref
+          .read(weekPlanProvider.notifier)
+          .removeWhere((s) => ids.contains(s.templateId));
+      ref.read(felixTemplateIdsProvider.notifier).remove(ids);
     case MealPlanAction():
       break;
   }

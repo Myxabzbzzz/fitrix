@@ -320,14 +320,16 @@ void main() {
         (tester) async {
       await seed(action: _plan);
       await pumpFelix(tester);
-      expect(find.text('Add 2 workouts to Gym'), findsOneWidget);
-      expect(find.text('Upper body · 2 exercises'), findsOneWidget);
+      expect(find.text('2 workouts'), findsOneWidget);
+      expect(find.text('Upper body'), findsOneWidget);
+      expect(find.textContaining('2 exercises · Bench press, Row'),
+          findsOneWidget);
       final before = container
           .read(workoutTemplatesProvider)
           .where((t) => t.sport == Sport.gym)
           .length;
 
-      await tester.tap(find.text('Confirm'));
+      await tester.tap(find.text('Add to My workouts'));
       await tester.pumpAndSettle();
 
       final gym = container
@@ -340,8 +342,7 @@ void main() {
       expect(upper.exercises.first.sets, hasLength(4));
       expect(upper.exercises.first.sets.first.kg, 60);
       expect(upper.exercises.first.sets.first.reps, 8);
-      expect(find.text('Workouts added to Gym'), findsOneWidget);
-      expect(find.text('Open'), findsNothing); // no router in this test
+      expect(find.text('Added ✓'), findsOneWidget);
       expect(applied, findsOneWidget);
     });
 
@@ -459,8 +460,8 @@ void main() {
         (tester) async {
       await seed(action: _plan);
       await pumpFelix(tester, locale: const Locale('ru'));
-      expect(find.text('Подтвердить'), findsOneWidget);
-      expect(find.textContaining('Добавить 2 тренировки'), findsOneWidget);
+      expect(find.text('Добавить в мои тренировки'), findsOneWidget);
+      expect(find.text('2 тренировки'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });

@@ -18,6 +18,9 @@ class WorkoutCard extends StatelessWidget {
   /// Shows an edit icon in the top-right corner when set.
   final VoidCallback? onEdit;
 
+  /// A chip shown above the title (e.g. "Felix plan"); none when null.
+  final Widget? badge;
+
   /// Semantics label of the edit icon (no tooltip).
   final String editLabel;
 
@@ -31,6 +34,7 @@ class WorkoutCard extends StatelessWidget {
     this.doneLabel = 'Done',
     this.onStart,
     this.onEdit,
+    this.badge,
     this.editLabel = 'Edit workout',
   });
 
@@ -57,6 +61,10 @@ class WorkoutCard extends StatelessWidget {
                   children: [
                     if (dayLabel != null) ...[
                       DayBadge(label: dayLabel!, today: today),
+                      const SizedBox(height: AppSpacing.xxs),
+                    ],
+                    if (badge != null) ...[
+                      Align(alignment: Alignment.centerLeft, child: badge),
                       const SizedBox(height: AppSpacing.xxs),
                     ],
                     Text(title,

@@ -984,5 +984,9 @@
   "chatActionWeightSetFirst": "Сначала укажите свой вес",
   "chatActionSetWeight": "Указать вес",
   "gymDiscardAndStart": "Сбросить и начать",
-  "chatActionWeightSet": "Обновить вес до {to} кг"
+  "chatActionWeightSet": "Обновить вес до {to} кг",
+  "felixPlanBadge": "План Феликса",
+  "felixPlanTitleCount": "{count, plural, one{{count} тренировка} few{{count} тренировки} many{{count} тренировок} other{{count} тренировки}}",
+  "felixPlanAddToWorkouts": "Добавить в мои тренировки",
+  "felixPlanAddToToday": "Добавить в план на сегодня"
 }

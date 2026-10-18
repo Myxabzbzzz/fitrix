@@ -3775,4 +3775,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String chatActionWeightSet(String to) {
     return 'Обновить вес до $to кг';
   }
+
+  @override
+  String get felixPlanBadge => 'План Феликса';
+
+  @override
+  String felixPlanTitleCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count тренировки',
+      many: '$count тренировок',
+      few: '$count тренировки',
+      one: '$count тренировка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get felixPlanAddToWorkouts => 'Добавить в мои тренировки';
+
+  @override
+  String get felixPlanAddToToday => 'Добавить в план на сегодня';
 }

@@ -6,6 +6,8 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/core/widgets/felix_plan_badge.dart';
+import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
 import 'package:fitrix/features/plan/presentation/widgets/plan_format.dart';
@@ -46,6 +48,7 @@ class _Choice {
   final String? templateId;
   final int minutes;
   final Intensity intensity;
+  final bool felix;
 
   const _Choice({
     required this.key,
@@ -55,6 +58,7 @@ class _Choice {
     this.templateId,
     required this.minutes,
     required this.intensity,
+    this.felix = false,
   });
 }
 
@@ -75,6 +79,7 @@ class _AddSessionSheetState extends ConsumerState<_AddSessionSheet> {
 
   List<_Choice> _choices(AppLocalizations l10n) {
     final out = <_Choice>[];
+    final felixIds = ref.watch(felixTemplateIdsProvider);
     for (final t in ref.watch(workoutTemplatesProvider)) {
       if (t.sport != _sport) continue;
       final minutes = t.estimatedDuration.inMinutes;
@@ -87,6 +92,7 @@ class _AddSessionSheetState extends ConsumerState<_AddSessionSheet> {
         templateId: t.id,
         minutes: minutes,
         intensity: intensityOfTemplate(t),
+        felix: felixIds.contains(t.id),
       ));
     }
     if (_sport != Sport.gym) {
@@ -417,6 +423,10 @@ class _ChoiceRow extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppText.caption.copyWith(color: fg2)),
+                    if (choice.felix) ...[
+                      const SizedBox(height: AppSpacing.xxs),
+                      FelixPlanBadge(onDark: selected),
+                    ],
                   ],
                 ),
               ),

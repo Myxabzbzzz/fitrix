@@ -6,7 +6,9 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/core/widgets/felix_plan_badge.dart';
 import 'package:fitrix/core/widgets/workout_card.dart';
+import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/workouts/domain/coach_message.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
@@ -53,10 +55,13 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
   /// Swiped away: deleted at once, with a few seconds to undo.
   void _delete(WorkoutTemplate template) {
     final notifier = ref.read(workoutTemplatesProvider.notifier);
+    final felix = ref.read(felixTemplateIdsProvider.notifier);
+    final wasFelix = ref.read(felixTemplateIdsProvider).contains(template.id);
     final index = ref
         .read(workoutTemplatesProvider)
         .indexWhere((w) => w.id == template.id);
     notifier.remove(template.id);
+    felix.remove([template.id]);
 
     final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context)
@@ -66,7 +71,10 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
         duration: const Duration(seconds: 4),
         action: SnackBarAction(
           label: l10n.undo,
-          onPressed: () => notifier.restore(template, index),
+          onPressed: () {
+            notifier.restore(template, index);
+            if (wasFelix) felix.add([template.id]);
+          },
         ),
       ));
   }
@@ -110,8 +118,12 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
     final allHistory = ref.watch(workoutHistoryProvider);
     final localeName = Localizations.localeOf(context).toString();
     // Room for a 2-line title at the user's text size.
-    final cellHeight =
-        128 + MediaQuery.textScalerOf(context).scale(16) * 2 - 32;
+    final felixIds = ref.watch(felixTemplateIdsProvider);
+    final hasFelix = workouts.any((w) => felixIds.contains(w.id));
+    final cellHeight = 128 +
+        MediaQuery.textScalerOf(context).scale(16) * 2 -
+        32 +
+        (hasFelix ? MediaQuery.textScalerOf(context).scale(12) + 14 : 0);
 
     // Today only for a plan with an open session today; other planned plans
     // show their next day; the rest no day at all.
@@ -187,6 +199,9 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                               child: WorkoutCard(
                                 title: workouts[i].name,
                                 dayLabel: dayLabel(workouts[i]),
+                                badge: felixIds.contains(workouts[i].id)
+                                    ? const FelixPlanBadge()
+                                    : null,
                                 today: openToday(workouts[i]),
                                 done: doneToday(workouts[i]),
                                 startLabel: l10n.gymStart,

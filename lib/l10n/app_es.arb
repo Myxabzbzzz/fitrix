@@ -984,5 +984,9 @@
   "chatActionWeightSetFirst": "Primero indica tu peso",
   "chatActionSetWeight": "Indicar peso",
   "gymDiscardAndStart": "Descartar y empezar",
-  "chatActionWeightSet": "Actualizar peso a {to} kg"
+  "chatActionWeightSet": "Actualizar peso a {to} kg",
+  "felixPlanBadge": "Plan de Felix",
+  "felixPlanTitleCount": "{count, plural, one{{count} entrenamiento} other{{count} entrenamientos}}",
+  "felixPlanAddToWorkouts": "Añadir a Mis entrenamientos",
+  "felixPlanAddToToday": "Añadir al plan de hoy"
 }
