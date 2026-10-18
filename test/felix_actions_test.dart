@@ -17,7 +17,10 @@ import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
-import 'package:fitrix/features/nutrition/data/nutrition_store.dart';
+import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/nutrition/data/food_catalog.dart';
+import 'package:fitrix/features/nutrition/data/food_log_store.dart';
+import 'package:fitrix/features/profile/data/performance_store.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -351,8 +354,14 @@ void main() {
 
       await tester.tap(find.text('Confirm'));
       await tester.pumpAndSettle();
-      expect(container.read(todayMealsProvider), hasLength(2));
-      expect(prefs.getString('nutrition_today_v1'), contains('Oatmeal'));
+      final logged = container.read(todayEntriesProvider);
+      expect(logged, hasLength(2));
+      expect(logged.map((e) => e.slot), [MealSlot.breakfast, MealSlot.lunch]);
+      expect(prefs.getString(FoodLogStore.key), contains('Oatmeal'));
+      // The profile makes the ring show: sex, age, height next to the weight.
+      await prefs.setString(AppConstants.keyUserAge, '30');
+      await prefs.setString(AppConstants.keyUserHeight, '175');
+      await prefs.setString(performanceProfileKey, '{"sex":"male"}');
 
       await tester.pumpWidget(UncontrolledProviderScope(
         container: container,
@@ -364,9 +373,12 @@ void main() {
         ),
       ));
       await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('nutrition-eaten')), findsOneWidget);
+      expect(find.text('1,220'), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('Chicken, rice'), 200,
+          scrollable: find.byType(Scrollable).first);
       expect(find.text('Oatmeal, banana'), findsOneWidget);
       expect(find.text('Chicken, rice'), findsOneWidget);
-      expect(find.text('1,220'), findsOneWidget);
     });
 
     testWidgets('an applied action cannot be applied again', (tester) async {
@@ -454,28 +466,39 @@ void main() {
   });
 
   group('nutrition store', () {
+    FoodEntry entry(String id, DateTime at, int kcal) => FoodEntry(
+        id: id,
+        at: at,
+        slot: MealSlot.lunch,
+        name: id,
+        grams: 0,
+        kcal: kcal,
+        protein: 0,
+        carbs: 0,
+        fat: 0);
+
     test('a plan applied on a new day is stored under that day only', () async {
       await seed();
       var now = DateTime(2026, 10, 12, 22);
       final container = ProviderContainer(overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        nutritionClockProvider.overrideWithValue(() => now),
+        clockProvider.overrideWithValue(() => now),
       ]);
       addTearDown(container.dispose);
-      final notifier = container.read(todayMealsProvider.notifier);
-      await notifier.replaceToday(
-          [const LoggedMeal(name: 'Yesterday', items: '', kcal: 100)]);
+      final notifier = container.read(foodLogProvider.notifier);
+      await notifier.replaceDay(container.read(todayProvider),
+          [entry('Yesterday', DateTime(2026, 10, 12, 21), 100)]);
 
       now = DateTime(2026, 10, 13, 8); // the app stayed open overnight
-      notifier.refresh();
-      expect(container.read(todayMealsProvider), isEmpty);
-      await notifier.replaceToday(
-          [const LoggedMeal(name: 'Today', items: '', kcal: 200)]);
+      container.read(todayProvider.notifier).state = DateTime(2026, 10, 13);
+      expect(container.read(todayEntriesProvider), isEmpty);
+      await notifier.replaceDay(container.read(todayProvider),
+          [entry('Today', DateTime(2026, 10, 13, 8), 200)]);
 
-      final stored = jsonDecode(prefs.getString(NutritionStore.key)!)
-          as Map<String, dynamic>;
-      expect(stored['date'], '2026-10-13');
-      expect((stored['meals'] as List).map((m) => m['name']), ['Today']);
+      final store = FoodLogStore(prefs, now: () => now);
+      expect(store.day(DateTime(2026, 10, 13)).map((e) => e.name), ['Today']);
+      expect(
+          store.day(DateTime(2026, 10, 12)).map((e) => e.name), ['Yesterday']);
     });
 
     test('applying a second meal plan replaces the first', () async {
@@ -484,15 +507,14 @@ void main() {
         sharedPreferencesProvider.overrideWithValue(prefs),
       ]);
       addTearDown(container.dispose);
-      final notifier = container.read(todayMealsProvider.notifier);
-      await notifier.replaceToday([
-        const LoggedMeal(name: 'A', items: '', kcal: 1),
-        const LoggedMeal(name: 'B', items: '', kcal: 2),
-      ]);
+      final notifier = container.read(foodLogProvider.notifier);
+      final today = container.read(todayProvider);
+      DateTime at() => DateTime(today.year, today.month, today.day, 12);
       await notifier
-          .replaceToday([const LoggedMeal(name: 'C', items: '', kcal: 3)]);
-      expect(container.read(todayMealsProvider).map((m) => m.name), ['C']);
-      expect(NutritionStore(prefs).loadToday().map((m) => m.name), ['C']);
+          .replaceDay(today, [entry('A', at(), 1), entry('B', at(), 2)]);
+      await notifier.replaceDay(today, [entry('C', at(), 3)]);
+      expect(container.read(todayEntriesProvider).map((m) => m.name), ['C']);
+      expect(FoodLogStore(prefs).day(today).map((m) => m.name), ['C']);
     });
   });
 

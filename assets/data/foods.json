@@ -1,0 +1,2973 @@
+[
+ {
+  "id": "chicken_breast",
+  "name": "Chicken breast, cooked",
+  "localName": "Tovuq ko‘kragi · Куриная грудка",
+  "category": "meat_fish",
+  "uzbek": false,
+  "kcal": 165,
+  "protein": 31,
+  "carbs": 0,
+  "fat": 3.6,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 15,
+   "magnesium_mg": 29,
+   "iron_mg": 1.0,
+   "zinc_mg": 1.0,
+   "potassium_mg": 256,
+   "sodium_mg": 74,
+   "b12_mcg": 0.3,
+   "selenium_mcg": 28,
+   "vitE_mg": 0.3,
+   "vitC_mg": 0,
+   "vitA_mcg": 6
+  },
+  "portions": [
+   {
+    "label": "1 breast",
+    "grams": 120
+   },
+   {
+    "label": "½ breast",
+    "grams": 60
+   }
+  ]
+ },
+ {
+  "id": "chicken_thigh",
+  "name": "Chicken thigh, cooked",
+  "localName": "Tovuq soni · Куриное бедро",
+  "category": "meat_fish",
+  "uzbek": false,
+  "kcal": 209,
+  "protein": 26,
+  "carbs": 0,
+  "fat": 10.9,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 12,
+   "magnesium_mg": 23,
+   "iron_mg": 1.3,
+   "zinc_mg": 2.4,
+   "potassium_mg": 240,
+   "sodium_mg": 95,
+   "b12_mcg": 0.4,
+   "selenium_mcg": 24,
+   "vitE_mg": 0.3,
+   "vitC_mg": 0,
+   "vitA_mcg": 18
+  },
+  "portions": [
+   {
+    "label": "1 thigh",
+    "grams": 90
+   }
+  ]
+ },
+ {
+  "id": "beef_cooked",
+  "name": "Beef, cooked",
+  "localName": "Mol go‘shti · Говядина",
+  "category": "meat_fish",
+  "uzbek": false,
+  "kcal": 250,
+  "protein": 26,
+  "carbs": 0,
+  "fat": 15,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.2,
+   "calcium_mg": 18,
+   "magnesium_mg": 21,
+   "iron_mg": 2.6,
+   "zinc_mg": 6.3,
+   "potassium_mg": 318,
+   "sodium_mg": 60,
+   "b12_mcg": 2.6,
+   "selenium_mcg": 27,
+   "vitE_mg": 0.2,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 120
+   },
+   {
+    "label": "small portion",
+    "grams": 80
+   }
+  ]
+ },
+ {
+  "id": "lamb_cooked",
+  "name": "Lamb, cooked",
+  "localName": "Qo‘y go‘shti · Баранина",
+  "category": "meat_fish",
+  "uzbek": false,
+  "kcal": 294,
+  "protein": 25,
+  "carbs": 0,
+  "fat": 21,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 17,
+   "magnesium_mg": 23,
+   "iron_mg": 1.9,
+   "zinc_mg": 4.5,
+   "potassium_mg": 310,
+   "sodium_mg": 72,
+   "b12_mcg": 2.6,
+   "selenium_mcg": 26,
+   "vitE_mg": 0.2,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 120
+   }
+  ]
+ },
+ {
+  "id": "turkey_breast",
+  "name": "Turkey breast, cooked",
+  "localName": "Kurka · Индейка",
+  "category": "meat_fish",
+  "uzbek": false,
+  "kcal": 135,
+  "protein": 30,
+  "carbs": 0,
+  "fat": 0.7,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.3,
+   "calcium_mg": 11,
+   "magnesium_mg": 28,
+   "iron_mg": 0.7,
+   "zinc_mg": 1.8,
+   "potassium_mg": 293,
+   "sodium_mg": 55,
+   "b12_mcg": 0.4,
+   "selenium_mcg": 32,
+   "vitE_mg": 0.1,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 120
+   }
+  ]
+ },
+ {
+  "id": "salmon",
+  "name": "Salmon, cooked",
+  "localName": "Losos · Лосось",
+  "category": "meat_fish",
+  "uzbek": false,
+  "kcal": 206,
+  "protein": 22,
+  "carbs": 0,
+  "fat": 12.4,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 11,
+   "calcium_mg": 15,
+   "magnesium_mg": 30,
+   "iron_mg": 0.3,
+   "zinc_mg": 0.6,
+   "potassium_mg": 384,
+   "sodium_mg": 61,
+   "b12_mcg": 3.2,
+   "selenium_mcg": 41,
+   "vitE_mg": 1.1,
+   "vitC_mg": 0,
+   "vitA_mcg": 12
+  },
+  "portions": [
+   {
+    "label": "1 fillet",
+    "grams": 140
+   }
+  ]
+ },
+ {
+  "id": "tuna_canned",
+  "name": "Tuna, canned in water",
+  "localName": "Orkinos · Тунец",
+  "category": "meat_fish",
+  "uzbek": false,
+  "kcal": 116,
+  "protein": 26,
+  "carbs": 0,
+  "fat": 0.8,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 1.7,
+   "calcium_mg": 13,
+   "magnesium_mg": 27,
+   "iron_mg": 1.4,
+   "zinc_mg": 0.7,
+   "potassium_mg": 237,
+   "sodium_mg": 247,
+   "b12_mcg": 2.2,
+   "selenium_mcg": 80,
+   "vitE_mg": 0.4,
+   "vitC_mg": 0,
+   "vitA_mcg": 5
+  },
+  "portions": [
+   {
+    "label": "1 can",
+    "grams": 120
+   },
+   {
+    "label": "½ can",
+    "grams": 60
+   }
+  ]
+ },
+ {
+  "id": "cod",
+  "name": "Cod, cooked",
+  "localName": "Treska · Треска",
+  "category": "meat_fish",
+  "uzbek": false,
+  "kcal": 105,
+  "protein": 23,
+  "carbs": 0,
+  "fat": 0.9,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.9,
+   "calcium_mg": 14,
+   "magnesium_mg": 42,
+   "iron_mg": 0.4,
+   "zinc_mg": 0.5,
+   "potassium_mg": 244,
+   "sodium_mg": 78,
+   "b12_mcg": 1.0,
+   "selenium_mcg": 38,
+   "vitE_mg": 0.6,
+   "vitC_mg": 0,
+   "vitA_mcg": 14
+  },
+  "portions": [
+   {
+    "label": "1 fillet",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "shrimp",
+  "name": "Shrimp, cooked",
+  "localName": "Krevetka · Креветки",
+  "category": "meat_fish",
+  "uzbek": false,
+  "kcal": 99,
+  "protein": 24,
+  "carbs": 0.2,
+  "fat": 0.3,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 64,
+   "magnesium_mg": 35,
+   "iron_mg": 0.5,
+   "zinc_mg": 1.6,
+   "potassium_mg": 259,
+   "sodium_mg": 111,
+   "b12_mcg": 1.2,
+   "selenium_mcg": 38,
+   "vitE_mg": 1.3,
+   "vitC_mg": 0,
+   "vitA_mcg": 54
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 100
+   }
+  ]
+ },
+ {
+  "id": "egg_boiled",
+  "name": "Egg, boiled",
+  "localName": "Tuxum · Яйцо варёное",
+  "category": "meat_fish",
+  "uzbek": false,
+  "kcal": 155,
+  "protein": 13,
+  "carbs": 1.1,
+  "fat": 11,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 2.2,
+   "calcium_mg": 50,
+   "magnesium_mg": 10,
+   "iron_mg": 1.2,
+   "zinc_mg": 1.1,
+   "potassium_mg": 126,
+   "sodium_mg": 124,
+   "b12_mcg": 1.1,
+   "selenium_mcg": 31,
+   "vitE_mg": 1.0,
+   "vitC_mg": 0,
+   "vitA_mcg": 160
+  },
+  "portions": [
+   {
+    "label": "1 egg",
+    "grams": 50
+   },
+   {
+    "label": "2 eggs",
+    "grams": 100
+   }
+  ]
+ },
+ {
+  "id": "milk",
+  "name": "Milk, whole",
+  "localName": "Sut · Молоко",
+  "category": "dairy",
+  "uzbek": false,
+  "kcal": 61,
+  "protein": 3.2,
+  "carbs": 4.8,
+  "fat": 3.3,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 1.3,
+   "calcium_mg": 113,
+   "magnesium_mg": 10,
+   "iron_mg": 0,
+   "zinc_mg": 0.4,
+   "potassium_mg": 132,
+   "sodium_mg": 43,
+   "b12_mcg": 0.45,
+   "selenium_mcg": 3.7,
+   "vitE_mg": 0.1,
+   "vitC_mg": 0,
+   "vitA_mcg": 46
+  },
+  "portions": [
+   {
+    "label": "1 glass",
+    "grams": 250
+   },
+   {
+    "label": "½ glass",
+    "grams": 125
+   }
+  ]
+ },
+ {
+  "id": "kefir",
+  "name": "Kefir",
+  "localName": "Kefir · Кефир",
+  "category": "dairy",
+  "uzbek": false,
+  "kcal": 41,
+  "protein": 3.4,
+  "carbs": 4.5,
+  "fat": 1.0,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 130,
+   "magnesium_mg": 12,
+   "iron_mg": 0.1,
+   "zinc_mg": 0.4,
+   "potassium_mg": 164,
+   "sodium_mg": 40,
+   "b12_mcg": 0.5,
+   "selenium_mcg": 2,
+   "vitE_mg": 0,
+   "vitC_mg": 0,
+   "vitA_mcg": 20
+  },
+  "portions": [
+   {
+    "label": "1 glass",
+    "grams": 250
+   }
+  ]
+ },
+ {
+  "id": "yogurt",
+  "name": "Yogurt, plain",
+  "localName": "Yogurt · Йогурт",
+  "category": "dairy",
+  "uzbek": false,
+  "kcal": 61,
+  "protein": 3.5,
+  "carbs": 4.7,
+  "fat": 3.3,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 121,
+   "magnesium_mg": 12,
+   "iron_mg": 0.05,
+   "zinc_mg": 0.6,
+   "potassium_mg": 155,
+   "sodium_mg": 46,
+   "b12_mcg": 0.5,
+   "selenium_mcg": 2.2,
+   "vitE_mg": 0.1,
+   "vitC_mg": 0.5,
+   "vitA_mcg": 27
+  },
+  "portions": [
+   {
+    "label": "1 cup",
+    "grams": 150
+   },
+   {
+    "label": "1 glass",
+    "grams": 250
+   }
+  ]
+ },
+ {
+  "id": "greek_yogurt",
+  "name": "Greek yogurt, plain",
+  "localName": "Grek yogurti · Греческий йогурт",
+  "category": "dairy",
+  "uzbek": false,
+  "kcal": 97,
+  "protein": 9,
+  "carbs": 3.9,
+  "fat": 5,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 100,
+   "magnesium_mg": 11,
+   "iron_mg": 0.04,
+   "zinc_mg": 0.5,
+   "potassium_mg": 141,
+   "sodium_mg": 35,
+   "b12_mcg": 0.75,
+   "selenium_mcg": 9,
+   "vitE_mg": 0.1,
+   "vitC_mg": 0,
+   "vitA_mcg": 20
+  },
+  "portions": [
+   {
+    "label": "1 cup",
+    "grams": 170
+   }
+  ]
+ },
+ {
+  "id": "cottage_cheese",
+  "name": "Cottage cheese",
+  "localName": "Tvorog · Творог",
+  "category": "dairy",
+  "uzbek": false,
+  "kcal": 98,
+  "protein": 11,
+  "carbs": 3.4,
+  "fat": 4.3,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 83,
+   "magnesium_mg": 8,
+   "iron_mg": 0.1,
+   "zinc_mg": 0.4,
+   "potassium_mg": 104,
+   "sodium_mg": 364,
+   "b12_mcg": 0.4,
+   "selenium_mcg": 9.7,
+   "vitE_mg": 0.1,
+   "vitC_mg": 0,
+   "vitA_mcg": 37
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 150
+   },
+   {
+    "label": "3 tbsp",
+    "grams": 60
+   }
+  ]
+ },
+ {
+  "id": "cheese_hard",
+  "name": "Hard cheese",
+  "localName": "Pishloq · Сыр",
+  "category": "dairy",
+  "uzbek": false,
+  "kcal": 403,
+  "protein": 25,
+  "carbs": 1.3,
+  "fat": 33,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.6,
+   "calcium_mg": 721,
+   "magnesium_mg": 28,
+   "iron_mg": 0.7,
+   "zinc_mg": 3.1,
+   "potassium_mg": 98,
+   "sodium_mg": 621,
+   "b12_mcg": 1.1,
+   "selenium_mcg": 28,
+   "vitE_mg": 0.7,
+   "vitC_mg": 0,
+   "vitA_mcg": 265
+  },
+  "portions": [
+   {
+    "label": "1 slice",
+    "grams": 30
+   }
+  ]
+ },
+ {
+  "id": "butter",
+  "name": "Butter",
+  "localName": "Sariyog‘ · Сливочное масло",
+  "category": "dairy",
+  "uzbek": false,
+  "kcal": 717,
+  "protein": 0.9,
+  "carbs": 0.1,
+  "fat": 81,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 24,
+   "magnesium_mg": 2,
+   "iron_mg": 0,
+   "zinc_mg": 0.1,
+   "potassium_mg": 24,
+   "sodium_mg": 11,
+   "b12_mcg": 0.2,
+   "selenium_mcg": 1,
+   "vitE_mg": 2.3,
+   "vitC_mg": 0,
+   "vitA_mcg": 684
+  },
+  "portions": [
+   {
+    "label": "1 tsp",
+    "grams": 5
+   },
+   {
+    "label": "1 tbsp",
+    "grams": 14
+   }
+  ]
+ },
+ {
+  "id": "apple",
+  "name": "Apple",
+  "localName": "Olma · Яблоко",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 52,
+  "protein": 0.3,
+  "carbs": 13.8,
+  "fat": 0.2,
+  "fibre": 2.4,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 6,
+   "magnesium_mg": 5,
+   "iron_mg": 0.1,
+   "zinc_mg": 0,
+   "potassium_mg": 107,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 0,
+   "vitE_mg": 0.2,
+   "vitC_mg": 4.6,
+   "vitA_mcg": 3
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 180
+   }
+  ]
+ },
+ {
+  "id": "banana",
+  "name": "Banana",
+  "localName": "Banan · Банан",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 89,
+  "protein": 1.1,
+  "carbs": 22.8,
+  "fat": 0.3,
+  "fibre": 2.6,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 5,
+   "magnesium_mg": 27,
+   "iron_mg": 0.3,
+   "zinc_mg": 0.2,
+   "potassium_mg": 358,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 1,
+   "vitE_mg": 0.1,
+   "vitC_mg": 8.7,
+   "vitA_mcg": 3
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 120
+   }
+  ]
+ },
+ {
+  "id": "orange",
+  "name": "Orange",
+  "localName": "Apelsin · Апельсин",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 47,
+  "protein": 0.9,
+  "carbs": 11.8,
+  "fat": 0.1,
+  "fibre": 2.4,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 40,
+   "magnesium_mg": 10,
+   "iron_mg": 0.1,
+   "zinc_mg": 0.1,
+   "potassium_mg": 181,
+   "sodium_mg": 0,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.5,
+   "vitE_mg": 0.2,
+   "vitC_mg": 53,
+   "vitA_mcg": 11
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "pomegranate",
+  "name": "Pomegranate",
+  "localName": "Anor · Гранат",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 83,
+  "protein": 1.7,
+  "carbs": 18.7,
+  "fat": 1.2,
+  "fibre": 4,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 10,
+   "magnesium_mg": 12,
+   "iron_mg": 0.3,
+   "zinc_mg": 0.4,
+   "potassium_mg": 236,
+   "sodium_mg": 3,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.5,
+   "vitE_mg": 0.6,
+   "vitC_mg": 10,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 small",
+    "grams": 150
+   },
+   {
+    "label": "½ small",
+    "grams": 75
+   }
+  ]
+ },
+ {
+  "id": "grapes",
+  "name": "Grapes",
+  "localName": "Uzum · Виноград",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 69,
+  "protein": 0.7,
+  "carbs": 18.1,
+  "fat": 0.2,
+  "fibre": 0.9,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 10,
+   "magnesium_mg": 7,
+   "iron_mg": 0.4,
+   "zinc_mg": 0.1,
+   "potassium_mg": 191,
+   "sodium_mg": 2,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.1,
+   "vitE_mg": 0.2,
+   "vitC_mg": 3.2,
+   "vitA_mcg": 3
+  },
+  "portions": [
+   {
+    "label": "1 bunch",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "watermelon",
+  "name": "Watermelon",
+  "localName": "Tarvuz · Арбуз",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 30,
+  "protein": 0.6,
+  "carbs": 7.6,
+  "fat": 0.2,
+  "fibre": 0.4,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 7,
+   "magnesium_mg": 10,
+   "iron_mg": 0.2,
+   "zinc_mg": 0.1,
+   "potassium_mg": 112,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.4,
+   "vitE_mg": 0.1,
+   "vitC_mg": 8.1,
+   "vitA_mcg": 28
+  },
+  "portions": [
+   {
+    "label": "1 slice",
+    "grams": 300
+   }
+  ]
+ },
+ {
+  "id": "melon",
+  "name": "Melon",
+  "localName": "Qovun · Дыня",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 34,
+  "protein": 0.8,
+  "carbs": 8.2,
+  "fat": 0.2,
+  "fibre": 0.9,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 9,
+   "magnesium_mg": 12,
+   "iron_mg": 0.2,
+   "zinc_mg": 0.2,
+   "potassium_mg": 267,
+   "sodium_mg": 16,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.4,
+   "vitE_mg": 0.05,
+   "vitC_mg": 37,
+   "vitA_mcg": 169
+  },
+  "portions": [
+   {
+    "label": "1 slice",
+    "grams": 200
+   }
+  ]
+ },
+ {
+  "id": "persimmon",
+  "name": "Persimmon",
+  "localName": "Xurmo · Хурма",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 70,
+  "protein": 0.6,
+  "carbs": 18.6,
+  "fat": 0.2,
+  "fibre": 3.6,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 8,
+   "magnesium_mg": 9,
+   "iron_mg": 0.15,
+   "zinc_mg": 0.1,
+   "potassium_mg": 161,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.6,
+   "vitE_mg": 0.5,
+   "vitC_mg": 7.5,
+   "vitA_mcg": 81
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 170
+   }
+  ]
+ },
+ {
+  "id": "quince",
+  "name": "Quince",
+  "localName": "Behi · Айва",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 57,
+  "protein": 0.4,
+  "carbs": 15.3,
+  "fat": 0.1,
+  "fibre": 1.9,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 11,
+   "magnesium_mg": 8,
+   "iron_mg": 0.7,
+   "zinc_mg": 0.04,
+   "potassium_mg": 197,
+   "sodium_mg": 4,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.6,
+   "vitE_mg": 0.4,
+   "vitC_mg": 15,
+   "vitA_mcg": 2
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 200
+   }
+  ]
+ },
+ {
+  "id": "apricot",
+  "name": "Apricot",
+  "localName": "O‘rik · Абрикос",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 48,
+  "protein": 1.4,
+  "carbs": 11.1,
+  "fat": 0.4,
+  "fibre": 2,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 13,
+   "magnesium_mg": 10,
+   "iron_mg": 0.4,
+   "zinc_mg": 0.2,
+   "potassium_mg": 259,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.4,
+   "vitE_mg": 0.9,
+   "vitC_mg": 10,
+   "vitA_mcg": 96
+  },
+  "portions": [
+   {
+    "label": "3 fruits",
+    "grams": 105
+   }
+  ]
+ },
+ {
+  "id": "apricot_dried",
+  "name": "Dried apricots",
+  "localName": "Quritilgan o‘rik · Курага",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 241,
+  "protein": 3.4,
+  "carbs": 62.6,
+  "fat": 0.5,
+  "fibre": 7.3,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 55,
+   "magnesium_mg": 32,
+   "iron_mg": 2.7,
+   "zinc_mg": 0.4,
+   "potassium_mg": 1162,
+   "sodium_mg": 10,
+   "b12_mcg": 0,
+   "selenium_mcg": 2.2,
+   "vitE_mg": 4.3,
+   "vitC_mg": 1,
+   "vitA_mcg": 180
+  },
+  "portions": [
+   {
+    "label": "1 handful",
+    "grams": 30
+   }
+  ]
+ },
+ {
+  "id": "raisins",
+  "name": "Raisins",
+  "localName": "Mayiz · Изюм",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 299,
+  "protein": 3.1,
+  "carbs": 79.2,
+  "fat": 0.5,
+  "fibre": 3.7,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 50,
+   "magnesium_mg": 32,
+   "iron_mg": 1.9,
+   "zinc_mg": 0.2,
+   "potassium_mg": 749,
+   "sodium_mg": 11,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.6,
+   "vitE_mg": 0.1,
+   "vitC_mg": 2.3,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 handful",
+    "grams": 30
+   }
+  ]
+ },
+ {
+  "id": "dates",
+  "name": "Dates",
+  "localName": "Xurma · Финики",
+  "category": "fruit",
+  "uzbek": false,
+  "kcal": 282,
+  "protein": 2.5,
+  "carbs": 75,
+  "fat": 0.4,
+  "fibre": 8,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 39,
+   "magnesium_mg": 43,
+   "iron_mg": 1,
+   "zinc_mg": 0.4,
+   "potassium_mg": 656,
+   "sodium_mg": 2,
+   "b12_mcg": 0,
+   "selenium_mcg": 3,
+   "vitE_mg": 0.05,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "3 dates",
+    "grams": 60
+   }
+  ]
+ },
+ {
+  "id": "tomato",
+  "name": "Tomato",
+  "localName": "Pomidor · Помидор",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 18,
+  "protein": 0.9,
+  "carbs": 3.9,
+  "fat": 0.2,
+  "fibre": 1.2,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 10,
+   "magnesium_mg": 11,
+   "iron_mg": 0.3,
+   "zinc_mg": 0.2,
+   "potassium_mg": 237,
+   "sodium_mg": 5,
+   "b12_mcg": 0,
+   "selenium_mcg": 0,
+   "vitE_mg": 0.5,
+   "vitC_mg": 14,
+   "vitA_mcg": 42
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 120
+   }
+  ]
+ },
+ {
+  "id": "cucumber",
+  "name": "Cucumber",
+  "localName": "Bodring · Огурец",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 15,
+  "protein": 0.7,
+  "carbs": 3.6,
+  "fat": 0.1,
+  "fibre": 0.5,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 16,
+   "magnesium_mg": 13,
+   "iron_mg": 0.3,
+   "zinc_mg": 0.2,
+   "potassium_mg": 147,
+   "sodium_mg": 2,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.3,
+   "vitE_mg": 0.03,
+   "vitC_mg": 2.8,
+   "vitA_mcg": 5
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "carrot",
+  "name": "Carrot",
+  "localName": "Sabzi · Морковь",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 41,
+  "protein": 0.9,
+  "carbs": 9.6,
+  "fat": 0.2,
+  "fibre": 2.8,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 33,
+   "magnesium_mg": 12,
+   "iron_mg": 0.3,
+   "zinc_mg": 0.2,
+   "potassium_mg": 320,
+   "sodium_mg": 69,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.1,
+   "vitE_mg": 0.7,
+   "vitC_mg": 5.9,
+   "vitA_mcg": 835
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 80
+   }
+  ]
+ },
+ {
+  "id": "onion",
+  "name": "Onion",
+  "localName": "Piyoz · Лук",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 40,
+  "protein": 1.1,
+  "carbs": 9.3,
+  "fat": 0.1,
+  "fibre": 1.7,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 23,
+   "magnesium_mg": 10,
+   "iron_mg": 0.2,
+   "zinc_mg": 0.2,
+   "potassium_mg": 146,
+   "sodium_mg": 4,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.5,
+   "vitE_mg": 0.02,
+   "vitC_mg": 7.4,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 100
+   }
+  ]
+ },
+ {
+  "id": "potato",
+  "name": "Potato, boiled",
+  "localName": "Kartoshka · Картофель",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 87,
+  "protein": 1.9,
+  "carbs": 20.1,
+  "fat": 0.1,
+  "fibre": 1.8,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 5,
+   "magnesium_mg": 22,
+   "iron_mg": 0.3,
+   "zinc_mg": 0.3,
+   "potassium_mg": 379,
+   "sodium_mg": 4,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.3,
+   "vitE_mg": 0.01,
+   "vitC_mg": 13,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "pumpkin",
+  "name": "Pumpkin",
+  "localName": "Qovoq · Тыква",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 26,
+  "protein": 1,
+  "carbs": 6.5,
+  "fat": 0.1,
+  "fibre": 0.5,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 21,
+   "magnesium_mg": 12,
+   "iron_mg": 0.8,
+   "zinc_mg": 0.3,
+   "potassium_mg": 340,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.3,
+   "vitE_mg": 0.4,
+   "vitC_mg": 9,
+   "vitA_mcg": 426
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "spinach",
+  "name": "Spinach",
+  "localName": "Ismaloq · Шпинат",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 23,
+  "protein": 2.9,
+  "carbs": 3.6,
+  "fat": 0.4,
+  "fibre": 2.2,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 99,
+   "magnesium_mg": 79,
+   "iron_mg": 2.7,
+   "zinc_mg": 0.5,
+   "potassium_mg": 558,
+   "sodium_mg": 79,
+   "b12_mcg": 0,
+   "selenium_mcg": 1,
+   "vitE_mg": 2,
+   "vitC_mg": 28,
+   "vitA_mcg": 469
+  },
+  "portions": [
+   {
+    "label": "1 handful",
+    "grams": 50
+   }
+  ]
+ },
+ {
+  "id": "broccoli",
+  "name": "Broccoli",
+  "localName": "Brokkoli · Брокколи",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 34,
+  "protein": 2.8,
+  "carbs": 6.6,
+  "fat": 0.4,
+  "fibre": 2.6,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 47,
+   "magnesium_mg": 21,
+   "iron_mg": 0.7,
+   "zinc_mg": 0.4,
+   "potassium_mg": 316,
+   "sodium_mg": 33,
+   "b12_mcg": 0,
+   "selenium_mcg": 2.5,
+   "vitE_mg": 0.8,
+   "vitC_mg": 89,
+   "vitA_mcg": 31
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 100
+   }
+  ]
+ },
+ {
+  "id": "bell_pepper",
+  "name": "Bell pepper",
+  "localName": "Bolgar qalampiri · Болгарский перец",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 31,
+  "protein": 1,
+  "carbs": 6,
+  "fat": 0.3,
+  "fibre": 2.1,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 7,
+   "magnesium_mg": 12,
+   "iron_mg": 0.4,
+   "zinc_mg": 0.25,
+   "potassium_mg": 211,
+   "sodium_mg": 4,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.1,
+   "vitE_mg": 1.6,
+   "vitC_mg": 128,
+   "vitA_mcg": 157
+  },
+  "portions": [
+   {
+    "label": "1 medium",
+    "grams": 120
+   }
+  ]
+ },
+ {
+  "id": "cabbage",
+  "name": "Cabbage",
+  "localName": "Karam · Капуста",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 25,
+  "protein": 1.3,
+  "carbs": 5.8,
+  "fat": 0.1,
+  "fibre": 2.5,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 40,
+   "magnesium_mg": 12,
+   "iron_mg": 0.5,
+   "zinc_mg": 0.2,
+   "potassium_mg": 170,
+   "sodium_mg": 18,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.3,
+   "vitE_mg": 0.15,
+   "vitC_mg": 36,
+   "vitA_mcg": 5
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 100
+   }
+  ]
+ },
+ {
+  "id": "chickpeas",
+  "name": "Chickpeas, cooked",
+  "localName": "No‘xat · Нут",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 164,
+  "protein": 8.9,
+  "carbs": 27.4,
+  "fat": 2.6,
+  "fibre": 7.6,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 49,
+   "magnesium_mg": 48,
+   "iron_mg": 2.9,
+   "zinc_mg": 1.5,
+   "potassium_mg": 291,
+   "sodium_mg": 7,
+   "b12_mcg": 0,
+   "selenium_mcg": 3.7,
+   "vitE_mg": 0.4,
+   "vitC_mg": 1.3,
+   "vitA_mcg": 1
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 100
+   }
+  ]
+ },
+ {
+  "id": "lentils",
+  "name": "Lentils, cooked",
+  "localName": "Yasmiq · Чечевица",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 116,
+  "protein": 9,
+  "carbs": 20,
+  "fat": 0.4,
+  "fibre": 7.9,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 19,
+   "magnesium_mg": 36,
+   "iron_mg": 3.3,
+   "zinc_mg": 1.3,
+   "potassium_mg": 369,
+   "sodium_mg": 2,
+   "b12_mcg": 0,
+   "selenium_mcg": 2.8,
+   "vitE_mg": 0.1,
+   "vitC_mg": 1.5,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "mung_beans",
+  "name": "Mung beans, cooked",
+  "localName": "Mosh · Маш",
+  "category": "veg",
+  "uzbek": false,
+  "kcal": 105,
+  "protein": 7,
+  "carbs": 19,
+  "fat": 0.4,
+  "fibre": 7.6,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 27,
+   "magnesium_mg": 48,
+   "iron_mg": 1.4,
+   "zinc_mg": 0.8,
+   "potassium_mg": 266,
+   "sodium_mg": 2,
+   "b12_mcg": 0,
+   "selenium_mcg": 2.2,
+   "vitE_mg": 0.15,
+   "vitC_mg": 1,
+   "vitA_mcg": 2
+  },
+  "portions": [
+   {
+    "label": "1 portion",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "rice_cooked",
+  "name": "Rice, white, cooked",
+  "localName": "Guruch · Рис",
+  "category": "grains",
+  "uzbek": false,
+  "kcal": 130,
+  "protein": 2.7,
+  "carbs": 28.2,
+  "fat": 0.3,
+  "fibre": 0.4,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 10,
+   "magnesium_mg": 12,
+   "iron_mg": 0.2,
+   "zinc_mg": 0.5,
+   "potassium_mg": 35,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 7.5,
+   "vitE_mg": 0.04,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 cup",
+    "grams": 160
+   }
+  ]
+ },
+ {
+  "id": "buckwheat",
+  "name": "Buckwheat, cooked",
+  "localName": "Grechka · Гречка",
+  "category": "grains",
+  "uzbek": false,
+  "kcal": 92,
+  "protein": 3.4,
+  "carbs": 19.9,
+  "fat": 0.6,
+  "fibre": 2.7,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 7,
+   "magnesium_mg": 51,
+   "iron_mg": 0.8,
+   "zinc_mg": 0.6,
+   "potassium_mg": 88,
+   "sodium_mg": 4,
+   "b12_mcg": 0,
+   "selenium_mcg": 2.2,
+   "vitE_mg": 0.1,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 cup",
+    "grams": 170
+   }
+  ]
+ },
+ {
+  "id": "oatmeal_cooked",
+  "name": "Oatmeal porridge, cooked",
+  "localName": "Suli bo‘tqasi · Овсяная каша",
+  "category": "grains",
+  "uzbek": false,
+  "kcal": 71,
+  "protein": 2.5,
+  "carbs": 12,
+  "fat": 1.5,
+  "fibre": 1.7,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 9,
+   "magnesium_mg": 27,
+   "iron_mg": 0.7,
+   "zinc_mg": 0.6,
+   "potassium_mg": 70,
+   "sodium_mg": 4,
+   "b12_mcg": 0,
+   "selenium_mcg": 5,
+   "vitE_mg": 0.1,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 bowl",
+    "grams": 250
+   }
+  ]
+ },
+ {
+  "id": "oats_dry",
+  "name": "Oats, dry",
+  "localName": "Suli · Овсяные хлопья",
+  "category": "grains",
+  "uzbek": false,
+  "kcal": 379,
+  "protein": 13.2,
+  "carbs": 67.7,
+  "fat": 6.5,
+  "fibre": 10.1,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 52,
+   "magnesium_mg": 138,
+   "iron_mg": 4.3,
+   "zinc_mg": 3.6,
+   "potassium_mg": 362,
+   "sodium_mg": 6,
+   "b12_mcg": 0,
+   "selenium_mcg": 29,
+   "vitE_mg": 0.4,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "½ cup",
+    "grams": 40
+   }
+  ]
+ },
+ {
+  "id": "pasta_cooked",
+  "name": "Pasta, cooked",
+  "localName": "Makaron · Макароны",
+  "category": "grains",
+  "uzbek": false,
+  "kcal": 158,
+  "protein": 5.8,
+  "carbs": 30.9,
+  "fat": 0.9,
+  "fibre": 1.8,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 7,
+   "magnesium_mg": 18,
+   "iron_mg": 1.3,
+   "zinc_mg": 0.5,
+   "potassium_mg": 44,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 26,
+   "vitE_mg": 0.06,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 plate",
+    "grams": 200
+   }
+  ]
+ },
+ {
+  "id": "bulgur",
+  "name": "Bulgur, cooked",
+  "localName": "Bulgur · Булгур",
+  "category": "grains",
+  "uzbek": false,
+  "kcal": 83,
+  "protein": 3.1,
+  "carbs": 18.6,
+  "fat": 0.2,
+  "fibre": 4.5,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 10,
+   "magnesium_mg": 32,
+   "iron_mg": 0.9,
+   "zinc_mg": 0.6,
+   "potassium_mg": 68,
+   "sodium_mg": 5,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.6,
+   "vitE_mg": 0.02,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 cup",
+    "grams": 180
+   }
+  ]
+ },
+ {
+  "id": "bread_white",
+  "name": "White bread",
+  "localName": "Oq non · Белый хлеб",
+  "category": "bread",
+  "uzbek": false,
+  "kcal": 265,
+  "protein": 9,
+  "carbs": 49,
+  "fat": 3.2,
+  "fibre": 2.7,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 144,
+   "magnesium_mg": 25,
+   "iron_mg": 3.6,
+   "zinc_mg": 0.8,
+   "potassium_mg": 115,
+   "sodium_mg": 491,
+   "b12_mcg": 0,
+   "selenium_mcg": 24,
+   "vitE_mg": 0.2,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 slice",
+    "grams": 30
+   },
+   {
+    "label": "2 slices",
+    "grams": 60
+   }
+  ]
+ },
+ {
+  "id": "bread_whole",
+  "name": "Whole wheat bread",
+  "localName": "To‘liq donli non · Цельнозерновой хлеб",
+  "category": "bread",
+  "uzbek": false,
+  "kcal": 252,
+  "protein": 12.5,
+  "carbs": 43,
+  "fat": 3.5,
+  "fibre": 6,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 107,
+   "magnesium_mg": 82,
+   "iron_mg": 2.4,
+   "zinc_mg": 1.8,
+   "potassium_mg": 254,
+   "sodium_mg": 450,
+   "b12_mcg": 0,
+   "selenium_mcg": 40,
+   "vitE_mg": 0.6,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 slice",
+    "grams": 35
+   },
+   {
+    "label": "2 slices",
+    "grams": 70
+   }
+  ]
+ },
+ {
+  "id": "lavash",
+  "name": "Lavash",
+  "localName": "Lavash · Лаваш",
+  "category": "bread",
+  "uzbek": false,
+  "kcal": 275,
+  "protein": 9.1,
+  "carbs": 57,
+  "fat": 1.2,
+  "fibre": 2.2,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 22,
+   "magnesium_mg": 20,
+   "iron_mg": 2.2,
+   "zinc_mg": 0.7,
+   "potassium_mg": 110,
+   "sodium_mg": 536,
+   "b12_mcg": 0,
+   "selenium_mcg": 20,
+   "vitE_mg": 0.2,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 sheet",
+    "grams": 60
+   }
+  ]
+ },
+ {
+  "id": "tea_black",
+  "name": "Tea, black, no sugar",
+  "localName": "Choy · Чай",
+  "category": "drinks",
+  "uzbek": false,
+  "kcal": 1,
+  "protein": 0,
+  "carbs": 0.3,
+  "fat": 0,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 0,
+   "magnesium_mg": 3,
+   "iron_mg": 0,
+   "zinc_mg": 0,
+   "potassium_mg": 37,
+   "sodium_mg": 3,
+   "b12_mcg": 0,
+   "selenium_mcg": 0,
+   "vitE_mg": 0,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 cup",
+    "grams": 240
+   }
+  ]
+ },
+ {
+  "id": "coffee_black",
+  "name": "Coffee, black",
+  "localName": "Qahva · Кофе",
+  "category": "drinks",
+  "uzbek": false,
+  "kcal": 1,
+  "protein": 0.1,
+  "carbs": 0,
+  "fat": 0,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 2,
+   "magnesium_mg": 3,
+   "iron_mg": 0,
+   "zinc_mg": 0,
+   "potassium_mg": 49,
+   "sodium_mg": 2,
+   "b12_mcg": 0,
+   "selenium_mcg": 0,
+   "vitE_mg": 0.01,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 cup",
+    "grams": 240
+   }
+  ]
+ },
+ {
+  "id": "cola",
+  "name": "Cola",
+  "localName": "Kola · Кола",
+  "category": "drinks",
+  "uzbek": false,
+  "kcal": 42,
+  "protein": 0,
+  "carbs": 10.6,
+  "fat": 0,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 2,
+   "magnesium_mg": 0,
+   "iron_mg": 0,
+   "zinc_mg": 0,
+   "potassium_mg": 2,
+   "sodium_mg": 4,
+   "b12_mcg": 0,
+   "selenium_mcg": 0,
+   "vitE_mg": 0,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 can",
+    "grams": 330
+   }
+  ]
+ },
+ {
+  "id": "orange_juice",
+  "name": "Orange juice",
+  "localName": "Apelsin sharbati · Апельсиновый сок",
+  "category": "drinks",
+  "uzbek": false,
+  "kcal": 45,
+  "protein": 0.7,
+  "carbs": 10.4,
+  "fat": 0.2,
+  "fibre": 0.2,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 11,
+   "magnesium_mg": 11,
+   "iron_mg": 0.2,
+   "zinc_mg": 0.05,
+   "potassium_mg": 200,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.1,
+   "vitE_mg": 0.04,
+   "vitC_mg": 50,
+   "vitA_mcg": 10
+  },
+  "portions": [
+   {
+    "label": "1 glass",
+    "grams": 250
+   }
+  ]
+ },
+ {
+  "id": "whey_shake",
+  "name": "Whey protein powder",
+  "localName": "Protein kukuni · Сывороточный протеин",
+  "category": "drinks",
+  "uzbek": false,
+  "kcal": 400,
+  "protein": 80,
+  "carbs": 8,
+  "fat": 6,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 450,
+   "magnesium_mg": 60,
+   "iron_mg": 0.5,
+   "zinc_mg": 3,
+   "potassium_mg": 500,
+   "sodium_mg": 300,
+   "b12_mcg": 2,
+   "selenium_mcg": 10,
+   "vitE_mg": 0.2,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 scoop",
+    "grams": 30
+   }
+  ]
+ },
+ {
+  "id": "peanut_butter",
+  "name": "Peanut butter",
+  "localName": "Yer yong‘oq pastasi · Арахисовая паста",
+  "category": "other",
+  "uzbek": false,
+  "kcal": 588,
+  "protein": 25,
+  "carbs": 20,
+  "fat": 50,
+  "fibre": 6,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 49,
+   "magnesium_mg": 168,
+   "iron_mg": 1.7,
+   "zinc_mg": 2.5,
+   "potassium_mg": 649,
+   "sodium_mg": 426,
+   "b12_mcg": 0,
+   "selenium_mcg": 5.6,
+   "vitE_mg": 9.1,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 tbsp",
+    "grams": 16
+   }
+  ]
+ },
+ {
+  "id": "walnuts",
+  "name": "Walnuts",
+  "localName": "Yong‘oq · Грецкие орехи",
+  "category": "other",
+  "uzbek": false,
+  "kcal": 654,
+  "protein": 15.2,
+  "carbs": 13.7,
+  "fat": 65.2,
+  "fibre": 6.7,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 98,
+   "magnesium_mg": 158,
+   "iron_mg": 2.9,
+   "zinc_mg": 3.1,
+   "potassium_mg": 441,
+   "sodium_mg": 2,
+   "b12_mcg": 0,
+   "selenium_mcg": 4.9,
+   "vitE_mg": 0.7,
+   "vitC_mg": 1.3,
+   "vitA_mcg": 1
+  },
+  "portions": [
+   {
+    "label": "1 handful",
+    "grams": 30
+   }
+  ]
+ },
+ {
+  "id": "almonds",
+  "name": "Almonds",
+  "localName": "Bodom · Миндаль",
+  "category": "other",
+  "uzbek": false,
+  "kcal": 579,
+  "protein": 21.2,
+  "carbs": 21.6,
+  "fat": 49.9,
+  "fibre": 12.5,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 269,
+   "magnesium_mg": 270,
+   "iron_mg": 3.7,
+   "zinc_mg": 3.1,
+   "potassium_mg": 733,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 4.1,
+   "vitE_mg": 26,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 handful",
+    "grams": 30
+   }
+  ]
+ },
+ {
+  "id": "olive_oil",
+  "name": "Olive oil",
+  "localName": "Zaytun moyi · Оливковое масло",
+  "category": "other",
+  "uzbek": false,
+  "kcal": 884,
+  "protein": 0,
+  "carbs": 0,
+  "fat": 100,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 1,
+   "magnesium_mg": 0,
+   "iron_mg": 0.6,
+   "zinc_mg": 0,
+   "potassium_mg": 1,
+   "sodium_mg": 2,
+   "b12_mcg": 0,
+   "selenium_mcg": 0,
+   "vitE_mg": 14,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 tbsp",
+    "grams": 14
+   }
+  ]
+ },
+ {
+  "id": "sunflower_oil",
+  "name": "Sunflower oil",
+  "localName": "Kungaboqar moyi · Подсолнечное масло",
+  "category": "other",
+  "uzbek": false,
+  "kcal": 884,
+  "protein": 0,
+  "carbs": 0,
+  "fat": 100,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 0,
+   "magnesium_mg": 0,
+   "iron_mg": 0,
+   "zinc_mg": 0,
+   "potassium_mg": 0,
+   "sodium_mg": 0,
+   "b12_mcg": 0,
+   "selenium_mcg": 0,
+   "vitE_mg": 41,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 tbsp",
+    "grams": 14
+   }
+  ]
+ },
+ {
+  "id": "honey",
+  "name": "Honey",
+  "localName": "Asal · Мёд",
+  "category": "other",
+  "uzbek": false,
+  "kcal": 304,
+  "protein": 0.3,
+  "carbs": 82.4,
+  "fat": 0,
+  "fibre": 0.2,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 6,
+   "magnesium_mg": 2,
+   "iron_mg": 0.4,
+   "zinc_mg": 0.2,
+   "potassium_mg": 52,
+   "sodium_mg": 4,
+   "b12_mcg": 0,
+   "selenium_mcg": 0.8,
+   "vitE_mg": 0,
+   "vitC_mg": 0.5,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 tbsp",
+    "grams": 21
+   }
+  ]
+ },
+ {
+  "id": "sugar",
+  "name": "Sugar",
+  "localName": "Shakar · Сахар",
+  "category": "other",
+  "uzbek": false,
+  "kcal": 387,
+  "protein": 0,
+  "carbs": 100,
+  "fat": 0,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 1,
+   "magnesium_mg": 0,
+   "iron_mg": 0,
+   "zinc_mg": 0,
+   "potassium_mg": 2,
+   "sodium_mg": 1,
+   "b12_mcg": 0,
+   "selenium_mcg": 0,
+   "vitE_mg": 0,
+   "vitC_mg": 0,
+   "vitA_mcg": 0
+  },
+  "portions": [
+   {
+    "label": "1 tsp",
+    "grams": 4
+   }
+  ]
+ },
+ {
+  "id": "dark_chocolate",
+  "name": "Dark chocolate",
+  "localName": "Qora shokolad · Тёмный шоколад",
+  "category": "other",
+  "uzbek": false,
+  "kcal": 598,
+  "protein": 7.8,
+  "carbs": 45.9,
+  "fat": 42.6,
+  "fibre": 10.9,
+  "micros": {
+   "vitD_mcg": 0,
+   "calcium_mg": 73,
+   "magnesium_mg": 228,
+   "iron_mg": 12,
+   "zinc_mg": 3.3,
+   "potassium_mg": 715,
+   "sodium_mg": 20,
+   "b12_mcg": 0,
+   "selenium_mcg": 6.8,
+   "vitE_mg": 0.6,
+   "vitC_mg": 0,
+   "vitA_mcg": 2
+  },
+  "portions": [
+   {
+    "label": "2 squares",
+    "grams": 20
+   }
+  ]
+ },
+ {
+  "id": "tashkent_plov",
+  "name": "Tashkent plov",
+  "localName": "Toshkent oshi · Плов ташкентский",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 206,
+  "protein": 6.2,
+  "carbs": 22.9,
+  "fat": 9.9,
+  "fibre": 1.6,
+  "micros": {
+   "vitD_mcg": 0.02,
+   "calcium_mg": 15,
+   "magnesium_mg": 12,
+   "iron_mg": 0.55,
+   "zinc_mg": 1.09,
+   "potassium_mg": 118,
+   "sodium_mg": 328,
+   "b12_mcg": 0.31,
+   "selenium_mcg": 7.15,
+   "vitE_mg": 2.21,
+   "vitC_mg": 1.31,
+   "vitA_mcg": 117
+  },
+  "portions": [
+   {
+    "label": "1 plate",
+    "grams": 350
+   },
+   {
+    "label": "½ plate",
+    "grams": 175
+   },
+   {
+    "label": "2 plates",
+    "grams": 700
+   }
+  ]
+ },
+ {
+  "id": "samarkand_plov",
+  "name": "Samarkand plov",
+  "localName": "Samarqand oshi · Плов самаркандский",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 197,
+  "protein": 6.9,
+  "carbs": 22,
+  "fat": 9.0,
+  "fibre": 1.5,
+  "micros": {
+   "vitD_mcg": 0.03,
+   "calcium_mg": 14,
+   "magnesium_mg": 12,
+   "iron_mg": 0.55,
+   "zinc_mg": 1.17,
+   "potassium_mg": 130,
+   "sodium_mg": 329,
+   "b12_mcg": 0.36,
+   "selenium_mcg": 7.44,
+   "vitE_mg": 2.2,
+   "vitC_mg": 1.32,
+   "vitA_mcg": 117
+  },
+  "portions": [
+   {
+    "label": "1 plate",
+    "grams": 350
+   },
+   {
+    "label": "½ plate",
+    "grams": 175
+   },
+   {
+    "label": "2 plates",
+    "grams": 700
+   }
+  ]
+ },
+ {
+  "id": "plov_chickpeas",
+  "name": "Plov with chickpeas",
+  "localName": "Nohutli osh · Плов с нутом",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 185,
+  "protein": 5.7,
+  "carbs": 22.5,
+  "fat": 8.0,
+  "fibre": 2.4,
+  "micros": {
+   "vitD_mcg": 0.01,
+   "calcium_mg": 17,
+   "magnesium_mg": 14,
+   "iron_mg": 0.64,
+   "zinc_mg": 0.82,
+   "potassium_mg": 117,
+   "sodium_mg": 323,
+   "b12_mcg": 0.16,
+   "selenium_mcg": 5.48,
+   "vitE_mg": 1.8,
+   "vitC_mg": 1.31,
+   "vitA_mcg": 100
+  },
+  "portions": [
+   {
+    "label": "1 plate",
+    "grams": 350
+   },
+   {
+    "label": "½ plate",
+    "grams": 175
+   },
+   {
+    "label": "2 plates",
+    "grams": 700
+   }
+  ]
+ },
+ {
+  "id": "chicken_plov",
+  "name": "Chicken plov",
+  "localName": "Tovuqli osh · Плов с курицей",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 158,
+  "protein": 8.9,
+  "carbs": 19,
+  "fat": 5.2,
+  "fibre": 1.3,
+  "micros": {
+   "vitD_mcg": 0.01,
+   "calcium_mg": 12,
+   "magnesium_mg": 12,
+   "iron_mg": 0.33,
+   "zinc_mg": 0.63,
+   "potassium_mg": 99,
+   "sodium_mg": 332,
+   "b12_mcg": 0.06,
+   "selenium_mcg": 7.3,
+   "vitE_mg": 1.38,
+   "vitC_mg": 1.15,
+   "vitA_mcg": 103
+  },
+  "portions": [
+   {
+    "label": "1 plate",
+    "grams": 350
+   },
+   {
+    "label": "½ plate",
+    "grams": 175
+   },
+   {
+    "label": "2 plates",
+    "grams": 700
+   }
+  ]
+ },
+ {
+  "id": "wedding_plov",
+  "name": "Wedding plov (to‘y oshi)",
+  "localName": "To‘y oshi · Свадебный плов",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 217,
+  "protein": 6.0,
+  "carbs": 23,
+  "fat": 11.2,
+  "fibre": 1.6,
+  "micros": {
+   "vitD_mcg": 0.02,
+   "calcium_mg": 14,
+   "magnesium_mg": 12,
+   "iron_mg": 0.49,
+   "zinc_mg": 0.99,
+   "potassium_mg": 134,
+   "sodium_mg": 332,
+   "b12_mcg": 0.42,
+   "selenium_mcg": 7.67,
+   "vitE_mg": 2.61,
+   "vitC_mg": 1.32,
+   "vitA_mcg": 117
+  },
+  "portions": [
+   {
+    "label": "1 plate",
+    "grams": 350
+   },
+   {
+    "label": "½ plate",
+    "grams": 175
+   },
+   {
+    "label": "2 plates",
+    "grams": 700
+   }
+  ]
+ },
+ {
+  "id": "achichuk",
+  "name": "Achichuk salad",
+  "localName": "Achchiq-chuchuk · Ачичук",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 32,
+  "protein": 1.0,
+  "carbs": 6,
+  "fat": 0.5,
+  "fibre": 1.2,
+  "micros": {
+   "vitD_mcg": 0.0,
+   "calcium_mg": 13,
+   "magnesium_mg": 11,
+   "iron_mg": 0.28,
+   "zinc_mg": 0.2,
+   "potassium_mg": 204,
+   "sodium_mg": 198,
+   "b12_mcg": 0.0,
+   "selenium_mcg": 0.13,
+   "vitE_mg": 0.38,
+   "vitC_mg": 15,
+   "vitA_mcg": 33
+  },
+  "portions": [
+   {
+    "label": "1 bowl",
+    "grams": 150
+   },
+   {
+    "label": "½ bowl",
+    "grams": 75
+   }
+  ]
+ },
+ {
+  "id": "non",
+  "name": "Non (flatbread)",
+  "localName": "Non · Лепёшка",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 274,
+  "protein": 9,
+  "carbs": 54,
+  "fat": 2.4,
+  "fibre": 2.4,
+  "micros": {
+   "vitD_mcg": 0.0,
+   "calcium_mg": 144,
+   "magnesium_mg": 25,
+   "iron_mg": 3.6,
+   "zinc_mg": 0.8,
+   "potassium_mg": 115,
+   "sodium_mg": 491,
+   "b12_mcg": 0.0,
+   "selenium_mcg": 24,
+   "vitE_mg": 0.2,
+   "vitC_mg": 0.0,
+   "vitA_mcg": 0.0
+  },
+  "portions": [
+   {
+    "label": "¼ piece",
+    "grams": 60
+   },
+   {
+    "label": "½ piece",
+    "grams": 120
+   },
+   {
+    "label": "1 piece",
+    "grams": 240
+   }
+  ]
+ },
+ {
+  "id": "lagman",
+  "name": "Lagman",
+  "localName": "Lag‘mon · Лагман",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 109,
+  "protein": 6,
+  "carbs": 14,
+  "fat": 3.2,
+  "fibre": 1.5,
+  "micros": {
+   "vitD_mcg": 0.02,
+   "calcium_mg": 9.29,
+   "magnesium_mg": 12,
+   "iron_mg": 0.81,
+   "zinc_mg": 0.75,
+   "potassium_mg": 94,
+   "sodium_mg": 281,
+   "b12_mcg": 0.21,
+   "selenium_mcg": 13,
+   "vitE_mg": 0.79,
+   "vitC_mg": 7.97,
+   "vitA_mcg": 51
+  },
+  "portions": [
+   {
+    "label": "1 bowl",
+    "grams": 400
+   },
+   {
+    "label": "½ bowl",
+    "grams": 200
+   }
+  ]
+ },
+ {
+  "id": "manti",
+  "name": "Manti",
+  "localName": "Manti · Манты",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 201,
+  "protein": 9,
+  "carbs": 21,
+  "fat": 9,
+  "fibre": 1.2,
+  "micros": {
+   "vitD_mcg": 0.05,
+   "calcium_mg": 66,
+   "magnesium_mg": 19,
+   "iron_mg": 2.18,
+   "zinc_mg": 2.11,
+   "potassium_mg": 188,
+   "sodium_mg": 517,
+   "b12_mcg": 0.78,
+   "selenium_mcg": 17,
+   "vitE_mg": 0.16,
+   "vitC_mg": 2.08,
+   "vitA_mcg": 21
+  },
+  "portions": [
+   {
+    "label": "5 pieces",
+    "grams": 250
+   },
+   {
+    "label": "3 pieces",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "shurpa",
+  "name": "Shurpa",
+  "localName": "Sho‘rva · Шурпа",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 70,
+  "protein": 4.5,
+  "carbs": 4.5,
+  "fat": 3.8,
+  "fibre": 0.9,
+  "micros": {
+   "vitD_mcg": 0.01,
+   "calcium_mg": 5.57,
+   "magnesium_mg": 6.51,
+   "iron_mg": 0.24,
+   "zinc_mg": 0.43,
+   "potassium_mg": 114,
+   "sodium_mg": 282,
+   "b12_mcg": 0.21,
+   "selenium_mcg": 2.15,
+   "vitE_mg": 0.75,
+   "vitC_mg": 6.73,
+   "vitA_mcg": 57
+  },
+  "portions": [
+   {
+    "label": "1 bowl",
+    "grams": 350
+   }
+  ]
+ },
+ {
+  "id": "somsa",
+  "name": "Somsa",
+  "localName": "Somsa · Самса",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 259,
+  "protein": 9.5,
+  "carbs": 26,
+  "fat": 13,
+  "fibre": 1.4,
+  "micros": {
+   "vitD_mcg": 0.03,
+   "calcium_mg": 68,
+   "magnesium_mg": 18,
+   "iron_mg": 1.96,
+   "zinc_mg": 1.49,
+   "potassium_mg": 154,
+   "sodium_mg": 526,
+   "b12_mcg": 0.66,
+   "selenium_mcg": 16,
+   "vitE_mg": 0.25,
+   "vitC_mg": 1.48,
+   "vitA_mcg": 34
+  },
+  "portions": [
+   {
+    "label": "1 piece",
+    "grams": 120
+   },
+   {
+    "label": "2 pieces",
+    "grams": 240
+   }
+  ]
+ },
+ {
+  "id": "shashlik_chicken",
+  "name": "Chicken shashlik",
+  "localName": "Tovuq kabob · Шашлык куриный",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 188,
+  "protein": 27,
+  "carbs": 1,
+  "fat": 8.5,
+  "fibre": 0.2,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 12,
+   "magnesium_mg": 22,
+   "iron_mg": 1.24,
+   "zinc_mg": 2.29,
+   "potassium_mg": 234,
+   "sodium_mg": 400,
+   "b12_mcg": 0.38,
+   "selenium_mcg": 23,
+   "vitE_mg": 0.29,
+   "vitC_mg": 0.3,
+   "vitA_mcg": 17
+  },
+  "portions": [
+   {
+    "label": "3 skewers",
+    "grams": 270
+   },
+   {
+    "label": "1 skewer",
+    "grams": 90
+   }
+  ]
+ },
+ {
+  "id": "shashlik_beef",
+  "name": "Beef shashlik",
+  "localName": "Mol go‘shti kabob · Шашлык из говядины",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 232,
+  "protein": 25,
+  "carbs": 1,
+  "fat": 14.2,
+  "fibre": 0.2,
+  "micros": {
+   "vitD_mcg": 0.19,
+   "calcium_mg": 18,
+   "magnesium_mg": 20,
+   "iron_mg": 2.48,
+   "zinc_mg": 5.99,
+   "potassium_mg": 308,
+   "sodium_mg": 367,
+   "b12_mcg": 2.47,
+   "selenium_mcg": 26,
+   "vitE_mg": 0.19,
+   "vitC_mg": 0.3,
+   "vitA_mcg": 0.0
+  },
+  "portions": [
+   {
+    "label": "3 skewers",
+    "grams": 270
+   },
+   {
+    "label": "1 skewer",
+    "grams": 90
+   }
+  ]
+ },
+ {
+  "id": "shashlik_lamb",
+  "name": "Lamb shashlik",
+  "localName": "Qo‘y go‘shti kabob · Шашлык из баранины",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 253,
+  "protein": 24,
+  "carbs": 1,
+  "fat": 17,
+  "fibre": 0.2,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 17,
+   "magnesium_mg": 22,
+   "iron_mg": 1.81,
+   "zinc_mg": 4.28,
+   "potassium_mg": 300,
+   "sodium_mg": 379,
+   "b12_mcg": 2.47,
+   "selenium_mcg": 25,
+   "vitE_mg": 0.19,
+   "vitC_mg": 0.3,
+   "vitA_mcg": 0.0
+  },
+  "portions": [
+   {
+    "label": "3 skewers",
+    "grams": 270
+   },
+   {
+    "label": "1 skewer",
+    "grams": 90
+   }
+  ]
+ },
+ {
+  "id": "chuchvara",
+  "name": "Chuchvara",
+  "localName": "Chuchvara · Чучвара",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 186,
+  "protein": 9,
+  "carbs": 24,
+  "fat": 6,
+  "fibre": 1.1,
+  "micros": {
+   "vitD_mcg": 0.05,
+   "calcium_mg": 71,
+   "magnesium_mg": 17,
+   "iron_mg": 2.29,
+   "zinc_mg": 1.95,
+   "potassium_mg": 143,
+   "sodium_mg": 546,
+   "b12_mcg": 0.65,
+   "selenium_mcg": 18,
+   "vitE_mg": 0.14,
+   "vitC_mg": 0.59,
+   "vitA_mcg": 0.0
+  },
+  "portions": [
+   {
+    "label": "1 bowl",
+    "grams": 250
+   },
+   {
+    "label": "½ bowl",
+    "grams": 125
+   }
+  ]
+ },
+ {
+  "id": "dimlama",
+  "name": "Dimlama",
+  "localName": "Dimlama · Димлама",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 95,
+  "protein": 5,
+  "carbs": 9,
+  "fat": 4.3,
+  "fibre": 1.8,
+  "micros": {
+   "vitD_mcg": 0.01,
+   "calcium_mg": 14,
+   "magnesium_mg": 13,
+   "iron_mg": 0.45,
+   "zinc_mg": 0.7,
+   "potassium_mg": 225,
+   "sodium_mg": 291,
+   "b12_mcg": 0.31,
+   "selenium_mcg": 3.29,
+   "vitE_mg": 0.64,
+   "vitC_mg": 16,
+   "vitA_mcg": 95
+  },
+  "portions": [
+   {
+    "label": "1 plate",
+    "grams": 350
+   }
+  ]
+ },
+ {
+  "id": "mastava",
+  "name": "Mastava",
+  "localName": "Mastava · Мастава",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 84,
+  "protein": 3.7,
+  "carbs": 11,
+  "fat": 2.8,
+  "fibre": 1.0,
+  "micros": {
+   "vitD_mcg": 0.01,
+   "calcium_mg": 6.69,
+   "magnesium_mg": 7.26,
+   "iron_mg": 0.27,
+   "zinc_mg": 0.51,
+   "potassium_mg": 112,
+   "sodium_mg": 280,
+   "b12_mcg": 0.16,
+   "selenium_mcg": 2.58,
+   "vitE_mg": 0.56,
+   "vitC_mg": 6.89,
+   "vitA_mcg": 58
+  },
+  "portions": [
+   {
+    "label": "1 bowl",
+    "grams": 350
+   }
+  ]
+ },
+ {
+  "id": "norin",
+  "name": "Norin",
+  "localName": "Norin · Норин",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 182,
+  "protein": 13,
+  "carbs": 18,
+  "fat": 6.5,
+  "fibre": 1.0,
+  "micros": {
+   "vitD_mcg": 0.05,
+   "calcium_mg": 9.6,
+   "magnesium_mg": 13,
+   "iron_mg": 1.19,
+   "zinc_mg": 1.79,
+   "potassium_mg": 112,
+   "sodium_mg": 326,
+   "b12_mcg": 0.65,
+   "selenium_mcg": 17,
+   "vitE_mg": 0.08,
+   "vitC_mg": 0.74,
+   "vitA_mcg": 0.0
+  },
+  "portions": [
+   {
+    "label": "1 plate",
+    "grams": 300
+   }
+  ]
+ },
+ {
+  "id": "qatiq",
+  "name": "Qatiq (sour yogurt)",
+  "localName": "Qatiq · Катык",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 62,
+  "protein": 3.5,
+  "carbs": 4.7,
+  "fat": 3.3,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 121,
+   "magnesium_mg": 12,
+   "iron_mg": 0.05,
+   "zinc_mg": 0.6,
+   "potassium_mg": 155,
+   "sodium_mg": 46,
+   "b12_mcg": 0.5,
+   "selenium_mcg": 2.2,
+   "vitE_mg": 0.1,
+   "vitC_mg": 0.5,
+   "vitA_mcg": 27
+  },
+  "portions": [
+   {
+    "label": "1 glass",
+    "grams": 250
+   },
+   {
+    "label": "1 cup",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "suzma",
+  "name": "Suzma (strained yogurt)",
+  "localName": "Suzma · Сузьма",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 128,
+  "protein": 9,
+  "carbs": 4,
+  "fat": 8.5,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.1,
+   "calcium_mg": 100,
+   "magnesium_mg": 11,
+   "iron_mg": 0.04,
+   "zinc_mg": 0.5,
+   "potassium_mg": 141,
+   "sodium_mg": 151,
+   "b12_mcg": 0.75,
+   "selenium_mcg": 9.0,
+   "vitE_mg": 0.1,
+   "vitC_mg": 0.0,
+   "vitA_mcg": 20
+  },
+  "portions": [
+   {
+    "label": "3 tbsp",
+    "grams": 60
+   },
+   {
+    "label": "1 cup",
+    "grams": 150
+   }
+  ]
+ },
+ {
+  "id": "mosh_kichiri",
+  "name": "Mosh kichiri",
+  "localName": "Mosh kichiri · Мош-кичири",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 110,
+  "protein": 4.5,
+  "carbs": 20,
+  "fat": 1.3,
+  "fibre": 2.8,
+  "micros": {
+   "vitD_mcg": 0.0,
+   "calcium_mg": 15,
+   "magnesium_mg": 20,
+   "iron_mg": 0.53,
+   "zinc_mg": 0.46,
+   "potassium_mg": 117,
+   "sodium_mg": 276,
+   "b12_mcg": 0.0,
+   "selenium_mcg": 3.69,
+   "vitE_mg": 0.71,
+   "vitC_mg": 0.96,
+   "vitA_mcg": 42
+  },
+  "portions": [
+   {
+    "label": "1 bowl",
+    "grams": 350
+   }
+  ]
+ },
+ {
+  "id": "ayron",
+  "name": "Ayron (salted yogurt drink)",
+  "localName": "Ayron · Айран",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 30,
+  "protein": 1.7,
+  "carbs": 2.3,
+  "fat": 1.5,
+  "fibre": 0,
+  "micros": {
+   "vitD_mcg": 0.05,
+   "calcium_mg": 60,
+   "magnesium_mg": 6.0,
+   "iron_mg": 0.03,
+   "zinc_mg": 0.3,
+   "potassium_mg": 78,
+   "sodium_mg": 139,
+   "b12_mcg": 0.25,
+   "selenium_mcg": 1.1,
+   "vitE_mg": 0.05,
+   "vitC_mg": 0.25,
+   "vitA_mcg": 14
+  },
+  "portions": [
+   {
+    "label": "1 glass",
+    "grams": 250
+   }
+  ]
+ },
+ {
+  "id": "shirguruch",
+  "name": "Milk rice porridge (shirguruch)",
+  "localName": "Sutli guruch · Молочная рисовая каша",
+  "category": "uzbek",
+  "uzbek": true,
+  "estimate": true,
+  "kcal": 110,
+  "protein": 3,
+  "carbs": 20,
+  "fat": 2,
+  "fibre": 0.3,
+  "micros": {
+   "vitD_mcg": 0.78,
+   "calcium_mg": 70,
+   "magnesium_mg": 8.43,
+   "iron_mg": 0.04,
+   "zinc_mg": 0.34,
+   "potassium_mg": 87,
+   "sodium_mg": 65,
+   "b12_mcg": 0.27,
+   "selenium_mcg": 3.74,
+   "vitE_mg": 0.1,
+   "vitC_mg": 0.0,
+   "vitA_mcg": 38
+  },
+  "portions": [
+   {
+    "label": "1 bowl",
+    "grams": 300
+   }
+  ]
+ }
+]

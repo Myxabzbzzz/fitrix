@@ -2286,4 +2286,508 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectedAppsClose => 'Close';
+
+  @override
+  String get nutritionToday => 'Today';
+
+  @override
+  String nutritionDateTraining(String date) {
+    return '$date · training day';
+  }
+
+  @override
+  String get nutritionCompleteTitle => 'Complete your profile';
+
+  @override
+  String get nutritionCompleteBody =>
+      'Add your sex, age, weight and height to get daily targets.';
+
+  @override
+  String get nutritionLeftToday => 'Left today';
+
+  @override
+  String get nutritionBurned => 'Burned in training';
+
+  @override
+  String nutritionBurnedValue(String kcal) {
+    return '≈ +$kcal kcal';
+  }
+
+  @override
+  String get nutritionHowSet => 'How it’s set ›';
+
+  @override
+  String get nutritionMacros => 'Macros';
+
+  @override
+  String nutritionProteinPerKg(String value) {
+    return 'protein $value g/kg';
+  }
+
+  @override
+  String nutritionGramsOf(String eaten, String target) {
+    return '$eaten / $target g';
+  }
+
+  @override
+  String nutritionWaterTitle(String drunk, String target) {
+    return 'Water · $drunk of $target L';
+  }
+
+  @override
+  String nutritionWaterNoTarget(String drunk) {
+    return 'Water · $drunk L';
+  }
+
+  @override
+  String get nutritionWaterWorkout => '+0.5 L for today’s workout';
+
+  @override
+  String nutritionAddMl(String ml) {
+    return '+$ml ml';
+  }
+
+  @override
+  String get nutritionMeals => 'Meals';
+
+  @override
+  String nutritionMealsLogged(String n) {
+    return '$n of 4 logged';
+  }
+
+  @override
+  String get nutritionAdd => 'Add';
+
+  @override
+  String get nutritionLowToday => 'Low today';
+
+  @override
+  String nutritionAllMicros(String n) {
+    return 'All $n ›';
+  }
+
+  @override
+  String get nutritionDinnerIdea => 'Dinner idea';
+
+  @override
+  String nutritionIdeaMessage(
+      String gap, String food, String portion, String protein) {
+    return 'Protein is $gap g behind. $food ($portion) gives about $protein g.';
+  }
+
+  @override
+  String get nutritionAddToDinner => 'Add to dinner';
+
+  @override
+  String get nutritionOtherIdea => 'Other idea';
+
+  @override
+  String get nutritionRemove => 'Remove';
+
+  @override
+  String get nutritionSearch => 'Search foods';
+
+  @override
+  String get nutritionFood => 'Food';
+
+  @override
+  String nutritionGrams(String grams) {
+    return '$grams g';
+  }
+
+  @override
+  String nutritionAddToSlot(String slot) {
+    String _temp0 = intl.Intl.selectLogic(
+      slot,
+      {
+        'breakfast': 'Add to breakfast',
+        'lunch': 'Add to lunch',
+        'dinner': 'Add to dinner',
+        'snack': 'Add to snack',
+        'other': 'Add to dinner',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nutritionAddToSlotKcal(String slot, String kcal) {
+    String _temp0 = intl.Intl.selectLogic(
+      slot,
+      {
+        'breakfast': 'Add to breakfast · $kcal kcal',
+        'lunch': 'Add to lunch · $kcal kcal',
+        'dinner': 'Add to dinner · $kcal kcal',
+        'snack': 'Add to snack · $kcal kcal',
+        'other': 'Add to dinner · $kcal kcal',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nutritionAddedTo(String name, String slot) {
+    String _temp0 = intl.Intl.selectLogic(
+      slot,
+      {
+        'breakfast': 'Added $name to breakfast',
+        'lunch': 'Added $name to lunch',
+        'dinner': 'Added $name to dinner',
+        'snack': 'Added $name to snack',
+        'other': 'Added $name',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nutritionResults => 'Results';
+
+  @override
+  String nutritionResultsCount(String n) {
+    return '$n foods · per portion';
+  }
+
+  @override
+  String get nutritionNoResults => 'Nothing found. Try another name.';
+
+  @override
+  String get nutritionRecent => 'Recent';
+
+  @override
+  String get nutritionRecentNote => 'you ate it this week';
+
+  @override
+  String nutritionPortionLine(String portion, String kcal, String protein) {
+    return '$portion · $kcal kcal · P $protein g';
+  }
+
+  @override
+  String get nutritionCantFind => 'Can’t find it?';
+
+  @override
+  String get nutritionCantFindBody => 'Ask Felix to estimate it';
+
+  @override
+  String get foodBaseError => 'Couldn’t load the food base.';
+
+  @override
+  String get foodNotFound => 'This food isn’t in the base.';
+
+  @override
+  String get foodCatAll => 'All';
+
+  @override
+  String get foodCatUzbek => 'Uzbek dishes';
+
+  @override
+  String get foodCatMeatFish => 'Meat & fish';
+
+  @override
+  String get foodCatDairy => 'Dairy';
+
+  @override
+  String get foodCatFruit => 'Fruit';
+
+  @override
+  String get foodCatVeg => 'Vegetables';
+
+  @override
+  String get foodCatGrains => 'Grains';
+
+  @override
+  String get foodCatBread => 'Bread';
+
+  @override
+  String get foodCatDrinks => 'Drinks';
+
+  @override
+  String get foodCatOther => 'Other';
+
+  @override
+  String get foodRecipeEstimate => 'Recipe estimate';
+
+  @override
+  String foodPer100(String kcal) {
+    return '$kcal kcal / 100 g';
+  }
+
+  @override
+  String get foodPortion => 'Portion';
+
+  @override
+  String get foodKcal => 'kcal';
+
+  @override
+  String get foodFitsDay => 'Fits your day?';
+
+  @override
+  String foodKcalLeftAfter(String kcal) {
+    return '$kcal kcal left after';
+  }
+
+  @override
+  String foodKcalOver(String kcal) {
+    return '$kcal kcal over';
+  }
+
+  @override
+  String foodEaten(String kcal) {
+    return 'Eaten $kcal';
+  }
+
+  @override
+  String foodPlus(String name, String kcal) {
+    return '+ $name $kcal';
+  }
+
+  @override
+  String foodTarget(String kcal) {
+    return 'Target $kcal';
+  }
+
+  @override
+  String foodFatWould(String fat, String target) {
+    return 'Fat would reach $fat of $target g.';
+  }
+
+  @override
+  String foodProteinBehind(String g) {
+    return 'Protein stays $g g behind.';
+  }
+
+  @override
+  String get foodRichIn => 'Rich in';
+
+  @override
+  String get foodPctOfTarget => '% of your daily target';
+
+  @override
+  String get micrTitle => 'Micronutrients';
+
+  @override
+  String micrTargetsFor(String who, String age) {
+    return 'Targets for $who, $age · NASEM';
+  }
+
+  @override
+  String get micrMen => 'men';
+
+  @override
+  String get micrWomen => 'women';
+
+  @override
+  String get micrToday => 'Today';
+
+  @override
+  String get micr7Days => '7 days';
+
+  @override
+  String get micr30Days => '30 days';
+
+  @override
+  String get micrAthlete => 'Athlete essentials';
+
+  @override
+  String get micrVitamins => 'Vitamins';
+
+  @override
+  String get micrMinerals => 'Minerals';
+
+  @override
+  String micrAll(String n) {
+    return 'All $n';
+  }
+
+  @override
+  String get micrEmpty => 'Log food to see your micronutrients.';
+
+  @override
+  String micrAverage(String n) {
+    return 'Average over $n logged days';
+  }
+
+  @override
+  String get micrLow => 'Low';
+
+  @override
+  String get micrOk => 'OK';
+
+  @override
+  String get micrHigh => 'High';
+
+  @override
+  String get micrVitDTitle => 'Vitamin D is low all week';
+
+  @override
+  String get micrVitDBody =>
+      'Fatty fish, eggs and fortified dairy help a little. Ask your doctor about a D3 supplement.';
+
+  @override
+  String get micrInSeason => 'In season now';
+
+  @override
+  String micrUzbekistanMonth(String month) {
+    return 'Uzbekistan · $month';
+  }
+
+  @override
+  String get microVitD => 'Vitamin D';
+
+  @override
+  String get microCalcium => 'Calcium';
+
+  @override
+  String get microMagnesium => 'Magnesium';
+
+  @override
+  String get microIron => 'Iron';
+
+  @override
+  String get microZinc => 'Zinc';
+
+  @override
+  String get microPotassium => 'Potassium';
+
+  @override
+  String get microSodium => 'Sodium';
+
+  @override
+  String get microB12 => 'Vitamin B12';
+
+  @override
+  String get microSelenium => 'Selenium';
+
+  @override
+  String get microVitE => 'Vitamin E';
+
+  @override
+  String get microVitC => 'Vitamin C';
+
+  @override
+  String get microVitA => 'Vitamin A';
+
+  @override
+  String get microHintVitD => 'Fatty fish, eggs, sunlight';
+
+  @override
+  String get microHintCalcium => 'Dairy, sesame, greens';
+
+  @override
+  String get microHintMagnesium => 'Nuts, buckwheat, legumes';
+
+  @override
+  String get microHintIron => 'Meat, liver, lentils';
+
+  @override
+  String get microHintZinc => 'Beef, lamb, pumpkin seeds';
+
+  @override
+  String get microHintPotassium => 'Potatoes, bananas, legumes';
+
+  @override
+  String get microHintSodium => 'Bread, salted cheese, broths';
+
+  @override
+  String get microHintB12 => 'Beef, eggs, dairy';
+
+  @override
+  String get microHintSelenium => 'Fish, eggs, meat';
+
+  @override
+  String get microHintVitE => 'Nuts, seeds, vegetable oil';
+
+  @override
+  String get microHintVitC => 'Peppers, citrus, pomegranate';
+
+  @override
+  String get microHintVitA => 'Carrots, pumpkin, spinach';
+
+  @override
+  String get targetsTitle => 'Your targets';
+
+  @override
+  String get targetsSubtitle =>
+      'Based on your profile and the last 4 weeks of training';
+
+  @override
+  String get targetsGoal => 'Goal';
+
+  @override
+  String get targetsLoseFat => 'Lose fat';
+
+  @override
+  String get targetsMaintain => 'Maintain';
+
+  @override
+  String get targetsLeanBulk => 'Lean bulk';
+
+  @override
+  String get targetsBmr => 'Base metabolism';
+
+  @override
+  String targetsBmrFormula(String weight, String height, String age) {
+    return 'Mifflin-St Jeor · $weight kg, $height cm, $age y';
+  }
+
+  @override
+  String targetsActivity(String factor) {
+    return '× $factor activity';
+  }
+
+  @override
+  String targetsHours(String hours) {
+    return '$hours h training a week in FITRIX';
+  }
+
+  @override
+  String targetsHoursEstimated(String hours) {
+    return 'Estimated $hours h a week: no workouts in the last 4 weeks';
+  }
+
+  @override
+  String get targetsAdjLose => '−15% to lose fat';
+
+  @override
+  String get targetsAdjMaintain => 'Keep your weight';
+
+  @override
+  String get targetsAdjBulk => '+10% lean bulk';
+
+  @override
+  String get targetsDaily => 'Daily target';
+
+  @override
+  String targetsProteinG(String g) {
+    return 'Protein · $g g';
+  }
+
+  @override
+  String targetsFatG(String g) {
+    return 'Fat · $g g';
+  }
+
+  @override
+  String targetsCarbsG(String g) {
+    return 'Carbs · $g g';
+  }
+
+  @override
+  String targetsPerKg(String value) {
+    return '$value g per kg body weight';
+  }
+
+  @override
+  String targetsFatPerKg(String value, String pct) {
+    return '$value g per kg, about $pct% of kcal';
+  }
+
+  @override
+  String get targetsCarbsNote => 'The rest of the calories';
+
+  @override
+  String get targetsAuto => 'auto';
+
+  @override
+  String get targetsSave => 'Save targets';
 }

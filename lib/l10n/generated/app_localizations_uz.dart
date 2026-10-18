@@ -2239,4 +2239,509 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get connectedAppsClose => 'Yopish';
+
+  @override
+  String get nutritionToday => 'Bugun';
+
+  @override
+  String nutritionDateTraining(String date) {
+    return '$date · mashg‘ulot kuni';
+  }
+
+  @override
+  String get nutritionCompleteTitle => 'Profilingizni to‘ldiring';
+
+  @override
+  String get nutritionCompleteBody =>
+      'Kunlik me’yorlarni olish uchun jinsingiz, yoshingiz, vazningiz va bo‘yingizni kiriting.';
+
+  @override
+  String get nutritionLeftToday => 'Bugun qoldi';
+
+  @override
+  String get nutritionBurned => 'Mashg‘ulotda yoqildi';
+
+  @override
+  String nutritionBurnedValue(String kcal) {
+    return '≈ +$kcal kkal';
+  }
+
+  @override
+  String get nutritionHowSet => 'Qanday hisoblanadi ›';
+
+  @override
+  String get nutritionMacros => 'Makrolar';
+
+  @override
+  String nutritionProteinPerKg(String value) {
+    return 'oqsil $value g/kg';
+  }
+
+  @override
+  String nutritionGramsOf(String eaten, String target) {
+    return '$eaten / $target g';
+  }
+
+  @override
+  String nutritionWaterTitle(String drunk, String target) {
+    return 'Suv · $drunk / $target l';
+  }
+
+  @override
+  String nutritionWaterNoTarget(String drunk) {
+    return 'Suv · $drunk l';
+  }
+
+  @override
+  String get nutritionWaterWorkout => 'Bugungi mashg‘ulot uchun +0,5 l';
+
+  @override
+  String nutritionAddMl(String ml) {
+    return '+$ml ml';
+  }
+
+  @override
+  String get nutritionMeals => 'Ovqatlar';
+
+  @override
+  String nutritionMealsLogged(String n) {
+    return '$n / 4 yozilgan';
+  }
+
+  @override
+  String get nutritionAdd => 'Qo‘shish';
+
+  @override
+  String get nutritionLowToday => 'Bugun kam';
+
+  @override
+  String nutritionAllMicros(String n) {
+    return 'Hammasi $n ›';
+  }
+
+  @override
+  String get nutritionDinnerIdea => 'Kechki ovqat g‘oyasi';
+
+  @override
+  String nutritionIdeaMessage(
+      String gap, String food, String portion, String protein) {
+    return 'Oqsil $gap g yetmayapti. $food ($portion) taxminan $protein g beradi.';
+  }
+
+  @override
+  String get nutritionAddToDinner => 'Kechki ovqatga qo‘shish';
+
+  @override
+  String get nutritionOtherIdea => 'Boshqa g‘oya';
+
+  @override
+  String get nutritionRemove => 'O‘chirish';
+
+  @override
+  String get nutritionSearch => 'Mahsulot qidirish';
+
+  @override
+  String get nutritionFood => 'Mahsulot';
+
+  @override
+  String nutritionGrams(String grams) {
+    return '$grams g';
+  }
+
+  @override
+  String nutritionAddToSlot(String slot) {
+    String _temp0 = intl.Intl.selectLogic(
+      slot,
+      {
+        'breakfast': 'Nonushtaga qo‘shish',
+        'lunch': 'Tushlikka qo‘shish',
+        'dinner': 'Kechki ovqatga qo‘shish',
+        'snack': 'Yengil ovqatga qo‘shish',
+        'other': 'Kechki ovqatga qo‘shish',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nutritionAddToSlotKcal(String slot, String kcal) {
+    String _temp0 = intl.Intl.selectLogic(
+      slot,
+      {
+        'breakfast': 'Nonushtaga qo‘shish · $kcal kkal',
+        'lunch': 'Tushlikka qo‘shish · $kcal kkal',
+        'dinner': 'Kechki ovqatga qo‘shish · $kcal kkal',
+        'snack': 'Yengil ovqatga qo‘shish · $kcal kkal',
+        'other': 'Kechki ovqatga qo‘shish · $kcal kkal',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nutritionAddedTo(String name, String slot) {
+    String _temp0 = intl.Intl.selectLogic(
+      slot,
+      {
+        'breakfast': '$name nonushtaga qo‘shildi',
+        'lunch': '$name tushlikka qo‘shildi',
+        'dinner': '$name kechki ovqatga qo‘shildi',
+        'snack': '$name yengil ovqatga qo‘shildi',
+        'other': '$name qo‘shildi',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nutritionResults => 'Natijalar';
+
+  @override
+  String nutritionResultsCount(String n) {
+    return '$n ta mahsulot · bir porsiya uchun';
+  }
+
+  @override
+  String get nutritionNoResults =>
+      'Hech narsa topilmadi. Boshqa nom bilan urinib ko‘ring.';
+
+  @override
+  String get nutritionRecent => 'So‘nggilar';
+
+  @override
+  String get nutritionRecentNote => 'bu hafta yegansiz';
+
+  @override
+  String nutritionPortionLine(String portion, String kcal, String protein) {
+    return '$portion · $kcal kkal · O $protein g';
+  }
+
+  @override
+  String get nutritionCantFind => 'Topa olmadingizmi?';
+
+  @override
+  String get nutritionCantFindBody => 'Felixdan baholashni so‘rang';
+
+  @override
+  String get foodBaseError => 'Mahsulotlar bazasini yuklab bo‘lmadi.';
+
+  @override
+  String get foodNotFound => 'Bu mahsulot bazada yo‘q.';
+
+  @override
+  String get foodCatAll => 'Hammasi';
+
+  @override
+  String get foodCatUzbek => 'O‘zbek taomlari';
+
+  @override
+  String get foodCatMeatFish => 'Go‘sht va baliq';
+
+  @override
+  String get foodCatDairy => 'Sut mahsulotlari';
+
+  @override
+  String get foodCatFruit => 'Mevalar';
+
+  @override
+  String get foodCatVeg => 'Sabzavotlar';
+
+  @override
+  String get foodCatGrains => 'Don va makaron';
+
+  @override
+  String get foodCatBread => 'Non';
+
+  @override
+  String get foodCatDrinks => 'Ichimliklar';
+
+  @override
+  String get foodCatOther => 'Boshqa';
+
+  @override
+  String get foodRecipeEstimate => 'Retsept bo‘yicha baho';
+
+  @override
+  String foodPer100(String kcal) {
+    return '$kcal kkal / 100 g';
+  }
+
+  @override
+  String get foodPortion => 'Porsiya';
+
+  @override
+  String get foodKcal => 'kkal';
+
+  @override
+  String get foodFitsDay => 'Kuningizga mosmi?';
+
+  @override
+  String foodKcalLeftAfter(String kcal) {
+    return 'keyin $kcal kkal qoladi';
+  }
+
+  @override
+  String foodKcalOver(String kcal) {
+    return '$kcal kkal ortiq';
+  }
+
+  @override
+  String foodEaten(String kcal) {
+    return 'Yeyilgan $kcal';
+  }
+
+  @override
+  String foodPlus(String name, String kcal) {
+    return '+ $name $kcal';
+  }
+
+  @override
+  String foodTarget(String kcal) {
+    return 'Maqsad $kcal';
+  }
+
+  @override
+  String foodFatWould(String fat, String target) {
+    return 'Yog‘ $target g dan $fat g ga yetadi.';
+  }
+
+  @override
+  String foodProteinBehind(String g) {
+    return 'Oqsil hali ham $g g yetmaydi.';
+  }
+
+  @override
+  String get foodRichIn => 'Boy';
+
+  @override
+  String get foodPctOfTarget => 'kunlik me’yoringizning %';
+
+  @override
+  String get micrTitle => 'Mikronutriyentlar';
+
+  @override
+  String micrTargetsFor(String who, String age) {
+    return '$who uchun me’yorlar, $age · NASEM';
+  }
+
+  @override
+  String get micrMen => 'erkaklar';
+
+  @override
+  String get micrWomen => 'ayollar';
+
+  @override
+  String get micrToday => 'Bugun';
+
+  @override
+  String get micr7Days => '7 kun';
+
+  @override
+  String get micr30Days => '30 kun';
+
+  @override
+  String get micrAthlete => 'Sportchi uchun asosiylar';
+
+  @override
+  String get micrVitamins => 'Vitaminlar';
+
+  @override
+  String get micrMinerals => 'Minerallar';
+
+  @override
+  String micrAll(String n) {
+    return 'Hammasi $n';
+  }
+
+  @override
+  String get micrEmpty => 'Mikronutriyentlarni ko‘rish uchun ovqat yozing.';
+
+  @override
+  String micrAverage(String n) {
+    return 'Yozuvi bor $n kun o‘rtachasi';
+  }
+
+  @override
+  String get micrLow => 'Kam';
+
+  @override
+  String get micrOk => 'Me’yorda';
+
+  @override
+  String get micrHigh => 'Ko‘p';
+
+  @override
+  String get micrVitDTitle => 'D vitamini butun hafta kam';
+
+  @override
+  String get micrVitDBody =>
+      'Yog‘li baliq, tuxum va boyitilgan sut mahsulotlari biroz yordam beradi. D3 qo‘shimchasi haqida shifokoringizdan so‘rang.';
+
+  @override
+  String get micrInSeason => 'Hozir mavsumda';
+
+  @override
+  String micrUzbekistanMonth(String month) {
+    return 'O‘zbekiston · $month';
+  }
+
+  @override
+  String get microVitD => 'D vitamini';
+
+  @override
+  String get microCalcium => 'Kaltsiy';
+
+  @override
+  String get microMagnesium => 'Magniy';
+
+  @override
+  String get microIron => 'Temir';
+
+  @override
+  String get microZinc => 'Rux';
+
+  @override
+  String get microPotassium => 'Kaliy';
+
+  @override
+  String get microSodium => 'Natriy';
+
+  @override
+  String get microB12 => 'B12 vitamini';
+
+  @override
+  String get microSelenium => 'Selen';
+
+  @override
+  String get microVitE => 'E vitamini';
+
+  @override
+  String get microVitC => 'C vitamini';
+
+  @override
+  String get microVitA => 'A vitamini';
+
+  @override
+  String get microHintVitD => 'Yog‘li baliq, tuxum, quyosh';
+
+  @override
+  String get microHintCalcium => 'Sut mahsulotlari, kunjut, ko‘katlar';
+
+  @override
+  String get microHintMagnesium => 'Yong‘oq, grechka, dukkaklilar';
+
+  @override
+  String get microHintIron => 'Go‘sht, jigar, yasmiq';
+
+  @override
+  String get microHintZinc => 'Mol va qo‘y go‘shti, qovoq urug‘i';
+
+  @override
+  String get microHintPotassium => 'Kartoshka, banan, dukkaklilar';
+
+  @override
+  String get microHintSodium => 'Non, sho‘r pishloq, sho‘rvalar';
+
+  @override
+  String get microHintB12 => 'Mol go‘shti, tuxum, sut mahsulotlari';
+
+  @override
+  String get microHintSelenium => 'Baliq, tuxum, go‘sht';
+
+  @override
+  String get microHintVitE => 'Yong‘oq, urug‘lar, o‘simlik moyi';
+
+  @override
+  String get microHintVitC => 'Qalampir, sitrus, anor';
+
+  @override
+  String get microHintVitA => 'Sabzi, qovoq, ismaloq';
+
+  @override
+  String get targetsTitle => 'Sizning me’yorlaringiz';
+
+  @override
+  String get targetsSubtitle =>
+      'Profilingiz va so‘nggi 4 hafta mashg‘ulotlari asosida';
+
+  @override
+  String get targetsGoal => 'Maqsad';
+
+  @override
+  String get targetsLoseFat => 'Yog‘ yo‘qotish';
+
+  @override
+  String get targetsMaintain => 'Saqlash';
+
+  @override
+  String get targetsLeanBulk => 'Sifatli massa';
+
+  @override
+  String get targetsBmr => 'Bazal metabolizm';
+
+  @override
+  String targetsBmrFormula(String weight, String height, String age) {
+    return 'Mifflin-St Jeor · $weight kg, $height sm, $age yosh';
+  }
+
+  @override
+  String targetsActivity(String factor) {
+    return '× $factor faollik';
+  }
+
+  @override
+  String targetsHours(String hours) {
+    return 'FITRIX’da haftasiga $hours soat mashg‘ulot';
+  }
+
+  @override
+  String targetsHoursEstimated(String hours) {
+    return 'Taxminan haftasiga $hours soat: 4 hafta ichida mashg‘ulot yo‘q';
+  }
+
+  @override
+  String get targetsAdjLose => 'Yog‘ yo‘qotish uchun −15%';
+
+  @override
+  String get targetsAdjMaintain => 'Vaznni saqlash';
+
+  @override
+  String get targetsAdjBulk => '+10% sifatli massa';
+
+  @override
+  String get targetsDaily => 'Kunlik me’yor';
+
+  @override
+  String targetsProteinG(String g) {
+    return 'Oqsil · $g g';
+  }
+
+  @override
+  String targetsFatG(String g) {
+    return 'Yog‘ · $g g';
+  }
+
+  @override
+  String targetsCarbsG(String g) {
+    return 'Uglevodlar · $g g';
+  }
+
+  @override
+  String targetsPerKg(String value) {
+    return 'Tana vazni kg ga $value g';
+  }
+
+  @override
+  String targetsFatPerKg(String value, String pct) {
+    return 'kg ga $value g, kaloriyaning taxminan $pct%';
+  }
+
+  @override
+  String get targetsCarbsNote => 'Qolgan kaloriyalar';
+
+  @override
+  String get targetsAuto => 'avto';
+
+  @override
+  String get targetsSave => 'Me’yorlarni saqlash';
 }

@@ -28,7 +28,12 @@ import 'package:fitrix/features/workouts/presentation/screens/my_workouts_screen
 import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_screen.dart';
 import 'package:fitrix/features/workouts/presentation/screens/workout_complete_screen.dart';
 import 'package:fitrix/features/progress/presentation/screens/progress_screen.dart';
+import 'package:fitrix/features/nutrition/data/food_catalog.dart';
+import 'package:fitrix/features/nutrition/presentation/screens/add_food_screen.dart';
+import 'package:fitrix/features/nutrition/presentation/screens/food_detail_screen.dart';
+import 'package:fitrix/features/nutrition/presentation/screens/micros_screen.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.dart';
+import 'package:fitrix/features/nutrition/presentation/screens/targets_screen.dart';
 import 'package:fitrix/features/content/presentation/article_screen.dart';
 import 'package:fitrix/features/content/presentation/discover_screen.dart';
 import 'package:fitrix/features/shop/presentation/shop_screen.dart';
@@ -61,11 +66,20 @@ class AppRouter {
   static const String addExercise = '/home/workouts/exercises/add';
   static const String progress = '/home/progress';
   static const String nutrition = '/home/nutrition';
+  static const String nutritionAdd = '/home/nutrition/add';
+  static const String nutritionMicros = '/home/nutrition/micros';
+  static const String nutritionTargets = '/home/nutrition/targets';
   static const String fitrixMap = '/home/map';
   static const String recovery = '/home/checkin/recovery';
   static const String weekPlan = '/home/plan';
 
   static String article(String id) => '$discover/article/$id';
+
+  /// The add-food screen for [slot] (breakfast, lunch, dinner or snack).
+  static String addFood(MealSlot slot) => '$nutritionAdd?slot=${slot.name}';
+
+  static String foodDetail(String id, MealSlot slot) =>
+      '$nutrition/food/$id?slot=${slot.name}';
 
   static String exercise(String id) => '$exerciseLibrary/$id';
 
@@ -304,6 +318,50 @@ class AppRouter {
                           state,
                           const NutritionScreen(),
                         ),
+                        routes: [
+                          GoRoute(
+                            path: 'add',
+                            name: 'nutritionAdd',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              AddFoodScreen(
+                                  slot: MealSlot.fromName(
+                                      state.uri.queryParameters['slot'])),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'food/:id',
+                            name: 'nutritionFood',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              FoodDetailScreen(
+                                id: state.pathParameters['id']!,
+                                slot: MealSlot.fromName(
+                                    state.uri.queryParameters['slot']),
+                              ),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'micros',
+                            name: 'nutritionMicros',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              const MicrosScreen(),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'targets',
+                            name: 'nutritionTargets',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              const TargetsScreen(),
+                            ),
+                          ),
+                        ],
                       ),
                       GoRoute(
                         path: 'checkin/recovery',

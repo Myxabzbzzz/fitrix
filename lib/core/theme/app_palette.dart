@@ -60,6 +60,12 @@ class AppPalette {
   /// Destructive actions and errors
   final Color danger;
 
+  /// Caution (low intake, over a limit that is not an error).
+  final Color warning;
+
+  /// Good / on target.
+  final Color success;
+
   const AppPalette._({
     required this.background,
     required this.textPrimary,
@@ -83,6 +89,8 @@ class AppPalette {
     required this.badge,
     required this.accentSoft,
     required this.danger,
+    required this.warning,
+    required this.success,
   });
 
   static const light = AppPalette._(
@@ -108,6 +116,8 @@ class AppPalette {
     badge: Color(0x52C5C5C5),
     accentSoft: Color(0x24009ED8),
     danger: Color(0xFFD93A3F),
+    warning: Color(0xFFB87A00),
+    success: Color(0xFF1E8E3E),
   );
 
   static const dark = AppPalette._(
@@ -133,6 +143,8 @@ class AppPalette {
     badge: Color(0x1FFFFFFF),
     accentSoft: Color(0x38009ED8),
     danger: Color(0xFFFF6B6F),
+    warning: Color(0xFFFFB84D),
+    success: Color(0xFF5FD38D),
   );
 
   static AppPalette of(BuildContext context) =>

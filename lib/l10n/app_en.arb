@@ -1687,5 +1687,441 @@
   "connectedAppsSheetPrivacy": "FITRIX only reads data and never posts.",
   "connectedAppsSheetSoon": "Connecting apps is not available yet. We will add it in a later update.",
   "connectedAppsComingSoon": "Coming in a later update",
-  "connectedAppsClose": "Close"
+  "connectedAppsClose": "Close",
+  "nutritionToday": "Today",
+  "nutritionDateTraining": "{date} · training day",
+  "@nutritionDateTraining": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionCompleteTitle": "Complete your profile",
+  "nutritionCompleteBody": "Add your sex, age, weight and height to get daily targets.",
+  "nutritionLeftToday": "Left today",
+  "nutritionBurned": "Burned in training",
+  "nutritionBurnedValue": "≈ +{kcal} kcal",
+  "@nutritionBurnedValue": {
+    "placeholders": {
+      "kcal": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionHowSet": "How it’s set ›",
+  "nutritionMacros": "Macros",
+  "nutritionProteinPerKg": "protein {value} g/kg",
+  "@nutritionProteinPerKg": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionGramsOf": "{eaten} / {target} g",
+  "@nutritionGramsOf": {
+    "placeholders": {
+      "eaten": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionWaterTitle": "Water · {drunk} of {target} L",
+  "@nutritionWaterTitle": {
+    "placeholders": {
+      "drunk": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionWaterNoTarget": "Water · {drunk} L",
+  "@nutritionWaterNoTarget": {
+    "placeholders": {
+      "drunk": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionWaterWorkout": "+0.5 L for today’s workout",
+  "nutritionAddMl": "+{ml} ml",
+  "@nutritionAddMl": {
+    "placeholders": {
+      "ml": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionMeals": "Meals",
+  "nutritionMealsLogged": "{n} of 4 logged",
+  "@nutritionMealsLogged": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionAdd": "Add",
+  "nutritionLowToday": "Low today",
+  "nutritionAllMicros": "All {n} ›",
+  "@nutritionAllMicros": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionDinnerIdea": "Dinner idea",
+  "nutritionIdeaMessage": "Protein is {gap} g behind. {food} ({portion}) gives about {protein} g.",
+  "@nutritionIdeaMessage": {
+    "placeholders": {
+      "gap": {
+        "type": "String"
+      },
+      "food": {
+        "type": "String"
+      },
+      "portion": {
+        "type": "String"
+      },
+      "protein": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionAddToDinner": "Add to dinner",
+  "nutritionOtherIdea": "Other idea",
+  "nutritionRemove": "Remove",
+  "nutritionSearch": "Search foods",
+  "nutritionFood": "Food",
+  "nutritionGrams": "{grams} g",
+  "@nutritionGrams": {
+    "placeholders": {
+      "grams": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionAddToSlot": "{slot, select, breakfast{Add to breakfast} lunch{Add to lunch} dinner{Add to dinner} snack{Add to snack} other{Add to dinner}}",
+  "@nutritionAddToSlot": {
+    "placeholders": {
+      "slot": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionAddToSlotKcal": "{slot, select, breakfast{Add to breakfast · {kcal} kcal} lunch{Add to lunch · {kcal} kcal} dinner{Add to dinner · {kcal} kcal} snack{Add to snack · {kcal} kcal} other{Add to dinner · {kcal} kcal}}",
+  "@nutritionAddToSlotKcal": {
+    "placeholders": {
+      "slot": {
+        "type": "String"
+      },
+      "kcal": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionAddedTo": "{slot, select, breakfast{Added {name} to breakfast} lunch{Added {name} to lunch} dinner{Added {name} to dinner} snack{Added {name} to snack} other{Added {name}}}",
+  "@nutritionAddedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "slot": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionResults": "Results",
+  "nutritionResultsCount": "{n} foods · per portion",
+  "@nutritionResultsCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionNoResults": "Nothing found. Try another name.",
+  "nutritionRecent": "Recent",
+  "nutritionRecentNote": "you ate it this week",
+  "nutritionPortionLine": "{portion} · {kcal} kcal · P {protein} g",
+  "@nutritionPortionLine": {
+    "placeholders": {
+      "portion": {
+        "type": "String"
+      },
+      "kcal": {
+        "type": "String"
+      },
+      "protein": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionCantFind": "Can’t find it?",
+  "nutritionCantFindBody": "Ask Felix to estimate it",
+  "foodBaseError": "Couldn’t load the food base.",
+  "foodNotFound": "This food isn’t in the base.",
+  "foodCatAll": "All",
+  "foodCatUzbek": "Uzbek dishes",
+  "foodCatMeatFish": "Meat & fish",
+  "foodCatDairy": "Dairy",
+  "foodCatFruit": "Fruit",
+  "foodCatVeg": "Vegetables",
+  "foodCatGrains": "Grains",
+  "foodCatBread": "Bread",
+  "foodCatDrinks": "Drinks",
+  "foodCatOther": "Other",
+  "foodRecipeEstimate": "Recipe estimate",
+  "foodPer100": "{kcal} kcal / 100 g",
+  "@foodPer100": {
+    "placeholders": {
+      "kcal": {
+        "type": "String"
+      }
+    }
+  },
+  "foodPortion": "Portion",
+  "foodKcal": "kcal",
+  "foodFitsDay": "Fits your day?",
+  "foodKcalLeftAfter": "{kcal} kcal left after",
+  "@foodKcalLeftAfter": {
+    "placeholders": {
+      "kcal": {
+        "type": "String"
+      }
+    }
+  },
+  "foodKcalOver": "{kcal} kcal over",
+  "@foodKcalOver": {
+    "placeholders": {
+      "kcal": {
+        "type": "String"
+      }
+    }
+  },
+  "foodEaten": "Eaten {kcal}",
+  "@foodEaten": {
+    "placeholders": {
+      "kcal": {
+        "type": "String"
+      }
+    }
+  },
+  "foodPlus": "+ {name} {kcal}",
+  "@foodPlus": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "kcal": {
+        "type": "String"
+      }
+    }
+  },
+  "foodTarget": "Target {kcal}",
+  "@foodTarget": {
+    "placeholders": {
+      "kcal": {
+        "type": "String"
+      }
+    }
+  },
+  "foodFatWould": "Fat would reach {fat} of {target} g.",
+  "@foodFatWould": {
+    "placeholders": {
+      "fat": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "foodProteinBehind": "Protein stays {g} g behind.",
+  "@foodProteinBehind": {
+    "placeholders": {
+      "g": {
+        "type": "String"
+      }
+    }
+  },
+  "foodRichIn": "Rich in",
+  "foodPctOfTarget": "% of your daily target",
+  "micrTitle": "Micronutrients",
+  "micrTargetsFor": "Targets for {who}, {age} · NASEM",
+  "@micrTargetsFor": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      },
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "micrMen": "men",
+  "micrWomen": "women",
+  "micrToday": "Today",
+  "micr7Days": "7 days",
+  "micr30Days": "30 days",
+  "micrAthlete": "Athlete essentials",
+  "micrVitamins": "Vitamins",
+  "micrMinerals": "Minerals",
+  "micrAll": "All {n}",
+  "@micrAll": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "micrEmpty": "Log food to see your micronutrients.",
+  "micrAverage": "Average over {n} logged days",
+  "@micrAverage": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "micrLow": "Low",
+  "micrOk": "OK",
+  "micrHigh": "High",
+  "micrVitDTitle": "Vitamin D is low all week",
+  "micrVitDBody": "Fatty fish, eggs and fortified dairy help a little. Ask your doctor about a D3 supplement.",
+  "micrInSeason": "In season now",
+  "micrUzbekistanMonth": "Uzbekistan · {month}",
+  "@micrUzbekistanMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "microVitD": "Vitamin D",
+  "microCalcium": "Calcium",
+  "microMagnesium": "Magnesium",
+  "microIron": "Iron",
+  "microZinc": "Zinc",
+  "microPotassium": "Potassium",
+  "microSodium": "Sodium",
+  "microB12": "Vitamin B12",
+  "microSelenium": "Selenium",
+  "microVitE": "Vitamin E",
+  "microVitC": "Vitamin C",
+  "microVitA": "Vitamin A",
+  "microHintVitD": "Fatty fish, eggs, sunlight",
+  "microHintCalcium": "Dairy, sesame, greens",
+  "microHintMagnesium": "Nuts, buckwheat, legumes",
+  "microHintIron": "Meat, liver, lentils",
+  "microHintZinc": "Beef, lamb, pumpkin seeds",
+  "microHintPotassium": "Potatoes, bananas, legumes",
+  "microHintSodium": "Bread, salted cheese, broths",
+  "microHintB12": "Beef, eggs, dairy",
+  "microHintSelenium": "Fish, eggs, meat",
+  "microHintVitE": "Nuts, seeds, vegetable oil",
+  "microHintVitC": "Peppers, citrus, pomegranate",
+  "microHintVitA": "Carrots, pumpkin, spinach",
+  "targetsTitle": "Your targets",
+  "targetsSubtitle": "Based on your profile and the last 4 weeks of training",
+  "targetsGoal": "Goal",
+  "targetsLoseFat": "Lose fat",
+  "targetsMaintain": "Maintain",
+  "targetsLeanBulk": "Lean bulk",
+  "targetsBmr": "Base metabolism",
+  "targetsBmrFormula": "Mifflin-St Jeor · {weight} kg, {height} cm, {age} y",
+  "@targetsBmrFormula": {
+    "placeholders": {
+      "weight": {
+        "type": "String"
+      },
+      "height": {
+        "type": "String"
+      },
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "targetsActivity": "× {factor} activity",
+  "@targetsActivity": {
+    "placeholders": {
+      "factor": {
+        "type": "String"
+      }
+    }
+  },
+  "targetsHours": "{hours} h training a week in FITRIX",
+  "@targetsHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "targetsHoursEstimated": "Estimated {hours} h a week: no workouts in the last 4 weeks",
+  "@targetsHoursEstimated": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "targetsAdjLose": "−15% to lose fat",
+  "targetsAdjMaintain": "Keep your weight",
+  "targetsAdjBulk": "+10% lean bulk",
+  "targetsDaily": "Daily target",
+  "targetsProteinG": "Protein · {g} g",
+  "@targetsProteinG": {
+    "placeholders": {
+      "g": {
+        "type": "String"
+      }
+    }
+  },
+  "targetsFatG": "Fat · {g} g",
+  "@targetsFatG": {
+    "placeholders": {
+      "g": {
+        "type": "String"
+      }
+    }
+  },
+  "targetsCarbsG": "Carbs · {g} g",
+  "@targetsCarbsG": {
+    "placeholders": {
+      "g": {
+        "type": "String"
+      }
+    }
+  },
+  "targetsPerKg": "{value} g per kg body weight",
+  "@targetsPerKg": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "targetsFatPerKg": "{value} g per kg, about {pct}% of kcal",
+  "@targetsFatPerKg": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "targetsCarbsNote": "The rest of the calories",
+  "targetsAuto": "auto",
+  "targetsSave": "Save targets"
 }

@@ -2331,4 +2331,509 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get connectedAppsClose => 'Закрыть';
+
+  @override
+  String get nutritionToday => 'Сегодня';
+
+  @override
+  String nutritionDateTraining(String date) {
+    return '$date · день тренировки';
+  }
+
+  @override
+  String get nutritionCompleteTitle => 'Заполните профиль';
+
+  @override
+  String get nutritionCompleteBody =>
+      'Укажите пол, возраст, вес и рост, чтобы получить дневные нормы.';
+
+  @override
+  String get nutritionLeftToday => 'Осталось сегодня';
+
+  @override
+  String get nutritionBurned => 'Сожжено на тренировке';
+
+  @override
+  String nutritionBurnedValue(String kcal) {
+    return '≈ +$kcal ккал';
+  }
+
+  @override
+  String get nutritionHowSet => 'Как это считается ›';
+
+  @override
+  String get nutritionMacros => 'БЖУ';
+
+  @override
+  String nutritionProteinPerKg(String value) {
+    return 'белок $value г/кг';
+  }
+
+  @override
+  String nutritionGramsOf(String eaten, String target) {
+    return '$eaten / $target г';
+  }
+
+  @override
+  String nutritionWaterTitle(String drunk, String target) {
+    return 'Вода · $drunk из $target л';
+  }
+
+  @override
+  String nutritionWaterNoTarget(String drunk) {
+    return 'Вода · $drunk л';
+  }
+
+  @override
+  String get nutritionWaterWorkout => '+0,5 л за сегодняшнюю тренировку';
+
+  @override
+  String nutritionAddMl(String ml) {
+    return '+$ml мл';
+  }
+
+  @override
+  String get nutritionMeals => 'Приёмы пищи';
+
+  @override
+  String nutritionMealsLogged(String n) {
+    return '$n из 4 записано';
+  }
+
+  @override
+  String get nutritionAdd => 'Добавить';
+
+  @override
+  String get nutritionLowToday => 'Мало сегодня';
+
+  @override
+  String nutritionAllMicros(String n) {
+    return 'Все $n ›';
+  }
+
+  @override
+  String get nutritionDinnerIdea => 'Идея для ужина';
+
+  @override
+  String nutritionIdeaMessage(
+      String gap, String food, String portion, String protein) {
+    return 'Белка не хватает $gap г. $food ($portion) даст около $protein г.';
+  }
+
+  @override
+  String get nutritionAddToDinner => 'Добавить в ужин';
+
+  @override
+  String get nutritionOtherIdea => 'Другая идея';
+
+  @override
+  String get nutritionRemove => 'Удалить';
+
+  @override
+  String get nutritionSearch => 'Найти продукт';
+
+  @override
+  String get nutritionFood => 'Продукт';
+
+  @override
+  String nutritionGrams(String grams) {
+    return '$grams г';
+  }
+
+  @override
+  String nutritionAddToSlot(String slot) {
+    String _temp0 = intl.Intl.selectLogic(
+      slot,
+      {
+        'breakfast': 'Добавить в завтрак',
+        'lunch': 'Добавить в обед',
+        'dinner': 'Добавить в ужин',
+        'snack': 'Добавить в перекус',
+        'other': 'Добавить в ужин',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nutritionAddToSlotKcal(String slot, String kcal) {
+    String _temp0 = intl.Intl.selectLogic(
+      slot,
+      {
+        'breakfast': 'Добавить в завтрак · $kcal ккал',
+        'lunch': 'Добавить в обед · $kcal ккал',
+        'dinner': 'Добавить в ужин · $kcal ккал',
+        'snack': 'Добавить в перекус · $kcal ккал',
+        'other': 'Добавить в ужин · $kcal ккал',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nutritionAddedTo(String name, String slot) {
+    String _temp0 = intl.Intl.selectLogic(
+      slot,
+      {
+        'breakfast': '$name добавлено в завтрак',
+        'lunch': '$name добавлено в обед',
+        'dinner': '$name добавлено в ужин',
+        'snack': '$name добавлено в перекус',
+        'other': '$name добавлено',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nutritionResults => 'Результаты';
+
+  @override
+  String nutritionResultsCount(String n) {
+    return '$n продуктов · на порцию';
+  }
+
+  @override
+  String get nutritionNoResults =>
+      'Ничего не найдено. Попробуйте другое название.';
+
+  @override
+  String get nutritionRecent => 'Недавнее';
+
+  @override
+  String get nutritionRecentNote => 'вы ели это на этой неделе';
+
+  @override
+  String nutritionPortionLine(String portion, String kcal, String protein) {
+    return '$portion · $kcal ккал · Б $protein г';
+  }
+
+  @override
+  String get nutritionCantFind => 'Не нашли?';
+
+  @override
+  String get nutritionCantFindBody => 'Попросите Феликса оценить';
+
+  @override
+  String get foodBaseError => 'Не удалось загрузить базу продуктов.';
+
+  @override
+  String get foodNotFound => 'Этого продукта нет в базе.';
+
+  @override
+  String get foodCatAll => 'Все';
+
+  @override
+  String get foodCatUzbek => 'Узбекские блюда';
+
+  @override
+  String get foodCatMeatFish => 'Мясо и рыба';
+
+  @override
+  String get foodCatDairy => 'Молочное';
+
+  @override
+  String get foodCatFruit => 'Фрукты';
+
+  @override
+  String get foodCatVeg => 'Овощи и бобовые';
+
+  @override
+  String get foodCatGrains => 'Крупы и паста';
+
+  @override
+  String get foodCatBread => 'Хлеб';
+
+  @override
+  String get foodCatDrinks => 'Напитки';
+
+  @override
+  String get foodCatOther => 'Другое';
+
+  @override
+  String get foodRecipeEstimate => 'Оценка по рецепту';
+
+  @override
+  String foodPer100(String kcal) {
+    return '$kcal ккал / 100 г';
+  }
+
+  @override
+  String get foodPortion => 'Порция';
+
+  @override
+  String get foodKcal => 'ккал';
+
+  @override
+  String get foodFitsDay => 'Вписывается в день?';
+
+  @override
+  String foodKcalLeftAfter(String kcal) {
+    return 'потом останется $kcal ккал';
+  }
+
+  @override
+  String foodKcalOver(String kcal) {
+    return 'перебор $kcal ккал';
+  }
+
+  @override
+  String foodEaten(String kcal) {
+    return 'Съедено $kcal';
+  }
+
+  @override
+  String foodPlus(String name, String kcal) {
+    return '+ $name $kcal';
+  }
+
+  @override
+  String foodTarget(String kcal) {
+    return 'Цель $kcal';
+  }
+
+  @override
+  String foodFatWould(String fat, String target) {
+    return 'Жиров станет $fat из $target г.';
+  }
+
+  @override
+  String foodProteinBehind(String g) {
+    return 'Белка всё ещё не хватает $g г.';
+  }
+
+  @override
+  String get foodRichIn => 'Богато';
+
+  @override
+  String get foodPctOfTarget => '% от вашей дневной нормы';
+
+  @override
+  String get micrTitle => 'Микронутриенты';
+
+  @override
+  String micrTargetsFor(String who, String age) {
+    return 'Нормы для $who, $age · NASEM';
+  }
+
+  @override
+  String get micrMen => 'мужчин';
+
+  @override
+  String get micrWomen => 'женщин';
+
+  @override
+  String get micrToday => 'Сегодня';
+
+  @override
+  String get micr7Days => '7 дней';
+
+  @override
+  String get micr30Days => '30 дней';
+
+  @override
+  String get micrAthlete => 'Для спортсмена';
+
+  @override
+  String get micrVitamins => 'Витамины';
+
+  @override
+  String get micrMinerals => 'Минералы';
+
+  @override
+  String micrAll(String n) {
+    return 'Все $n';
+  }
+
+  @override
+  String get micrEmpty => 'Запишите еду, чтобы увидеть микронутриенты.';
+
+  @override
+  String micrAverage(String n) {
+    return 'В среднем за $n дн. с записями';
+  }
+
+  @override
+  String get micrLow => 'Мало';
+
+  @override
+  String get micrOk => 'Норма';
+
+  @override
+  String get micrHigh => 'Много';
+
+  @override
+  String get micrVitDTitle => 'Витамин D низкий всю неделю';
+
+  @override
+  String get micrVitDBody =>
+      'Немного помогают жирная рыба, яйца и обогащённые молочные продукты. Спросите врача о добавке D3.';
+
+  @override
+  String get micrInSeason => 'Сейчас в сезон';
+
+  @override
+  String micrUzbekistanMonth(String month) {
+    return 'Узбекистан · $month';
+  }
+
+  @override
+  String get microVitD => 'Витамин D';
+
+  @override
+  String get microCalcium => 'Кальций';
+
+  @override
+  String get microMagnesium => 'Магний';
+
+  @override
+  String get microIron => 'Железо';
+
+  @override
+  String get microZinc => 'Цинк';
+
+  @override
+  String get microPotassium => 'Калий';
+
+  @override
+  String get microSodium => 'Натрий';
+
+  @override
+  String get microB12 => 'Витамин B12';
+
+  @override
+  String get microSelenium => 'Селен';
+
+  @override
+  String get microVitE => 'Витамин E';
+
+  @override
+  String get microVitC => 'Витамин C';
+
+  @override
+  String get microVitA => 'Витамин A';
+
+  @override
+  String get microHintVitD => 'Жирная рыба, яйца, солнце';
+
+  @override
+  String get microHintCalcium => 'Молочное, кунжут, зелень';
+
+  @override
+  String get microHintMagnesium => 'Орехи, гречка, бобовые';
+
+  @override
+  String get microHintIron => 'Мясо, печень, чечевица';
+
+  @override
+  String get microHintZinc => 'Говядина, баранина, тыквенные семечки';
+
+  @override
+  String get microHintPotassium => 'Картофель, бананы, бобовые';
+
+  @override
+  String get microHintSodium => 'Хлеб, солёный сыр, бульоны';
+
+  @override
+  String get microHintB12 => 'Говядина, яйца, молочное';
+
+  @override
+  String get microHintSelenium => 'Рыба, яйца, мясо';
+
+  @override
+  String get microHintVitE => 'Орехи, семечки, растительное масло';
+
+  @override
+  String get microHintVitC => 'Перец, цитрусовые, гранат';
+
+  @override
+  String get microHintVitA => 'Морковь, тыква, шпинат';
+
+  @override
+  String get targetsTitle => 'Ваши нормы';
+
+  @override
+  String get targetsSubtitle =>
+      'По вашему профилю и тренировкам за последние 4 недели';
+
+  @override
+  String get targetsGoal => 'Цель';
+
+  @override
+  String get targetsLoseFat => 'Похудение';
+
+  @override
+  String get targetsMaintain => 'Поддержание';
+
+  @override
+  String get targetsLeanBulk => 'Чистый набор';
+
+  @override
+  String get targetsBmr => 'Базовый обмен';
+
+  @override
+  String targetsBmrFormula(String weight, String height, String age) {
+    return 'Миффлин — Сан-Жеор · $weight кг, $height см, $age л.';
+  }
+
+  @override
+  String targetsActivity(String factor) {
+    return '× $factor активность';
+  }
+
+  @override
+  String targetsHours(String hours) {
+    return '$hours ч тренировок в неделю в FITRIX';
+  }
+
+  @override
+  String targetsHoursEstimated(String hours) {
+    return 'Оценка $hours ч в неделю: за 4 недели нет тренировок';
+  }
+
+  @override
+  String get targetsAdjLose => '−15% для похудения';
+
+  @override
+  String get targetsAdjMaintain => 'Поддержание веса';
+
+  @override
+  String get targetsAdjBulk => '+10% чистый набор';
+
+  @override
+  String get targetsDaily => 'Дневная норма';
+
+  @override
+  String targetsProteinG(String g) {
+    return 'Белок · $g г';
+  }
+
+  @override
+  String targetsFatG(String g) {
+    return 'Жиры · $g г';
+  }
+
+  @override
+  String targetsCarbsG(String g) {
+    return 'Углеводы · $g г';
+  }
+
+  @override
+  String targetsPerKg(String value) {
+    return '$value г на кг веса';
+  }
+
+  @override
+  String targetsFatPerKg(String value, String pct) {
+    return '$value г на кг, около $pct% калорий';
+  }
+
+  @override
+  String get targetsCarbsNote => 'Остальные калории';
+
+  @override
+  String get targetsAuto => 'авто';
+
+  @override
+  String get targetsSave => 'Сохранить нормы';
 }

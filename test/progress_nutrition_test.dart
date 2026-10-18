@@ -9,7 +9,6 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
-import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.dart';
 import 'package:fitrix/features/progress/presentation/widgets/progress_chart.dart';
 
@@ -20,9 +19,15 @@ Widget _host(Widget child) => MaterialApp(
       home: child,
     );
 
-/// The Nutrition screen with empty storage (so it shows the sample day).
+/// The Nutrition screen with a complete profile and nothing logged.
 Future<Widget> _nutrition() async {
-  SharedPreferences.setMockInitialValues({});
+  SharedPreferences.setMockInitialValues({
+    'user_name': 'Alex',
+    'user_age': '26',
+    'user_weight': '78.4',
+    'user_height': '181',
+    'performance_profile_v1': '{"sex":"male"}',
+  });
   final prefs = await SharedPreferences.getInstance();
   return ProviderScope(
     overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
@@ -95,23 +100,22 @@ void main() {
   });
 
   group('Nutrition', () {
-    testWidgets('ring shows consumed and goal', (t) async {
+    testWidgets('ring shows eaten and the computed target', (t) async {
       _se(t);
       await t.pumpWidget((await _nutrition()));
       await t.pumpAndSettle();
-      expect(find.text('1,700'), findsOneWidget);
-      expect(find.text('of 2,400 kcal'), findsOneWidget);
+      expect(find.text('0'), findsOneWidget);
+      // Mifflin-St Jeor 1790 x 1.375 (3 h assumed) = 2461, maintain.
+      expect(find.text('of 2,450 kcal'), findsOneWidget);
     });
 
-    testWidgets('macro labels and Felix tip are shown', (t) async {
+    testWidgets('macro labels are shown', (t) async {
       _se(t);
       await t.pumpWidget((await _nutrition()));
       await t.pumpAndSettle();
       for (final l in ['Protein', 'Carbs', 'Fat']) {
         expect(find.text(l), findsOneWidget);
       }
-      await t.scrollUntilVisible(find.byType(CoachCard), 100);
-      expect(find.byType(CoachCard), findsOneWidget);
       expect(t.takeException(), isNull);
     });
 

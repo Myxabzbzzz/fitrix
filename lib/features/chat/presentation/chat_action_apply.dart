@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/chat/data/models/chat_action.dart';
-import 'package:fitrix/features/nutrition/data/nutrition_store.dart';
+import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/nutrition/data/food_catalog.dart';
+import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/profile/data/models/profile_row.dart';
 import 'package:fitrix/features/profile/data/models/user_profile.dart';
@@ -55,9 +57,32 @@ Future<Map<String, num>?> applyChatAction(
       return const {};
     case MealPlanAction():
       // A meal plan is a whole day: it replaces what was logged today.
-      await ref.read(todayMealsProvider.notifier).replaceToday([
-        for (final m in action.meals)
-          LoggedMeal(name: m.name, items: m.items, kcal: m.kcal),
+      final now = ref.read(clockProvider)();
+      final today = ref.read(todayProvider);
+      const byOrder = [
+        MealSlot.breakfast,
+        MealSlot.lunch,
+        MealSlot.snack,
+        MealSlot.dinner,
+      ];
+      await ref.read(foodLogProvider.notifier).replaceDay(today, [
+        for (final (i, m) in action.meals.indexed)
+          FoodEntry(
+            id: newEntryId(now),
+            at: DateTime(
+                today.year, today.month, today.day, now.hour, now.minute, i),
+            slot: MealSlot.values.where((s) {
+                  final n = m.name.toLowerCase();
+                  return n.contains(s.name);
+                }).firstOrNull ??
+                byOrder[i % byOrder.length],
+            name: m.items.isEmpty ? m.name : m.items,
+            grams: 0,
+            kcal: m.kcal,
+            protein: 0,
+            carbs: 0,
+            fat: 0,
+          ),
       ]);
       return const {};
   }

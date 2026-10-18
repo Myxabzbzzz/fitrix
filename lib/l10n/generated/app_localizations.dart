@@ -3846,6 +3846,799 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get connectedAppsClose;
+
+  /// No description provided for @nutritionToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get nutritionToday;
+
+  /// No description provided for @nutritionDateTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · training day'**
+  String nutritionDateTraining(String date);
+
+  /// No description provided for @nutritionCompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get nutritionCompleteTitle;
+
+  /// No description provided for @nutritionCompleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your sex, age, weight and height to get daily targets.'**
+  String get nutritionCompleteBody;
+
+  /// No description provided for @nutritionLeftToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Left today'**
+  String get nutritionLeftToday;
+
+  /// No description provided for @nutritionBurned.
+  ///
+  /// In en, this message translates to:
+  /// **'Burned in training'**
+  String get nutritionBurned;
+
+  /// No description provided for @nutritionBurnedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'≈ +{kcal} kcal'**
+  String nutritionBurnedValue(String kcal);
+
+  /// No description provided for @nutritionHowSet.
+  ///
+  /// In en, this message translates to:
+  /// **'How it’s set ›'**
+  String get nutritionHowSet;
+
+  /// No description provided for @nutritionMacros.
+  ///
+  /// In en, this message translates to:
+  /// **'Macros'**
+  String get nutritionMacros;
+
+  /// No description provided for @nutritionProteinPerKg.
+  ///
+  /// In en, this message translates to:
+  /// **'protein {value} g/kg'**
+  String nutritionProteinPerKg(String value);
+
+  /// No description provided for @nutritionGramsOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{eaten} / {target} g'**
+  String nutritionGramsOf(String eaten, String target);
+
+  /// No description provided for @nutritionWaterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Water · {drunk} of {target} L'**
+  String nutritionWaterTitle(String drunk, String target);
+
+  /// No description provided for @nutritionWaterNoTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Water · {drunk} L'**
+  String nutritionWaterNoTarget(String drunk);
+
+  /// No description provided for @nutritionWaterWorkout.
+  ///
+  /// In en, this message translates to:
+  /// **'+0.5 L for today’s workout'**
+  String get nutritionWaterWorkout;
+
+  /// No description provided for @nutritionAddMl.
+  ///
+  /// In en, this message translates to:
+  /// **'+{ml} ml'**
+  String nutritionAddMl(String ml);
+
+  /// No description provided for @nutritionMeals.
+  ///
+  /// In en, this message translates to:
+  /// **'Meals'**
+  String get nutritionMeals;
+
+  /// No description provided for @nutritionMealsLogged.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} of 4 logged'**
+  String nutritionMealsLogged(String n);
+
+  /// No description provided for @nutritionAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get nutritionAdd;
+
+  /// No description provided for @nutritionLowToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Low today'**
+  String get nutritionLowToday;
+
+  /// No description provided for @nutritionAllMicros.
+  ///
+  /// In en, this message translates to:
+  /// **'All {n} ›'**
+  String nutritionAllMicros(String n);
+
+  /// No description provided for @nutritionDinnerIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'Dinner idea'**
+  String get nutritionDinnerIdea;
+
+  /// No description provided for @nutritionIdeaMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Protein is {gap} g behind. {food} ({portion}) gives about {protein} g.'**
+  String nutritionIdeaMessage(
+      String gap, String food, String portion, String protein);
+
+  /// No description provided for @nutritionAddToDinner.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to dinner'**
+  String get nutritionAddToDinner;
+
+  /// No description provided for @nutritionOtherIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'Other idea'**
+  String get nutritionOtherIdea;
+
+  /// No description provided for @nutritionRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get nutritionRemove;
+
+  /// No description provided for @nutritionSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search foods'**
+  String get nutritionSearch;
+
+  /// No description provided for @nutritionFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get nutritionFood;
+
+  /// No description provided for @nutritionGrams.
+  ///
+  /// In en, this message translates to:
+  /// **'{grams} g'**
+  String nutritionGrams(String grams);
+
+  /// No description provided for @nutritionAddToSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'{slot, select, breakfast{Add to breakfast} lunch{Add to lunch} dinner{Add to dinner} snack{Add to snack} other{Add to dinner}}'**
+  String nutritionAddToSlot(String slot);
+
+  /// No description provided for @nutritionAddToSlotKcal.
+  ///
+  /// In en, this message translates to:
+  /// **'{slot, select, breakfast{Add to breakfast · {kcal} kcal} lunch{Add to lunch · {kcal} kcal} dinner{Add to dinner · {kcal} kcal} snack{Add to snack · {kcal} kcal} other{Add to dinner · {kcal} kcal}}'**
+  String nutritionAddToSlotKcal(String slot, String kcal);
+
+  /// No description provided for @nutritionAddedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'{slot, select, breakfast{Added {name} to breakfast} lunch{Added {name} to lunch} dinner{Added {name} to dinner} snack{Added {name} to snack} other{Added {name}}}'**
+  String nutritionAddedTo(String name, String slot);
+
+  /// No description provided for @nutritionResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get nutritionResults;
+
+  /// No description provided for @nutritionResultsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} foods · per portion'**
+  String nutritionResultsCount(String n);
+
+  /// No description provided for @nutritionNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found. Try another name.'**
+  String get nutritionNoResults;
+
+  /// No description provided for @nutritionRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get nutritionRecent;
+
+  /// No description provided for @nutritionRecentNote.
+  ///
+  /// In en, this message translates to:
+  /// **'you ate it this week'**
+  String get nutritionRecentNote;
+
+  /// No description provided for @nutritionPortionLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{portion} · {kcal} kcal · P {protein} g'**
+  String nutritionPortionLine(String portion, String kcal, String protein);
+
+  /// No description provided for @nutritionCantFind.
+  ///
+  /// In en, this message translates to:
+  /// **'Can’t find it?'**
+  String get nutritionCantFind;
+
+  /// No description provided for @nutritionCantFindBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Felix to estimate it'**
+  String get nutritionCantFindBody;
+
+  /// No description provided for @foodBaseError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load the food base.'**
+  String get foodBaseError;
+
+  /// No description provided for @foodNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This food isn’t in the base.'**
+  String get foodNotFound;
+
+  /// No description provided for @foodCatAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get foodCatAll;
+
+  /// No description provided for @foodCatUzbek.
+  ///
+  /// In en, this message translates to:
+  /// **'Uzbek dishes'**
+  String get foodCatUzbek;
+
+  /// No description provided for @foodCatMeatFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Meat & fish'**
+  String get foodCatMeatFish;
+
+  /// No description provided for @foodCatDairy.
+  ///
+  /// In en, this message translates to:
+  /// **'Dairy'**
+  String get foodCatDairy;
+
+  /// No description provided for @foodCatFruit.
+  ///
+  /// In en, this message translates to:
+  /// **'Fruit'**
+  String get foodCatFruit;
+
+  /// No description provided for @foodCatVeg.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegetables'**
+  String get foodCatVeg;
+
+  /// No description provided for @foodCatGrains.
+  ///
+  /// In en, this message translates to:
+  /// **'Grains'**
+  String get foodCatGrains;
+
+  /// No description provided for @foodCatBread.
+  ///
+  /// In en, this message translates to:
+  /// **'Bread'**
+  String get foodCatBread;
+
+  /// No description provided for @foodCatDrinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Drinks'**
+  String get foodCatDrinks;
+
+  /// No description provided for @foodCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get foodCatOther;
+
+  /// No description provided for @foodRecipeEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe estimate'**
+  String get foodRecipeEstimate;
+
+  /// No description provided for @foodPer100.
+  ///
+  /// In en, this message translates to:
+  /// **'{kcal} kcal / 100 g'**
+  String foodPer100(String kcal);
+
+  /// No description provided for @foodPortion.
+  ///
+  /// In en, this message translates to:
+  /// **'Portion'**
+  String get foodPortion;
+
+  /// No description provided for @foodKcal.
+  ///
+  /// In en, this message translates to:
+  /// **'kcal'**
+  String get foodKcal;
+
+  /// No description provided for @foodFitsDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Fits your day?'**
+  String get foodFitsDay;
+
+  /// No description provided for @foodKcalLeftAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'{kcal} kcal left after'**
+  String foodKcalLeftAfter(String kcal);
+
+  /// No description provided for @foodKcalOver.
+  ///
+  /// In en, this message translates to:
+  /// **'{kcal} kcal over'**
+  String foodKcalOver(String kcal);
+
+  /// No description provided for @foodEaten.
+  ///
+  /// In en, this message translates to:
+  /// **'Eaten {kcal}'**
+  String foodEaten(String kcal);
+
+  /// No description provided for @foodPlus.
+  ///
+  /// In en, this message translates to:
+  /// **'+ {name} {kcal}'**
+  String foodPlus(String name, String kcal);
+
+  /// No description provided for @foodTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Target {kcal}'**
+  String foodTarget(String kcal);
+
+  /// No description provided for @foodFatWould.
+  ///
+  /// In en, this message translates to:
+  /// **'Fat would reach {fat} of {target} g.'**
+  String foodFatWould(String fat, String target);
+
+  /// No description provided for @foodProteinBehind.
+  ///
+  /// In en, this message translates to:
+  /// **'Protein stays {g} g behind.'**
+  String foodProteinBehind(String g);
+
+  /// No description provided for @foodRichIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Rich in'**
+  String get foodRichIn;
+
+  /// No description provided for @foodPctOfTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'% of your daily target'**
+  String get foodPctOfTarget;
+
+  /// No description provided for @micrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Micronutrients'**
+  String get micrTitle;
+
+  /// No description provided for @micrTargetsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Targets for {who}, {age} · NASEM'**
+  String micrTargetsFor(String who, String age);
+
+  /// No description provided for @micrMen.
+  ///
+  /// In en, this message translates to:
+  /// **'men'**
+  String get micrMen;
+
+  /// No description provided for @micrWomen.
+  ///
+  /// In en, this message translates to:
+  /// **'women'**
+  String get micrWomen;
+
+  /// No description provided for @micrToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get micrToday;
+
+  /// No description provided for @micr7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'7 days'**
+  String get micr7Days;
+
+  /// No description provided for @micr30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days'**
+  String get micr30Days;
+
+  /// No description provided for @micrAthlete.
+  ///
+  /// In en, this message translates to:
+  /// **'Athlete essentials'**
+  String get micrAthlete;
+
+  /// No description provided for @micrVitamins.
+  ///
+  /// In en, this message translates to:
+  /// **'Vitamins'**
+  String get micrVitamins;
+
+  /// No description provided for @micrMinerals.
+  ///
+  /// In en, this message translates to:
+  /// **'Minerals'**
+  String get micrMinerals;
+
+  /// No description provided for @micrAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All {n}'**
+  String micrAll(String n);
+
+  /// No description provided for @micrEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Log food to see your micronutrients.'**
+  String get micrEmpty;
+
+  /// No description provided for @micrAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average over {n} logged days'**
+  String micrAverage(String n);
+
+  /// No description provided for @micrLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get micrLow;
+
+  /// No description provided for @micrOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get micrOk;
+
+  /// No description provided for @micrHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get micrHigh;
+
+  /// No description provided for @micrVitDTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vitamin D is low all week'**
+  String get micrVitDTitle;
+
+  /// No description provided for @micrVitDBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Fatty fish, eggs and fortified dairy help a little. Ask your doctor about a D3 supplement.'**
+  String get micrVitDBody;
+
+  /// No description provided for @micrInSeason.
+  ///
+  /// In en, this message translates to:
+  /// **'In season now'**
+  String get micrInSeason;
+
+  /// No description provided for @micrUzbekistanMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Uzbekistan · {month}'**
+  String micrUzbekistanMonth(String month);
+
+  /// No description provided for @microVitD.
+  ///
+  /// In en, this message translates to:
+  /// **'Vitamin D'**
+  String get microVitD;
+
+  /// No description provided for @microCalcium.
+  ///
+  /// In en, this message translates to:
+  /// **'Calcium'**
+  String get microCalcium;
+
+  /// No description provided for @microMagnesium.
+  ///
+  /// In en, this message translates to:
+  /// **'Magnesium'**
+  String get microMagnesium;
+
+  /// No description provided for @microIron.
+  ///
+  /// In en, this message translates to:
+  /// **'Iron'**
+  String get microIron;
+
+  /// No description provided for @microZinc.
+  ///
+  /// In en, this message translates to:
+  /// **'Zinc'**
+  String get microZinc;
+
+  /// No description provided for @microPotassium.
+  ///
+  /// In en, this message translates to:
+  /// **'Potassium'**
+  String get microPotassium;
+
+  /// No description provided for @microSodium.
+  ///
+  /// In en, this message translates to:
+  /// **'Sodium'**
+  String get microSodium;
+
+  /// No description provided for @microB12.
+  ///
+  /// In en, this message translates to:
+  /// **'Vitamin B12'**
+  String get microB12;
+
+  /// No description provided for @microSelenium.
+  ///
+  /// In en, this message translates to:
+  /// **'Selenium'**
+  String get microSelenium;
+
+  /// No description provided for @microVitE.
+  ///
+  /// In en, this message translates to:
+  /// **'Vitamin E'**
+  String get microVitE;
+
+  /// No description provided for @microVitC.
+  ///
+  /// In en, this message translates to:
+  /// **'Vitamin C'**
+  String get microVitC;
+
+  /// No description provided for @microVitA.
+  ///
+  /// In en, this message translates to:
+  /// **'Vitamin A'**
+  String get microVitA;
+
+  /// No description provided for @microHintVitD.
+  ///
+  /// In en, this message translates to:
+  /// **'Fatty fish, eggs, sunlight'**
+  String get microHintVitD;
+
+  /// No description provided for @microHintCalcium.
+  ///
+  /// In en, this message translates to:
+  /// **'Dairy, sesame, greens'**
+  String get microHintCalcium;
+
+  /// No description provided for @microHintMagnesium.
+  ///
+  /// In en, this message translates to:
+  /// **'Nuts, buckwheat, legumes'**
+  String get microHintMagnesium;
+
+  /// No description provided for @microHintIron.
+  ///
+  /// In en, this message translates to:
+  /// **'Meat, liver, lentils'**
+  String get microHintIron;
+
+  /// No description provided for @microHintZinc.
+  ///
+  /// In en, this message translates to:
+  /// **'Beef, lamb, pumpkin seeds'**
+  String get microHintZinc;
+
+  /// No description provided for @microHintPotassium.
+  ///
+  /// In en, this message translates to:
+  /// **'Potatoes, bananas, legumes'**
+  String get microHintPotassium;
+
+  /// No description provided for @microHintSodium.
+  ///
+  /// In en, this message translates to:
+  /// **'Bread, salted cheese, broths'**
+  String get microHintSodium;
+
+  /// No description provided for @microHintB12.
+  ///
+  /// In en, this message translates to:
+  /// **'Beef, eggs, dairy'**
+  String get microHintB12;
+
+  /// No description provided for @microHintSelenium.
+  ///
+  /// In en, this message translates to:
+  /// **'Fish, eggs, meat'**
+  String get microHintSelenium;
+
+  /// No description provided for @microHintVitE.
+  ///
+  /// In en, this message translates to:
+  /// **'Nuts, seeds, vegetable oil'**
+  String get microHintVitE;
+
+  /// No description provided for @microHintVitC.
+  ///
+  /// In en, this message translates to:
+  /// **'Peppers, citrus, pomegranate'**
+  String get microHintVitC;
+
+  /// No description provided for @microHintVitA.
+  ///
+  /// In en, this message translates to:
+  /// **'Carrots, pumpkin, spinach'**
+  String get microHintVitA;
+
+  /// No description provided for @targetsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your targets'**
+  String get targetsTitle;
+
+  /// No description provided for @targetsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your profile and the last 4 weeks of training'**
+  String get targetsSubtitle;
+
+  /// No description provided for @targetsGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get targetsGoal;
+
+  /// No description provided for @targetsLoseFat.
+  ///
+  /// In en, this message translates to:
+  /// **'Lose fat'**
+  String get targetsLoseFat;
+
+  /// No description provided for @targetsMaintain.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintain'**
+  String get targetsMaintain;
+
+  /// No description provided for @targetsLeanBulk.
+  ///
+  /// In en, this message translates to:
+  /// **'Lean bulk'**
+  String get targetsLeanBulk;
+
+  /// No description provided for @targetsBmr.
+  ///
+  /// In en, this message translates to:
+  /// **'Base metabolism'**
+  String get targetsBmr;
+
+  /// No description provided for @targetsBmrFormula.
+  ///
+  /// In en, this message translates to:
+  /// **'Mifflin-St Jeor · {weight} kg, {height} cm, {age} y'**
+  String targetsBmrFormula(String weight, String height, String age);
+
+  /// No description provided for @targetsActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'× {factor} activity'**
+  String targetsActivity(String factor);
+
+  /// No description provided for @targetsHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h training a week in FITRIX'**
+  String targetsHours(String hours);
+
+  /// No description provided for @targetsHoursEstimated.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated {hours} h a week: no workouts in the last 4 weeks'**
+  String targetsHoursEstimated(String hours);
+
+  /// No description provided for @targetsAdjLose.
+  ///
+  /// In en, this message translates to:
+  /// **'−15% to lose fat'**
+  String get targetsAdjLose;
+
+  /// No description provided for @targetsAdjMaintain.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your weight'**
+  String get targetsAdjMaintain;
+
+  /// No description provided for @targetsAdjBulk.
+  ///
+  /// In en, this message translates to:
+  /// **'+10% lean bulk'**
+  String get targetsAdjBulk;
+
+  /// No description provided for @targetsDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily target'**
+  String get targetsDaily;
+
+  /// No description provided for @targetsProteinG.
+  ///
+  /// In en, this message translates to:
+  /// **'Protein · {g} g'**
+  String targetsProteinG(String g);
+
+  /// No description provided for @targetsFatG.
+  ///
+  /// In en, this message translates to:
+  /// **'Fat · {g} g'**
+  String targetsFatG(String g);
+
+  /// No description provided for @targetsCarbsG.
+  ///
+  /// In en, this message translates to:
+  /// **'Carbs · {g} g'**
+  String targetsCarbsG(String g);
+
+  /// No description provided for @targetsPerKg.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} g per kg body weight'**
+  String targetsPerKg(String value);
+
+  /// No description provided for @targetsFatPerKg.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} g per kg, about {pct}% of kcal'**
+  String targetsFatPerKg(String value, String pct);
+
+  /// No description provided for @targetsCarbsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The rest of the calories'**
+  String get targetsCarbsNote;
+
+  /// No description provided for @targetsAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'auto'**
+  String get targetsAuto;
+
+  /// No description provided for @targetsSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save targets'**
+  String get targetsSave;
 }
 
 class _AppLocalizationsDelegate

@@ -1,118 +1,54 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:fitrix/core/animation/motion.dart';
+import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/nutrition/data/dinner_idea.dart';
+import 'package:fitrix/features/nutrition/data/food_catalog.dart';
+import 'package:fitrix/features/nutrition/data/food_log_store.dart';
+import 'package:fitrix/features/nutrition/data/micronutrients.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
+import 'package:fitrix/features/nutrition/presentation/widgets/nutrition_cards.dart';
+import 'package:fitrix/features/profile/data/performance_store.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
-/// "My Nutrition": today's calories ring and macro progress. The ring and
-/// bars fill from zero when the screen opens.
-enum _Macro { protein, carbs, fat }
-
-enum _Meal { breakfast, lunch, snack }
-
+/// "My nutrition": today's calories, macros, water, meals, the lowest
+/// micronutrients and a dinner idea when protein is behind.
 class NutritionScreen extends ConsumerStatefulWidget {
   const NutritionScreen({super.key});
-
-  static const int _consumed = 1700;
-  static const int _goal = 2400;
-
-  static const _macros = [
-    (id: _Macro.protein, grams: 120, goal: 160),
-    (id: _Macro.carbs, grams: 180, goal: 260),
-    (id: _Macro.fat, grams: 55, goal: 80),
-  ];
-
-  static const _meals = [
-    (id: _Meal.breakfast, kcal: 520),
-    (id: _Meal.lunch, kcal: 780),
-    (id: _Meal.snack, kcal: 400),
-  ];
 
   @override
   ConsumerState<NutritionScreen> createState() => _NutritionScreenState();
 }
 
-class _NutritionScreenState extends ConsumerState<NutritionScreen>
-    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  static const _goal = NutritionScreen._goal;
-  static const _macros = NutritionScreen._macros;
-
-  late final AnimationController _fill = AnimationController(
-    vsync: this,
-    duration: Motion.slow,
-  );
-  VoidCallback? _cancelPending;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    // The date may have changed since the meals were loaded.
-    Future.microtask(() {
-      if (mounted) ref.read(todayMealsProvider.notifier).refresh();
-    });
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && mounted) {
-      ref.read(todayMealsProvider.notifier).refresh();
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (Motion.reduced(context)) {
-      _cancelPending?.call();
-      _fill.value = 1;
-    } else if (_cancelPending == null && _fill.isDismissed) {
-      // Fill once the page transition has revealed the screen.
-      _cancelPending = afterRouteEntrance(context, () {
-        if (mounted) _fill.forward();
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _cancelPending?.call();
-    _fill.dispose();
-    super.dispose();
-  }
-
-  /// Fill progress for item [index], slightly staggered.
-  double _progress(int index) => Curves.easeOutCubic.transform(
-        Interval(0.1 * index, 0.7 + 0.1 * index).transform(_fill.value),
-      );
+class _NutritionScreenState extends ConsumerState<NutritionScreen> {
+  int _ideaIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _fill,
-      builder: (context, _) => _build(context),
-    );
-  }
-
-  Widget _build(BuildContext context) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
-    final fmt =
-        NumberFormat.decimalPattern(Localizations.localeOf(context).toString());
-    // Meals confirmed from Felix replace the sample day.
-    final logged = ref.watch(todayMealsProvider);
-    final hasLogged = logged.isNotEmpty;
-    final consumed = hasLogged
-        ? logged.fold<int>(0, (sum, m) => sum + m.kcal)
-        : NutritionScreen._consumed;
-    final left = _goal - consumed;
+    final locale = Localizations.localeOf(context).toString();
+    final today = ref.watch(todayProvider);
+    final now = ref.watch(clockProvider)();
+    final entries = ref.watch(todayEntriesProvider);
+    final targets = ref.watch(targetsProvider);
+    final training = ref.watch(trainingDayProvider);
+    final burned = ref.watch(burnedKcalProvider);
+    final water = ref.watch(todayWaterProvider);
+
+    final eaten = entries.fold<int>(0, (s, e) => s + e.kcal);
+    final protein = entries.fold<double>(0, (s, e) => s + e.protein);
+    final carbs = entries.fold<double>(0, (s, e) => s + e.carbs);
+    final fat = entries.fold<double>(0, (s, e) => s + e.fat);
+    final dateText = DateFormat('EEE d MMM', locale).format(today);
+    final liters = NumberFormat('0.0', locale);
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -121,133 +57,195 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ScreenTitle(l10n.nutritionTitle),
+            ScreenTitle(
+              l10n.nutritionTitle,
+              trailing: IconButton(
+                tooltip: l10n.nutritionSearch,
+                icon: Icon(Icons.search, color: palette.textPrimary),
+                onPressed: () =>
+                    context.push(AppRouter.addFood(MealSlot.forTime(now))),
+              ),
+            ),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(
                     AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.lg),
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: palette.tile,
-                      borderRadius: AppRadius.smAll,
-                    ),
-                    child: Row(
+                  NutritionTile(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                    child: Column(
                       children: [
-                        SizedBox(
-                          key: const ValueKey('calorie-ring'),
-                          width: 132,
-                          height: 132,
-                          child: Stack(
-                            fit: StackFit.expand,
+                        Text(l10n.nutritionToday,
+                            style: AppText.bodyStrong
+                                .copyWith(color: palette.textPrimary)),
+                        Text(
+                          training
+                              ? l10n.nutritionDateTraining(dateText)
+                              : dateText,
+                          textAlign: TextAlign.center,
+                          style: AppText.caption
+                              .copyWith(color: palette.textSecondary),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  if (targets == null)
+                    _CompleteProfileCard(
+                        onTap: () => context.push(AppRouter.editProfile))
+                  else ...[
+                    NutritionTile(
+                      child: Row(
+                        children: [
+                          CalorieRing(eaten: eaten, target: targets.kcal),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: _RingSide(
+                              left: targets.kcal - eaten,
+                              burned: burned,
+                              onHow: () =>
+                                  context.push(AppRouter.nutritionTargets),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    NutritionTile(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
                             children: [
-                              CustomPaint(
-                                painter: _RingPainter(
-                                  fraction: consumed / _goal * _progress(0),
-                                  track: palette.buttonMuted,
-                                  arc: palette.accent,
-                                ),
+                              Expanded(
+                                child: Text(l10n.nutritionMacros,
+                                    style: AppText.headingS
+                                        .copyWith(color: palette.textPrimary)),
                               ),
-                              Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      fmt.format(consumed),
-                                      style: AppText.displayMedium
-                                          .copyWith(color: palette.textPrimary),
-                                    ),
-                                    Text(
-                                      l10n.nutritionOfGoal(fmt.format(_goal)),
-                                      style: AppText.micro.copyWith(
-                                          color: palette.textSecondary),
-                                    ),
-                                  ],
+                              Flexible(
+                                child: Text(
+                                  l10n.nutritionProteinPerKg(
+                                      NumberFormat('0.0', locale).format(ref
+                                          .watch(nutritionSettingsProvider)
+                                          .proteinPerKg)),
+                                  style: AppText.caption
+                                      .copyWith(color: palette.textSecondary),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        if (hasLogged)
-                          const Spacer()
-                        else ...[
-                          const SizedBox(width: AppSpacing.lg),
-                          Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                for (final (i, macro) in _macros.indexed) ...[
-                                  if (i > 0)
-                                    const SizedBox(height: AppSpacing.sm),
-                                  _MacroRow(
-                                    label: switch (macro.id) {
-                                      _Macro.protein => l10n.nutritionProtein,
-                                      _Macro.carbs => l10n.nutritionCarbs,
-                                      _Macro.fat => l10n.nutritionFat,
-                                    },
-                                    grams: macro.grams,
-                                    goal: macro.goal,
-                                    progress: _progress(i + 1),
-                                  ),
-                                ],
-                              ],
-                            ),
+                          const SizedBox(height: AppSpacing.sm),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                  child: MacroColumn(
+                                      label: l10n.nutritionProtein,
+                                      eaten: protein,
+                                      target: targets.protein)),
+                              const SizedBox(width: AppSpacing.sm),
+                              Expanded(
+                                  child: MacroColumn(
+                                      label: l10n.nutritionCarbs,
+                                      eaten: carbs,
+                                      target: targets.carbs)),
+                              const SizedBox(width: AppSpacing.sm),
+                              Expanded(
+                                  child: MacroColumn(
+                                      label: l10n.nutritionFat,
+                                      eaten: fat,
+                                      target: targets.fat)),
+                            ],
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.sm),
+                  NutritionTile(
+                    child: Row(
+                      children: [
+                        WaterGlass(
+                            fraction: targets == null || targets.waterMl <= 0
+                                ? 0
+                                : water / targets.waterMl),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                targets == null
+                                    ? l10n.nutritionWaterNoTarget(
+                                        liters.format(water / 1000))
+                                    : l10n.nutritionWaterTitle(
+                                        liters.format(water / 1000),
+                                        liters.format(targets.waterMl / 1000)),
+                                style: AppText.bodyStrong
+                                    .copyWith(color: palette.textPrimary),
+                              ),
+                              if (training)
+                                Text(l10n.nutritionWaterWorkout,
+                                    style: AppText.caption.copyWith(
+                                        color: palette.textSecondary)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            for (final ml in const [250, 500]) ...[
+                              AppButton(
+                                key: ValueKey('water-$ml'),
+                                label: l10n.nutritionAddMl('$ml'),
+                                style: AppButtonStyle.secondary,
+                                onPressed: () => ref
+                                    .read(foodLogProvider.notifier)
+                                    .addWater(today, ml),
+                              ),
+                              if (ml == 250)
+                                const SizedBox(height: AppSpacing.xs),
+                            ],
+                          ],
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Text(
-                    left > 0
-                        ? l10n.nutritionLeft(fmt.format(left))
-                        : l10n.nutritionGoalReached,
-                    style:
-                        AppText.bodyStrong.copyWith(color: palette.textPrimary),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  if (hasLogged)
-                    for (final meal in logged) ...[
-                      _MealRow(
-                        name: meal.name,
-                        items: meal.items,
-                        trailing: l10n.nutritionKcal('${meal.kcal}'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(l10n.nutritionMeals,
+                            style: AppText.headingS
+                                .copyWith(color: palette.textPrimary)),
                       ),
-                      const SizedBox(height: AppSpacing.xs),
-                    ]
-                  else ...[
-                    for (final meal in NutritionScreen._meals) ...[
-                      _MealRow(
-                        name: switch (meal.id) {
-                          _Meal.breakfast => l10n.nutritionBreakfast,
-                          _Meal.lunch => l10n.nutritionLunch,
-                          _Meal.snack => l10n.nutritionSnack,
-                        },
-                        items: switch (meal.id) {
-                          _Meal.breakfast => l10n.nutritionBreakfastItems,
-                          _Meal.lunch => l10n.nutritionLunchItems,
-                          _Meal.snack => l10n.nutritionSnackItems,
-                        },
-                        trailing: l10n.nutritionKcal('${meal.kcal}'),
+                      Text(
+                        l10n.nutritionMealsLogged(
+                            '${{for (final e in entries) e.slot}.length}'),
+                        style: AppText.caption
+                            .copyWith(color: palette.textSecondary),
                       ),
-                      const SizedBox(height: AppSpacing.xs),
                     ],
-                    _MealRow(
-                      name: l10n.nutritionDinner,
-                      items: l10n.nutritionNotLogged,
-                      trailing: '—',
-                    ),
-                  ],
-                  const SizedBox(height: AppSpacing.md),
-                  CoachCard(
-                    eyebrow: l10n.nutritionTipEyebrow,
-                    title: l10n.nutritionTipTitle,
-                    message: l10n.nutritionTipMessage,
-                    imageAsset: 'assets/images/felix_avatar.png',
-                    imageWidth: 44,
-                    imageHeight: 44,
                   ),
+                  const SizedBox(height: AppSpacing.xs),
+                  for (final slot in MealSlot.values) ...[
+                    MealSlotCard(
+                      slot: slot,
+                      entries: [
+                        for (final e in entries)
+                          if (e.slot == slot) e,
+                      ],
+                      onAdd: () => context.push(AppRouter.addFood(slot)),
+                      onRemove: (e) =>
+                          ref.read(foodLogProvider.notifier).remove(e.id),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                  ],
+                  ..._lowToday(context, entries),
+                  ..._dinnerIdea(context, now, targets?.kcal, targets?.protein,
+                      eaten, protein),
                 ],
               ),
             ),
@@ -256,79 +254,163 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen>
       ),
     );
   }
-}
 
-class _RingPainter extends CustomPainter {
-  final double fraction;
-  final Color track;
-  final Color arc;
-
-  _RingPainter({
-    required this.fraction,
-    required this.track,
-    required this.arc,
-  });
-
-  static const double _stroke = 12;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = (Offset.zero & size).deflate(_stroke / 2);
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = _stroke
-      ..strokeCap = StrokeCap.round;
-    canvas.drawArc(rect, 0, math.pi * 2, false, paint..color = track);
-    final f = fraction.clamp(0.0, 1.0);
-    if (f > 0) {
-      canvas.drawArc(
-          rect, -math.pi / 2, math.pi * 2 * f, false, paint..color = arc);
+  /// The 3 lowest micronutrients today, when there is something logged and
+  /// the targets are known.
+  List<Widget> _lowToday(BuildContext context, List<FoodEntry> entries) {
+    final sex = ref.watch(performanceProfileProvider).sex;
+    final age = ref.watch(bodyStatsProvider).age;
+    if (entries.isEmpty || sex == null || age == null) return const [];
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final targets = microTargets(sex, age);
+    final totals = {for (final k in microKeys) k: 0.0};
+    for (final e in entries) {
+      for (final k in microKeys) {
+        totals[k] = totals[k]! + (e.micros[k] ?? 0);
+      }
     }
+    final ranked = [
+      for (final k in microKeys)
+        if (k != 'sodium_mg') (key: k, pct: totals[k]! / targets[k]! * 100),
+    ]..sort((a, b) => a.pct.compareTo(b.pct));
+    return [
+      const SizedBox(height: AppSpacing.sm),
+      Row(
+        children: [
+          Expanded(
+            child: Text(l10n.nutritionLowToday,
+                style: AppText.headingS.copyWith(color: palette.textPrimary)),
+          ),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => context.push(AppRouter.nutritionMicros),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 44),
+              child: Align(
+                widthFactor: 1,
+                child: Text(l10n.nutritionAllMicros('${microKeys.length}'),
+                    style: AppText.body14.copyWith(color: palette.accent)),
+              ),
+            ),
+          ),
+        ],
+      ),
+      Wrap(
+        spacing: AppSpacing.xs,
+        runSpacing: AppSpacing.xs,
+        children: [
+          for (final r in ranked.take(3))
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+              decoration: BoxDecoration(
+                  color: palette.tile, borderRadius: AppRadius.fullAll),
+              child: Text.rich(TextSpan(children: [
+                TextSpan(
+                    text: microName(l10n, r.key),
+                    style: AppText.captionStrong
+                        .copyWith(color: palette.textPrimary)),
+                TextSpan(
+                    text: '  ${r.pct.round()}%',
+                    style: AppText.captionStrong.copyWith(
+                        color: r.pct < 60 ? palette.warning : palette.success)),
+              ])),
+            ),
+        ],
+      ),
+    ];
   }
 
-  @override
-  bool shouldRepaint(_RingPainter old) =>
-      old.fraction != fraction || old.track != track || old.arc != arc;
+  List<Widget> _dinnerIdea(BuildContext context, DateTime now, int? kcal,
+      int? proteinTarget, int eaten, double protein) {
+    if (kcal == null || proteinTarget == null || now.hour < 15) {
+      return const [];
+    }
+    final gap = proteinTarget - protein;
+    final catalog = ref.watch(foodCatalogProvider).valueOrNull;
+    if (gap < 30 || catalog == null) return const [];
+    final ideas = dinnerIdeas(catalog, kcal - eaten);
+    if (ideas.isEmpty) return const [];
+    final l10n = AppLocalizations.of(context);
+    final idea = ideas[_ideaIndex % ideas.length];
+    final grams = idea.portion.grams;
+    return [
+      const SizedBox(height: AppSpacing.md),
+      KeyedSubtree(
+        key: const ValueKey('dinner-idea'),
+        child: CoachCard(
+          eyebrow: l10n.nutritionDinnerIdea,
+          title: '',
+          message: l10n.nutritionIdeaMessage(
+            '${gap.round()}',
+            idea.food.name,
+            '${idea.portion.label} $grams g',
+            '${idea.food.proteinFor(grams).round()}',
+          ),
+          imageAsset: 'assets/images/felix_avatar.png',
+          imageWidth: 56,
+          imageHeight: 80,
+          primaryLabel: l10n.nutritionAddToDinner,
+          onPrimary: () {
+            ref.read(foodLogProvider.notifier).add(FoodEntry.fromFood(
+                  idea.food,
+                  grams: grams,
+                  slot: MealSlot.dinner,
+                  at: now,
+                  id: newEntryId(now),
+                ));
+          },
+          secondaryLabel: ideas.length > 1 ? l10n.nutritionOtherIdea : null,
+          onSecondary: () => setState(() => _ideaIndex++),
+        ),
+      ),
+    ];
+  }
 }
 
-class _MacroRow extends StatelessWidget {
-  final String label;
-  final int grams;
-  final int goal;
-  final double progress;
-
-  const _MacroRow({
-    required this.label,
-    required this.grams,
-    required this.goal,
-    required this.progress,
-  });
+class _RingSide extends StatelessWidget {
+  final int left;
+  final int burned;
+  final VoidCallback onHow;
+  const _RingSide(
+      {required this.left, required this.burned, required this.onHow});
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final fmt =
+        NumberFormat.decimalPattern(Localizations.localeOf(context).toString());
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(label,
-                  style: AppText.captionStrong
-                      .copyWith(color: palette.textPrimary)),
-            ),
-            Text('$grams / $goal g',
-                style: AppText.caption.copyWith(color: palette.textSecondary)),
-          ],
+        Text(l10n.nutritionLeftToday,
+            style: AppText.caption.copyWith(color: palette.textSecondary)),
+        Text(
+          left > 0
+              ? l10n.nutritionKcal(fmt.format(left))
+              : l10n.nutritionGoalReached,
+          style: AppText.headingM.copyWith(color: palette.textPrimary),
         ),
-        const SizedBox(height: AppSpacing.xxs),
-        ClipRRect(
-          borderRadius: AppRadius.fullAll,
-          child: LinearProgressIndicator(
-            value: (grams / goal).clamp(0.0, 1.0) * progress,
-            minHeight: 6,
-            color: palette.accent,
-            backgroundColor: palette.buttonMuted,
+        if (burned > 0) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(l10n.nutritionBurned,
+              style: AppText.caption.copyWith(color: palette.textSecondary)),
+          Text(l10n.nutritionBurnedValue(fmt.format(burned)),
+              style: AppText.headingS.copyWith(color: palette.textPrimary)),
+        ],
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onHow,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(l10n.nutritionHowSet,
+                  style: AppText.body14.copyWith(color: palette.accent)),
+            ),
           ),
         ),
       ],
@@ -336,45 +418,38 @@ class _MacroRow extends StatelessWidget {
   }
 }
 
-class _MealRow extends StatelessWidget {
-  final String name;
-  final String items;
-  final String trailing;
-
-  const _MealRow({
-    required this.name,
-    required this.items,
-    required this.trailing,
-  });
+class _CompleteProfileCard extends StatelessWidget {
+  final VoidCallback onTap;
+  const _CompleteProfileCard({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-      decoration:
-          BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name,
-                    style: AppText.bodyStrong
-                        .copyWith(color: palette.textPrimary)),
-                Text(items,
-                    style:
-                        AppText.caption.copyWith(color: palette.textSecondary)),
-              ],
+    final l10n = AppLocalizations.of(context);
+    return InkWell(
+      key: const ValueKey('nutrition-complete-profile'),
+      borderRadius: AppRadius.smAll,
+      onTap: onTap,
+      child: NutritionTile(
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.nutritionCompleteTitle,
+                      style: AppText.headingS
+                          .copyWith(color: palette.textPrimary)),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(l10n.nutritionCompleteBody,
+                      style: AppText.caption
+                          .copyWith(color: palette.textSecondary)),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: AppSpacing.xs),
-          Text(trailing,
-              style:
-                  AppText.captionStrong.copyWith(color: palette.textPrimary)),
-        ],
+            Icon(Icons.chevron_right, color: palette.textSecondary),
+          ],
+        ),
       ),
     );
   }
