@@ -3000,6 +3000,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Plan your training week'**
   String get planEntryEmpty;
+
+  /// No description provided for @planNextWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get planNextWeek;
+
+  /// No description provided for @planPlanNextWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan next week'**
+  String get planPlanNextWeek;
 }
 
 class _AppLocalizationsDelegate

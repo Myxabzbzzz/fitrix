@@ -175,6 +175,16 @@ void main() {
       expect(s.to, _d(20));
     });
 
+    test('first session yesterday still counts; later one not done', () {
+      final week = [_football('f', 17), _s('l', 18)];
+      final s = suggestPlanChange(week, _d(18), catalog)!;
+      expect(s.sessionId, 'l');
+      expect(s.to, _d(19));
+      expect(
+          suggestPlanChange(week, _d(18), catalog, isDone: (x) => x.id == 'l'),
+          isNull);
+    });
+
     test('ignores pairs in the past', () {
       final week = [_football('f', 12), _s('l', 13)];
       expect(suggestPlanChange(week, _d(14), catalog), isNull);
@@ -292,6 +302,7 @@ void main() {
       Size size = const Size(390, 844),
       double textScale = 1.0,
       Set<String> dismissed = const {},
+      DateTime? now,
     }) async {
       tester.view.physicalSize = size * 3;
       tester.view.devicePixelRatio = 3;
@@ -303,7 +314,7 @@ void main() {
       if (dismissed.isNotEmpty) await store.saveDismissed(dismissed);
       final c = ProviderContainer(overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        clockProvider.overrideWithValue(() => _now),
+        clockProvider.overrideWithValue(() => now ?? _now),
         exerciseCatalogProvider.overrideWith((ref) async => catalog),
       ]);
       addTearDown(c.dispose);
@@ -444,6 +455,50 @@ void main() {
       // Mon 12 is past: Wed 14 and Fri 16 only.
       expect([for (final s in store.all()) s.day], [_d(14), _d(16)]);
       expect(find.text('Plan my week'), findsNothing);
+    });
+
+    testWidgets('Sunday: a session added for Tuesday shows under Next week',
+        (tester) async {
+      final sunday = DateTime(2026, 10, 18, 9);
+      final c = await pump(tester, const [], now: sunday);
+      await tester.tap(find.byKey(const Key('plan-add')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Football').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Tue'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Add Football 7×7 · Tuesday'));
+      await tester.pumpAndSettle();
+      final added = WeekPlanStore(c.read(sharedPreferencesProvider)).all();
+      expect(added.single.day, _d(20));
+      await tester.scrollUntilVisible(find.text('Next week'), 300,
+          scrollable: find.byType(Scrollable).first);
+      expect(find.text('Next week'), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('Football 7×7'), 300,
+          scrollable: find.byType(Scrollable).first);
+      expect(find.text('Football 7×7'), findsOneWidget);
+      // Header counts stay this-week only.
+      await tester.fling(
+          find.byType(Scrollable).first, const Offset(0, 3000), 3000);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('0 sessions'), findsOneWidget);
+    });
+
+    testWidgets('Saturday: Plan next week seeds next Mon/Wed/Fri',
+        (tester) async {
+      final saturday = DateTime(2026, 10, 17, 9);
+      final c = await pump(tester, const [], now: saturday);
+      expect(find.text('Plan my week'), findsNothing);
+      await tester.tap(find.text('Plan next week'));
+      await tester.pumpAndSettle();
+      final days = [
+        for (final s in WeekPlanStore(c.read(sharedPreferencesProvider)).all())
+          s.day
+      ];
+      expect(days, [_d(19), _d(21), _d(23)]);
+      await tester.scrollUntilVisible(find.text('Next week'), 300,
+          scrollable: find.byType(Scrollable).first);
+      expect(find.text('Next week'), findsOneWidget);
     });
 
     testWidgets('SE size and 1.3 text: no overflow', (tester) async {

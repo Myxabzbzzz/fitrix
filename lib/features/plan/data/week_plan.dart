@@ -179,22 +179,23 @@ class PlanSuggestion {
 bool _hardOn(List<PlannedSession> week, DateTime day) =>
     week.any((s) => s.intensity == Intensity.hard && sameDay(s.day, day));
 
-/// Two hard leg-loading sessions on consecutive days from today on: move the
-/// later gym one to the first following day with no hard session and at
-/// least 48 h after the other leg session.
+/// Two hard leg-loading sessions on consecutive days: move the later gym
+/// one to the first following day with no hard session and at least 48 h
+/// after the other leg session. Only the later session has to be today or
+/// later and not done ([isDone]); the other may be yesterday.
 PlanSuggestion? suggestPlanChange(
     List<PlannedSession> week, DateTime today, ExerciseCatalog c,
-    {List<WorkoutTemplate>? templates}) {
+    {List<WorkoutTemplate>? templates, bool Function(PlannedSession)? isDone}) {
   final from = dateOnly(today);
   final hardLegs = [
     for (final s in week)
       if (s.intensity == Intensity.hard &&
-          !s.day.isBefore(from) &&
           loadsLegs(s, c, templates: templates))
         s,
   ]..sort((a, b) => a.day.compareTo(b.day));
   for (final later in hardLegs) {
-    if (later.sport != Sport.gym) continue;
+    if (later.sport != Sport.gym || later.day.isBefore(from)) continue;
+    if (isDone != null && isDone(later)) continue;
     for (final other in hardLegs) {
       if (other.id == later.id || addDays(other.day, 1) != later.day) continue;
       for (var n = 1; n <= 7; n++) {

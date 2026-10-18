@@ -482,5 +482,7 @@
   "planEmptyTitle": "Aún no hay plan",
   "planEmptyBody": "Organiza tus entrenamientos de gimnasio para el resto de la semana con un toque.",
   "planPlanWeek": "Planificar mi semana",
-  "planEntryEmpty": "Planifica tu semana de entrenamiento"
+  "planEntryEmpty": "Planifica tu semana de entrenamiento",
+  "planNextWeek": "Próxima semana",
+  "planPlanNextWeek": "Planificar la próxima semana"
 }

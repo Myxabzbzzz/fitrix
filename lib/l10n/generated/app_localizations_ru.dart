@@ -1841,4 +1841,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get planEntryEmpty => 'Спланируйте неделю тренировок';
+
+  @override
+  String get planNextWeek => 'Следующая неделя';
+
+  @override
+  String get planPlanNextWeek => 'Спланировать следующую неделю';
 }

@@ -1803,4 +1803,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planEntryEmpty => 'Plan your training week';
+
+  @override
+  String get planNextWeek => 'Next week';
+
+  @override
+  String get planPlanNextWeek => 'Plan next week';
 }

@@ -82,7 +82,9 @@ class WeekPlanScreen extends ConsumerWidget {
 
     var suggestion = catalog == null
         ? null
-        : suggestPlanChange(plan, today, catalog, templates: templates);
+        : suggestPlanChange(plan, today, catalog,
+            templates: templates,
+            isDone: (s) => status(s) == SessionStatus.done);
     if (suggestion != null &&
         dismissed.contains(
             DismissedSuggestionsNotifier.keyFor(suggestion.sessionId, today))) {
@@ -96,8 +98,17 @@ class WeekPlanScreen extends ConsumerWidget {
         : '${DateFormat('d MMM', locale).format(start)} – '
             '${DateFormat('d MMM', locale).format(days.last)}';
 
-    final seeds = _seedSessions(templates, start, today);
-    final showSeedOffer = week.isEmpty && seeds.isNotEmpty;
+    // Sessions after this Sunday that the add sheet can reach (today + 6).
+    final nextStart = addDays(start, 7);
+    final nextLast = addDays(today, 6);
+    final nextDays = [
+      for (var d = nextStart; !d.isAfter(nextLast); d = addDays(d, 1))
+        if (plan.any((s) => s.day == d)) d,
+    ];
+    final nextWeekHasPlan = plan.any((s) => !s.day.isBefore(nextStart));
+    final (seeds, seedsNextWeek) =
+        _seedSessions(templates, start, today, nextWeekHasPlan);
+    final showSeedOffer = week.isEmpty && (seeds.isNotEmpty || plan.isEmpty);
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -147,7 +158,7 @@ class WeekPlanScreen extends ConsumerWidget {
                   ],
                   if (showSeedOffer) ...[
                     const SizedBox(height: AppSpacing.sm),
-                    _SeedOffer(seeds: seeds),
+                    _SeedOffer(seeds: seeds, nextWeek: seedsNextWeek),
                   ],
                   for (final d in days) ...[
                     const SizedBox(height: AppSpacing.md),
@@ -161,6 +172,25 @@ class WeekPlanScreen extends ConsumerWidget {
                       history: history,
                       templates: templates,
                     ),
+                  ],
+                  if (nextDays.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.lg),
+                    Text(l10n.planNextWeek,
+                        style: AppText.headingM
+                            .copyWith(color: palette.textPrimary)),
+                    for (final d in nextDays) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      _DaySection(
+                        day: d,
+                        today: today,
+                        sessions: [
+                          for (final s in plan)
+                            if (s.day == d) s,
+                        ],
+                        history: history,
+                        templates: templates,
+                      ),
+                    ],
                   ],
                   const SizedBox(height: AppSpacing.md),
                   AppButton(
@@ -181,30 +211,37 @@ class WeekPlanScreen extends ConsumerWidget {
   }
 }
 
-/// One session per gym plan on Mon, Wed and Fri of the week, for days from
-/// today on.
-List<PlannedSession> _seedSessions(
-    List<WorkoutTemplate> templates, DateTime weekStart, DateTime today) {
+/// One session per gym plan on Mon, Wed and Fri. This week's days from
+/// today on; when none is left, next week's (unless it already has
+/// sessions). The flag says it is next week.
+(List<PlannedSession>, bool) _seedSessions(List<WorkoutTemplate> templates,
+    DateTime weekStart, DateTime today, bool nextWeekHasPlan) {
   final gym = [
     for (final t in templates)
       if (t.sport == Sport.gym) t,
   ];
-  const offsets = [0, 2, 4];
-  final out = <PlannedSession>[];
-  for (var i = 0; i < gym.length && i < offsets.length; i++) {
-    final day = addDays(weekStart, offsets[i]);
-    if (day.isBefore(today)) continue;
-    out.add(PlannedSession(
-      id: const Uuid().v4(),
-      day: day,
-      sport: Sport.gym,
-      title: gym[i].name,
-      templateId: gym[i].id,
-      minutes: gym[i].estimatedDuration.inMinutes,
-      intensity: intensityOfTemplate(gym[i]),
-    ));
+  List<PlannedSession> seed(DateTime monday) {
+    final out = <PlannedSession>[];
+    for (var i = 0; i < gym.length && i < 3; i++) {
+      final day = addDays(monday, i * 2);
+      if (day.isBefore(today)) continue;
+      out.add(PlannedSession(
+        id: const Uuid().v4(),
+        day: day,
+        sport: Sport.gym,
+        title: gym[i].name,
+        templateId: gym[i].id,
+        minutes: gym[i].estimatedDuration.inMinutes,
+        intensity: intensityOfTemplate(gym[i]),
+      ));
+    }
+    return out;
   }
-  return out;
+
+  final thisWeek = seed(weekStart);
+  if (thisWeek.isNotEmpty) return (thisWeek, false);
+  if (nextWeekHasPlan) return (const [], false);
+  return (seed(addDays(weekStart, 7)), true);
 }
 
 class _DayStrip extends StatelessWidget {
@@ -436,7 +473,8 @@ class _FelixCard extends ConsumerWidget {
 
 class _SeedOffer extends ConsumerWidget {
   final List<PlannedSession> seeds;
-  const _SeedOffer({required this.seeds});
+  final bool nextWeek;
+  const _SeedOffer({required this.seeds, required this.nextWeek});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -455,10 +493,17 @@ class _SeedOffer extends ConsumerWidget {
           Text(l10n.planEmptyBody,
               style: AppText.caption.copyWith(color: palette.textSecondary)),
           const SizedBox(height: AppSpacing.sm),
-          AppButton(
-            label: l10n.planPlanWeek,
-            onPressed: () => ref.read(weekPlanProvider.notifier).addAll(seeds),
-          ),
+          if (seeds.isNotEmpty)
+            AppButton(
+              label: nextWeek ? l10n.planPlanNextWeek : l10n.planPlanWeek,
+              onPressed: () =>
+                  ref.read(weekPlanProvider.notifier).addAll(seeds),
+            )
+          else
+            AppButton(
+              label: l10n.planAddSession,
+              onPressed: () => showAddSessionSheet(context),
+            ),
         ],
       ),
     );

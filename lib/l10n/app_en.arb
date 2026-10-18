@@ -1379,5 +1379,7 @@
   "planEmptyTitle": "No plan yet",
   "planEmptyBody": "Set up your gym workouts for the rest of this week in one tap.",
   "planPlanWeek": "Plan my week",
-  "planEntryEmpty": "Plan your training week"
+  "planEntryEmpty": "Plan your training week",
+  "planNextWeek": "Next week",
+  "planPlanNextWeek": "Plan next week"
 }

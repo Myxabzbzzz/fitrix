@@ -1764,4 +1764,10 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get planEntryEmpty => 'Mashq haftasini rejalashtiring';
+
+  @override
+  String get planNextWeek => 'Keyingi hafta';
+
+  @override
+  String get planPlanNextWeek => 'Keyingi haftani rejalashtirish';
 }

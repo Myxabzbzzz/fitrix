@@ -482,5 +482,7 @@
   "planEmptyTitle": "Reja hali yo‘q",
   "planEmptyBody": "Shu haftaning qolgan kunlari uchun zal mashqlarini bir bosishda rejalashtiring.",
   "planPlanWeek": "Haftamni rejalashtirish",
-  "planEntryEmpty": "Mashq haftasini rejalashtiring"
+  "planEntryEmpty": "Mashq haftasini rejalashtiring",
+  "planNextWeek": "Keyingi hafta",
+  "planPlanNextWeek": "Keyingi haftani rejalashtirish"
 }
