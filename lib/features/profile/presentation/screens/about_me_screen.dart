@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -15,49 +14,12 @@ import 'package:fitrix/features/profile/presentation/providers/profile_provider.
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/features/profile/presentation/widgets/about_me_guard.dart';
+import 'package:fitrix/features/profile/presentation/widgets/about_me_labels.dart';
+import 'package:fitrix/features/profile/presentation/widgets/about_me_widgets.dart';
 
 const _levels = ['Beginner', 'Intermediate', 'Advanced'];
 const _otherGoal = '\u0000other';
-
-/// True while About me has unsaved edits; read by the route's exit guard.
-final aboutMeDirtyProvider = StateProvider<bool>((ref) => false);
-
-/// The "Discard changes?" dialog; true when the user chose to discard.
-Future<bool> confirmDiscardChanges(BuildContext context) async {
-  final l10n = AppLocalizations.of(context);
-  final discard = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(l10n.aboutMeDiscardTitle),
-      content: Text(l10n.aboutMeDiscardBody),
-      actions: [
-        TextButton(
-          key: const Key('about-keep-editing'),
-          onPressed: () => Navigator.pop(context, false),
-          child: Text(l10n.aboutMeKeepEditing),
-        ),
-        TextButton(
-          key: const Key('about-discard'),
-          onPressed: () => Navigator.pop(context, true),
-          style: TextButton.styleFrom(
-              foregroundColor: AppPalette.of(context).danger),
-          child: Text(l10n.aboutMeDiscard),
-        ),
-      ],
-    ),
-  );
-  return discard == true;
-}
-
-/// [GoRoute.onExit] for About me: asks before unsaved edits are dropped.
-Future<bool> aboutMeOnExit(BuildContext context, GoRouterState state) async {
-  final dirty =
-      ProviderScope.containerOf(context).read(aboutMeDirtyProvider.notifier);
-  if (!dirty.state) return true;
-  final discard = await confirmDiscardChanges(context);
-  if (discard) dirty.state = false;
-  return discard;
-}
 
 /// About me: the profile entered during onboarding, editable
 /// (opened from the Profile tab).
@@ -225,41 +187,8 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
     if (!_touched.contains(field) && !_dirty) return null;
     final e = _errors[field];
     if (e == null) return null;
-    final l10n = AppLocalizations.of(context);
-    return switch (e.kind) {
-      ProfileErrorKind.nameRequired => l10n.profileErrNameRequired,
-      ProfileErrorKind.nameTooLong => l10n.profileErrNameTooLong,
-      ProfileErrorKind.surnameTooLong => l10n.profileErrSurnameTooLong,
-      ProfileErrorKind.ageRequired => l10n.profileErrAgeRequired,
-      ProfileErrorKind.ageWhole => l10n.profileErrAgeWhole,
-      ProfileErrorKind.ageRange => l10n.profileErrAgeRange(e.min, e.max),
-      ProfileErrorKind.weightRequired => l10n.profileErrWeightRequired,
-      ProfileErrorKind.weightNumber => l10n.profileErrWeightNumber,
-      ProfileErrorKind.weightRange => l10n.profileErrWeightRange(e.min, e.max),
-      ProfileErrorKind.heightRequired => l10n.profileErrHeightRequired,
-      ProfileErrorKind.heightNumber => l10n.profileErrHeightNumber,
-      ProfileErrorKind.heightRange => l10n.profileErrHeightRange(e.min, e.max),
-    };
+    return aboutMeErrorText(AppLocalizations.of(context), e);
   }
-
-  String _goalLabel(AppLocalizations l10n, String goal) {
-    final i = AppConstants.fitnessGoals.indexOf(goal);
-    return switch (i) {
-      0 => l10n.aboutGoalBuild,
-      1 => l10n.aboutGoalEndurance,
-      2 => l10n.aboutGoalLose,
-      3 => l10n.aboutGoalHealthy,
-      4 => l10n.aboutGoalTrack,
-      _ => goal,
-    };
-  }
-
-  String _levelLabel(AppLocalizations l10n, String level) => switch (level) {
-        'Beginner' => l10n.programLevelBeginner,
-        'Intermediate' => l10n.programLevelMedium,
-        'Advanced' => l10n.programLevelAdvanced,
-        _ => level,
-      };
 
   void _toggleSport(String sport) {
     setState(() {
@@ -336,68 +265,6 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
       );
     }
 
-    Widget divider() => Divider(height: 1, color: palette.border);
-
-    Widget list(List<Widget> rows) => Container(
-          margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          decoration: BoxDecoration(
-            color: palette.tile,
-            borderRadius: AppRadius.mdAll,
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(children: rows),
-        );
-
-    Widget pill(String label, bool selected, VoidCallback onTap, {Key? key}) =>
-        Semantics(
-          button: true,
-          selected: selected,
-          label: label,
-          excludeSemantics: true,
-          child: GestureDetector(
-            key: key,
-            behavior: HitTestBehavior.opaque,
-            onTap: onTap,
-            child: Container(
-              constraints: const BoxConstraints(minHeight: 36),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: selected ? palette.pillSelected : palette.buttonMuted,
-                borderRadius: AppRadius.fullAll,
-              ),
-              child: Text(
-                label,
-                style: AppText.captionStrong.copyWith(
-                  color:
-                      selected ? palette.onPillSelected : palette.textPrimary,
-                ),
-              ),
-            ),
-          ),
-        );
-
-    Widget section(String title, Widget child, {String? note}) => Padding(
-          padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md, AppSpacing.lg, AppSpacing.md, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title,
-                  style: AppText.headingS.copyWith(color: palette.textPrimary)),
-              const SizedBox(height: AppSpacing.sm),
-              child,
-              if (note != null) ...[
-                const SizedBox(height: AppSpacing.xs),
-                Text(note,
-                    key: const Key('about-sports-limit'),
-                    style: AppText.caption.copyWith(color: palette.danger)),
-              ],
-            ],
-          ),
-        );
-
     final knownSports = {for (final s in Sport.values) s.label};
     final extraSports = _baseline.sports
         .followedBy(_sports)
@@ -447,30 +314,30 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
-                      list([
+                      aboutMeList(palette, [
                         field(
                             id: 'name',
                             controller: _name,
                             label: l10n.profileFieldName),
-                        divider(),
+                        aboutMeDivider(palette),
                         field(
                             id: 'surname',
                             controller: _surname,
                             label: l10n.profileFieldSurname),
-                        divider(),
+                        aboutMeDivider(palette),
                         field(
                             id: 'age',
                             controller: _age,
                             label: l10n.age,
                             keyboardType: TextInputType.number),
-                        divider(),
+                        aboutMeDivider(palette),
                         field(
                             id: 'weight',
                             controller: _weight,
                             label: l10n.profileFieldWeightKg,
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true)),
-                        divider(),
+                        aboutMeDivider(palette),
                         field(
                             id: 'height',
                             controller: _height,
@@ -479,7 +346,8 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                                 decimal: true),
                             last: true),
                       ]),
-                      section(
+                      aboutMeSection(
+                        palette,
                         l10n.aboutMeGoal,
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,13 +357,15 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                               runSpacing: AppSpacing.xs,
                               children: [
                                 for (final g in AppConstants.fitnessGoals)
-                                  pill(
-                                    _goalLabel(l10n, g),
+                                  aboutMePill(
+                                    palette,
+                                    aboutMeGoalLabel(l10n, g),
                                     _goalChoice == g,
                                     () => setState(() => _goalChoice = g),
                                     key: Key('about-goal-$g'),
                                   ),
-                                pill(
+                                aboutMePill(
+                                  palette,
                                   l10n.aboutMeGoalOther,
                                   _goalChoice == _otherGoal,
                                   () =>
@@ -521,22 +391,25 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                           ],
                         ),
                       ),
-                      section(
+                      aboutMeSection(
+                        palette,
                         l10n.aboutMeLevel,
                         Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: AppSpacing.xs,
                           children: [
                             if (_level.isNotEmpty && !_levels.contains(_level))
-                              pill(
+                              aboutMePill(
+                                palette,
                                 _level,
                                 true,
                                 () => setState(() => _level = ''),
                                 key: Key('about-level-extra-$_level'),
                               ),
                             for (final lv in _levels)
-                              pill(
-                                _levelLabel(l10n, lv),
+                              aboutMePill(
+                                palette,
+                                aboutMeLevelLabel(l10n, lv),
                                 _level == lv,
                                 () => setState(() => _level = lv),
                                 key: Key('about-level-$lv'),
@@ -544,21 +417,24 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                           ],
                         ),
                       ),
-                      section(
+                      aboutMeSection(
+                        palette,
                         l10n.aboutMeSports,
                         Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: AppSpacing.xs,
                           children: [
                             for (final s in Sport.values)
-                              pill(
+                              aboutMePill(
+                                palette,
                                 s.localizedLabel(l10n),
                                 _sports.contains(s.label),
                                 () => _toggleSport(s.label),
                                 key: Key('about-sport-${s.name}'),
                               ),
                             for (final s in extraSports)
-                              pill(
+                              aboutMePill(
+                                palette,
                                 s,
                                 _sports.contains(s),
                                 () => _toggleSport(s),
@@ -570,7 +446,7 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                       ),
                       if (email != null && email.isNotEmpty) ...[
                         const SizedBox(height: AppSpacing.lg),
-                        list([
+                        aboutMeList(palette, [
                           Padding(
                             padding: const EdgeInsets.all(AppSpacing.md),
                             child: Row(

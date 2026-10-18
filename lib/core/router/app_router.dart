@@ -45,6 +45,7 @@ import 'package:fitrix/features/map/presentation/map_screen.dart';
 import 'package:fitrix/features/programs/presentation/screens/program_detail_screen.dart';
 import 'package:fitrix/features/programs/presentation/screens/program_progress_screen.dart';
 import 'package:fitrix/features/programs/presentation/screens/programs_screen.dart';
+import 'package:fitrix/features/profile/presentation/widgets/about_me_guard.dart';
 
 class AppRouter {
   // Onboarding

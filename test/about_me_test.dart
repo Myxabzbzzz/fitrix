@@ -9,6 +9,7 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/auth/data/account_service.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/profile/presentation/screens/about_me_screen.dart';
+import 'package:fitrix/features/profile/presentation/widgets/about_me_guard.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'support/fake_auth.dart';
 
