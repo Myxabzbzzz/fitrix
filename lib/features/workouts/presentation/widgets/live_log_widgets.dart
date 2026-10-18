@@ -1,8 +1,11 @@
 import 'dart:math' as math;
+import 'package:fitrix/core/text/normalize.dart';
+import 'package:fitrix/features/workouts/presentation/widgets/live_log_exercise_cards.dart';
+import 'package:fitrix/features/workouts/presentation/widgets/live_log_format.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fitrix/core/text/normalize.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -15,9 +18,6 @@ import 'package:fitrix/features/workouts/presentation/providers/workouts_provide
 import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/exercise_menu_sheet.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/rest_timer.dart';
-import 'package:fitrix/l10n/generated/app_localizations.dart';
-import 'package:fitrix/features/workouts/presentation/widgets/live_log_format.dart';
-import 'package:fitrix/features/workouts/presentation/widgets/live_log_exercise_cards.dart';
 
 /// The expanded active workout: progress, exercise cards, rest bar and the
 /// bottom buttons.

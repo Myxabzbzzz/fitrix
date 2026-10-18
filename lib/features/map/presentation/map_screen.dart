@@ -439,7 +439,7 @@ const ColorFilter _identityTiles = ColorFilter.matrix(<double>[
   0, 0, 0, 1, 0,
 ]);
 
-/// "Soft" dark map (design/map-dark): keeps hues recognisable (parks stay
+/// "Soft" dark map: keeps hues recognisable (parks stay
 /// green, water blue) instead of a plain invert.
 const ColorFilter _darkTiles = ColorFilter.matrix(<double>[
   0.1713, -0.8644, -0.087, 0, 210.9, //

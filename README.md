@@ -14,7 +14,7 @@ Platforms in this repo: iOS, Android, macOS and web.
   [Google and Apple sign-in](#google-and-apple-sign-in)); until then they
   say "coming soon"
 
-**Main app** (5-tab bar: Discover · Shop · Home · Felix · About me). Each
+**Main app** (5-tab bar: Discover · Shop · Home · Felix · Profile). Each
 folder in `lib/features/` is one area:
 
 | Folder | What it does |
@@ -32,7 +32,7 @@ folder in `lib/features/` is one area:
 | `chat` | Felix: general assistant plus a trainer chat per sport; streamed replies, photos, and plans/weight changes applied after you tap to confirm |
 | `content` | Discover articles; the data layer (Supabase, with a bundled copy offline) shared with Shop |
 | `shop` | Product catalog, cart and placing an order request (no payments) |
-| `map` | Fitrix map with on-device routing (walk, metro, car) over bundled street data |
+| `map` | Fitrix map with on-device routing (walk, bike, metro, car) over bundled street data |
 
 Light and dark themes follow the system setting. The app is in English,
 Russian, Uzbek and Spanish (see [Translations](#translations)).

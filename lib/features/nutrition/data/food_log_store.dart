@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/time/day_key.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 
 DateTime? _parseDayKey(String s) {

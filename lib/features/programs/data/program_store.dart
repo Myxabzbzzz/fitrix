@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/time/day_key.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The program the user is following. [sessionTemplateIds] maps a program
 /// session name to the workout template created for it.

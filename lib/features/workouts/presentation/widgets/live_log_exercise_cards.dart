@@ -204,9 +204,9 @@ class CurrentExerciseCard extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: AppSpacing.xs),
-          const TableHeader(),
+          const SetTableHeader(),
           for (var s = 0; s < exercise.sets.length; s++)
-            SetRow(
+            SetTableRow(
               key: ValueKey('set-$index-$s'),
               label: numbers[s],
               set: exercise.sets[s],

@@ -129,7 +129,7 @@ class WeekPlanScreen extends ConsumerWidget {
                   ],
                   for (final d in days) ...[
                     const SizedBox(height: AppSpacing.md),
-                    DaySection(
+                    PlanDaySection(
                       day: d,
                       today: today,
                       sessions: [
@@ -147,7 +147,7 @@ class WeekPlanScreen extends ConsumerWidget {
                             .copyWith(color: palette.textPrimary)),
                     for (final d in nextDays) ...[
                       const SizedBox(height: AppSpacing.md),
-                      DaySection(
+                      PlanDaySection(
                         day: d,
                         today: today,
                         sessions: [

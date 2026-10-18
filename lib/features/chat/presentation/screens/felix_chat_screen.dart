@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:fitrix/core/widgets/app_snack.dart';
+import 'package:fitrix/features/chat/presentation/widgets/chat_composer.dart';
+import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -12,14 +15,11 @@ import 'package:fitrix/features/chat/data/services/photo_service.dart';
 import 'package:fitrix/features/chat/data/services/speech_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/chat/presentation/providers/dictation_controller.dart';
-import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_auto_scroll.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_action_card.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
 import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
-import 'package:fitrix/l10n/generated/app_localizations.dart';
-import 'package:fitrix/features/chat/presentation/widgets/chat_composer.dart';
 
 /// Chat currently open on the Felix tab.
 final selectedAssistantTopicProvider =
@@ -286,7 +286,7 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
                       .read(chatMessagesProviderFor(topic).notifier)
                       .sendMessage(reply, isQuickReply: true),
                 ),
-                Composer(
+                ChatComposer(
                   controller: _controller,
                   enabled: !isReplying,
                   onSend: () => _send(topic),

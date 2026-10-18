@@ -13,8 +13,8 @@ const _colRpe = 36.0;
 const _colCheck = 36.0;
 const _gap = AppSpacing.xxs;
 
-class TableHeader extends StatelessWidget {
-  const TableHeader({super.key});
+class SetTableHeader extends StatelessWidget {
+  const SetTableHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class TableHeader extends StatelessWidget {
   }
 }
 
-class SetRow extends StatelessWidget {
+class SetTableRow extends StatelessWidget {
   /// 1-based number among working sets; null for a warm-up ("W").
   final int? label;
   final WorkoutSet set;
@@ -59,7 +59,7 @@ class SetRow extends StatelessWidget {
   final ValueChanged<double> onKgChanged;
   final ValueChanged<int> onRepsChanged;
 
-  const SetRow({
+  const SetTableRow({
     super.key,
     required this.label,
     required this.set,

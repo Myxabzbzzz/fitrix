@@ -1,9 +1,8 @@
 import 'dart:async';
 
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:fitrix/core/time/day_key.dart';
 
 /// The clock the app reads "now" from. Tests override it.
 final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);

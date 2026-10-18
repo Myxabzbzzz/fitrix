@@ -9,14 +9,14 @@ import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/start_workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
-class DaySection extends ConsumerWidget {
+class PlanDaySection extends ConsumerWidget {
   final DateTime day;
   final DateTime today;
   final List<PlannedSession> sessions;
   final List<CompletedWorkout> history;
   final List<WorkoutTemplate> templates;
 
-  const DaySection({
+  const PlanDaySection({
     super.key,
     required this.day,
     required this.today,

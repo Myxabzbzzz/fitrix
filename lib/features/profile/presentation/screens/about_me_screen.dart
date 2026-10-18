@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:fitrix/features/profile/presentation/widgets/about_me_guard.dart';
+import 'package:fitrix/features/profile/presentation/widgets/about_me_labels.dart';
+import 'package:fitrix/features/profile/presentation/widgets/about_me_widgets.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
@@ -13,10 +17,6 @@ import 'package:fitrix/features/profile/data/models/user_profile.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
-import 'package:fitrix/l10n/generated/app_localizations.dart';
-import 'package:fitrix/features/profile/presentation/widgets/about_me_guard.dart';
-import 'package:fitrix/features/profile/presentation/widgets/about_me_labels.dart';
-import 'package:fitrix/features/profile/presentation/widgets/about_me_widgets.dart';
 
 const _levels = ['Beginner', 'Intermediate', 'Advanced'];
 const _otherGoal = '\u0000other';

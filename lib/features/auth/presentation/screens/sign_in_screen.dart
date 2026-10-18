@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:fitrix/features/auth/presentation/widgets/sign_in_widgets.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,8 +14,6 @@ import 'package:fitrix/features/auth/data/auth_failure.dart';
 import 'package:fitrix/features/auth/data/social_sign_in.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/auth/presentation/widgets/code_input.dart';
-import 'package:fitrix/l10n/generated/app_localizations.dart';
-import 'package:fitrix/features/auth/presentation/widgets/sign_in_widgets.dart';
 
 /// Sign in with email: enter the address, then the 6-digit code from the
 /// email. New addresses get an account automatically. "Continue with

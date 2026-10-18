@@ -1,6 +1,6 @@
+import 'package:fitrix/core/time/day_key.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';

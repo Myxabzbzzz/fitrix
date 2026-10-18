@@ -1,8 +1,11 @@
-"""Build the compact multi-mode routing graph for the FITRIX prototype.
+"""Build the compact multi-mode routing graph for FITRIX.
 
-Inputs: Overpass `out body geom` street network (walk.json), metro relations (metro.json, out geom)
-and metro stop nodes (metro_nodes.json). Output: junction nodes + edges [a, b, meters, mid, class, oneway]
-plus metro lines with ordered stations.
+Usage:
+  python3 tool/build_route_graph.py walk.json metro.json metro_nodes.json assets/data/route-graph.json
+
+Inputs are Overpass API exports (`out body geom`): the street network (walk.json),
+metro relations (metro.json) and metro stop nodes (metro_nodes.json). Output: junction
+nodes + edges [a, b, meters, mid, class, oneway] plus metro lines with ordered stations.
 """
 import json, sys, math, collections
 

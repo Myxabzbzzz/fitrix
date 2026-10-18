@@ -7,7 +7,7 @@ import 'package:fitrix/features/chat/presentation/providers/dictation_controller
 import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
-class Composer extends StatelessWidget {
+class ChatComposer extends StatelessWidget {
   final TextEditingController controller;
   final bool enabled;
   final VoidCallback onSend;
@@ -17,7 +17,7 @@ class Composer extends StatelessWidget {
   final String? pendingPhoto;
   final VoidCallback onRemovePhoto;
 
-  const Composer({
+  const ChatComposer({
     super.key,
     required this.controller,
     required this.enabled,
