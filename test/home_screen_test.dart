@@ -13,6 +13,7 @@ import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/overflow.dart';
 
 Future<ProviderContainer> _pump(
   WidgetTester tester, {
@@ -125,10 +126,10 @@ void main() {
   });
 
   testWidgets('no overflow at 375x667', (tester) async {
-    await _pump(tester, size: const Size(375, 667));
-    expect(tester.takeException(), isNull);
-    await _pump(tester, size: const Size(375, 667), active: true);
-    expect(tester.takeException(), isNull);
+    await _pump(tester, size: iPhoneSeSize);
+    expectNoOverflow(tester);
+    await _pump(tester, size: iPhoneSeSize, active: true);
+    expectNoOverflow(tester);
   });
 
   testWidgets('drawer About me opens the About me page', (tester) async {

@@ -18,6 +18,7 @@ import 'package:fitrix/features/shop/providers.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 import 'support/fake_content_source.dart';
+import 'support/overflow.dart';
 
 const _user = User(
   id: 'u1',
@@ -331,12 +332,11 @@ void main() {
 
   for (final code in ['en', 'ru', 'uz', 'es']) {
     testWidgets('no overflow on iPhone SE ($code)', (tester) async {
-      await _pump(tester, _source(),
-          size: const Size(375, 667), locale: Locale(code));
-      expect(tester.takeException(), isNull);
+      await _pump(tester, _source(), size: iPhoneSeSize, locale: Locale(code));
+      expectNoOverflow(tester);
       await _add(tester, 'whey');
       await _openCart(tester);
-      expect(tester.takeException(), isNull);
+      expectNoOverflow(tester);
     });
   }
 
@@ -344,11 +344,11 @@ void main() {
     testWidgets('no overflow at 1.3x text on iPhone SE ($code)',
         (tester) async {
       await _pump(tester, _source(),
-          size: const Size(375, 667), locale: Locale(code), textScale: 1.3);
-      expect(tester.takeException(), isNull);
+          size: iPhoneSeSize, locale: Locale(code), textScale: 1.3);
+      expectNoOverflow(tester);
       await _add(tester, 'whey');
       await _openCart(tester);
-      expect(tester.takeException(), isNull);
+      expectNoOverflow(tester);
     });
   }
 }

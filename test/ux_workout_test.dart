@@ -12,6 +12,7 @@ import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_scr
 import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/edit_workout_sheet.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/overflow.dart';
 
 Future<ProviderContainer> _container() async {
   SharedPreferences.setMockInitialValues({});
@@ -200,14 +201,14 @@ void main() {
 
     for (final code in ['en', 'ru']) {
       testWidgets('SE size no overflow ($code)', (tester) async {
-        _size(tester, const Size(375, 667));
+        _size(tester, iPhoneSeSize);
         final c = await _container();
         await tester.pumpWidget(_app(
             c, const SportWorkoutsScreen(sport: Sport.gym),
             locale: Locale(code)));
         await tester.pumpAndSettle();
         expect(find.byIcon(Icons.edit_outlined), findsWidgets);
-        expect(tester.takeException(), isNull);
+        expectNoOverflow(tester);
       });
     }
   });

@@ -14,6 +14,7 @@ import 'package:fitrix/features/profile/presentation/screens/edit_profile_screen
 import 'package:fitrix/features/profile/presentation/screens/hr_zones_screen.dart';
 import 'package:fitrix/features/profile/presentation/screens/profile_tab_screen.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/overflow.dart';
 
 void main() {
   group('zones maths', () {
@@ -131,7 +132,7 @@ void main() {
             performanceProfileKey:
                 jsonEncode({'restingHr': 56, 'maxHr': 194, 'lthr': 172}),
           });
-      expect(tester.takeException(), isNull);
+      expectNoOverflow(tester);
     });
   });
 
@@ -198,7 +199,7 @@ void main() {
     testWidgets('SE at 1.3x text: no overflow', (tester) async {
       await pumpScreen(tester, const EditProfileScreen(),
           textScale: 1.3, prefsValues: base);
-      expect(tester.takeException(), isNull);
+      expectNoOverflow(tester);
     });
   });
 
@@ -222,7 +223,7 @@ void main() {
           find.byKey(const Key('connect-garmin')), 100);
       await tester.tap(find.byKey(const Key('connect-garmin')));
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      expectNoOverflow(tester);
     });
   });
 
@@ -247,7 +248,7 @@ void main() {
       await pumpScreen(tester, const ProfileTabScreen(),
           textScale: 1.3, prefsValues: base);
       expect(find.text('Set up'), findsOneWidget);
-      expect(tester.takeException(), isNull);
+      expectNoOverflow(tester);
     });
   });
 }

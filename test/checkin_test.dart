@@ -19,6 +19,7 @@ import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/overflow.dart';
 
 CheckIn _checkIn({
   DateTime? at,
@@ -436,22 +437,20 @@ void main() {
     for (final scale in [1.0, 1.3]) {
       testWidgets('no overflow at 375x667, text x$scale', (tester) async {
         await pump(tester,
-            home: const HomeScreen(),
-            size: const Size(375, 667),
-            textScale: scale);
-        expect(tester.takeException(), isNull);
+            home: const HomeScreen(), size: iPhoneSeSize, textScale: scale);
+        expectNoOverflow(tester);
         await tester.tap(find.text('Check in'));
         await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
+        expectNoOverflow(tester);
         await tester.tap(find.text('Save check-in'));
         await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
+        expectNoOverflow(tester);
         await pump(tester,
             home: const RecoveryScreen(),
-            size: const Size(375, 667),
+            size: iPhoneSeSize,
             textScale: scale,
             existing: _checkIn());
-        expect(tester.takeException(), isNull);
+        expectNoOverflow(tester);
       });
     }
   });

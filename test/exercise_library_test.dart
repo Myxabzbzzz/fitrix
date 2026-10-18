@@ -17,6 +17,7 @@ import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/overflow.dart';
 
 late ExerciseCatalog _catalog;
 
@@ -429,7 +430,7 @@ void main() {
           ]),
         ]);
         await _pump(tester, c, entry.value, size: se, textScale: 1.3);
-        expect(tester.takeException(), isNull);
+        expectNoOverflow(tester);
       });
     }
   });

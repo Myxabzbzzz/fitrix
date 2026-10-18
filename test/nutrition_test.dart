@@ -21,6 +21,7 @@ import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.
 import 'package:fitrix/features/nutrition/presentation/screens/targets_screen.dart';
 import 'package:fitrix/features/profile/data/performance_store.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/overflow.dart';
 
 List<Food> _foods() {
   final raw = jsonDecode(File('assets/data/foods.json').readAsStringSync())
@@ -507,7 +508,7 @@ void main() {
         await t.pumpAndSettle();
         await t.drag(find.byType(Scrollable).first, const Offset(0, -2000));
         await t.pumpAndSettle();
-        expect(t.takeException(), isNull);
+        expectNoOverflow(t);
       });
     }
   });
@@ -542,7 +543,7 @@ void main() {
             textScale: scale);
         await t.enterText(find.byType(TextField), 'plov');
         await t.pumpAndSettle();
-        expect(t.takeException(), isNull);
+        expectNoOverflow(t);
       });
     }
   });
@@ -589,7 +590,7 @@ void main() {
             textScale: scale);
         await t.drag(find.byType(Scrollable).first, const Offset(0, -2000));
         await t.pumpAndSettle();
-        expect(t.takeException(), isNull);
+        expectNoOverflow(t);
       });
     }
   });
@@ -650,7 +651,7 @@ void main() {
         await t.pumpAndSettle();
         await t.drag(find.byType(Scrollable).first, const Offset(0, -3000));
         await t.pumpAndSettle();
-        expect(t.takeException(), isNull);
+        expectNoOverflow(t);
       });
     }
   });
@@ -699,7 +700,7 @@ void main() {
         await pump(t, const TargetsScreen(), textScale: scale);
         await t.drag(find.byType(Scrollable).first, const Offset(0, -2000));
         await t.pumpAndSettle();
-        expect(t.takeException(), isNull);
+        expectNoOverflow(t);
       });
     }
   });

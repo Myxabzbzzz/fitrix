@@ -17,6 +17,7 @@ import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/overflow.dart';
 
 // Wednesday 14 Oct 2026; the week is Mon 12 - Sun 18.
 final _now = DateTime(2026, 10, 14, 9, 0);
@@ -519,15 +520,15 @@ void main() {
             _s('t', 14),
             _s('m', 13),
           ],
-          size: const Size(375, 667),
+          size: iPhoneSeSize,
           textScale: 1.3);
-      expect(tester.takeException(), isNull);
+      expectNoOverflow(tester);
       await tester.tap(find.byKey(const Key('plan-add')));
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      expectNoOverflow(tester);
       await tester.tap(find.text('Football').last);
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      expectNoOverflow(tester);
     });
   });
 }

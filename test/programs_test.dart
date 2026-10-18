@@ -24,6 +24,7 @@ import 'package:fitrix/features/programs/presentation/screens/programs_screen.da
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/overflow.dart';
 
 // Wednesday 14 Oct 2026; Monday is 12 Oct.
 final _now = DateTime(2026, 10, 14, 9, 0);
@@ -586,27 +587,27 @@ void main() {
             sessionTemplateIds: const {});
         for (final loc in [AppRouter.programs, detail]) {
           await pump(tester, loc,
-              size: const Size(375, 667),
+              size: iPhoneSeSize,
               textScale: scale,
               active: active,
               plan: [_football('f', 17)],
               history: [_bench(_d(9))]);
-          expect(tester.takeException(), isNull, reason: loc);
+          expectNoOverflow(tester, reason: loc);
         }
         await pump(tester, AppRouter.programsActive,
-            size: const Size(375, 667),
+            size: iPhoneSeSize,
             textScale: scale,
             active: active,
             history: [_bench(_d(9))]);
-        expect(tester.takeException(), isNull);
+        expectNoOverflow(tester);
         await pump(tester, detail,
-            size: const Size(375, 667),
+            size: iPhoneSeSize,
             textScale: scale,
             plan: [_football('f', 17)],
             history: [_bench(_d(9))]);
         await tester.tap(find.byKey(const Key('program-start')));
         await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
+        expectNoOverflow(tester);
       });
     }
   });

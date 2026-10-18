@@ -9,6 +9,7 @@ import 'package:fitrix/features/profile/domain/streak.dart';
 import 'package:fitrix/features/profile/presentation/screens/about_me_screen.dart';
 import 'package:fitrix/features/profile/presentation/screens/profile_tab_screen.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/overflow.dart';
 
 void main() {
   group('currentStreak', () {
@@ -72,7 +73,7 @@ void main() {
     expect(find.text('A'), findsOneWidget);
     expect(find.text('72.5'), findsOneWidget);
     expect(find.text('day streak'), findsOneWidget);
-    expect(tester.takeException(), isNull);
+    expectNoOverflow(tester);
   });
 
   testWidgets('theme control writes themeModeProvider', (tester) async {

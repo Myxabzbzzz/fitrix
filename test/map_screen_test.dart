@@ -22,6 +22,7 @@ import 'package:fitrix/features/map/data/routing_service.dart';
 import 'package:fitrix/features/map/presentation/map_screen.dart';
 import 'package:fitrix/features/map/routing/router.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/overflow.dart';
 
 /// 1x1 transparent PNG, so no test ever touches the network.
 final Uint8List _blankPng = base64Decode(
@@ -589,10 +590,10 @@ void main() {
 
   testWidgets('SE size: no overflow, card stays above the bottom edge',
       (tester) async {
-    await _pump(tester, size: const Size(375, 667));
+    await _pump(tester, size: iPhoneSeSize);
     await tester.tap(_mode('metro'));
     await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
+    expectNoOverflow(tester);
     final bottom =
         tester.getBottomLeft(find.byKey(const ValueKey('place-card'))).dy;
     expect(bottom, lessThanOrEqualTo(667));

@@ -15,6 +15,7 @@ import 'package:fitrix/features/content/providers.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 import 'support/fake_content_source.dart';
+import 'support/overflow.dart';
 
 const _user = User(
   id: 'u1',
@@ -233,11 +234,8 @@ void main() {
     testWidgets('no overflow at 1.3x text on iPhone SE ($code)',
         (tester) async {
       await _pump(tester, _source(),
-          size: const Size(375, 667), locale: Locale(code), textScale: 1.3);
-      expect(tester.takeException(), isNull);
-      await tester.drag(_list.first, const Offset(0, -900));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+          size: iPhoneSeSize, locale: Locale(code), textScale: 1.3);
+      await expectNoOverflowWhileScrolling(tester, _list.first, -900);
     });
 
     testWidgets('article fits iPhone SE at 1.3x text ($code)', (tester) async {
@@ -253,12 +251,8 @@ void main() {
 
   for (final code in ['en', 'ru', 'uz', 'es']) {
     testWidgets('no overflow on iPhone SE ($code)', (tester) async {
-      await _pump(tester, _source(),
-          size: const Size(375, 667), locale: Locale(code));
-      expect(tester.takeException(), isNull);
-      await tester.drag(_list.first, const Offset(0, -600));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      await _pump(tester, _source(), size: iPhoneSeSize, locale: Locale(code));
+      await expectNoOverflowWhileScrolling(tester, _list.first, -600);
     });
   }
 }

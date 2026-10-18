@@ -12,6 +12,7 @@ import 'package:fitrix/features/profile/presentation/screens/about_me_screen.dar
 import 'package:fitrix/features/profile/presentation/widgets/about_me_guard.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'support/fake_auth.dart';
+import 'support/overflow.dart';
 
 void main() {
   late SharedPreferences prefs;
@@ -223,10 +224,8 @@ void main() {
 
   testWidgets('no overflow on SE at 1.3x text', (tester) async {
     await pump(tester, locale: const Locale('ru'), textScale: 1.3);
-    expect(tester.takeException(), isNull);
-    await tester.drag(find.byType(ListView), const Offset(0, -1500));
-    await tester.pump();
-    expect(tester.takeException(), isNull);
+    await expectNoOverflowWhileScrolling(tester, find.byType(ListView), -1500,
+        settle: false);
   });
 
   testWidgets('partial profile: errors show once the form is dirty',
