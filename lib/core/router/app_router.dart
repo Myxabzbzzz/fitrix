@@ -18,6 +18,7 @@ import 'package:fitrix/features/shell/presentation/main_shell.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/screens/my_workouts_screen.dart';
 import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_screen.dart';
+import 'package:fitrix/features/workouts/presentation/screens/workout_complete_screen.dart';
 import 'package:fitrix/features/progress/presentation/screens/progress_screen.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.dart';
 import 'package:fitrix/features/content/presentation/article_screen.dart';
@@ -44,6 +45,7 @@ class AppRouter {
 
   // Home sections
   static const String workouts = '/home/workouts';
+  static const String workoutComplete = '/home/workouts/complete';
   static const String progress = '/home/progress';
   static const String nutrition = '/home/nutrition';
   static const String fitrixMap = '/home/map';
@@ -211,6 +213,13 @@ class AppRouter {
                           const MyWorkoutsScreen(),
                         ),
                         routes: [
+                          // Before ':sport' so it isn't read as a sport.
+                          GoRoute(
+                            path: 'complete',
+                            name: 'workoutComplete',
+                            builder: (context, state) =>
+                                const WorkoutCompleteScreen(),
+                          ),
                           GoRoute(
                             path: ':sport',
                             name: 'sportWorkouts',

@@ -1139,4 +1139,224 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get chatActionError => 'Qo‘llab bo‘lmadi. Qayta urinib ko‘ring.';
+
+  @override
+  String get unitTonnes => 't';
+
+  @override
+  String workoutLiveCaption(int x, int y, String t) {
+    return '$x / $y-yondashuv · $t ko‘tarildi';
+  }
+
+  @override
+  String get workoutColRpe => 'RPE';
+
+  @override
+  String workoutRestShort(String time) {
+    return 'dam $time';
+  }
+
+  @override
+  String workoutBestShort(String value) {
+    return 'eng yaxshisi $value';
+  }
+
+  @override
+  String get workoutPr => 'Rekord';
+
+  @override
+  String get workoutE1rm => 'e1RM';
+
+  @override
+  String get workoutBodyweight => 'TV';
+
+  @override
+  String workoutFelixLine(String last, String next) {
+    return 'Oxirgi marta $last. Bugun $next kg ni sinab ko‘ring.';
+  }
+
+  @override
+  String get workoutRestLabel => 'Dam';
+
+  @override
+  String workoutRestNext(String label) {
+    return 'Keyingisi: $label';
+  }
+
+  @override
+  String workoutNextSet(int n, String kg, int reps) {
+    return '$n-yondashuv · $kg × $reps';
+  }
+
+  @override
+  String workoutRestAdd(int n) {
+    return '+$n s';
+  }
+
+  @override
+  String workoutRestSub(int n) {
+    return '−$n s';
+  }
+
+  @override
+  String get workoutRestSkip => 'O‘tkazib yuborish';
+
+  @override
+  String get workoutMenuSwap => 'Mashqni almashtirish';
+
+  @override
+  String workoutMenuSimilar(String names) {
+    return 'O‘xshash: $names';
+  }
+
+  @override
+  String get workoutMenuNoSimilar => 'Kutubxonada o‘xshash mashqlar yo‘q';
+
+  @override
+  String get workoutMenuWarmup => 'Isitish yondashuvlarini qo‘shish';
+
+  @override
+  String workoutMenuWarmupSub(String plan) {
+    return '2 yondashuv: $plan';
+  }
+
+  @override
+  String get workoutMenuRest => 'Dam olish taymeri';
+
+  @override
+  String get workoutMenuRestSub => 'Shu mashq uchun';
+
+  @override
+  String get workoutMenuNote => 'Eslatma';
+
+  @override
+  String get workoutMenuNoteEmpty => 'Eslatma qo‘shish';
+
+  @override
+  String get workoutMenuNoteHint => 'Masalan: oxirgi yondashuvda tasma';
+
+  @override
+  String get workoutNoteSave => 'Saqlash';
+
+  @override
+  String get workoutMenuReorder => 'Tartib';
+
+  @override
+  String get workoutMenuReorderSub =>
+      'Mashg‘ulotda yuqoriga yoki pastga siljitish';
+
+  @override
+  String get workoutMenuRemove => 'Mashqni olib tashlash';
+
+  @override
+  String get workoutRemoveTitle => 'Bu mashqni olib tashlaysizmi?';
+
+  @override
+  String get workoutRemoveBody => 'Yozilgan yondashuvlar yo‘qoladi.';
+
+  @override
+  String get workoutRemoveConfirm => 'Olib tashlash';
+
+  @override
+  String workoutRpeTitle(int n) {
+    return '$n-yondashuv RPE · qanchalik og‘ir edi?';
+  }
+
+  @override
+  String workoutRpeCaption(int n, int left) {
+    return 'RPE $n · zaxirada taxminan $left ta takror';
+  }
+
+  @override
+  String get workoutCompleteTitle => 'Mashg‘ulot yakunlandi';
+
+  @override
+  String workoutCompleteSubtitle(String name, int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n ta yangi rekord',
+      zero: 'yangi rekordlar yo‘q',
+    );
+    return '$name · $_temp0';
+  }
+
+  @override
+  String get workoutTileDuration => 'Davomiyligi';
+
+  @override
+  String get workoutTileVolume => 'Hajm';
+
+  @override
+  String get workoutTileSets => 'Yondashuvlar';
+
+  @override
+  String get workoutTileRecords => 'Rekordlar';
+
+  @override
+  String get workoutTileLoad => 'Yuklama';
+
+  @override
+  String get workoutOverallTitle => 'Umuman qanchalik og‘ir bo‘ldi?';
+
+  @override
+  String get workoutOverallHint =>
+      'Majburiy emas. Felix keyingi mashg‘ulotlarni rejalashda foydalanadi.';
+
+  @override
+  String workoutOverallCaption(int n, String label) {
+    return 'RPE $n · $label. Felix ertangi rejani tuzishda foydalanadi.';
+  }
+
+  @override
+  String get workoutRpeVeryEasy => 'Juda yengil';
+
+  @override
+  String get workoutRpeEasy => 'Yengil';
+
+  @override
+  String get workoutRpeModerate => 'O‘rtacha';
+
+  @override
+  String get workoutRpeHard => 'Og‘ir';
+
+  @override
+  String get workoutRpeVeryHard => 'Juda og‘ir';
+
+  @override
+  String get workoutRpeMax => 'Maksimal';
+
+  @override
+  String get workoutExercisesTitle => 'Mashqlar';
+
+  @override
+  String get workoutBestSetE1rm => 'eng yaxshi yondashuv · e1RM';
+
+  @override
+  String workoutBestSet(String value) {
+    return 'Eng yaxshi yondashuv $value';
+  }
+
+  @override
+  String get workoutNextTimeTitle => 'Keyingi safar';
+
+  @override
+  String workoutNextTimeBody(String exercise, String kg) {
+    return '$exercise: barcha yondashuvlar bajarildi. Keyingi safar $kg kg ni sinab ko‘ring.';
+  }
+
+  @override
+  String get workoutSave => 'Mashg‘ulotni saqlash';
+
+  @override
+  String get workoutDiscard => 'Saqlamaslik';
+
+  @override
+  String get workoutDiscardTitle => 'Mashg‘ulot saqlanmasinmi?';
+
+  @override
+  String get workoutDiscardBody => 'U tarixingizga saqlanmaydi.';
+
+  @override
+  String get workoutAddExercise => 'Mashq';
 }

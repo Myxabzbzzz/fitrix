@@ -181,3 +181,26 @@ double? suggestNextKg(List<WorkoutSet> lastSets) {
 
 /// Nearest 2.5 kg.
 double roundToPlate(double kg) => (kg / 2.5).round() * 2.5;
+
+/// Two warm-up sets for a working weight: about 55% x 10 and 75% x 5,
+/// rounded to the plate.
+List<({double kg, int reps})> warmupPlan(double workingKg) => [
+      (kg: roundToPlate(workingKg * 0.55), reps: 10),
+      (kg: roundToPlate(workingKg * 0.75), reps: 5),
+    ];
+
+/// The best done working set: highest e1RM; bodyweight sets (0 kg) compare
+/// by reps. Null when there is none.
+WorkoutSet? bestSet(Iterable<WorkoutSet> sets) {
+  WorkoutSet? best;
+  for (final s in sets) {
+    if (!_isWorking(s)) continue;
+    if (best == null) {
+      best = s;
+      continue;
+    }
+    final a = e1rm(s.kg, s.reps), b = e1rm(best.kg, best.reps);
+    if (a > b || (a == b && s.reps > best.reps)) best = s;
+  }
+  return best;
+}

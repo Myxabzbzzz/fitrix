@@ -1170,4 +1170,231 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chatActionError => 'No se pudo aplicar. Inténtalo de nuevo.';
+
+  @override
+  String get unitTonnes => 't';
+
+  @override
+  String workoutLiveCaption(int x, int y, String t) {
+    return 'Serie $x de $y · $t levantadas';
+  }
+
+  @override
+  String get workoutColRpe => 'RPE';
+
+  @override
+  String workoutRestShort(String time) {
+    return 'descanso $time';
+  }
+
+  @override
+  String workoutBestShort(String value) {
+    return 'mejor $value';
+  }
+
+  @override
+  String get workoutPr => 'PR';
+
+  @override
+  String get workoutE1rm => 'e1RM';
+
+  @override
+  String get workoutBodyweight => 'PC';
+
+  @override
+  String workoutFelixLine(String last, String next) {
+    return 'La última vez $last. Hoy prueba $next kg.';
+  }
+
+  @override
+  String get workoutRestLabel => 'Descanso';
+
+  @override
+  String workoutRestNext(String label) {
+    return 'Siguiente: $label';
+  }
+
+  @override
+  String workoutNextSet(int n, String kg, int reps) {
+    return 'Serie $n · $kg × $reps';
+  }
+
+  @override
+  String workoutRestAdd(int n) {
+    return '+$n s';
+  }
+
+  @override
+  String workoutRestSub(int n) {
+    return '−$n s';
+  }
+
+  @override
+  String get workoutRestSkip => 'Omitir';
+
+  @override
+  String get workoutMenuSwap => 'Cambiar ejercicio';
+
+  @override
+  String workoutMenuSimilar(String names) {
+    return 'Similares: $names';
+  }
+
+  @override
+  String get workoutMenuNoSimilar =>
+      'No hay ejercicios similares en la biblioteca';
+
+  @override
+  String get workoutMenuWarmup => 'Añadir series de calentamiento';
+
+  @override
+  String workoutMenuWarmupSub(String plan) {
+    return '2 series: $plan';
+  }
+
+  @override
+  String get workoutMenuRest => 'Temporizador de descanso';
+
+  @override
+  String get workoutMenuRestSub => 'Para este ejercicio';
+
+  @override
+  String get workoutMenuNote => 'Nota';
+
+  @override
+  String get workoutMenuNoteEmpty => 'Añadir una nota';
+
+  @override
+  String get workoutMenuNoteHint => 'Por ejemplo: correas en la última serie';
+
+  @override
+  String get workoutNoteSave => 'Guardar';
+
+  @override
+  String get workoutMenuReorder => 'Reordenar';
+
+  @override
+  String get workoutMenuReorderSub => 'Subir o bajar en el entrenamiento';
+
+  @override
+  String get workoutMenuRemove => 'Quitar ejercicio';
+
+  @override
+  String get workoutRemoveTitle => '¿Quitar este ejercicio?';
+
+  @override
+  String get workoutRemoveBody => 'Se perderán las series registradas.';
+
+  @override
+  String get workoutRemoveConfirm => 'Quitar';
+
+  @override
+  String workoutRpeTitle(int n) {
+    return 'RPE de la serie $n · ¿qué tan duro fue?';
+  }
+
+  @override
+  String workoutRpeCaption(int n, int left) {
+    String _temp0 = intl.Intl.pluralLogic(
+      left,
+      locale: localeName,
+      other: '$left repeticiones',
+      one: '$left repetición',
+    );
+    return 'RPE $n · unas $_temp0 en reserva';
+  }
+
+  @override
+  String get workoutCompleteTitle => 'Entrenamiento completado';
+
+  @override
+  String workoutCompleteSubtitle(String name, int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n récords nuevos',
+      one: '$n récord nuevo',
+      zero: 'sin récords nuevos',
+    );
+    return '$name · $_temp0';
+  }
+
+  @override
+  String get workoutTileDuration => 'Duración';
+
+  @override
+  String get workoutTileVolume => 'Volumen';
+
+  @override
+  String get workoutTileSets => 'Series';
+
+  @override
+  String get workoutTileRecords => 'Récords';
+
+  @override
+  String get workoutTileLoad => 'Carga';
+
+  @override
+  String get workoutOverallTitle => '¿Qué tan dura fue en general?';
+
+  @override
+  String get workoutOverallHint =>
+      'Opcional. Felix lo usa para planificar tus próximas sesiones.';
+
+  @override
+  String workoutOverallCaption(int n, String label) {
+    return 'RPE $n · $label. Felix lo usa para planificar mañana.';
+  }
+
+  @override
+  String get workoutRpeVeryEasy => 'Muy fácil';
+
+  @override
+  String get workoutRpeEasy => 'Fácil';
+
+  @override
+  String get workoutRpeModerate => 'Moderado';
+
+  @override
+  String get workoutRpeHard => 'Duro';
+
+  @override
+  String get workoutRpeVeryHard => 'Muy duro';
+
+  @override
+  String get workoutRpeMax => 'Esfuerzo máximo';
+
+  @override
+  String get workoutExercisesTitle => 'Ejercicios';
+
+  @override
+  String get workoutBestSetE1rm => 'mejor serie · e1RM';
+
+  @override
+  String workoutBestSet(String value) {
+    return 'Mejor serie $value';
+  }
+
+  @override
+  String get workoutNextTimeTitle => 'La próxima vez';
+
+  @override
+  String workoutNextTimeBody(String exercise, String kg) {
+    return '$exercise: todas las series hechas. La próxima vez prueba $kg kg.';
+  }
+
+  @override
+  String get workoutSave => 'Guardar entrenamiento';
+
+  @override
+  String get workoutDiscard => 'Descartar';
+
+  @override
+  String get workoutDiscardTitle => '¿Descartar este entrenamiento?';
+
+  @override
+  String get workoutDiscardBody => 'No se guardará en tu historial.';
+
+  @override
+  String get workoutAddExercise => 'Ejercicio';
 }

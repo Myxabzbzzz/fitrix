@@ -5,6 +5,7 @@ import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/data/workout_storage.dart';
+import 'package:fitrix/features/workouts/domain/training_math.dart';
 
 final workoutStorageProvider = Provider<WorkoutStorage>(
   (ref) => WorkoutStorage(ref.watch(sharedPreferencesProvider)),
@@ -36,6 +37,11 @@ final workoutHistoryProvider =
     onChanged: ref.read(localChangesProvider).notify,
   ),
 );
+
+/// The finished-but-unsaved workout shown on the "Workout complete" screen.
+/// Save writes it to history, Discard clears it.
+final pendingCompletedWorkoutProvider =
+    StateProvider<CompletedWorkout?>((ref) => null);
 
 final activeWorkoutProvider =
     StateNotifierProvider<ActiveWorkoutNotifier, ActiveWorkout?>(
@@ -207,16 +213,27 @@ class ActiveWorkoutNotifier extends StateNotifier<ActiveWorkout?> {
     );
   }
 
-  /// Ends the workout. It's saved to history if at least one set was
-  /// completed; returns whether it was saved.
-  bool finish() {
+  /// Ends the workout. It's saved to history if at least one working set was
+  /// completed; returns the saved workout, or null when nothing was saved.
+  /// [at] is the finish time (defaults to now).
+  CompletedWorkout? finish({int? sessionRpe, DateTime? at}) {
     final workout = state;
-    if (workout == null) return false;
-    final saved = workout.completedSets > 0;
-    if (saved) _history.add(CompletedWorkout.from(workout, DateTime.now()));
+    if (workout == null) return null;
+    CompletedWorkout? saved;
+    if (workout.completedSets > 0) {
+      saved = CompletedWorkout.from(
+        workout,
+        at ?? DateTime.now(),
+        sessionRpe: sessionRpe,
+      );
+      _history.add(saved);
+    }
     state = null;
     return saved;
   }
+
+  /// Drops the workout without saving it.
+  void discard() => state = null;
 
   void toggleSet(int exerciseIndex, int setIndex) {
     _updateSet(exerciseIndex, setIndex, (s) => s.copyWith(done: !s.done));
@@ -247,23 +264,136 @@ class ActiveWorkoutNotifier extends StateNotifier<ActiveWorkout?> {
     );
   }
 
+  void setRpe(int exerciseIndex, int setIndex, int rpe) {
+    _updateSet(exerciseIndex, setIndex, (s) => s.copyWith(rpe: rpe));
+  }
+
+  /// Adds two warm-up sets (about 55% and 75% of the first working set's
+  /// weight) at the top. Does nothing for bodyweight work or when the
+  /// exercise already has warm-ups.
+  void addWarmupSets(int exerciseIndex) {
+    final workout = state;
+    if (workout == null) return;
+    final exercise = workout.exercises[exerciseIndex];
+    if (exercise.sets.any((s) => s.warmup)) return;
+    final working = exercise.sets.where((s) => !s.warmup);
+    if (working.isEmpty || working.first.kg <= 0) return;
+    _replaceExercise(
+      exerciseIndex,
+      exercise.copyWith(sets: [
+        for (final w in warmupPlan(working.first.kg))
+          WorkoutSet(
+            previousKg: 0,
+            previousReps: 0,
+            kg: w.kg,
+            reps: w.reps,
+            warmup: true,
+          ),
+        ...exercise.sets,
+      ]),
+    );
+  }
+
+  void removeExercise(int index) {
+    final workout = state;
+    if (workout == null) return;
+    state =
+        workout.copyWith(exercises: [...workout.exercises]..removeAt(index));
+  }
+
+  /// Moves the exercise at [from] so it ends up at index [to].
+  void moveExercise(int from, int to) {
+    final workout = state;
+    if (workout == null || from == to) return;
+    final list = [...workout.exercises];
+    if (to < 0 || to >= list.length) return;
+    list.insert(to, list.removeAt(from));
+    state = workout.copyWith(exercises: list);
+  }
+
+  /// Swaps the exercise for [name], keeping the number of working sets and
+  /// reps; weights and ticks start over, "Previous" comes from history.
+  void replaceExercise(int index, String name) {
+    final workout = state;
+    if (workout == null) return;
+    final old = workout.exercises[index];
+    final fresh = Exercise(
+      name: name,
+      restSeconds: old.restSeconds,
+      sets: [
+        for (final s in old.sets.where((s) => !s.warmup))
+          WorkoutSet(previousKg: 0, previousReps: 0, kg: 0, reps: s.reps),
+      ],
+    );
+    _replaceExercise(index, _withHistory(fresh));
+  }
+
+  /// Appends exercises (3 x 10 each); "Previous" comes from history.
+  void addExercises(List<String> names) {
+    final workout = state;
+    if (workout == null || names.isEmpty) return;
+    state = workout.copyWith(exercises: [
+      ...workout.exercises,
+      for (final name in names)
+        _withHistory(Exercise(name: name, sets: [
+          for (var i = 0; i < 3; i++)
+            const WorkoutSet(previousKg: 0, previousReps: 0, kg: 0, reps: 10),
+        ])),
+    ]);
+  }
+
+  /// An empty note removes it.
+  void setNote(int exerciseIndex, String note) {
+    final workout = state;
+    if (workout == null) return;
+    final exercise = workout.exercises[exerciseIndex];
+    final text = note.trim();
+    _replaceExercise(
+      exerciseIndex,
+      text.isEmpty
+          ? exercise.copyWith(clearNote: true)
+          : exercise.copyWith(note: text),
+    );
+  }
+
+  void setRest(int exerciseIndex, int seconds) {
+    final workout = state;
+    if (workout == null) return;
+    _replaceExercise(
+      exerciseIndex,
+      workout.exercises[exerciseIndex].copyWith(restSeconds: seconds),
+    );
+  }
+
+  /// Fills "Previous" and weights from the last session that had [exercise].
+  Exercise _withHistory(Exercise exercise) {
+    for (final w in _history.state) {
+      if (w.exercises
+          .any((e) => e.name.toLowerCase() == exercise.name.toLowerCase())) {
+        return _withPrevious(exercise, w);
+      }
+    }
+    return exercise;
+  }
+
   static Exercise _withPrevious(Exercise exercise, CompletedWorkout? last) {
     if (last == null) return exercise;
     Exercise? previous;
     for (final e in last.exercises) {
-      if (e.name == exercise.name) previous = e;
+      if (e.name.toLowerCase() == exercise.name.toLowerCase()) previous = e;
     }
     if (previous == null) return exercise;
+    final before = previous.sets.where((s) => !s.warmup).toList();
 
     return exercise.copyWith(
       sets: [
         for (var i = 0; i < exercise.sets.length; i++)
-          if (i < previous.sets.length)
+          if (i < before.length)
             exercise.sets[i].copyWith(
-              previousKg: previous.sets[i].kg,
-              previousReps: previous.sets[i].reps,
-              kg: previous.sets[i].kg,
-              reps: previous.sets[i].reps,
+              previousKg: before[i].kg,
+              previousReps: before[i].reps,
+              kg: before[i].kg,
+              reps: before[i].reps,
             )
           else
             exercise.sets[i],

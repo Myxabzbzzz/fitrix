@@ -1191,4 +1191,234 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatActionError => 'Не удалось применить. Попробуйте ещё раз.';
+
+  @override
+  String get unitTonnes => 'т';
+
+  @override
+  String workoutLiveCaption(int x, int y, String t) {
+    return 'Подход $x из $y · поднято $t';
+  }
+
+  @override
+  String get workoutColRpe => 'RPE';
+
+  @override
+  String workoutRestShort(String time) {
+    return 'отдых $time';
+  }
+
+  @override
+  String workoutBestShort(String value) {
+    return 'лучший $value';
+  }
+
+  @override
+  String get workoutPr => 'Рекорд';
+
+  @override
+  String get workoutE1rm => 'e1RM';
+
+  @override
+  String get workoutBodyweight => 'СВ';
+
+  @override
+  String workoutFelixLine(String last, String next) {
+    return 'В прошлый раз $last. Сегодня попробуйте $next кг.';
+  }
+
+  @override
+  String get workoutRestLabel => 'Отдых';
+
+  @override
+  String workoutRestNext(String label) {
+    return 'Далее: $label';
+  }
+
+  @override
+  String workoutNextSet(int n, String kg, int reps) {
+    return 'Подход $n · $kg × $reps';
+  }
+
+  @override
+  String workoutRestAdd(int n) {
+    return '+$n с';
+  }
+
+  @override
+  String workoutRestSub(int n) {
+    return '−$n с';
+  }
+
+  @override
+  String get workoutRestSkip => 'Пропустить';
+
+  @override
+  String get workoutMenuSwap => 'Заменить упражнение';
+
+  @override
+  String workoutMenuSimilar(String names) {
+    return 'Похожие: $names';
+  }
+
+  @override
+  String get workoutMenuNoSimilar => 'В библиотеке нет похожих упражнений';
+
+  @override
+  String get workoutMenuWarmup => 'Добавить разминочные подходы';
+
+  @override
+  String workoutMenuWarmupSub(String plan) {
+    return '2 подхода: $plan';
+  }
+
+  @override
+  String get workoutMenuRest => 'Таймер отдыха';
+
+  @override
+  String get workoutMenuRestSub => 'Для этого упражнения';
+
+  @override
+  String get workoutMenuNote => 'Заметка';
+
+  @override
+  String get workoutMenuNoteEmpty => 'Добавить заметку';
+
+  @override
+  String get workoutMenuNoteHint => 'Например: лямки на последнем подходе';
+
+  @override
+  String get workoutNoteSave => 'Сохранить';
+
+  @override
+  String get workoutMenuReorder => 'Порядок';
+
+  @override
+  String get workoutMenuReorderSub => 'Переместить выше или ниже в тренировке';
+
+  @override
+  String get workoutMenuRemove => 'Удалить упражнение';
+
+  @override
+  String get workoutRemoveTitle => 'Удалить это упражнение?';
+
+  @override
+  String get workoutRemoveBody => 'Записанные подходы будут потеряны.';
+
+  @override
+  String get workoutRemoveConfirm => 'Удалить';
+
+  @override
+  String workoutRpeTitle(int n) {
+    return 'RPE подхода $n · насколько было тяжело?';
+  }
+
+  @override
+  String workoutRpeCaption(int n, int left) {
+    String _temp0 = intl.Intl.pluralLogic(
+      left,
+      locale: localeName,
+      other: '$left повтора',
+      many: '$left повторов',
+      few: '$left повтора',
+      one: '$left повтор',
+    );
+    return 'RPE $n · примерно $_temp0 в запасе';
+  }
+
+  @override
+  String get workoutCompleteTitle => 'Тренировка завершена';
+
+  @override
+  String workoutCompleteSubtitle(String name, int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n новых рекорда',
+      many: '$n новых рекордов',
+      few: '$n новых рекорда',
+      one: '$n новый рекорд',
+      zero: 'новых рекордов нет',
+    );
+    return '$name · $_temp0';
+  }
+
+  @override
+  String get workoutTileDuration => 'Длительность';
+
+  @override
+  String get workoutTileVolume => 'Объём';
+
+  @override
+  String get workoutTileSets => 'Подходы';
+
+  @override
+  String get workoutTileRecords => 'Рекорды';
+
+  @override
+  String get workoutTileLoad => 'Нагрузка';
+
+  @override
+  String get workoutOverallTitle => 'Насколько тяжёлой была тренировка?';
+
+  @override
+  String get workoutOverallHint =>
+      'Необязательно. Felix учтёт это при планировании.';
+
+  @override
+  String workoutOverallCaption(int n, String label) {
+    return 'RPE $n · $label. Felix учтёт это при планировании завтрашнего дня.';
+  }
+
+  @override
+  String get workoutRpeVeryEasy => 'Очень легко';
+
+  @override
+  String get workoutRpeEasy => 'Легко';
+
+  @override
+  String get workoutRpeModerate => 'Умеренно';
+
+  @override
+  String get workoutRpeHard => 'Тяжело';
+
+  @override
+  String get workoutRpeVeryHard => 'Очень тяжело';
+
+  @override
+  String get workoutRpeMax => 'Максимум';
+
+  @override
+  String get workoutExercisesTitle => 'Упражнения';
+
+  @override
+  String get workoutBestSetE1rm => 'лучший подход · e1RM';
+
+  @override
+  String workoutBestSet(String value) {
+    return 'Лучший подход $value';
+  }
+
+  @override
+  String get workoutNextTimeTitle => 'В следующий раз';
+
+  @override
+  String workoutNextTimeBody(String exercise, String kg) {
+    return '$exercise: все подходы выполнены. В следующий раз попробуйте $kg кг.';
+  }
+
+  @override
+  String get workoutSave => 'Сохранить тренировку';
+
+  @override
+  String get workoutDiscard => 'Не сохранять';
+
+  @override
+  String get workoutDiscardTitle => 'Не сохранять тренировку?';
+
+  @override
+  String get workoutDiscardBody => 'Она не попадёт в вашу историю.';
+
+  @override
+  String get workoutAddExercise => 'Упражнение';
 }

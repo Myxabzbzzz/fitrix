@@ -1167,4 +1167,230 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatActionError => 'Couldn’t apply this. Please try again.';
+
+  @override
+  String get unitTonnes => 't';
+
+  @override
+  String workoutLiveCaption(int x, int y, String t) {
+    return 'Set $x of $y · $t lifted';
+  }
+
+  @override
+  String get workoutColRpe => 'RPE';
+
+  @override
+  String workoutRestShort(String time) {
+    return 'rest $time';
+  }
+
+  @override
+  String workoutBestShort(String value) {
+    return 'best $value';
+  }
+
+  @override
+  String get workoutPr => 'PR';
+
+  @override
+  String get workoutE1rm => 'e1RM';
+
+  @override
+  String get workoutBodyweight => 'BW';
+
+  @override
+  String workoutFelixLine(String last, String next) {
+    return 'Last time $last. Try $next kg today.';
+  }
+
+  @override
+  String get workoutRestLabel => 'Rest';
+
+  @override
+  String workoutRestNext(String label) {
+    return 'Next: $label';
+  }
+
+  @override
+  String workoutNextSet(int n, String kg, int reps) {
+    return 'Set $n · $kg × $reps';
+  }
+
+  @override
+  String workoutRestAdd(int n) {
+    return '+${n}s';
+  }
+
+  @override
+  String workoutRestSub(int n) {
+    return '−${n}s';
+  }
+
+  @override
+  String get workoutRestSkip => 'Skip';
+
+  @override
+  String get workoutMenuSwap => 'Swap exercise';
+
+  @override
+  String workoutMenuSimilar(String names) {
+    return 'Similar: $names';
+  }
+
+  @override
+  String get workoutMenuNoSimilar => 'No similar exercises in the library';
+
+  @override
+  String get workoutMenuWarmup => 'Add warm-up sets';
+
+  @override
+  String workoutMenuWarmupSub(String plan) {
+    return '2 sets: $plan';
+  }
+
+  @override
+  String get workoutMenuRest => 'Rest timer';
+
+  @override
+  String get workoutMenuRestSub => 'For this exercise';
+
+  @override
+  String get workoutMenuNote => 'Note';
+
+  @override
+  String get workoutMenuNoteEmpty => 'Add a note';
+
+  @override
+  String get workoutMenuNoteHint => 'e.g. Straps on the last set';
+
+  @override
+  String get workoutNoteSave => 'Save';
+
+  @override
+  String get workoutMenuReorder => 'Reorder';
+
+  @override
+  String get workoutMenuReorderSub => 'Move up or down in the workout';
+
+  @override
+  String get workoutMenuRemove => 'Remove exercise';
+
+  @override
+  String get workoutRemoveTitle => 'Remove this exercise?';
+
+  @override
+  String get workoutRemoveBody => 'Its logged sets will be lost.';
+
+  @override
+  String get workoutRemoveConfirm => 'Remove';
+
+  @override
+  String workoutRpeTitle(int n) {
+    return 'RPE for set $n · how hard was it?';
+  }
+
+  @override
+  String workoutRpeCaption(int n, int left) {
+    String _temp0 = intl.Intl.pluralLogic(
+      left,
+      locale: localeName,
+      other: '$left reps',
+      one: '$left rep',
+    );
+    return 'RPE $n · about $_temp0 left in the tank';
+  }
+
+  @override
+  String get workoutCompleteTitle => 'Workout complete';
+
+  @override
+  String workoutCompleteSubtitle(String name, int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n new records',
+      one: '$n new record',
+      zero: 'no new records',
+    );
+    return '$name · $_temp0';
+  }
+
+  @override
+  String get workoutTileDuration => 'Duration';
+
+  @override
+  String get workoutTileVolume => 'Volume';
+
+  @override
+  String get workoutTileSets => 'Sets';
+
+  @override
+  String get workoutTileRecords => 'Records';
+
+  @override
+  String get workoutTileLoad => 'Load';
+
+  @override
+  String get workoutOverallTitle => 'How hard was it overall?';
+
+  @override
+  String get workoutOverallHint =>
+      'Optional. Felix uses it to plan your next sessions.';
+
+  @override
+  String workoutOverallCaption(int n, String label) {
+    return 'RPE $n · $label. Felix uses it to plan tomorrow.';
+  }
+
+  @override
+  String get workoutRpeVeryEasy => 'Very easy';
+
+  @override
+  String get workoutRpeEasy => 'Easy';
+
+  @override
+  String get workoutRpeModerate => 'Moderate';
+
+  @override
+  String get workoutRpeHard => 'Hard';
+
+  @override
+  String get workoutRpeVeryHard => 'Very hard';
+
+  @override
+  String get workoutRpeMax => 'Max effort';
+
+  @override
+  String get workoutExercisesTitle => 'Exercises';
+
+  @override
+  String get workoutBestSetE1rm => 'best set · e1RM';
+
+  @override
+  String workoutBestSet(String value) {
+    return 'Best set $value';
+  }
+
+  @override
+  String get workoutNextTimeTitle => 'Next time';
+
+  @override
+  String workoutNextTimeBody(String exercise, String kg) {
+    return '$exercise: every set done. Try $kg kg next time.';
+  }
+
+  @override
+  String get workoutSave => 'Save workout';
+
+  @override
+  String get workoutDiscard => 'Discard';
+
+  @override
+  String get workoutDiscardTitle => 'Discard this workout?';
+
+  @override
+  String get workoutDiscardBody => 'It won’t be saved to your history.';
+
+  @override
+  String get workoutAddExercise => 'Exercise';
 }

@@ -197,7 +197,7 @@ void main() {
       await tester.pumpAndSettle();
       final total = container.read(activeWorkoutProvider)!.totalSets;
       expect(total, greaterThanOrEqualTo(5));
-      expect(find.text('0 из $total подходов'), findsOneWidget);
+      expect(find.text('Подход 1 из $total · поднято 0,0 т'), findsOneWidget);
       expect(find.text('Добавить подход'), findsWidgets);
       expect(find.text('Add set'), findsNothing);
       await tester.pumpWidget(const SizedBox());

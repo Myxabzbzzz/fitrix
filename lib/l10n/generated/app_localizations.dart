@@ -2003,6 +2003,366 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn’t apply this. Please try again.'**
   String get chatActionError;
+
+  /// No description provided for @unitTonnes.
+  ///
+  /// In en, this message translates to:
+  /// **'t'**
+  String get unitTonnes;
+
+  /// No description provided for @workoutLiveCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Set {x} of {y} · {t} lifted'**
+  String workoutLiveCaption(int x, int y, String t);
+
+  /// No description provided for @workoutColRpe.
+  ///
+  /// In en, this message translates to:
+  /// **'RPE'**
+  String get workoutColRpe;
+
+  /// No description provided for @workoutRestShort.
+  ///
+  /// In en, this message translates to:
+  /// **'rest {time}'**
+  String workoutRestShort(String time);
+
+  /// No description provided for @workoutBestShort.
+  ///
+  /// In en, this message translates to:
+  /// **'best {value}'**
+  String workoutBestShort(String value);
+
+  /// No description provided for @workoutPr.
+  ///
+  /// In en, this message translates to:
+  /// **'PR'**
+  String get workoutPr;
+
+  /// No description provided for @workoutE1rm.
+  ///
+  /// In en, this message translates to:
+  /// **'e1RM'**
+  String get workoutE1rm;
+
+  /// No description provided for @workoutBodyweight.
+  ///
+  /// In en, this message translates to:
+  /// **'BW'**
+  String get workoutBodyweight;
+
+  /// No description provided for @workoutFelixLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Last time {last}. Try {next} kg today.'**
+  String workoutFelixLine(String last, String next);
+
+  /// No description provided for @workoutRestLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest'**
+  String get workoutRestLabel;
+
+  /// No description provided for @workoutRestNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {label}'**
+  String workoutRestNext(String label);
+
+  /// No description provided for @workoutNextSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set {n} · {kg} × {reps}'**
+  String workoutNextSet(int n, String kg, int reps);
+
+  /// No description provided for @workoutRestAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'+{n}s'**
+  String workoutRestAdd(int n);
+
+  /// No description provided for @workoutRestSub.
+  ///
+  /// In en, this message translates to:
+  /// **'−{n}s'**
+  String workoutRestSub(int n);
+
+  /// No description provided for @workoutRestSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get workoutRestSkip;
+
+  /// No description provided for @workoutMenuSwap.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap exercise'**
+  String get workoutMenuSwap;
+
+  /// No description provided for @workoutMenuSimilar.
+  ///
+  /// In en, this message translates to:
+  /// **'Similar: {names}'**
+  String workoutMenuSimilar(String names);
+
+  /// No description provided for @workoutMenuNoSimilar.
+  ///
+  /// In en, this message translates to:
+  /// **'No similar exercises in the library'**
+  String get workoutMenuNoSimilar;
+
+  /// No description provided for @workoutMenuWarmup.
+  ///
+  /// In en, this message translates to:
+  /// **'Add warm-up sets'**
+  String get workoutMenuWarmup;
+
+  /// No description provided for @workoutMenuWarmupSub.
+  ///
+  /// In en, this message translates to:
+  /// **'2 sets: {plan}'**
+  String workoutMenuWarmupSub(String plan);
+
+  /// No description provided for @workoutMenuRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest timer'**
+  String get workoutMenuRest;
+
+  /// No description provided for @workoutMenuRestSub.
+  ///
+  /// In en, this message translates to:
+  /// **'For this exercise'**
+  String get workoutMenuRestSub;
+
+  /// No description provided for @workoutMenuNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get workoutMenuNote;
+
+  /// No description provided for @workoutMenuNoteEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note'**
+  String get workoutMenuNoteEmpty;
+
+  /// No description provided for @workoutMenuNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Straps on the last set'**
+  String get workoutMenuNoteHint;
+
+  /// No description provided for @workoutNoteSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get workoutNoteSave;
+
+  /// No description provided for @workoutMenuReorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder'**
+  String get workoutMenuReorder;
+
+  /// No description provided for @workoutMenuReorderSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up or down in the workout'**
+  String get workoutMenuReorderSub;
+
+  /// No description provided for @workoutMenuRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove exercise'**
+  String get workoutMenuRemove;
+
+  /// No description provided for @workoutRemoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this exercise?'**
+  String get workoutRemoveTitle;
+
+  /// No description provided for @workoutRemoveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Its logged sets will be lost.'**
+  String get workoutRemoveBody;
+
+  /// No description provided for @workoutRemoveConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get workoutRemoveConfirm;
+
+  /// No description provided for @workoutRpeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'RPE for set {n} · how hard was it?'**
+  String workoutRpeTitle(int n);
+
+  /// No description provided for @workoutRpeCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'RPE {n} · about {left, plural, one{{left} rep} other{{left} reps}} left in the tank'**
+  String workoutRpeCaption(int n, int left);
+
+  /// No description provided for @workoutCompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout complete'**
+  String get workoutCompleteTitle;
+
+  /// No description provided for @workoutCompleteSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {n, plural, =0{no new records} one{{n} new record} other{{n} new records}}'**
+  String workoutCompleteSubtitle(String name, int n);
+
+  /// No description provided for @workoutTileDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get workoutTileDuration;
+
+  /// No description provided for @workoutTileVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get workoutTileVolume;
+
+  /// No description provided for @workoutTileSets.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets'**
+  String get workoutTileSets;
+
+  /// No description provided for @workoutTileRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get workoutTileRecords;
+
+  /// No description provided for @workoutTileLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Load'**
+  String get workoutTileLoad;
+
+  /// No description provided for @workoutOverallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How hard was it overall?'**
+  String get workoutOverallTitle;
+
+  /// No description provided for @workoutOverallHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Felix uses it to plan your next sessions.'**
+  String get workoutOverallHint;
+
+  /// No description provided for @workoutOverallCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'RPE {n} · {label}. Felix uses it to plan tomorrow.'**
+  String workoutOverallCaption(int n, String label);
+
+  /// No description provided for @workoutRpeVeryEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Very easy'**
+  String get workoutRpeVeryEasy;
+
+  /// No description provided for @workoutRpeEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get workoutRpeEasy;
+
+  /// No description provided for @workoutRpeModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get workoutRpeModerate;
+
+  /// No description provided for @workoutRpeHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get workoutRpeHard;
+
+  /// No description provided for @workoutRpeVeryHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Very hard'**
+  String get workoutRpeVeryHard;
+
+  /// No description provided for @workoutRpeMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Max effort'**
+  String get workoutRpeMax;
+
+  /// No description provided for @workoutExercisesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercises'**
+  String get workoutExercisesTitle;
+
+  /// No description provided for @workoutBestSetE1rm.
+  ///
+  /// In en, this message translates to:
+  /// **'best set · e1RM'**
+  String get workoutBestSetE1rm;
+
+  /// No description provided for @workoutBestSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Best set {value}'**
+  String workoutBestSet(String value);
+
+  /// No description provided for @workoutNextTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next time'**
+  String get workoutNextTimeTitle;
+
+  /// No description provided for @workoutNextTimeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{exercise}: every set done. Try {kg} kg next time.'**
+  String workoutNextTimeBody(String exercise, String kg);
+
+  /// No description provided for @workoutSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save workout'**
+  String get workoutSave;
+
+  /// No description provided for @workoutDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get workoutDiscard;
+
+  /// No description provided for @workoutDiscardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this workout?'**
+  String get workoutDiscardTitle;
+
+  /// No description provided for @workoutDiscardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It won’t be saved to your history.'**
+  String get workoutDiscardBody;
+
+  /// No description provided for @workoutAddExercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise'**
+  String get workoutAddExercise;
 }
 
 class _AppLocalizationsDelegate

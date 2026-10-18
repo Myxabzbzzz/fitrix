@@ -216,7 +216,7 @@ void main() {
         ..start(WorkoutCatalog.defaults.first)
         ..setKg(0, 0, 30)
         ..toggleSet(0, 0);
-      expect(a.read(activeWorkoutProvider.notifier).finish(), isTrue);
+      expect(a.read(activeWorkoutProvider.notifier).finish(), isNotNull);
       await a.say(AssistantTopic.app, 'Build muscle and strength');
       await a.say(gym, 'Plan my leg day');
       await a.sync();

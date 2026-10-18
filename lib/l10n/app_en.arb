@@ -808,5 +808,204 @@
         "type": "String"
       }
     }
-  }
+  },
+  "unitTonnes": "t",
+  "workoutLiveCaption": "Set {x} of {y} · {t} lifted",
+  "@workoutLiveCaption": {
+    "placeholders": {
+      "x": {
+        "type": "int"
+      },
+      "y": {
+        "type": "int"
+      },
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "workoutColRpe": "RPE",
+  "workoutRestShort": "rest {time}",
+  "@workoutRestShort": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "workoutBestShort": "best {value}",
+  "@workoutBestShort": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "workoutPr": "PR",
+  "workoutE1rm": "e1RM",
+  "workoutBodyweight": "BW",
+  "workoutFelixLine": "Last time {last}. Try {next} kg today.",
+  "@workoutFelixLine": {
+    "placeholders": {
+      "last": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "workoutRestLabel": "Rest",
+  "workoutRestNext": "Next: {label}",
+  "@workoutRestNext": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "workoutNextSet": "Set {n} · {kg} × {reps}",
+  "@workoutNextSet": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "kg": {
+        "type": "String"
+      },
+      "reps": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutRestAdd": "+{n}s",
+  "@workoutRestAdd": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutRestSub": "−{n}s",
+  "@workoutRestSub": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutRestSkip": "Skip",
+  "workoutMenuSwap": "Swap exercise",
+  "workoutMenuSimilar": "Similar: {names}",
+  "@workoutMenuSimilar": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "workoutMenuNoSimilar": "No similar exercises in the library",
+  "workoutMenuWarmup": "Add warm-up sets",
+  "workoutMenuWarmupSub": "2 sets: {plan}",
+  "@workoutMenuWarmupSub": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "workoutMenuRest": "Rest timer",
+  "workoutMenuRestSub": "For this exercise",
+  "workoutMenuNote": "Note",
+  "workoutMenuNoteEmpty": "Add a note",
+  "workoutMenuNoteHint": "e.g. Straps on the last set",
+  "workoutNoteSave": "Save",
+  "workoutMenuReorder": "Reorder",
+  "workoutMenuReorderSub": "Move up or down in the workout",
+  "workoutMenuRemove": "Remove exercise",
+  "workoutRemoveTitle": "Remove this exercise?",
+  "workoutRemoveBody": "Its logged sets will be lost.",
+  "workoutRemoveConfirm": "Remove",
+  "workoutRpeTitle": "RPE for set {n} · how hard was it?",
+  "@workoutRpeTitle": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutRpeCaption": "RPE {n} · about {left, plural, one{{left} rep} other{{left} reps}} left in the tank",
+  "@workoutRpeCaption": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "left": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutCompleteTitle": "Workout complete",
+  "workoutCompleteSubtitle": "{name} · {n, plural, =0{no new records} one{{n} new record} other{{n} new records}}",
+  "@workoutCompleteSubtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "workoutTileDuration": "Duration",
+  "workoutTileVolume": "Volume",
+  "workoutTileSets": "Sets",
+  "workoutTileRecords": "Records",
+  "workoutTileLoad": "Load",
+  "workoutOverallTitle": "How hard was it overall?",
+  "workoutOverallHint": "Optional. Felix uses it to plan your next sessions.",
+  "workoutOverallCaption": "RPE {n} · {label}. Felix uses it to plan tomorrow.",
+  "@workoutOverallCaption": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "workoutRpeVeryEasy": "Very easy",
+  "workoutRpeEasy": "Easy",
+  "workoutRpeModerate": "Moderate",
+  "workoutRpeHard": "Hard",
+  "workoutRpeVeryHard": "Very hard",
+  "workoutRpeMax": "Max effort",
+  "workoutExercisesTitle": "Exercises",
+  "workoutBestSetE1rm": "best set · e1RM",
+  "workoutBestSet": "Best set {value}",
+  "@workoutBestSet": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "workoutNextTimeTitle": "Next time",
+  "workoutNextTimeBody": "{exercise}: every set done. Try {kg} kg next time.",
+  "@workoutNextTimeBody": {
+    "placeholders": {
+      "exercise": {
+        "type": "String"
+      },
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "workoutSave": "Save workout",
+  "workoutDiscard": "Discard",
+  "workoutDiscardTitle": "Discard this workout?",
+  "workoutDiscardBody": "It won’t be saved to your history.",
+  "workoutAddExercise": "Exercise"
 }

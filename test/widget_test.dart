@@ -98,7 +98,7 @@ void main() {
         ..setKg(0, 0, 30)
         ..setReps(0, 0, 8)
         ..toggleSet(0, 0);
-      expect(first.read(activeWorkoutProvider.notifier).finish(), isTrue);
+      expect(first.read(activeWorkoutProvider.notifier).finish(), isNotNull);
 
       final second = await _restart();
       final history = second.read(workoutHistoryProvider);
@@ -118,7 +118,7 @@ void main() {
       final notifier = container.read(activeWorkoutProvider.notifier)
         ..start(WorkoutCatalog.defaults.first);
 
-      expect(notifier.finish(), isFalse);
+      expect(notifier.finish(), isNull);
       expect(container.read(workoutHistoryProvider), isEmpty);
       expect(container.read(activeWorkoutProvider), isNull);
     });
@@ -242,7 +242,7 @@ void main() {
     await tester.tap(find.text('Start').first);
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('Biceps curl'), findsOneWidget);
-    expect(find.text('Previous'), findsWidgets);
+    expect(find.text('PREVIOUS'), findsWidgets);
 
     // Finish so the elapsed-time ticker is disposed before the test ends.
     await tester.scrollUntilVisible(

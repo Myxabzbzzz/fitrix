@@ -79,14 +79,14 @@ void main() {
     _phoneSize(tester);
     final container = await _pumpExpanded(tester);
     final total = container.read(activeWorkoutProvider)!.totalSets;
-    expect(
-        tester.widget<Text>(find.byKey(captionKey)).data, '0 of $total sets');
+    expect(tester.widget<Text>(find.byKey(captionKey)).data,
+        'Set 1 of $total · 0.0 t lifted');
     expect(tester.getSize(find.byKey(fillKey)).width, 0);
 
     await tester.tap(find.byIcon(Icons.check).first);
     await tester.pumpAndSettle();
-    expect(
-        tester.widget<Text>(find.byKey(captionKey)).data, '1 of $total sets');
+    expect(tester.widget<Text>(find.byKey(captionKey)).data,
+        startsWith('Set 2 of $total'));
     final ratio = tester.getSize(find.byKey(fillKey)).width /
         tester.getSize(find.byKey(trackKey)).width;
     expect(ratio, closeTo(1 / total, 0.001));
@@ -127,6 +127,9 @@ void main() {
     addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
     await _pumpExpanded(tester);
     await tester.tap(find.byIcon(Icons.check).first);
+    await tester.pump();
+    // The rest countdown it starts is a ticker; skip it to see the rest.
+    await tester.tap(find.text('Skip'));
     await tester.pump();
     expect(tester.hasRunningAnimations, isFalse);
     await _unmount(tester);

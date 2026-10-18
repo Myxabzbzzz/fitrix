@@ -84,9 +84,10 @@ void main() {
       expect(_fieldFocused(), isTrue);
 
       // The caption above the progress bar is inert list space.
+      // The caption is wider now, so tap in the gap on its left instead.
       await tester.tapAt(
-          tester.getTopRight(find.byKey(ActiveWorkoutSheet.captionKey)) +
-              const Offset(40, 4));
+          tester.getTopLeft(find.byKey(ActiveWorkoutSheet.captionKey)) +
+              const Offset(-10, 4));
       await tester.pumpAndSettle();
       expect(_fieldFocused(), isFalse);
       await tester.pumpWidget(const SizedBox());
@@ -109,6 +110,14 @@ void main() {
 
     testWidgets('focused bottom field ends above the Done bar', (tester) async {
       await pumpSheet(tester);
+      // Only the current exercise is expanded now, so give it enough sets
+      // for the list to scroll.
+      final c = ProviderScope.containerOf(
+          tester.element(find.byType(ActiveWorkoutSheet)));
+      for (var i = 0; i < 10; i++) {
+        c.read(activeWorkoutProvider.notifier).addSet(0);
+      }
+      await tester.pumpAndSettle();
       tester.view.viewInsets = const FakeViewPadding(bottom: 900);
       addTearDown(tester.view.resetViewInsets);
       await tester.pumpAndSettle();
@@ -116,7 +125,11 @@ void main() {
           of: find.byKey(const ValueKey('table')),
           matching: find.byType(Scrollable).first));
 
-      final tableRect = tester.getRect(find.byKey(const ValueKey('table')));
+      // The list stops above the Finish button now (it only gets the full
+      // height while a field is focused), so measure against the list.
+      final tableRect = tester.getRect(find.descendant(
+          of: find.byKey(const ValueKey('table')),
+          matching: find.byType(ListView)));
       // Lowest field inside the viewport, scrolled flush with its bottom edge
       // so only scrollPadding can lift it clear of the Done bar.
       Finder lowest() => find

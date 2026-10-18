@@ -104,12 +104,13 @@ class Exercise {
     List<WorkoutSet>? sets,
     int? restSeconds,
     String? note,
+    bool clearNote = false,
   }) =>
       Exercise(
         name: name ?? this.name,
         sets: sets ?? this.sets,
         restSeconds: restSeconds ?? this.restSeconds,
-        note: note ?? this.note,
+        note: clearNote ? null : note ?? this.note,
       );
 
   Map<String, dynamic> toJson() => {
@@ -220,14 +221,18 @@ class ActiveWorkout {
     required this.exercises,
   });
 
-  int get completedSets =>
-      exercises.fold(0, (sum, e) => sum + e.sets.where((s) => s.done).length);
+  /// Working sets ticked off; warm-ups don't count.
+  int get completedSets => exercises.fold(
+      0, (sum, e) => sum + e.sets.where((s) => s.done && !s.warmup).length);
 
-  int get totalSets => exercises.fold(0, (sum, e) => sum + e.sets.length);
+  /// Working sets; warm-ups don't count.
+  int get totalSets => exercises.fold(
+      0, (sum, e) => sum + e.sets.where((s) => !s.warmup).length);
 
-  ActiveWorkout copyWith({List<Exercise>? exercises}) => ActiveWorkout(
+  ActiveWorkout copyWith({List<Exercise>? exercises, DateTime? startedAt}) =>
+      ActiveWorkout(
         template: template,
-        startedAt: startedAt,
+        startedAt: startedAt ?? this.startedAt,
         exercises: exercises ?? this.exercises,
       );
 
