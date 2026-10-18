@@ -621,3 +621,52 @@ test('refineAction: egg count words multiply a single-egg item', () => {
   const done = { ...egg, items: [{ ...egg.items[0], grams: 100 }] };
   assert.equal(refineAction(done, 'I had 2 eggs').items[0].grams, 100);
 });
+
+test('inferSchedule: named days alone schedule the week when they match the plan', () => {
+  const { inferSchedule } = require('./actions');
+  const plan = (n) => ({ type: 'workout_plan', sport: 'gym', templates: Array.from({ length: n }, (_, i) => tpl('S' + i)) });
+  const ru = inferSchedule(plan(3), 'составь план на пн ср пт');
+  assert.equal(ru.when, 'week');
+  assert.deepEqual(ru.days, ['mon', 'wed', 'fri']);
+  const en = inferSchedule(plan(3), '3-day split, Monday Wednesday Friday');
+  assert.equal(en.when, 'week');
+  assert.deepEqual(en.days, ['mon', 'wed', 'fri']);
+  // count mismatch and no week word: nothing inferred
+  const mism = inferSchedule(plan(2), 'составь план на пн ср пт');
+  assert.equal(mism.when, undefined);
+  assert.equal(mism.days, undefined);
+  // the model's own "today" is kept
+  const own = { ...plan(1), when: 'today', days: ['today'] };
+  assert.deepEqual(inferSchedule(own, 'на понедельник'), own);
+});
+
+test('inferSchedule: a single plan for today wins over a week word', () => {
+  const { inferSchedule } = require('./actions');
+  const plan = (n) => ({ type: 'workout_plan', sport: 'gym', templates: Array.from({ length: n }, (_, i) => tpl('S' + i)) });
+  const p = inferSchedule(plan(1), 'план на сегодня, тренируюсь 3 раза в неделю');
+  assert.equal(p.when, 'today');
+  assert.deepEqual(p.days, ['today']);
+  assert.equal(inferSchedule(plan(1), "today's workout, I train 4 times a week").when, 'today');
+  // several templates: still the week
+  assert.equal(inferSchedule(plan(3), 'на сегодня и на неделю').when, 'week');
+});
+
+test('refineAction: weight delta sign follows the user words', () => {
+  const { refineAction } = require('./actions');
+  const d = (kg) => ({ type: 'weight', mode: 'delta', kg });
+  for (const t of ['похудел на 2 кг', 'я похудела на 2 кг', 'скинул 2 кг', 'скинула 2кг', 'сбросил 2 кг', 'сбросила 2 кг',
+    'I lost 2 kg', '2 kg ozdim', 'bajé 2 kg', 'adelgacé 2 kg', 'perdí 2 kg']) {
+    assert.deepEqual(refineAction(d(2), t), d(-2), t);
+    assert.deepEqual(refineAction(d(-2), t), d(-2), t);
+  }
+  for (const t of ['набрал 2 кг', 'набрала 2 кг', 'поправился на 2 кг', 'I gained 2 kg', 'put on 2 kg', '2 kg semirdim', 'subí 2 kg', 'engordé 2 kg']) {
+    assert.deepEqual(refineAction(d(-2), t), d(2), t);
+    assert.deepEqual(refineAction(d(2), t), d(2), t);
+  }
+  // no direction word, or both: unchanged
+  assert.deepEqual(refineAction(d(-2), 'вес минус 2 кг'), d(-2));
+  assert.deepEqual(refineAction(d(2), 'похудел, потом набрал 2 кг'), d(2));
+  // set mode untouched
+  const set = { type: 'weight', mode: 'set', kg: 80 };
+  assert.deepEqual(refineAction(set, 'похудел до 80 кг'), set);
+});

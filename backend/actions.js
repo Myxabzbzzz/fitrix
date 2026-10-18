@@ -307,20 +307,23 @@ const WEEK_RE = /(?<![\p{L}])(?:недел\p{L}*|week|hafta\p{L}*|semana)(?![\p{
 function inferSchedule(action, userText) {
   if (!action || action.type !== 'workout_plan' || typeof userText !== 'string') return action;
   const plan = { ...action };
+  const days = [];
+  for (const m of userText.matchAll(DAY_RE)) {
+    const key = Object.keys(m.groups).find((k) => m.groups[k] !== undefined);
+    if (key && !days.includes(key)) days.push(key);
+  }
+  const daysFit = days.length === plan.templates.length;
   if (plan.when === undefined || plan.when === null) {
-    if (WEEK_RE.test(userText)) plan.when = 'week';
-    else if (TODAY_RE.test(userText) && plan.templates.length === 1) plan.when = 'today';
+    // One session asked for today is today, even if the user also mentions
+    // how often they train a week.
+    if (TODAY_RE.test(userText) && plan.templates.length === 1) plan.when = 'today';
+    else if (WEEK_RE.test(userText)) plan.when = 'week';
+    // Weekday names that match the sessions one-to-one mean the week too.
+    else if (daysFit && plan.days == null) plan.when = 'week';
   }
   if (plan.days === undefined) {
     if (plan.when === 'today') plan.days = ['today'];
-    else if (plan.when === 'week') {
-      const days = [];
-      for (const m of userText.matchAll(DAY_RE)) {
-        const key = Object.keys(m.groups).find((k) => m.groups[k] !== undefined);
-        if (key && !days.includes(key)) days.push(key);
-      }
-      if (days.length === plan.templates.length) plan.days = days;
-    }
+    else if (plan.when === 'week' && daysFit) plan.days = days;
   }
   return validateAction(plan) || action;
 }
@@ -354,6 +357,28 @@ function fixEggCount(item, userText) {
   return item;
 }
 
+const L = '(?<![\\p{L}])';
+const R = '(?![\\p{L}])';
+const LOSS_RE = new RegExp(
+  L + '(?:похудел\\p{L}*|скинул\\p{L}*|сбросил\\p{L}*|lost|ozdim|baj[eé]|adelgac[eé]|perd[ií])' + R,
+  'iu'
+);
+const GAIN_RE = new RegExp(
+  L + '(?:набрал\\p{L}*|поправил\\p{L}*|gained|put\\s+on|semirdim|sub[ií]|engord[eé])' + R,
+  'iu'
+);
+
+// A delta's sign follows the user's own words ("похудел на 2 кг" is -2),
+// whatever sign the model wrote. Both or neither: left as it is.
+function fixWeightSign(action, userText) {
+  if (action.mode !== 'delta') return action;
+  const loss = LOSS_RE.test(userText);
+  const gain = GAIN_RE.test(userText);
+  if (loss === gain) return action;
+  const kg = loss ? -Math.abs(action.kg) : Math.abs(action.kg);
+  return kg === action.kg ? action : { ...action, kg };
+}
+
 /** Deterministic clean-ups that depend on the user's message. */
 function refineAction(action, userText) {
   if (!action || typeof userText !== 'string') return action;
@@ -361,6 +386,7 @@ function refineAction(action, userText) {
     const slot = action.slot !== null && !SLOT_RE.test(userText) ? null : action.slot;
     return { ...action, slot, items: action.items.map((it) => fixEggCount(it, userText)) };
   }
+  if (action.type === 'weight') return fixWeightSign(action, userText);
   return inferSchedule(action, userText);
 }
 
