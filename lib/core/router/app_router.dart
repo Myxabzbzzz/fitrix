@@ -42,6 +42,9 @@ import 'package:fitrix/features/content/presentation/article_screen.dart';
 import 'package:fitrix/features/content/presentation/discover_screen.dart';
 import 'package:fitrix/features/shop/presentation/shop_screen.dart';
 import 'package:fitrix/features/map/presentation/map_screen.dart';
+import 'package:fitrix/features/programs/presentation/screens/program_detail_screen.dart';
+import 'package:fitrix/features/programs/presentation/screens/program_progress_screen.dart';
+import 'package:fitrix/features/programs/presentation/screens/programs_screen.dart';
 
 class AppRouter {
   // Onboarding
@@ -68,6 +71,9 @@ class AppRouter {
   static const String workoutComplete = '/home/workouts/complete';
   static const String exerciseLibrary = '/home/workouts/exercises';
   static const String addExercise = '/home/workouts/exercises/add';
+  static const String programs = '/home/programs';
+  static const String programsActive = '/home/programs/active';
+  static String program(String id) => '/home/programs/$id';
   static const String progress = '/home/progress';
   static const String progressLoad = '/home/progress/load';
   static const String progressRecords = '/home/progress/records';
@@ -308,6 +314,37 @@ class AppRouter {
                                 sport: Sport.fromName(
                                     state.pathParameters['sport']!),
                               ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      GoRoute(
+                        path: 'programs',
+                        name: 'programs',
+                        pageBuilder: (context, state) => circleRevealPage(
+                          context,
+                          state,
+                          const ProgramsScreen(),
+                        ),
+                        routes: [
+                          // Before ':id' so "active" isn't read as an id.
+                          GoRoute(
+                            path: 'active',
+                            name: 'programActive',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              const ProgramProgressScreen(),
+                            ),
+                          ),
+                          GoRoute(
+                            path: ':id',
+                            name: 'programDetail',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              ProgramDetailScreen(
+                                  id: state.pathParameters['id']!),
                             ),
                           ),
                         ],

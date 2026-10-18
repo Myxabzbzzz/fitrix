@@ -5335,6 +5335,504 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log your weight to see your trend.'**
   String get bodyEmpty;
+
+  /// No description provided for @programsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Programs'**
+  String get programsTitle;
+
+  /// No description provided for @programsEntrySub.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready-made plans for the next weeks'**
+  String get programsEntrySub;
+
+  /// No description provided for @programsActiveEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Active program'**
+  String get programsActiveEyebrow;
+
+  /// No description provided for @programsWeekOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Week {w} of {n}'**
+  String programsWeekOf(int w, int n);
+
+  /// No description provided for @programsNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {session} · {day} · {duration}'**
+  String programsNext(String session, String day, String duration);
+
+  /// No description provided for @programsNoneLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions left in this program'**
+  String get programsNoneLeft;
+
+  /// No description provided for @programsDoneOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} sessions done'**
+  String programsDoneOf(int done, int total);
+
+  /// No description provided for @programsOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get programsOpen;
+
+  /// No description provided for @programsPickedEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked for you'**
+  String get programsPickedEyebrow;
+
+  /// No description provided for @programsPickedText.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {perWeek} days a week · {level}. A good fit for your goal and experience.'**
+  String programsPickedText(String name, int perWeek, String level);
+
+  /// No description provided for @programsFelixPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix pick'**
+  String get programsFelixPick;
+
+  /// No description provided for @programsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get programsFilterAll;
+
+  /// No description provided for @programsGoalMuscle.
+  ///
+  /// In en, this message translates to:
+  /// **'Muscle'**
+  String get programsGoalMuscle;
+
+  /// No description provided for @programsGoalStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength'**
+  String get programsGoalStrength;
+
+  /// No description provided for @programsGoalFatLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Fat loss'**
+  String get programsGoalFatLoss;
+
+  /// No description provided for @programsLevelBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get programsLevelBeginner;
+
+  /// No description provided for @programsLevelIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get programsLevelIntermediate;
+
+  /// No description provided for @programsLevelAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get programsLevelAdvanced;
+
+  /// No description provided for @programsAtHome.
+  ///
+  /// In en, this message translates to:
+  /// **'At home'**
+  String get programsAtHome;
+
+  /// No description provided for @programsDaysAWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Days a week'**
+  String get programsDaysAWeek;
+
+  /// No description provided for @programsAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get programsAny;
+
+  /// No description provided for @programsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, one{{n} program} other{{n} programs}}'**
+  String programsCount(int n);
+
+  /// No description provided for @programsPerWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{n}× / week'**
+  String programsPerWeek(int n);
+
+  /// No description provided for @programsWeeksMin.
+  ///
+  /// In en, this message translates to:
+  /// **'{weeks, plural, one{{weeks} week} other{{weeks} weeks}} · {min} min'**
+  String programsWeeksMin(int weeks, int min);
+
+  /// No description provided for @programsDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get programsDetails;
+
+  /// No description provided for @programsEmptyFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'No program matches these filters.'**
+  String get programsEmptyFilter;
+
+  /// No description provided for @programTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Program'**
+  String get programTitle;
+
+  /// No description provided for @programNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This program is not available.'**
+  String get programNotFound;
+
+  /// No description provided for @programLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Length'**
+  String get programLength;
+
+  /// No description provided for @programPerWeekLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Per week'**
+  String get programPerWeekLabel;
+
+  /// No description provided for @programSessionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Session'**
+  String get programSessionLabel;
+
+  /// No description provided for @programWeeksShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} wk'**
+  String programWeeksShort(int n);
+
+  /// No description provided for @programYourWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Your week'**
+  String get programYourWeek;
+
+  /// No description provided for @programClashes.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, one{{n} clash} other{{n} clashes}}'**
+  String programClashes(int n);
+
+  /// No description provided for @programRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest'**
+  String get programRest;
+
+  /// No description provided for @programWorkoutsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, one{{n} workout} other{{n} workouts}}'**
+  String programWorkoutsCount(int n);
+
+  /// No description provided for @programRir.
+  ///
+  /// In en, this message translates to:
+  /// **'RIR {n}'**
+  String programRir(int n);
+
+  /// No description provided for @programHowYouProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'How you progress'**
+  String get programHowYouProgress;
+
+  /// No description provided for @programFelixEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix adjusted it for you'**
+  String get programFelixEyebrow;
+
+  /// No description provided for @programFelixText.
+  ///
+  /// In en, this message translates to:
+  /// **'Training days avoid {days} and the day before because of {what}. You can change the days when you start.'**
+  String programFelixText(String days, String what);
+
+  /// No description provided for @programAskFelix.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Felix'**
+  String get programAskFelix;
+
+  /// No description provided for @programAskFelixDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Is {name} a good program for me? Check it against my week.'**
+  String programAskFelixDraft(String name);
+
+  /// No description provided for @programStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start program'**
+  String get programStart;
+
+  /// No description provided for @programStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start {name}'**
+  String programStartTitle(String name);
+
+  /// No description provided for @programStartSub.
+  ///
+  /// In en, this message translates to:
+  /// **'{weeks, plural, one{{weeks} week} other{{weeks} weeks}} · ends {date}'**
+  String programStartSub(int weeks, String date);
+
+  /// No description provided for @programStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get programStartDate;
+
+  /// No description provided for @programToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get programToday;
+
+  /// No description provided for @programPickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick date'**
+  String get programPickDate;
+
+  /// No description provided for @programTrainingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Training days'**
+  String get programTrainingDays;
+
+  /// No description provided for @programDaysPicked.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} of {total} picked'**
+  String programDaysPicked(int n, int total);
+
+  /// No description provided for @programClashTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{day} is {title}'**
+  String programClashTitle(String day, String title);
+
+  /// No description provided for @programClashHit.
+  ///
+  /// In en, this message translates to:
+  /// **'Training that day stacks two hard sessions. Pick another day.'**
+  String get programClashHit;
+
+  /// No description provided for @programClashAvoid.
+  ///
+  /// In en, this message translates to:
+  /// **'Program days stay clear of it, so you recover before and after.'**
+  String get programClashAvoid;
+
+  /// No description provided for @programStartWeights.
+  ///
+  /// In en, this message translates to:
+  /// **'Start weights'**
+  String get programStartWeights;
+
+  /// No description provided for @programFromRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'from your records'**
+  String get programFromRecords;
+
+  /// No description provided for @programReplacePlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace my weekly plan'**
+  String get programReplacePlan;
+
+  /// No description provided for @programReplaceSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Runs and football stay, gym days switch'**
+  String get programReplaceSub;
+
+  /// No description provided for @programStartOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Start on {date}'**
+  String programStartOn(String date);
+
+  /// No description provided for @programReplacesActive.
+  ///
+  /// In en, this message translates to:
+  /// **'This replaces your active program.'**
+  String get programReplacesActive;
+
+  /// No description provided for @programProgressSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Week {w} of {n} · started {date}'**
+  String programProgressSub(int w, int n, String date);
+
+  /// No description provided for @programDeloadNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Week {w} is a deload'**
+  String programDeloadNote(int w);
+
+  /// No description provided for @programTileSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get programTileSessions;
+
+  /// No description provided for @programTileOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On time'**
+  String get programTileOnTime;
+
+  /// No description provided for @programTileRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get programTileRecords;
+
+  /// No description provided for @programThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get programThisWeek;
+
+  /// No description provided for @programWeekDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} done'**
+  String programWeekDone(int done, int total);
+
+  /// No description provided for @programNoSessionsWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'No program sessions this week.'**
+  String get programNoSessionsWeek;
+
+  /// No description provided for @programPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'planned'**
+  String get programPlanned;
+
+  /// No description provided for @programMainLifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Main lifts'**
+  String get programMainLifts;
+
+  /// No description provided for @programTopSetKg.
+  ///
+  /// In en, this message translates to:
+  /// **'top set, kg'**
+  String get programTopSetKg;
+
+  /// No description provided for @programColLift.
+  ///
+  /// In en, this message translates to:
+  /// **'Lift'**
+  String get programColLift;
+
+  /// No description provided for @programColStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get programColStart;
+
+  /// No description provided for @programColNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get programColNow;
+
+  /// No description provided for @programColGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get programColGoal;
+
+  /// No description provided for @programNextIncrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Next increase'**
+  String get programNextIncrease;
+
+  /// No description provided for @programNextIncreaseText.
+  ///
+  /// In en, this message translates to:
+  /// **'You hit {sets} × {reps} on {lift} twice in a row. Next session: {kg} kg.'**
+  String programNextIncreaseText(int sets, int reps, String lift, String kg);
+
+  /// No description provided for @programNoActive.
+  ///
+  /// In en, this message translates to:
+  /// **'No active program'**
+  String get programNoActive;
+
+  /// No description provided for @programNoActiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a program to get a plan for the next weeks.'**
+  String get programNoActiveBody;
+
+  /// No description provided for @programBrowse.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse programs'**
+  String get programBrowse;
+
+  /// No description provided for @programEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End program'**
+  String get programEnd;
+
+  /// No description provided for @programEndTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End this program?'**
+  String get programEndTitle;
+
+  /// No description provided for @programEndBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your workouts and records stay. Its remaining sessions leave your plan.'**
+  String get programEndBody;
+
+  /// No description provided for @programKgReps.
+  ///
+  /// In en, this message translates to:
+  /// **'{kg} kg × {reps}'**
+  String programKgReps(String kg, int reps);
 }
 
 class _AppLocalizationsDelegate

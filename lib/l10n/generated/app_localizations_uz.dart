@@ -3189,4 +3189,334 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get bodyEmpty => 'Trendni ko‘rish uchun vazningizni yozing.';
+
+  @override
+  String get programsTitle => 'Dasturlar';
+
+  @override
+  String get programsEntrySub => 'Kelgusi haftalar uchun tayyor rejalar';
+
+  @override
+  String get programsActiveEyebrow => 'Faol dastur';
+
+  @override
+  String programsWeekOf(int w, int n) {
+    return '$w-hafta / $n';
+  }
+
+  @override
+  String programsNext(String session, String day, String duration) {
+    return 'Keyingisi: $session · $day · $duration';
+  }
+
+  @override
+  String get programsNoneLeft => 'Dasturda mashg‘ulot qolmadi';
+
+  @override
+  String programsDoneOf(int done, int total) {
+    return 'Bajarildi: $done / $total mashg‘ulot';
+  }
+
+  @override
+  String get programsOpen => 'Ochish';
+
+  @override
+  String get programsPickedEyebrow => 'Siz uchun tanlandi';
+
+  @override
+  String programsPickedText(String name, int perWeek, String level) {
+    return '$name · haftada $perWeek kun · $level. Maqsad va tajribangizga mos.';
+  }
+
+  @override
+  String get programsFelixPick => 'Felix tanlovi';
+
+  @override
+  String get programsFilterAll => 'Hammasi';
+
+  @override
+  String get programsGoalMuscle => 'Mushak';
+
+  @override
+  String get programsGoalStrength => 'Kuch';
+
+  @override
+  String get programsGoalFatLoss => 'Yog‘ yo‘qotish';
+
+  @override
+  String get programsLevelBeginner => 'Boshlovchi';
+
+  @override
+  String get programsLevelIntermediate => 'O‘rta';
+
+  @override
+  String get programsLevelAdvanced => 'Ilg‘or';
+
+  @override
+  String get programsAtHome => 'Uyda';
+
+  @override
+  String get programsDaysAWeek => 'Haftada kunlar';
+
+  @override
+  String get programsAny => 'Istalgan';
+
+  @override
+  String programsCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n dastur',
+      one: '$n dastur',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String programsPerWeek(int n) {
+    return '$n× / hafta';
+  }
+
+  @override
+  String programsWeeksMin(int weeks, int min) {
+    String _temp0 = intl.Intl.pluralLogic(
+      weeks,
+      locale: localeName,
+      other: '$weeks hafta',
+      one: '$weeks hafta',
+    );
+    return '$_temp0 · $min daq';
+  }
+
+  @override
+  String get programsDetails => 'Batafsil';
+
+  @override
+  String get programsEmptyFilter => 'Bu filtrlarga mos dastur yo‘q.';
+
+  @override
+  String get programTitle => 'Dastur';
+
+  @override
+  String get programNotFound => 'Bu dastur mavjud emas.';
+
+  @override
+  String get programLength => 'Davomiyligi';
+
+  @override
+  String get programPerWeekLabel => 'Haftada';
+
+  @override
+  String get programSessionLabel => 'Mashg‘ulot';
+
+  @override
+  String programWeeksShort(int n) {
+    return '$n hafta';
+  }
+
+  @override
+  String get programYourWeek => 'Sizning haftangiz';
+
+  @override
+  String programClashes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n to‘qnashuv',
+      one: '$n to‘qnashuv',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get programRest => 'Dam';
+
+  @override
+  String programWorkoutsCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n mashg‘ulot',
+      one: '$n mashg‘ulot',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String programRir(int n) {
+    return 'RIR $n';
+  }
+
+  @override
+  String get programHowYouProgress => 'Qanday rivojlanasiz';
+
+  @override
+  String get programFelixEyebrow => 'Felix buni siz uchun moslashtirdi';
+
+  @override
+  String programFelixText(String days, String what) {
+    return 'Mashg‘ulot kunlari $days va undan oldingi kundan chetlab o‘tadi: $what. Boshlashda kunlarni o‘zgartirishingiz mumkin.';
+  }
+
+  @override
+  String get programAskFelix => 'Felixdan so‘rash';
+
+  @override
+  String programAskFelixDraft(String name) {
+    return '$name dasturi menga mosmi? Uni haftam bilan solishtiring.';
+  }
+
+  @override
+  String get programStart => 'Dasturni boshlash';
+
+  @override
+  String programStartTitle(String name) {
+    return 'Boshlash: $name';
+  }
+
+  @override
+  String programStartSub(int weeks, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      weeks,
+      locale: localeName,
+      other: '$weeks hafta',
+      one: '$weeks hafta',
+    );
+    return '$_temp0 · tugaydi: $date';
+  }
+
+  @override
+  String get programStartDate => 'Boshlanish';
+
+  @override
+  String get programToday => 'Bugun';
+
+  @override
+  String get programPickDate => 'Sanani tanlash';
+
+  @override
+  String get programTrainingDays => 'Mashg‘ulot kunlari';
+
+  @override
+  String programDaysPicked(int n, int total) {
+    return 'Tanlandi: $n / $total';
+  }
+
+  @override
+  String programClashTitle(String day, String title) {
+    return '$day: $title';
+  }
+
+  @override
+  String get programClashHit =>
+      'Bu kuni ikkita og‘ir mashg‘ulot to‘planadi. Boshqa kunni tanlang.';
+
+  @override
+  String get programClashAvoid =>
+      'Dastur kunlari undan chetda, shuning uchun oldin va keyin tiklanasiz.';
+
+  @override
+  String get programStartWeights => 'Boshlang‘ich vaznlar';
+
+  @override
+  String get programFromRecords => 'rekordlaringizdan';
+
+  @override
+  String get programReplacePlan => 'Haftalik rejamni almashtirish';
+
+  @override
+  String get programReplaceSub =>
+      'Yugurish va futbol qoladi, zal kunlari almashadi';
+
+  @override
+  String programStartOn(String date) {
+    return '$date boshlash';
+  }
+
+  @override
+  String get programReplacesActive => 'Bu faol dasturingizni almashtiradi.';
+
+  @override
+  String programProgressSub(int w, int n, String date) {
+    return '$w-hafta / $n · boshlangan: $date';
+  }
+
+  @override
+  String programDeloadNote(int w) {
+    return '$w-hafta — yengillashtirilgan hafta';
+  }
+
+  @override
+  String get programTileSessions => 'Mashg‘ulotlar';
+
+  @override
+  String get programTileOnTime => 'O‘z vaqtida';
+
+  @override
+  String get programTileRecords => 'Rekordlar';
+
+  @override
+  String get programThisWeek => 'Shu hafta';
+
+  @override
+  String programWeekDone(int done, int total) {
+    return '$done / $total bajarildi';
+  }
+
+  @override
+  String get programNoSessionsWeek => 'Bu hafta dastur mashg‘ulotlari yo‘q.';
+
+  @override
+  String get programPlanned => 'rejalashtirilgan';
+
+  @override
+  String get programMainLifts => 'Asosiy mashqlar';
+
+  @override
+  String get programTopSetKg => 'eng yaxshi to‘plam, kg';
+
+  @override
+  String get programColLift => 'Mashq';
+
+  @override
+  String get programColStart => 'Boshi';
+
+  @override
+  String get programColNow => 'Hozir';
+
+  @override
+  String get programColGoal => 'Maqsad';
+
+  @override
+  String get programNextIncrease => 'Keyingi oshirish';
+
+  @override
+  String programNextIncreaseText(int sets, int reps, String lift, String kg) {
+    return '$lift mashqida $sets × $reps ni ketma-ket ikki marta bajardingiz. Keyingi safar: $kg kg.';
+  }
+
+  @override
+  String get programNoActive => 'Faol dastur yo‘q';
+
+  @override
+  String get programNoActiveBody =>
+      'Kelgusi haftalar rejasini olish uchun dasturni tanlang.';
+
+  @override
+  String get programBrowse => 'Dasturlarni ko‘rish';
+
+  @override
+  String get programEnd => 'Dasturni tugatish';
+
+  @override
+  String get programEndTitle => 'Bu dasturni tugatamizmi?';
+
+  @override
+  String get programEndBody =>
+      'Mashg‘ulotlar va rekordlar qoladi. Qolgan mashg‘ulotlar rejadan o‘chadi.';
+
+  @override
+  String programKgReps(String kg, int reps) {
+    return '$kg kg × $reps';
+  }
 }

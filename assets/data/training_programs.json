@@ -1,0 +1,679 @@
+[
+ {
+  "id": "gzclp",
+  "name": "GZCLP",
+  "author": "Cody Lefever",
+  "weeks": 12,
+  "perWeek": 4,
+  "level": "beginner",
+  "goals": [
+   "strength",
+   "muscle"
+  ],
+  "atHome": false,
+  "summary": "Linear progression with built-in volume and a clear plan for stalls.",
+  "deloadWeek": null,
+  "progressionRules": [
+   "Linear progression: Add 2.5 kg to the main lift every session while you hit all sets.",
+   "When you stall: Drop the weight by 10% and build back up, then move to the next rep scheme.",
+   "Three tiers: Heavy main lift first, a lighter second lift, then high-rep accessories."
+  ],
+  "sessions": [
+   {
+    "name": "Day 1",
+    "minutes": 70,
+    "exercises": [
+     {
+      "exercise": "Back squat",
+      "sets": 5,
+      "repsLow": 3,
+      "repsHigh": 3,
+      "rir": 1
+     },
+     {
+      "exercise": "Bench press",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 10,
+      "rir": 2
+     },
+     {
+      "exercise": "Lat pulldown",
+      "sets": 3,
+      "repsLow": 15,
+      "repsHigh": 15,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Day 2",
+    "minutes": 70,
+    "exercises": [
+     {
+      "exercise": "Overhead press",
+      "sets": 5,
+      "repsLow": 3,
+      "repsHigh": 3,
+      "rir": 1
+     },
+     {
+      "exercise": "Deadlift",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 10,
+      "rir": 2
+     },
+     {
+      "exercise": "Dumbbell row",
+      "sets": 3,
+      "repsLow": 15,
+      "repsHigh": 15,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Day 3",
+    "minutes": 70,
+    "exercises": [
+     {
+      "exercise": "Bench press",
+      "sets": 5,
+      "repsLow": 3,
+      "repsHigh": 3,
+      "rir": 1
+     },
+     {
+      "exercise": "Back squat",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 10,
+      "rir": 2
+     },
+     {
+      "exercise": "Lat pulldown",
+      "sets": 3,
+      "repsLow": 15,
+      "repsHigh": 15,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Day 4",
+    "minutes": 70,
+    "exercises": [
+     {
+      "exercise": "Deadlift",
+      "sets": 5,
+      "repsLow": 3,
+      "repsHigh": 3,
+      "rir": 1
+     },
+     {
+      "exercise": "Overhead press",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 10,
+      "rir": 2
+     },
+     {
+      "exercise": "Dumbbell row",
+      "sets": 3,
+      "repsLow": 15,
+      "repsHigh": 15,
+      "rir": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "full-body-3",
+  "name": "Full body 3×",
+  "author": "FITRIX template",
+  "weeks": 8,
+  "perWeek": 3,
+  "level": "beginner",
+  "goals": [
+   "muscle",
+   "fat_loss"
+  ],
+  "atHome": true,
+  "summary": "Every muscle twice a week in three 60-minute sessions.",
+  "deloadWeek": null,
+  "progressionRules": [
+   "Double progression: Hit the top of the rep range on every set, then add the smallest weight step.",
+   "Keep two reps in reserve: Stop sets when you could do about two more clean reps."
+  ],
+  "sessions": [
+   {
+    "name": "Full body A",
+    "minutes": 60,
+    "exercises": [
+     {
+      "exercise": "Goblet squat",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 2
+     },
+     {
+      "exercise": "Dumbbell bench press",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "rir": 2
+     },
+     {
+      "exercise": "Dumbbell row",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "rir": 2
+     },
+     {
+      "exercise": "Glute bridge",
+      "sets": 3,
+      "repsLow": 12,
+      "repsHigh": 15,
+      "rir": 2
+     },
+     {
+      "exercise": "Crunch",
+      "sets": 3,
+      "repsLow": 12,
+      "repsHigh": 15,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Full body B",
+    "minutes": 60,
+    "exercises": [
+     {
+      "exercise": "Romanian deadlift",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "rir": 2
+     },
+     {
+      "exercise": "Dumbbell shoulder press",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "rir": 2
+     },
+     {
+      "exercise": "Push-ups",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 15,
+      "rir": 2
+     },
+     {
+      "exercise": "Walking lunge",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 2
+     },
+     {
+      "exercise": "Biceps curl",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Full body C",
+    "minutes": 60,
+    "exercises": [
+     {
+      "exercise": "Goblet squat",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 2
+     },
+     {
+      "exercise": "Incline dumbbell press",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "rir": 2
+     },
+     {
+      "exercise": "Dumbbell row",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "rir": 2
+     },
+     {
+      "exercise": "Hip thrust",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 2
+     },
+     {
+      "exercise": "Lateral raise",
+      "sets": 3,
+      "repsLow": 12,
+      "repsHigh": 15,
+      "rir": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "stronglifts-5x5",
+  "name": "StrongLifts 5×5",
+  "author": "Mehdi Hadim",
+  "weeks": 12,
+  "perWeek": 3,
+  "level": "beginner",
+  "goals": [
+   "strength"
+  ],
+  "atHome": false,
+  "summary": "Five lifts, five sets of five, add weight every session.",
+  "deloadWeek": null,
+  "progressionRules": [
+   "Add weight every session: Put 2.5 kg on the bar after every session where you complete all 5 × 5.",
+   "When you fail: Repeat the weight, and after three fails drop it by 10%."
+  ],
+  "sessions": [
+   {
+    "name": "Workout A",
+    "minutes": 45,
+    "exercises": [
+     {
+      "exercise": "Back squat",
+      "sets": 5,
+      "repsLow": 5,
+      "repsHigh": 5,
+      "rir": 1
+     },
+     {
+      "exercise": "Bench press",
+      "sets": 5,
+      "repsLow": 5,
+      "repsHigh": 5,
+      "rir": 1
+     },
+     {
+      "exercise": "Barbell row",
+      "sets": 5,
+      "repsLow": 5,
+      "repsHigh": 5,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Workout B",
+    "minutes": 45,
+    "exercises": [
+     {
+      "exercise": "Back squat",
+      "sets": 5,
+      "repsLow": 5,
+      "repsHigh": 5,
+      "rir": 1
+     },
+     {
+      "exercise": "Overhead press",
+      "sets": 5,
+      "repsLow": 5,
+      "repsHigh": 5,
+      "rir": 1
+     },
+     {
+      "exercise": "Deadlift",
+      "sets": 1,
+      "repsLow": 5,
+      "repsHigh": 5,
+      "rir": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "ppl-6",
+  "name": "Push / Pull / Legs",
+  "author": "FITRIX template",
+  "weeks": 10,
+  "perWeek": 6,
+  "level": "advanced",
+  "goals": [
+   "muscle"
+  ],
+  "atHome": false,
+  "summary": "High frequency and volume for lifters who can train most days.",
+  "deloadWeek": null,
+  "progressionRules": [
+   "Double progression: Hit the top of the rep range on every set, then add 2.5 kg upper or 5 kg lower.",
+   "Volume first: Add a set before adding weight when a lift stalls."
+  ],
+  "sessions": [
+   {
+    "name": "Push",
+    "minutes": 75,
+    "exercises": [
+     {
+      "exercise": "Bench press",
+      "sets": 4,
+      "repsLow": 6,
+      "repsHigh": 8,
+      "rir": 2
+     },
+     {
+      "exercise": "Overhead press",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 10,
+      "rir": 2
+     },
+     {
+      "exercise": "Incline dumbbell press",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "rir": 1
+     },
+     {
+      "exercise": "Lateral raise",
+      "sets": 4,
+      "repsLow": 12,
+      "repsHigh": 15,
+      "rir": 1
+     },
+     {
+      "exercise": "Triceps pushdown",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Pull",
+    "minutes": 75,
+    "exercises": [
+     {
+      "exercise": "Barbell row",
+      "sets": 4,
+      "repsLow": 6,
+      "repsHigh": 8,
+      "rir": 2
+     },
+     {
+      "exercise": "Lat pulldown",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 12,
+      "rir": 1
+     },
+     {
+      "exercise": "Seated cable row",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     },
+     {
+      "exercise": "Face pull",
+      "sets": 3,
+      "repsLow": 12,
+      "repsHigh": 15,
+      "rir": 1
+     },
+     {
+      "exercise": "Biceps curl",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Legs",
+    "minutes": 75,
+    "exercises": [
+     {
+      "exercise": "Back squat",
+      "sets": 4,
+      "repsLow": 6,
+      "repsHigh": 8,
+      "rir": 2
+     },
+     {
+      "exercise": "Romanian deadlift",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 10,
+      "rir": 2
+     },
+     {
+      "exercise": "Leg press",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     },
+     {
+      "exercise": "Leg curl",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     },
+     {
+      "exercise": "Calf raise",
+      "sets": 4,
+      "repsLow": 12,
+      "repsHigh": 15,
+      "rir": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "upper-lower-4",
+  "name": "Upper / Lower 4×",
+  "author": "FITRIX template",
+  "weeks": 8,
+  "perWeek": 4,
+  "level": "intermediate",
+  "goals": [
+   "muscle",
+   "strength"
+  ],
+  "atHome": false,
+  "summary": "For lifters with a year of training who want every muscle twice a week: heavy compounds first, then moderate accessories.",
+  "deloadWeek": 7,
+  "progressionRules": [
+   "Double progression: Hit the top of the rep range on every set, then add 2.5 kg upper or 5 kg lower.",
+   "Deload in week 7: Same exercises, half the sets, so fatigue drops before the last block.",
+   "Volume builds: 10 to 16 sets per muscle a week over 6 weeks."
+  ],
+  "sessions": [
+   {
+    "name": "Upper 1",
+    "minutes": 80,
+    "exercises": [
+     {
+      "exercise": "Bench press",
+      "sets": 4,
+      "repsLow": 6,
+      "repsHigh": 8,
+      "rir": 2
+     },
+     {
+      "exercise": "Barbell row",
+      "sets": 4,
+      "repsLow": 6,
+      "repsHigh": 8,
+      "rir": 2
+     },
+     {
+      "exercise": "Overhead press",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 10,
+      "rir": 2
+     },
+     {
+      "exercise": "Lat pulldown",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     },
+     {
+      "exercise": "Triceps pushdown",
+      "sets": 3,
+      "repsLow": 12,
+      "repsHigh": 12,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Lower 1",
+    "minutes": 80,
+    "exercises": [
+     {
+      "exercise": "Back squat",
+      "sets": 4,
+      "repsLow": 6,
+      "repsHigh": 8,
+      "rir": 2
+     },
+     {
+      "exercise": "Romanian deadlift",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 10,
+      "rir": 2
+     },
+     {
+      "exercise": "Leg press",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     },
+     {
+      "exercise": "Leg curl",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     },
+     {
+      "exercise": "Calf raise",
+      "sets": 3,
+      "repsLow": 12,
+      "repsHigh": 15,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Upper 2",
+    "minutes": 80,
+    "exercises": [
+     {
+      "exercise": "Incline bench",
+      "sets": 4,
+      "repsLow": 6,
+      "repsHigh": 8,
+      "rir": 2
+     },
+     {
+      "exercise": "Chest-supported row",
+      "sets": 4,
+      "repsLow": 8,
+      "repsHigh": 10,
+      "rir": 2
+     },
+     {
+      "exercise": "Dumbbell shoulder press",
+      "sets": 3,
+      "repsLow": 8,
+      "repsHigh": 10,
+      "rir": 2
+     },
+     {
+      "exercise": "Cable fly",
+      "sets": 3,
+      "repsLow": 12,
+      "repsHigh": 15,
+      "rir": 1
+     },
+     {
+      "exercise": "Hammer curl",
+      "sets": 3,
+      "repsLow": 12,
+      "repsHigh": 12,
+      "rir": 1
+     }
+    ]
+   },
+   {
+    "name": "Lower 2",
+    "minutes": 80,
+    "exercises": [
+     {
+      "exercise": "Deadlift",
+      "sets": 3,
+      "repsLow": 5,
+      "repsHigh": 6,
+      "rir": 2
+     },
+     {
+      "exercise": "Front squat",
+      "sets": 3,
+      "repsLow": 6,
+      "repsHigh": 8,
+      "rir": 2
+     },
+     {
+      "exercise": "Walking lunge",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     },
+     {
+      "exercise": "Leg extension",
+      "sets": 3,
+      "repsLow": 12,
+      "repsHigh": 15,
+      "rir": 1
+     },
+     {
+      "exercise": "Hanging leg raise",
+      "sets": 3,
+      "repsLow": 10,
+      "repsHigh": 12,
+      "rir": 1
+     }
+    ]
+   }
+  ]
+ }
+]

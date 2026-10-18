@@ -88,22 +88,39 @@ class WorkoutTemplatesNotifier extends StateNotifier<List<WorkoutTemplate>> {
   }
 
   /// Adds ready-made plans (e.g. proposed by Felix) for [sport] in one go.
-  void addAll(
-      Sport sport, List<({String name, List<Exercise> exercises})> plans) {
+  /// Returns the new plans' ids, in order.
+  List<String> addAll(
+          Sport sport, List<({String name, List<Exercise> exercises})> plans) =>
+      addPlans(sport, [
+        for (final p in plans)
+          (
+            name: p.name,
+            exercises: p.exercises,
+            minutes: 60,
+            focus: sport.label
+          ),
+      ]);
+
+  /// Like [addAll] with a duration and a focus per plan (training programs).
+  List<String> addPlans(
+      Sport sport,
+      List<({String name, List<Exercise> exercises, int minutes, String focus})>
+          plans) {
     final now = DateTime.now();
-    state = [
-      ...state,
+    final created = [
       for (final plan in plans)
         WorkoutTemplate(
           id: _uuid.v4(),
           sport: sport,
           name: plan.name,
-          focus: sport.label,
-          estimatedDuration: const Duration(hours: 1),
+          focus: plan.focus,
+          estimatedDuration: Duration(minutes: plan.minutes),
           exercises: plan.exercises,
           updatedAt: now,
         ),
     ];
+    state = [...state, ...created];
+    return [for (final t in created) t.id];
   }
 
   void update(WorkoutTemplate template) {

@@ -3249,4 +3249,336 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get bodyEmpty => 'Registra tu peso para ver tu tendencia.';
+
+  @override
+  String get programsTitle => 'Programas';
+
+  @override
+  String get programsEntrySub => 'Planes listos para las próximas semanas';
+
+  @override
+  String get programsActiveEyebrow => 'Programa activo';
+
+  @override
+  String programsWeekOf(int w, int n) {
+    return 'Semana $w de $n';
+  }
+
+  @override
+  String programsNext(String session, String day, String duration) {
+    return 'Siguiente: $session · $day · $duration';
+  }
+
+  @override
+  String get programsNoneLeft => 'No quedan sesiones en este programa';
+
+  @override
+  String programsDoneOf(int done, int total) {
+    return '$done de $total sesiones hechas';
+  }
+
+  @override
+  String get programsOpen => 'Abrir';
+
+  @override
+  String get programsPickedEyebrow => 'Elegido para ti';
+
+  @override
+  String programsPickedText(String name, int perWeek, String level) {
+    return '$name · $perWeek días a la semana · $level. Encaja con tu objetivo y experiencia.';
+  }
+
+  @override
+  String get programsFelixPick => 'Elección de Felix';
+
+  @override
+  String get programsFilterAll => 'Todos';
+
+  @override
+  String get programsGoalMuscle => 'Músculo';
+
+  @override
+  String get programsGoalStrength => 'Fuerza';
+
+  @override
+  String get programsGoalFatLoss => 'Perder grasa';
+
+  @override
+  String get programsLevelBeginner => 'Principiante';
+
+  @override
+  String get programsLevelIntermediate => 'Intermedio';
+
+  @override
+  String get programsLevelAdvanced => 'Avanzado';
+
+  @override
+  String get programsAtHome => 'En casa';
+
+  @override
+  String get programsDaysAWeek => 'Días a la semana';
+
+  @override
+  String get programsAny => 'Cualquiera';
+
+  @override
+  String programsCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n programas',
+      one: '$n programa',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String programsPerWeek(int n) {
+    return '$n× / semana';
+  }
+
+  @override
+  String programsWeeksMin(int weeks, int min) {
+    String _temp0 = intl.Intl.pluralLogic(
+      weeks,
+      locale: localeName,
+      other: '$weeks semanas',
+      one: '$weeks semana',
+    );
+    return '$_temp0 · $min min';
+  }
+
+  @override
+  String get programsDetails => 'Detalles';
+
+  @override
+  String get programsEmptyFilter =>
+      'Ningún programa coincide con estos filtros.';
+
+  @override
+  String get programTitle => 'Programa';
+
+  @override
+  String get programNotFound => 'Este programa no está disponible.';
+
+  @override
+  String get programLength => 'Duración';
+
+  @override
+  String get programPerWeekLabel => 'Por semana';
+
+  @override
+  String get programSessionLabel => 'Sesión';
+
+  @override
+  String programWeeksShort(int n) {
+    return '$n sem';
+  }
+
+  @override
+  String get programYourWeek => 'Tu semana';
+
+  @override
+  String programClashes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n choques',
+      one: '$n choque',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get programRest => 'Descanso';
+
+  @override
+  String programWorkoutsCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n entrenamientos',
+      one: '$n entrenamiento',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String programRir(int n) {
+    return 'RIR $n';
+  }
+
+  @override
+  String get programHowYouProgress => 'Cómo progresas';
+
+  @override
+  String get programFelixEyebrow => 'Felix lo ajustó para ti';
+
+  @override
+  String programFelixText(String days, String what) {
+    return 'Los días de entreno evitan $days y el día anterior por: $what. Puedes cambiar los días al empezar.';
+  }
+
+  @override
+  String get programAskFelix => 'Preguntar a Felix';
+
+  @override
+  String programAskFelixDraft(String name) {
+    return '¿Es $name un buen programa para mí? Compárala con mi semana.';
+  }
+
+  @override
+  String get programStart => 'Empezar programa';
+
+  @override
+  String programStartTitle(String name) {
+    return 'Empezar $name';
+  }
+
+  @override
+  String programStartSub(int weeks, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      weeks,
+      locale: localeName,
+      other: '$weeks semanas',
+      one: '$weeks semana',
+    );
+    return '$_temp0 · termina el $date';
+  }
+
+  @override
+  String get programStartDate => 'Inicio';
+
+  @override
+  String get programToday => 'Hoy';
+
+  @override
+  String get programPickDate => 'Elegir fecha';
+
+  @override
+  String get programTrainingDays => 'Días de entreno';
+
+  @override
+  String programDaysPicked(int n, int total) {
+    return '$n de $total elegidos';
+  }
+
+  @override
+  String programClashTitle(String day, String title) {
+    return '$day: $title';
+  }
+
+  @override
+  String get programClashHit =>
+      'Entrenar ese día suma dos sesiones duras. Elige otro día.';
+
+  @override
+  String get programClashAvoid =>
+      'Los días del programa lo evitan para que te recuperes antes y después.';
+
+  @override
+  String get programStartWeights => 'Pesos iniciales';
+
+  @override
+  String get programFromRecords => 'de tus récords';
+
+  @override
+  String get programReplacePlan => 'Reemplazar mi plan semanal';
+
+  @override
+  String get programReplaceSub =>
+      'Correr y fútbol se quedan, los días de gimnasio cambian';
+
+  @override
+  String programStartOn(String date) {
+    return 'Empezar el $date';
+  }
+
+  @override
+  String get programReplacesActive => 'Esto reemplaza tu programa activo.';
+
+  @override
+  String programProgressSub(int w, int n, String date) {
+    return 'Semana $w de $n · empezó el $date';
+  }
+
+  @override
+  String programDeloadNote(int w) {
+    return 'La semana $w es de descarga';
+  }
+
+  @override
+  String get programTileSessions => 'Sesiones';
+
+  @override
+  String get programTileOnTime => 'A tiempo';
+
+  @override
+  String get programTileRecords => 'Récords';
+
+  @override
+  String get programThisWeek => 'Esta semana';
+
+  @override
+  String programWeekDone(int done, int total) {
+    return '$done de $total hechas';
+  }
+
+  @override
+  String get programNoSessionsWeek =>
+      'No hay sesiones del programa esta semana.';
+
+  @override
+  String get programPlanned => 'planificada';
+
+  @override
+  String get programMainLifts => 'Levantamientos principales';
+
+  @override
+  String get programTopSetKg => 'serie top, kg';
+
+  @override
+  String get programColLift => 'Ejercicio';
+
+  @override
+  String get programColStart => 'Inicio';
+
+  @override
+  String get programColNow => 'Ahora';
+
+  @override
+  String get programColGoal => 'Meta';
+
+  @override
+  String get programNextIncrease => 'Próximo aumento';
+
+  @override
+  String programNextIncreaseText(int sets, int reps, String lift, String kg) {
+    return 'Hiciste $sets × $reps en $lift dos veces seguidas. Próxima sesión: $kg kg.';
+  }
+
+  @override
+  String get programNoActive => 'Sin programa activo';
+
+  @override
+  String get programNoActiveBody =>
+      'Elige un programa para tener un plan de las próximas semanas.';
+
+  @override
+  String get programBrowse => 'Ver programas';
+
+  @override
+  String get programEnd => 'Terminar programa';
+
+  @override
+  String get programEndTitle => '¿Terminar este programa?';
+
+  @override
+  String get programEndBody =>
+      'Tus entrenamientos y récords se quedan. Las sesiones restantes salen de tu plan.';
+
+  @override
+  String programKgReps(String kg, int reps) {
+    return '$kg kg × $reps';
+  }
 }

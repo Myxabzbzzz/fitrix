@@ -33,13 +33,24 @@ class WeekPlanNotifier extends StateNotifier<List<PlannedSession>> {
         for (final s in state) s.id == id ? s.copyWith(day: day) : s,
       ]);
 
+  /// Removes every session for which [test] is true.
+  Future<void> removeWhere(bool Function(PlannedSession) test) => _set([
+        for (final s in state)
+          if (!test(s)) s
+      ]);
+
   /// Swaps today's and later gym sessions for [sessions] (used when Felix
-  /// builds a plan). Past sessions and other sports stay.
-  Future<void> replaceFutureGym(List<PlannedSession> sessions) {
+  /// builds a plan). Past sessions and other sports stay, and so do sessions
+  /// that [isDone] reports as done (a gym session finished today).
+  Future<void> replaceFutureGym(List<PlannedSession> sessions,
+      {bool Function(PlannedSession)? isDone}) {
     final today = dateOnly(_now());
     return _set([
       for (final s in state)
-        if (s.sport != Sport.gym || s.day.isBefore(today)) s,
+        if (s.sport != Sport.gym ||
+            s.day.isBefore(today) ||
+            (isDone != null && isDone(s)))
+          s,
       ...sessions,
     ]);
   }

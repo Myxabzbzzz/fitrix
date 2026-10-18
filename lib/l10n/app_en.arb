@@ -2477,5 +2477,303 @@
   "bodySheetTitle": "Today's weight",
   "bodySave": "Save",
   "bodyWeightRange": "Enter a weight between 20 and 400 kg.",
-  "bodyEmpty": "Log your weight to see your trend."
+  "bodyEmpty": "Log your weight to see your trend.",
+  "programsTitle": "Programs",
+  "programsEntrySub": "Ready-made plans for the next weeks",
+  "programsActiveEyebrow": "Active program",
+  "programsWeekOf": "Week {w} of {n}",
+    "@programsWeekOf": {
+      "placeholders": {
+        "w": {
+          "type": "int"
+        },
+        "n": {
+          "type": "int"
+        }
+      }
+    },
+  "programsNext": "Next: {session} · {day} · {duration}",
+    "@programsNext": {
+      "placeholders": {
+        "session": {
+          "type": "String"
+        },
+        "day": {
+          "type": "String"
+        },
+        "duration": {
+          "type": "String"
+        }
+      }
+    },
+  "programsNoneLeft": "No sessions left in this program",
+  "programsDoneOf": "{done} of {total} sessions done",
+    "@programsDoneOf": {
+      "placeholders": {
+        "done": {
+          "type": "int"
+        },
+        "total": {
+          "type": "int"
+        }
+      }
+    },
+  "programsOpen": "Open",
+  "programsPickedEyebrow": "Picked for you",
+  "programsPickedText": "{name} · {perWeek} days a week · {level}. A good fit for your goal and experience.",
+    "@programsPickedText": {
+      "placeholders": {
+        "name": {
+          "type": "String"
+        },
+        "perWeek": {
+          "type": "int"
+        },
+        "level": {
+          "type": "String"
+        }
+      }
+    },
+  "programsFelixPick": "Felix pick",
+  "programsFilterAll": "All",
+  "programsGoalMuscle": "Muscle",
+  "programsGoalStrength": "Strength",
+  "programsGoalFatLoss": "Fat loss",
+  "programsLevelBeginner": "Beginner",
+  "programsLevelIntermediate": "Intermediate",
+  "programsLevelAdvanced": "Advanced",
+  "programsAtHome": "At home",
+  "programsDaysAWeek": "Days a week",
+  "programsAny": "Any",
+  "programsCount": "{n, plural, one{{n} program} other{{n} programs}}",
+    "@programsCount": {
+      "placeholders": {
+        "n": {
+          "type": "int"
+        }
+      }
+    },
+  "programsPerWeek": "{n}× / week",
+    "@programsPerWeek": {
+      "placeholders": {
+        "n": {
+          "type": "int"
+        }
+      }
+    },
+  "programsWeeksMin": "{weeks, plural, one{{weeks} week} other{{weeks} weeks}} · {min} min",
+    "@programsWeeksMin": {
+      "placeholders": {
+        "weeks": {
+          "type": "int"
+        },
+        "min": {
+          "type": "int"
+        }
+      }
+    },
+  "programsDetails": "Details",
+  "programsEmptyFilter": "No program matches these filters.",
+  "programTitle": "Program",
+  "programNotFound": "This program is not available.",
+  "programLength": "Length",
+  "programPerWeekLabel": "Per week",
+  "programSessionLabel": "Session",
+  "programWeeksShort": "{n} wk",
+    "@programWeeksShort": {
+      "placeholders": {
+        "n": {
+          "type": "int"
+        }
+      }
+    },
+  "programYourWeek": "Your week",
+  "programClashes": "{n, plural, one{{n} clash} other{{n} clashes}}",
+    "@programClashes": {
+      "placeholders": {
+        "n": {
+          "type": "int"
+        }
+      }
+    },
+  "programRest": "Rest",
+  "programWorkoutsCount": "{n, plural, one{{n} workout} other{{n} workouts}}",
+    "@programWorkoutsCount": {
+      "placeholders": {
+        "n": {
+          "type": "int"
+        }
+      }
+    },
+  "programRir": "RIR {n}",
+    "@programRir": {
+      "placeholders": {
+        "n": {
+          "type": "int"
+        }
+      }
+    },
+  "programHowYouProgress": "How you progress",
+  "programFelixEyebrow": "Felix adjusted it for you",
+  "programFelixText": "Training days avoid {days} and the day before because of {what}. You can change the days when you start.",
+    "@programFelixText": {
+      "placeholders": {
+        "days": {
+          "type": "String"
+        },
+        "what": {
+          "type": "String"
+        }
+      }
+    },
+  "programAskFelix": "Ask Felix",
+  "programAskFelixDraft": "Is {name} a good program for me? Check it against my week.",
+    "@programAskFelixDraft": {
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
+  "programStart": "Start program",
+  "programStartTitle": "Start {name}",
+    "@programStartTitle": {
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
+  "programStartSub": "{weeks, plural, one{{weeks} week} other{{weeks} weeks}} · ends {date}",
+    "@programStartSub": {
+      "placeholders": {
+        "weeks": {
+          "type": "int"
+        },
+        "date": {
+          "type": "String"
+        }
+      }
+    },
+  "programStartDate": "Start",
+  "programToday": "Today",
+  "programPickDate": "Pick date",
+  "programTrainingDays": "Training days",
+  "programDaysPicked": "{n} of {total} picked",
+    "@programDaysPicked": {
+      "placeholders": {
+        "n": {
+          "type": "int"
+        },
+        "total": {
+          "type": "int"
+        }
+      }
+    },
+  "programClashTitle": "{day} is {title}",
+    "@programClashTitle": {
+      "placeholders": {
+        "day": {
+          "type": "String"
+        },
+        "title": {
+          "type": "String"
+        }
+      }
+    },
+  "programClashHit": "Training that day stacks two hard sessions. Pick another day.",
+  "programClashAvoid": "Program days stay clear of it, so you recover before and after.",
+  "programStartWeights": "Start weights",
+  "programFromRecords": "from your records",
+  "programReplacePlan": "Replace my weekly plan",
+  "programReplaceSub": "Runs and football stay, gym days switch",
+  "programStartOn": "Start on {date}",
+    "@programStartOn": {
+      "placeholders": {
+        "date": {
+          "type": "String"
+        }
+      }
+    },
+  "programReplacesActive": "This replaces your active program.",
+  "programProgressSub": "Week {w} of {n} · started {date}",
+    "@programProgressSub": {
+      "placeholders": {
+        "w": {
+          "type": "int"
+        },
+        "n": {
+          "type": "int"
+        },
+        "date": {
+          "type": "String"
+        }
+      }
+    },
+  "programDeloadNote": "Week {w} is a deload",
+    "@programDeloadNote": {
+      "placeholders": {
+        "w": {
+          "type": "int"
+        }
+      }
+    },
+  "programTileSessions": "Sessions",
+  "programTileOnTime": "On time",
+  "programTileRecords": "Records",
+  "programThisWeek": "This week",
+  "programWeekDone": "{done} of {total} done",
+    "@programWeekDone": {
+      "placeholders": {
+        "done": {
+          "type": "int"
+        },
+        "total": {
+          "type": "int"
+        }
+      }
+    },
+  "programNoSessionsWeek": "No program sessions this week.",
+  "programPlanned": "planned",
+  "programMainLifts": "Main lifts",
+  "programTopSetKg": "top set, kg",
+  "programColLift": "Lift",
+  "programColStart": "Start",
+  "programColNow": "Now",
+  "programColGoal": "Goal",
+  "programNextIncrease": "Next increase",
+  "programNextIncreaseText": "You hit {sets} × {reps} on {lift} twice in a row. Next session: {kg} kg.",
+    "@programNextIncreaseText": {
+      "placeholders": {
+        "sets": {
+          "type": "int"
+        },
+        "reps": {
+          "type": "int"
+        },
+        "lift": {
+          "type": "String"
+        },
+        "kg": {
+          "type": "String"
+        }
+      }
+    },
+  "programNoActive": "No active program",
+  "programNoActiveBody": "Pick a program to get a plan for the next weeks.",
+  "programBrowse": "Browse programs",
+  "programEnd": "End program",
+  "programEndTitle": "End this program?",
+  "programEndBody": "Your workouts and records stay. Its remaining sessions leave your plan.",
+  "programKgReps": "{kg} kg × {reps}",
+    "@programKgReps": {
+      "placeholders": {
+        "kg": {
+          "type": "String"
+        },
+        "reps": {
+          "type": "int"
+        }
+      }
+    }
 }

@@ -69,6 +69,16 @@ class MyWorkoutsScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
+                  Builder(
+                    builder: (cardContext) => _EntryCard(
+                      key: const ValueKey('programs-entry'),
+                      title: l10n.programsTitle,
+                      subtitle: l10n.programsEntrySub,
+                      onTap: () =>
+                          openWithReveal(cardContext, AppRouter.programs),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
                   for (final sport in _sports) ...[
                     SizedBox(
                       height: 120,

@@ -3298,4 +3298,343 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get bodyEmpty => 'Запишите вес, чтобы увидеть тренд.';
+
+  @override
+  String get programsTitle => 'Программы';
+
+  @override
+  String get programsEntrySub => 'Готовые планы на ближайшие недели';
+
+  @override
+  String get programsActiveEyebrow => 'Активная программа';
+
+  @override
+  String programsWeekOf(int w, int n) {
+    return 'Неделя $w из $n';
+  }
+
+  @override
+  String programsNext(String session, String day, String duration) {
+    return 'Дальше: $session · $day · $duration';
+  }
+
+  @override
+  String get programsNoneLeft => 'В программе не осталось занятий';
+
+  @override
+  String programsDoneOf(int done, int total) {
+    return 'Выполнено $done из $total занятий';
+  }
+
+  @override
+  String get programsOpen => 'Открыть';
+
+  @override
+  String get programsPickedEyebrow => 'Подобрано для вас';
+
+  @override
+  String programsPickedText(String name, int perWeek, String level) {
+    return '$name · $perWeek дн. в неделю · $level. Подходит вашей цели и опыту.';
+  }
+
+  @override
+  String get programsFelixPick => 'Выбор Felix';
+
+  @override
+  String get programsFilterAll => 'Все';
+
+  @override
+  String get programsGoalMuscle => 'Мышцы';
+
+  @override
+  String get programsGoalStrength => 'Сила';
+
+  @override
+  String get programsGoalFatLoss => 'Снижение жира';
+
+  @override
+  String get programsLevelBeginner => 'Новичок';
+
+  @override
+  String get programsLevelIntermediate => 'Средний';
+
+  @override
+  String get programsLevelAdvanced => 'Продвинутый';
+
+  @override
+  String get programsAtHome => 'Дома';
+
+  @override
+  String get programsDaysAWeek => 'Дней в неделю';
+
+  @override
+  String get programsAny => 'Любое';
+
+  @override
+  String programsCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n программы',
+      many: '$n программ',
+      few: '$n программы',
+      one: '$n программа',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String programsPerWeek(int n) {
+    return '$n× / нед.';
+  }
+
+  @override
+  String programsWeeksMin(int weeks, int min) {
+    String _temp0 = intl.Intl.pluralLogic(
+      weeks,
+      locale: localeName,
+      other: '$weeks недели',
+      many: '$weeks недель',
+      few: '$weeks недели',
+      one: '$weeks неделя',
+    );
+    return '$_temp0 · $min мин';
+  }
+
+  @override
+  String get programsDetails => 'Подробнее';
+
+  @override
+  String get programsEmptyFilter => 'Нет программ под эти фильтры.';
+
+  @override
+  String get programTitle => 'Программа';
+
+  @override
+  String get programNotFound => 'Эта программа недоступна.';
+
+  @override
+  String get programLength => 'Длительность';
+
+  @override
+  String get programPerWeekLabel => 'В неделю';
+
+  @override
+  String get programSessionLabel => 'Занятие';
+
+  @override
+  String programWeeksShort(int n) {
+    return '$n нед.';
+  }
+
+  @override
+  String get programYourWeek => 'Ваша неделя';
+
+  @override
+  String programClashes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n конфликта',
+      many: '$n конфликтов',
+      few: '$n конфликта',
+      one: '$n конфликт',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get programRest => 'Отдых';
+
+  @override
+  String programWorkoutsCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n тренировки',
+      many: '$n тренировок',
+      few: '$n тренировки',
+      one: '$n тренировка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String programRir(int n) {
+    return 'RIR $n';
+  }
+
+  @override
+  String get programHowYouProgress => 'Как вы прогрессируете';
+
+  @override
+  String get programFelixEyebrow => 'Felix подстроил это для вас';
+
+  @override
+  String programFelixText(String days, String what) {
+    return 'Дни тренировок обходят $days и день перед ним из-за: $what. Дни можно изменить при старте.';
+  }
+
+  @override
+  String get programAskFelix => 'Спросить Felix';
+
+  @override
+  String programAskFelixDraft(String name) {
+    return 'Подходит ли мне программа $name? Сверь её с моей неделей.';
+  }
+
+  @override
+  String get programStart => 'Начать программу';
+
+  @override
+  String programStartTitle(String name) {
+    return 'Начать: $name';
+  }
+
+  @override
+  String programStartSub(int weeks, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      weeks,
+      locale: localeName,
+      other: '$weeks недели',
+      many: '$weeks недель',
+      few: '$weeks недели',
+      one: '$weeks неделя',
+    );
+    return '$_temp0 · до $date';
+  }
+
+  @override
+  String get programStartDate => 'Старт';
+
+  @override
+  String get programToday => 'Сегодня';
+
+  @override
+  String get programPickDate => 'Выбрать дату';
+
+  @override
+  String get programTrainingDays => 'Дни тренировок';
+
+  @override
+  String programDaysPicked(int n, int total) {
+    return 'Выбрано $n из $total';
+  }
+
+  @override
+  String programClashTitle(String day, String title) {
+    return '$day: $title';
+  }
+
+  @override
+  String get programClashHit =>
+      'В этот день будут две тяжёлые тренировки. Выберите другой день.';
+
+  @override
+  String get programClashAvoid =>
+      'Дни программы обходят его, чтобы вы успели восстановиться до и после.';
+
+  @override
+  String get programStartWeights => 'Стартовые веса';
+
+  @override
+  String get programFromRecords => 'из ваших рекордов';
+
+  @override
+  String get programReplacePlan => 'Заменить мой план недели';
+
+  @override
+  String get programReplaceSub => 'Бег и футбол остаются, дни зала меняются';
+
+  @override
+  String programStartOn(String date) {
+    return 'Начать $date';
+  }
+
+  @override
+  String get programReplacesActive => 'Это заменит вашу активную программу.';
+
+  @override
+  String programProgressSub(int w, int n, String date) {
+    return 'Неделя $w из $n · старт $date';
+  }
+
+  @override
+  String programDeloadNote(int w) {
+    return 'Неделя $w — разгрузочная';
+  }
+
+  @override
+  String get programTileSessions => 'Занятия';
+
+  @override
+  String get programTileOnTime => 'Вовремя';
+
+  @override
+  String get programTileRecords => 'Рекорды';
+
+  @override
+  String get programThisWeek => 'На этой неделе';
+
+  @override
+  String programWeekDone(int done, int total) {
+    return '$done из $total выполнено';
+  }
+
+  @override
+  String get programNoSessionsWeek => 'На этой неделе нет занятий программы.';
+
+  @override
+  String get programPlanned => 'запланировано';
+
+  @override
+  String get programMainLifts => 'Основные упражнения';
+
+  @override
+  String get programTopSetKg => 'лучший подход, кг';
+
+  @override
+  String get programColLift => 'Упражнение';
+
+  @override
+  String get programColStart => 'Старт';
+
+  @override
+  String get programColNow => 'Сейчас';
+
+  @override
+  String get programColGoal => 'Цель';
+
+  @override
+  String get programNextIncrease => 'Следующая прибавка';
+
+  @override
+  String programNextIncreaseText(int sets, int reps, String lift, String kg) {
+    return 'Вы выполнили $sets × $reps в упражнении «$lift» два раза подряд. Следующий раз: $kg кг.';
+  }
+
+  @override
+  String get programNoActive => 'Нет активной программы';
+
+  @override
+  String get programNoActiveBody =>
+      'Выберите программу, чтобы получить план на ближайшие недели.';
+
+  @override
+  String get programBrowse => 'Смотреть программы';
+
+  @override
+  String get programEnd => 'Завершить программу';
+
+  @override
+  String get programEndTitle => 'Завершить эту программу?';
+
+  @override
+  String get programEndBody =>
+      'Тренировки и рекорды сохранятся. Оставшиеся занятия уйдут из плана.';
+
+  @override
+  String programKgReps(String kg, int reps) {
+    return '$kg кг × $reps';
+  }
 }
