@@ -44,6 +44,17 @@ class SyncState {
   DateTime? historyCursor;
   DateTime? chatCursor;
 
+  /// Synced documents: 'kind/docId' -> hash of the version both sides
+  /// agreed on. A local doc with another hash (or none) is unsynced.
+  Map<String, String> docs;
+
+  /// Server time of the newest document seen.
+  DateTime? docsCursor;
+
+  /// Documents deleted by the user: 'kind/docId' -> ms when deleted. Kept
+  /// until the deletion is on the server.
+  Map<String, int> docTombstones;
+
   SyncState({
     this.owner,
     Map<String, PlanVersion>? plans,
@@ -52,7 +63,12 @@ class SyncState {
     this.plansCursor,
     this.historyCursor,
     this.chatCursor,
-  })  : plans = plans ?? {},
+    Map<String, String>? docs,
+    this.docsCursor,
+    Map<String, int>? docTombstones,
+  })  : docs = docs ?? {},
+        docTombstones = docTombstones ?? {},
+        plans = plans ?? {},
         history = history ?? {},
         chat = chat ?? {};
 
@@ -74,6 +90,15 @@ class SyncState {
         plansCursor: _date(json['plansCursor']),
         historyCursor: _date(json['historyCursor']),
         chatCursor: _date(json['chatCursor']),
+        docs: {
+          for (final e in ((json['docs'] as Map?) ?? const {}).entries)
+            e.key as String: e.value as String,
+        },
+        docsCursor: _date(json['docsCursor']),
+        docTombstones: {
+          for (final e in ((json['docTombstones'] as Map?) ?? const {}).entries)
+            e.key as String: e.value as int,
+        },
       );
     } catch (e) {
       // Losing this only means a full pull and re-push (both idempotent).
@@ -93,6 +118,9 @@ class SyncState {
         'plansCursor': plansCursor?.toUtc().toIso8601String(),
         'historyCursor': historyCursor?.toUtc().toIso8601String(),
         'chatCursor': chatCursor?.toUtc().toIso8601String(),
+        'docs': docs,
+        'docsCursor': docsCursor?.toUtc().toIso8601String(),
+        'docTombstones': docTombstones,
       }),
     );
   }

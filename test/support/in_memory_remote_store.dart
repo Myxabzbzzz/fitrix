@@ -139,4 +139,56 @@ class InMemoryRemoteStore implements RemoteStore {
     }
     return {for (final r in messages) r.message.id};
   }
+
+  final _docs = <String, Map<String, RemoteDoc>>{};
+
+  /// While set, document pushes wait for it (a slow network).
+  Completer<void>? upsertDocsHold;
+
+  /// Server documents, for assertions (deleted ones included).
+  List<RemoteDoc> docsOf(String userId) =>
+      (_docs[userId] ?? {}).values.toList();
+
+  /// Simulates another device (or a newer app) writing a document.
+  void putDoc(
+    String userId,
+    String kind,
+    String docId,
+    Map<String, Object?>? data,
+  ) {
+    (_docs[userId] ??= {})['$kind/$docId'] = RemoteDoc(
+      kind: kind,
+      docId: docId,
+      data: data,
+      updatedAt: _now(),
+    );
+  }
+
+  @override
+  Future<List<RemoteDoc>> fetchDocs(String userId, {DateTime? since}) async {
+    _request();
+    return _since(docsOf(userId), (d) => d.updatedAt, since);
+  }
+
+  @override
+  Future<Map<String, DateTime>> upsertDocs(
+    String userId,
+    List<RemoteDoc> docs,
+  ) async {
+    await upsertDocsHold?.future;
+    _request();
+    final table = _docs[userId] ??= {};
+    final result = <String, DateTime>{};
+    for (final doc in docs) {
+      final now = _now();
+      table[doc.key] = RemoteDoc(
+        kind: doc.kind,
+        docId: doc.docId,
+        data: doc.data,
+        updatedAt: now,
+      );
+      result[doc.key] = now;
+    }
+    return result;
+  }
 }

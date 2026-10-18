@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/sync/local_changes.dart';
+import 'package:fitrix/core/sync/synced_collection.dart';
+import 'package:fitrix/core/sync/sync_state.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
@@ -66,6 +68,18 @@ class SyncLocal {
     }
   }
 
+  /// The synced document collections (filled in as stores adopt sync).
+  List<SyncedCollection> get collections => const [];
+
+  /// A store calls this when the user deletes a synced document, so the
+  /// deletion reaches the server (pruning old data must not call it).
+  void recordDocDeleted(String kind, String docId) {
+    final state = SyncState.load(prefs);
+    state.docTombstones['$kind/$docId'] = DateTime.now().millisecondsSinceEpoch;
+    state.save(prefs);
+    _ref.read(localChangesProvider).notify();
+  }
+
   /// Drops all synced data (it belongs to another account).
   void clear() {
     applyPlans(WorkoutCatalog.defaults, const []);
@@ -73,6 +87,9 @@ class SyncLocal {
     for (final topic in AssistantTopic.all) {
       prefs.remove(topic.conversationKey);
       applyChat(topic, const []);
+    }
+    for (final collection in collections) {
+      collection.clear();
     }
   }
 }

@@ -136,6 +136,90 @@ class SupabaseRemoteStore implements RemoteStore {
           },
       ]);
 
+  /// Docs per write request.
+  static const docBatchSize = 200;
+
+  @override
+  Future<List<RemoteDoc>> fetchDocs(String userId, {DateTime? since}) async {
+    final all = <RemoteDoc>[];
+    for (var from = 0;; from += pageSize) {
+      var query = _client.from('user_documents').select().eq('user_id', userId);
+      if (since != null) {
+        query = query.gt('updated_at', since.toUtc().toIso8601String());
+      }
+      final page = await query
+          .order('updated_at', ascending: true)
+          .order('kind', ascending: true)
+          .order('doc_id', ascending: true)
+          .range(from, from + pageSize - 1);
+      for (final row in page) {
+        final data = row['data'];
+        final deleted = row['deleted'] as bool? ?? false;
+        all.add(RemoteDoc(
+          kind: row['kind'] as String,
+          docId: row['doc_id'] as String,
+          data: deleted || data is! Map<String, dynamic>
+              ? null
+              : Map<String, Object?>.from(data),
+          updatedAt: DateTime.parse(row['updated_at'] as String),
+        ));
+      }
+      if (page.length < pageSize) return all;
+    }
+  }
+
+  @override
+  Future<Map<String, DateTime>> upsertDocs(
+    String userId,
+    List<RemoteDoc> docs,
+  ) async {
+    final result = <String, DateTime>{};
+    for (var i = 0; i < docs.length; i += docBatchSize) {
+      result.addAll(await _upsertDocBatch(
+        userId,
+        docs.sublist(i, min(i + docBatchSize, docs.length)),
+      ));
+    }
+    return result;
+  }
+
+  /// Like [_insert]: a batch rejected for bad data is retried doc by doc so
+  /// one bad doc can't hold up the rest; it stays unsynced.
+  Future<Map<String, DateTime>> _upsertDocBatch(
+    String userId,
+    List<RemoteDoc> docs,
+  ) async {
+    try {
+      final stored = await _client.from('user_documents').upsert([
+        for (final d in docs)
+          {
+            'user_id': userId,
+            'kind': d.kind,
+            'doc_id': d.docId,
+            'data': d.data,
+            'deleted': d.isDeleted,
+          },
+      ], onConflict: 'user_id,kind,doc_id').select('kind,doc_id,updated_at');
+      return {
+        for (final row in stored)
+          '${row['kind']}/${row['doc_id']}':
+              DateTime.parse(row['updated_at'] as String),
+      };
+    } on PostgrestException catch (e) {
+      final code = e.code ?? '';
+      if (!code.startsWith('22') && !code.startsWith('23')) rethrow;
+      if (docs.length == 1) {
+        debugPrint('Sync: document ${docs.single.key} rejected: $e');
+        return {};
+      }
+      final result = <String, DateTime>{};
+      for (final d in docs) {
+        result.addAll(await _upsertDocBatch(userId, [d]));
+      }
+      return result;
+    }
+  }
+
   /// All of the user's rows in [table] with [timeColumn] after [since],
   /// oldest first, page by page.
   Future<List<Map<String, dynamic>>> _fetch(

@@ -3,10 +3,12 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:fitrix/core/sync/doc_merge.dart';
 import 'package:fitrix/core/sync/remote_store.dart';
 import 'package:fitrix/core/sync/sync_local.dart';
 import 'package:fitrix/core/sync/sync_merge.dart';
 import 'package:fitrix/core/sync/sync_state.dart';
+import 'package:fitrix/core/sync/synced_collection.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 
@@ -143,9 +145,11 @@ class SyncEngine {
       await _pullPlans();
       await _pullHistory();
       await _pullChat();
+      await _pullDocs();
       await _pushPlans();
       await _pushHistory();
       await _pushChat();
+      await _pushDocs();
       _failures = 0;
       _lastError = null;
       _lastSyncedAt = DateTime.now();
@@ -371,10 +375,135 @@ class SyncEngine {
     _save(state);
   }
 
+  // --- Documents -------------------------------------------------------------
+
+  static String _key(String kind, String id) => '$kind/$id';
+
+  /// Ids of [kind] in state keys ('kind/id' -> id).
+  static Map<String, V> _forKind<V>(Map<String, V> map, String kind) {
+    final prefix = '$kind/';
+    return {
+      for (final e in map.entries)
+        if (e.key.startsWith(prefix)) e.key.substring(prefix.length): e.value,
+    };
+  }
+
+  List<SyncedCollection> get _collections => local.collections;
+
+  Future<void> _pullDocs() async {
+    final cursor = _load().docsCursor;
+    final rows = await remote.fetchDocs(userId, since: _since(cursor));
+    _checkDisposed();
+
+    final state = _load();
+    for (final collection in _collections) {
+      final kind = collection.kind;
+      final mine = [
+        for (final r in rows)
+          if (r.kind == kind) r
+      ];
+      if (mine.isEmpty) continue;
+      try {
+        final tombstones = _forKind(state.docTombstones, kind).keys.toSet();
+        final merge = mergeDocs(
+          local: collection.read(),
+          agreed: _forKind(state.docs, kind),
+          tombstones: tombstones,
+          remote: mine,
+        );
+        if (merge.apply.isNotEmpty) collection.apply(merge.apply);
+        state.docs.removeWhere((k, _) => k.startsWith('$kind/'));
+        for (final e in merge.agreed.entries) {
+          state.docs[_key(kind, e.key)] = e.value;
+        }
+      } catch (e) {
+        // A broken collection must not stop the rest; its docs stay as
+        // they were and are merged again on the next full pull.
+        debugPrint('Sync: could not merge $kind documents: $e');
+      }
+    }
+    // Rows of kinds this app doesn't know are skipped, but seen.
+    state.docsCursor = _latest(state.docsCursor, rows.map((r) => r.updatedAt));
+    _save(state);
+  }
+
+  /// Unsynced docs (changed ones and deletions), with the hash pushed for
+  /// each live doc.
+  ({List<RemoteDoc> docs, Map<String, String> hashes}) _pendingDocs(
+      SyncState state) {
+    final epoch = DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
+    final docs = <RemoteDoc>[];
+    final hashes = <String, String>{};
+    for (final collection in _collections) {
+      final kind = collection.kind;
+      final live = collection.read();
+      for (final e in live.entries) {
+        final key = _key(kind, e.key);
+        final hash = docHash(e.value);
+        if (hash == state.docs[key]) continue;
+        hashes[key] = hash;
+        docs.add(RemoteDoc(
+            kind: kind, docId: e.key, data: e.value, updatedAt: epoch));
+      }
+      for (final key in state.docTombstones.keys) {
+        if (!key.startsWith('$kind/')) continue;
+        final id = key.substring(kind.length + 1);
+        // Recreated since it was deleted: the live doc wins.
+        if (live.containsKey(id)) continue;
+        docs.add(
+            RemoteDoc(kind: kind, docId: id, data: null, updatedAt: epoch));
+      }
+    }
+    return (docs: docs, hashes: hashes);
+  }
+
+  Future<void> _pushDocs() async {
+    final pending = _pendingDocs(_load());
+    if (pending.docs.isNotEmpty) {
+      final stored = await remote.upsertDocs(userId, pending.docs);
+      _checkDisposed();
+
+      final state = _load();
+      for (final doc in pending.docs) {
+        final key = doc.key;
+        if (!stored.containsKey(key)) continue;
+        if (doc.isDeleted) {
+          state.docTombstones.remove(key);
+          state.docs.remove(key);
+        } else {
+          // The hash that was pushed, not the current one: a doc edited
+          // during the push stays dirty.
+          state.docs[key] = pending.hashes[key]!;
+          state.docTombstones.remove(key);
+        }
+      }
+      _save(state);
+    }
+    _pruneDocs();
+  }
+
+  /// Forgets agreed hashes of docs that are gone locally without a
+  /// deletion (pruned by their store). That never deletes them on the
+  /// server.
+  void _pruneDocs() {
+    final state = _load();
+    final before = state.docs.length;
+    for (final collection in _collections) {
+      final kind = collection.kind;
+      final live = collection.read();
+      state.docs.removeWhere((key, _) =>
+          key.startsWith('$kind/') &&
+          !live.containsKey(key.substring(kind.length + 1)) &&
+          !state.docTombstones.containsKey(key));
+    }
+    if (state.docs.length != before) _save(state);
+  }
+
   /// Local changes not on the server yet.
   int pendingCount() {
     final state = _load();
-    return _pendingPlans(state).length +
+    return _pendingDocs(state).docs.length +
+        _pendingPlans(state).length +
         local.history.where((w) => !state.history.contains(w.id)).length +
         _pendingChat(state.chat).length;
   }

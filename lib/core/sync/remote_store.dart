@@ -35,6 +35,26 @@ class ChatRecord {
   const ChatRecord(this.topic, this.message);
 }
 
+/// A synced document as stored on the server (`user_documents`). A deleted
+/// doc has no [data].
+class RemoteDoc {
+  final String kind, docId;
+  final Map<String, Object?>? data;
+
+  /// Server time of the last change (only meaningful on pulled docs).
+  final DateTime updatedAt;
+
+  const RemoteDoc({
+    required this.kind,
+    required this.docId,
+    required this.data,
+    required this.updatedAt,
+  });
+
+  bool get isDeleted => data == null;
+  String get key => '$kind/$docId';
+}
+
 /// The server side of sync, for one signed-in user. Implemented with
 /// Supabase in the app and in memory in tests.
 ///
@@ -69,4 +89,15 @@ abstract class RemoteStore {
 
   /// Like [insertHistory], for chat messages.
   Future<Set<String>> insertChat(String userId, List<ChatRecord> messages);
+
+  /// Docs changed after [since] (all when null), oldest first.
+  Future<List<RemoteDoc>> fetchDocs(String userId, {DateTime? since});
+
+  /// Inserts or overwrites [docs] (deleted ones are sent with no data).
+  /// Returns the server's new `updatedAt` of every doc stored, keyed
+  /// `'$kind/$docId'`.
+  Future<Map<String, DateTime>> upsertDocs(
+    String userId,
+    List<RemoteDoc> docs,
+  );
 }
