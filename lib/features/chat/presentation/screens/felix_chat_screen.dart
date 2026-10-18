@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/animation/motion.dart';
+import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
@@ -52,6 +53,20 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _dictation.addListener(_announceDictation);
+    // A draft set before this screen was built.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _takeDraft());
+  }
+
+  /// Moves a pending "Ask Felix" draft into the field once. Never sends.
+  void _takeDraft() {
+    if (!mounted) return;
+    final draft = ref.read(felixDraftProvider);
+    if (draft == null) return;
+    ref.read(felixDraftProvider.notifier).state = null;
+    _controller.value = TextEditingValue(
+      text: draft,
+      selection: TextSelection.collapsed(offset: draft.length),
+    );
   }
 
   @override
@@ -179,6 +194,10 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
     final messages = ref.watch(chatMessagesProviderFor(topic));
 
     final isReplying = messages.valueOrNull?.any((m) => m.isStreaming) ?? false;
+
+    ref.listen(felixDraftProvider, (_, next) {
+      if (next != null) _takeDraft();
+    });
 
     ref.listen(chatMessagesProviderFor(topic), (previous, next) {
       final list = next.valueOrNull;

@@ -17,6 +17,19 @@ void main() {
     expect(ids.length, catalog.all.length);
   });
 
+  test('names and aliases are unique across exercises', () {
+    final owner = <String, String>{};
+    for (final e in catalog.all) {
+      for (final n in [e.name, ...e.aliases]) {
+        final key = n.trim().toLowerCase();
+        final prev = owner[key];
+        expect(prev == null || prev == e.id, isTrue,
+            reason: '"$n" in ${e.id} also used by $prev');
+        owner[key] = e.id;
+      }
+    }
+  });
+
   test('every group and equipment is covered', () {
     expect(catalog.all.map((e) => e.group).toSet(), MuscleGroup.values.toSet());
     expect(

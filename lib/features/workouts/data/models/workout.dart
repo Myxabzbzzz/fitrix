@@ -1,4 +1,5 @@
 import 'package:uuid/uuid.dart';
+import 'package:fitrix/features/workouts/domain/training_math.dart';
 
 /// Sports shown on "My workouts" and as pills on the sport / progress screens.
 enum Sport {
@@ -27,12 +28,20 @@ class WorkoutSet {
   final int reps;
   final bool done;
 
+  /// How hard the set felt, 1-10. Optional.
+  final int? rpe;
+
+  /// Warm-up sets are logged but never count as volume or records.
+  final bool warmup;
+
   const WorkoutSet({
     required this.previousKg,
     required this.previousReps,
     required this.kg,
     required this.reps,
     this.done = false,
+    this.rpe,
+    this.warmup = false,
   });
 
   WorkoutSet copyWith({
@@ -41,6 +50,8 @@ class WorkoutSet {
     double? kg,
     int? reps,
     bool? done,
+    int? rpe,
+    bool? warmup,
   }) =>
       WorkoutSet(
         previousKg: previousKg ?? this.previousKg,
@@ -48,6 +59,8 @@ class WorkoutSet {
         kg: kg ?? this.kg,
         reps: reps ?? this.reps,
         done: done ?? this.done,
+        rpe: rpe ?? this.rpe,
+        warmup: warmup ?? this.warmup,
       );
 
   Map<String, dynamic> toJson() => {
@@ -56,6 +69,8 @@ class WorkoutSet {
         'kg': kg,
         'reps': reps,
         'done': done,
+        if (rpe != null) 'rpe': rpe,
+        if (warmup) 'warmup': true,
       };
 
   factory WorkoutSet.fromJson(Map<String, dynamic> json) => WorkoutSet(
@@ -64,6 +79,8 @@ class WorkoutSet {
         kg: (json['kg'] as num).toDouble(),
         reps: json['reps'] as int,
         done: json['done'] as bool? ?? false,
+        rpe: (json['rpe'] as num?)?.toInt(),
+        warmup: json['warmup'] as bool? ?? false,
       );
 }
 
@@ -71,14 +88,35 @@ class Exercise {
   final String name;
   final List<WorkoutSet> sets;
 
-  const Exercise({required this.name, required this.sets});
+  /// Rest between sets for this exercise, in seconds. Optional.
+  final int? restSeconds;
+  final String? note;
 
-  Exercise copyWith({String? name, List<WorkoutSet>? sets}) =>
-      Exercise(name: name ?? this.name, sets: sets ?? this.sets);
+  const Exercise({
+    required this.name,
+    required this.sets,
+    this.restSeconds,
+    this.note,
+  });
+
+  Exercise copyWith({
+    String? name,
+    List<WorkoutSet>? sets,
+    int? restSeconds,
+    String? note,
+  }) =>
+      Exercise(
+        name: name ?? this.name,
+        sets: sets ?? this.sets,
+        restSeconds: restSeconds ?? this.restSeconds,
+        note: note ?? this.note,
+      );
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'sets': [for (final s in sets) s.toJson()],
+        if (restSeconds != null) 'restSeconds': restSeconds,
+        if (note != null) 'note': note,
       };
 
   factory Exercise.fromJson(Map<String, dynamic> json) => Exercise(
@@ -87,6 +125,8 @@ class Exercise {
           for (final s in json['sets'] as List)
             WorkoutSet.fromJson(s as Map<String, dynamic>),
         ],
+        restSeconds: (json['restSeconds'] as num?)?.toInt(),
+        note: json['note'] as String?,
       );
 }
 
@@ -220,6 +260,10 @@ class CompletedWorkout {
   final DateTime finishedAt;
   final List<Exercise> exercises;
 
+  /// How hard the whole session felt, 1-10. Local only: never sent to the
+  /// server, and kept when a server copy of the workout is merged in.
+  final int? sessionRpe;
+
   /// Without an [id] (history saved before sync existed) one is derived
   /// from the workout itself, so it's the same every time it's loaded.
   CompletedWorkout({
@@ -230,6 +274,7 @@ class CompletedWorkout {
     required this.startedAt,
     required this.finishedAt,
     required this.exercises,
+    this.sessionRpe,
   }) : id = id ?? legacyId(templateId, startedAt, finishedAt);
 
   /// Deterministic UUID (v5) for a workout stored without an id.
@@ -246,7 +291,11 @@ class CompletedWorkout {
 
   static const _legacyNamespace = '0c3a8f1e-5d0b-4c47-9a57-3f2b9d1c6e21';
 
-  factory CompletedWorkout.from(ActiveWorkout workout, DateTime finishedAt) {
+  factory CompletedWorkout.from(
+    ActiveWorkout workout,
+    DateTime finishedAt, {
+    int? sessionRpe,
+  }) {
     return CompletedWorkout(
       id: const Uuid().v4(),
       templateId: workout.template.id,
@@ -259,12 +308,32 @@ class CompletedWorkout {
           if (e.sets.any((s) => s.done))
             e.copyWith(sets: e.sets.where((s) => s.done).toList()),
       ],
+      sessionRpe: sessionRpe,
     );
   }
 
+  CompletedWorkout copyWith({int? sessionRpe, List<Exercise>? exercises}) =>
+      CompletedWorkout(
+        id: id,
+        templateId: templateId,
+        name: name,
+        sport: sport,
+        startedAt: startedAt,
+        finishedAt: finishedAt,
+        exercises: exercises ?? this.exercises,
+        sessionRpe: sessionRpe ?? this.sessionRpe,
+      );
+
+  /// Session load; assumes RPE 6 when the user didn't rate the session.
+  int get load => sessionLoad(sessionRpe ?? 6, duration);
+
+  bool get loadEstimated => sessionRpe == null;
+
   Duration get duration => finishedAt.difference(startedAt);
 
-  int get setCount => exercises.fold(0, (sum, e) => sum + e.sets.length);
+  /// Working sets only; warm-ups don't count.
+  int get setCount => exercises.fold(
+      0, (sum, e) => sum + e.sets.where((s) => !s.warmup).length);
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -274,6 +343,7 @@ class CompletedWorkout {
         'startedAt': startedAt.toIso8601String(),
         'finishedAt': finishedAt.toIso8601String(),
         'exercises': [for (final e in exercises) e.toJson()],
+        if (sessionRpe != null) 'sessionRpe': sessionRpe,
       };
 
   factory CompletedWorkout.fromJson(Map<String, dynamic> json) =>
@@ -288,6 +358,7 @@ class CompletedWorkout {
           for (final e in json['exercises'] as List)
             Exercise.fromJson(e as Map<String, dynamic>),
         ],
+        sessionRpe: (json['sessionRpe'] as num?)?.toInt(),
       );
 }
 

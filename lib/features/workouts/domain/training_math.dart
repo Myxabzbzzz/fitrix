@@ -10,10 +10,10 @@ double e1rm(double kg, int reps) {
 /// Session load in arbitrary units: RPE times whole minutes.
 int sessionLoad(int rpe, Duration duration) => rpe * duration.inMinutes;
 
-// Task 2 extends this to skip warm-up sets.
+// The one place that excludes warm-ups.
 // History only holds done sets, so records don't need the done check.
 bool _isWorking(WorkoutSet s, {bool requireDone = true}) =>
-    !requireDone || s.done;
+    !s.warmup && (!requireDone || s.done);
 
 /// Total kg lifted in done working sets.
 double volumeKg(Iterable<Exercise> exercises) {
@@ -172,9 +172,11 @@ List<PersonalRecord> allRecords(List<CompletedWorkout> history) {
 
 /// Next session's weight: add 2.5 kg when every set was completed.
 double? suggestNextKg(List<WorkoutSet> lastSets) {
-  if (lastSets.isEmpty) return null;
-  final best = lastSets.map((s) => s.kg).reduce(_max);
-  return lastSets.every((s) => s.done) ? best + 2.5 : best;
+  final working = lastSets.where((s) => _isWorking(s, requireDone: false));
+  if (working.isEmpty) return null;
+  final best = working.map((s) => s.kg).reduce(_max);
+  if (best == 0) return null; // bodyweight
+  return working.every((s) => s.done) ? best + 2.5 : best;
 }
 
 /// Nearest 2.5 kg.

@@ -37,6 +37,22 @@ void main() {
     expect(v, 700);
   });
 
+  test('volumeKg ignores warm-up sets', () {
+    final v = volumeKg([
+      Exercise(name: 'a', sets: [
+        const WorkoutSet(
+            previousKg: 0,
+            previousReps: 0,
+            kg: 40,
+            reps: 10,
+            done: true,
+            warmup: true),
+        set_(100, 5),
+      ]),
+    ]);
+    expect(v, 500);
+  });
+
   group('loadSummary', () {
     final today = DateTime(2026, 10, 18);
     List<DailyLoad> days() => [
@@ -135,7 +151,24 @@ void main() {
       expect(r.single.previous, 20);
     });
 
-    // Warm-up sets are ignored once WorkoutSet.warmup exists (Task 2).
+    test('records ignore warm-up sets', () {
+      final a = workout(d1, [
+        Exercise(name: 'Bench press', sets: [set_(80, 8)])
+      ]);
+      final b = workout(d2, [
+        Exercise(name: 'Bench press', sets: [
+          const WorkoutSet(
+              previousKg: 0,
+              previousReps: 0,
+              kg: 120,
+              reps: 10,
+              done: true,
+              warmup: true),
+          set_(80, 8),
+        ])
+      ]);
+      expect(recordsIn(b, [a]), isEmpty);
+    });
 
     test('allRecords is chronological', () {
       final a = workout(d1, [
@@ -167,6 +200,34 @@ void main() {
           70);
     });
     test('none', () => expect(suggestNextKg([]), isNull));
+    test('skips warm-up sets', () {
+      expect(
+          suggestNextKg([
+            const WorkoutSet(
+                previousKg: 0,
+                previousReps: 0,
+                kg: 100,
+                reps: 5,
+                done: true,
+                warmup: true),
+            set_(70, 8),
+          ]),
+          72.5);
+      expect(
+          suggestNextKg([
+            const WorkoutSet(
+                previousKg: 0,
+                previousReps: 0,
+                kg: 20,
+                reps: 5,
+                done: true,
+                warmup: true),
+          ]),
+          isNull);
+    });
+    test('bodyweight has no suggestion', () {
+      expect(suggestNextKg([set_(0, 12), set_(0, 10)]), isNull);
+    });
   });
 
   test('roundToPlate', () {
