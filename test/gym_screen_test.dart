@@ -87,8 +87,8 @@ void main() {
       expect(three.days, 3);
       // Late evening to early next morning is 1 day.
       expect(
-          coachMessage(
-              [_done(DateTime(2026, 10, 12, 23, 30))], DateTime(2026, 10, 13, 6)),
+          coachMessage([_done(DateTime(2026, 10, 12, 23, 30))],
+              DateTime(2026, 10, 13, 6)),
           isNull);
     });
 
@@ -108,16 +108,15 @@ void main() {
   });
 
   group('gym screen', () {
-    testWidgets('first card is TODAY with a primary Start', (tester) async {
+    testWidgets('without a week plan no card claims a day', (tester) async {
       await _pump(tester);
-      final first = tester.widgetList<WorkoutCard>(find.byType(WorkoutCard)).first;
-      expect(first.today, isTrue);
-      expect(find.text('TODAY'), findsOneWidget);
+      final cards = tester.widgetList<WorkoutCard>(find.byType(WorkoutCard));
+      expect(cards.every((c) => !c.today && c.dayLabel == null), isTrue);
+      expect(find.text('TODAY'), findsNothing);
       final button = tester.widget<AppButton>(find.descendant(
-          of: find.byType(WorkoutCard).first, matching: find.byType(AppButton)));
-      expect(button.style, AppButtonStyle.primary);
-      final second = tester.widgetList<WorkoutCard>(find.byType(WorkoutCard)).elementAt(1);
-      expect(second.today, isFalse);
+          of: find.byType(WorkoutCard).first,
+          matching: find.byType(AppButton)));
+      expect(button.style, AppButtonStyle.secondary);
       expect(find.byType(AddWorkoutCard), findsOneWidget);
       expect(find.byType(CoachCard), findsOneWidget);
       expect(tester.takeException(), isNull);

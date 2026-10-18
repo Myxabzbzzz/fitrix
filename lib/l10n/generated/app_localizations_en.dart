@@ -3653,4 +3653,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get programDetailsTooltip => 'Program details';
+
+  @override
+  String nutritionKcalOver(String kcal) {
+    return '$kcal kcal over';
+  }
+
+  @override
+  String get homeDoneForToday => 'Done for today';
+
+  @override
+  String homeNextSession(String day, String title) {
+    return 'Next: $day · $title';
+  }
+
+  @override
+  String get homeNothingNext => 'Nothing else planned yet';
 }

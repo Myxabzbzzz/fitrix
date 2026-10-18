@@ -5936,6 +5936,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Program details'**
   String get programDetailsTooltip;
+
+  /// No description provided for @nutritionKcalOver.
+  ///
+  /// In en, this message translates to:
+  /// **'{kcal} kcal over'**
+  String nutritionKcalOver(String kcal);
+
+  /// No description provided for @homeDoneForToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Done for today'**
+  String get homeDoneForToday;
+
+  /// No description provided for @homeNextSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {day} · {title}'**
+  String homeNextSession(String day, String title);
+
+  /// No description provided for @homeNothingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing else planned yet'**
+  String get homeNothingNext;
 }
 
 class _AppLocalizationsDelegate

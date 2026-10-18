@@ -6,7 +6,9 @@ import 'package:fitrix/core/widgets/day_badge.dart';
 
 class WorkoutCard extends StatelessWidget {
   final String title;
-  final String dayLabel;
+
+  /// The day badge; none when null.
+  final String? dayLabel;
   final bool today;
   final bool done;
   final String startLabel;
@@ -53,8 +55,10 @@ class WorkoutCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    DayBadge(label: dayLabel, today: today),
-                    const SizedBox(height: AppSpacing.xxs),
+                    if (dayLabel != null) ...[
+                      DayBadge(label: dayLabel!, today: today),
+                      const SizedBox(height: AppSpacing.xxs),
+                    ],
                     Text(title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,

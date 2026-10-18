@@ -971,5 +971,9 @@
   "programsPickedLevelText": "{name} · {perWeek} días a la semana · {level}. Encaja con tu experiencia.",
   "programsStartEyebrow": "Para empezar",
   "programsStartText": "{name} · {perWeek} días a la semana · {level}. Añade tu objetivo y experiencia en Sobre mí para una elección más precisa.",
-  "programDetailsTooltip": "Detalles del programa"
+  "programDetailsTooltip": "Detalles del programa",
+  "nutritionKcalOver": "{kcal} kcal de más",
+  "homeDoneForToday": "Listo por hoy",
+  "homeNextSession": "Siguiente: {day} · {title}",
+  "homeNothingNext": "No hay nada más planificado"
 }

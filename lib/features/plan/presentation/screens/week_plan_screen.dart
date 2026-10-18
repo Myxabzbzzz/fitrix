@@ -18,48 +18,13 @@ import 'package:fitrix/features/plan/presentation/widgets/add_session_sheet.dart
 import 'package:fitrix/features/plan/presentation/widgets/plan_format.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/features/workouts/presentation/start_workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// "This week": the Mon-Sun plan, its training load, Felix's advice and a
 /// way to add sessions.
 class WeekPlanScreen extends ConsumerWidget {
   const WeekPlanScreen({super.key});
-
-  /// Starts [template] like the Gym screen does, asking first when another
-  /// workout is running.
-  static Future<void> startTemplate(
-      BuildContext context, WidgetRef ref, WorkoutTemplate template) async {
-    final active = ref.read(activeWorkoutProvider);
-    if (active != null && active.template.id != template.id) {
-      final replace = await showDialog<bool>(
-        context: context,
-        builder: (context) {
-          final l10n = AppLocalizations.of(context);
-          return AlertDialog(
-            title: Text(l10n.gymFinishCurrentTitle),
-            content: Text(
-              l10n.gymFinishCurrentBody(active.template.name, template.name),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text(l10n.cancel),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: Text(l10n.gymStart),
-              ),
-            ],
-          );
-        },
-      );
-      if (replace != true || !context.mounted) return;
-    }
-    if (active == null || active.template.id != template.id) {
-      ref.read(activeWorkoutProvider.notifier).start(template);
-    }
-    ref.read(activeWorkoutExpandedProvider.notifier).state = true;
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -670,7 +635,7 @@ class _SessionRow extends ConsumerWidget {
           key: Key('plan-start-${s.id}'),
           label: l10n.gymStart,
           size: AppButtonSize.small,
-          onPressed: () => WeekPlanScreen.startTemplate(context, ref, template),
+          onPressed: () => startWorkout(context, ref, template),
         );
       default:
         trailing = PlanChip.intensity(context, s.intensity);

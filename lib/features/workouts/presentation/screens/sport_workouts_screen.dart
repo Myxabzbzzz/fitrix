@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/workout_card.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/workouts/domain/coach_message.dart';
@@ -13,23 +13,21 @@ import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart';
+import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
+import 'package:fitrix/features/plan/presentation/widgets/plan_format.dart';
+import 'package:fitrix/features/workouts/presentation/start_workout.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/edit_workout_sheet.dart';
 import 'package:fitrix/core/widgets/sync_refresh.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 
-/// Workouts of one sport ("Gym"): today's workout card plus the other plans.
+/// Workouts of one sport ("Gym"): the sport's plans, marked with the day
+/// the week plan has them on.
 class SportWorkoutsScreen extends ConsumerStatefulWidget {
   final Sport sport;
 
-  /// Clock, injectable for tests.
-  final DateTime Function() now;
-
-  const SportWorkoutsScreen({
-    super.key,
-    required this.sport,
-    this.now = DateTime.now,
-  });
+  const SportWorkoutsScreen({super.key, required this.sport});
 
   @override
   ConsumerState<SportWorkoutsScreen> createState() =>
@@ -39,38 +37,8 @@ class SportWorkoutsScreen extends ConsumerStatefulWidget {
 class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
   late Sport _sport = widget.sport;
 
-  Future<void> _start(WorkoutTemplate template) async {
-    final active = ref.read(activeWorkoutProvider);
-    if (active != null && active.template.id != template.id) {
-      final replace = await showDialog<bool>(
-        context: context,
-        builder: (context) {
-          final l10n = AppLocalizations.of(context);
-          return AlertDialog(
-            title: Text(l10n.gymFinishCurrentTitle),
-            content: Text(
-              l10n.gymFinishCurrentBody(active.template.name, template.name),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text(l10n.cancel),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: Text(l10n.gymStart),
-              ),
-            ],
-          );
-        },
-      );
-      if (replace != true || !mounted) return;
-    }
-    if (active == null || active.template.id != template.id) {
-      ref.read(activeWorkoutProvider.notifier).start(template);
-    }
-    ref.read(activeWorkoutExpandedProvider.notifier).state = true;
-  }
+  Future<void> _start(WorkoutTemplate template) =>
+      startWorkout(context, ref, template);
 
   Future<void> _addWorkout() async {
     final name = await showDialog<String>(
@@ -137,20 +105,48 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
         .watch(workoutHistoryProvider)
         .where((w) => w.sport == _sport)
         .toList();
-    final now = widget.now();
+    final today = ref.watch(todayProvider);
+    final plan = ref.watch(weekPlanProvider);
+    final allHistory = ref.watch(workoutHistoryProvider);
     final localeName = Localizations.localeOf(context).toString();
     // Room for a 2-line title at the user's text size.
     final cellHeight =
         128 + MediaQuery.textScalerOf(context).scale(16) * 2 - 32;
-    final coach = coachMessage(history, now,
-        todayWorkout: workouts.isEmpty ? null : workouts.first.name,
-        localeName: localeName);
 
-    bool doneToday(WorkoutTemplate t) => history.any((w) =>
-        w.templateId == t.id &&
-        w.finishedAt.year == now.year &&
-        w.finishedAt.month == now.month &&
-        w.finishedAt.day == now.day);
+    // Today only for a plan with an open session today; other planned plans
+    // show their next day; the rest no day at all.
+    bool openToday(WorkoutTemplate t) => plan.any((s) =>
+        s.templateId == t.id &&
+        s.day == today &&
+        statusOf(s, allHistory, today) != SessionStatus.done);
+    PlannedSession? nextOf(WorkoutTemplate t) =>
+        nextSessionAfter(plan, today, where: (s) => s.templateId == t.id);
+    String? dayLabel(WorkoutTemplate t) {
+      if (openToday(t)) return l10n.gymToday;
+      final next = nextOf(t);
+      return next == null ? null : upcomingDayLabel(context, today, next.day);
+    }
+
+    // The coach card follows the same rule: today's session, else the next
+    // planned one; the first plan only while this sport isn't planned.
+    final sportPlanned = planInUse([
+      for (final s in plan)
+        if (s.sport == _sport) s
+    ], today);
+    WorkoutTemplate? coachPlan = workouts.where(openToday).firstOrNull;
+    if (coachPlan == null) {
+      final next = nextSessionAfter(plan, today,
+          where: (s) => workouts.any((t) => t.id == s.templateId));
+      coachPlan = next == null
+          ? null
+          : workouts.firstWhere((t) => t.id == next.templateId);
+    }
+    if (coachPlan == null && !sportPlanned) coachPlan = workouts.firstOrNull;
+    final coach = coachMessage(history, today,
+        todayWorkout: coachPlan?.name, localeName: localeName);
+
+    bool doneToday(WorkoutTemplate t) => history
+        .any((w) => w.templateId == t.id && sameDay(w.finishedAt, today));
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -190,11 +186,8 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                               onLongPress: () => _edit(workouts[i]),
                               child: WorkoutCard(
                                 title: workouts[i].name,
-                                dayLabel: i == 0
-                                    ? l10n.gymToday
-                                    : DateFormat('EEEE', localeName)
-                                        .format(now.add(Duration(days: i))),
-                                today: i == 0,
+                                dayLabel: dayLabel(workouts[i]),
+                                today: openToday(workouts[i]),
                                 done: doneToday(workouts[i]),
                                 startLabel: l10n.gymStart,
                                 doneLabel: l10n.gymDone,
@@ -226,10 +219,9 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                             l10n.gymCoachBackMessage(coach.days),
                         },
                         imageAsset: 'assets/images/felix_avatar.png',
-                        primaryLabel: workouts.isEmpty ? null : l10n.gymStart,
-                        onPrimary: workouts.isEmpty
-                            ? null
-                            : () => _start(workouts.first),
+                        primaryLabel: coachPlan == null ? null : l10n.gymStart,
+                        onPrimary:
+                            coachPlan == null ? null : () => _start(coachPlan!),
                         secondaryLabel: l10n.gymAskFelix,
                         onSecondary: () => _askFelix(coach),
                       ),

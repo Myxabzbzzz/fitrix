@@ -971,5 +971,9 @@
   "programsPickedLevelText": "{name} · {perWeek} дн. в неделю · {level}. Подходит вашему опыту.",
   "programsStartEyebrow": "С чего начать",
   "programsStartText": "{name} · {perWeek} дн. в неделю · {level}. Укажите цель и опыт в разделе «Обо мне», чтобы подбор был точнее.",
-  "programDetailsTooltip": "О программе"
+  "programDetailsTooltip": "О программе",
+  "nutritionKcalOver": "{kcal} ккал сверх цели",
+  "homeDoneForToday": "На сегодня всё",
+  "homeNextSession": "Далее: {day} · {title}",
+  "homeNothingNext": "Больше ничего не запланировано"
 }

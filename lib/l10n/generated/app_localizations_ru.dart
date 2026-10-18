@@ -3722,4 +3722,20 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get programDetailsTooltip => 'О программе';
+
+  @override
+  String nutritionKcalOver(String kcal) {
+    return '$kcal ккал сверх цели';
+  }
+
+  @override
+  String get homeDoneForToday => 'На сегодня всё';
+
+  @override
+  String homeNextSession(String day, String title) {
+    return 'Далее: $day · $title';
+  }
+
+  @override
+  String get homeNothingNext => 'Больше ничего не запланировано';
 }

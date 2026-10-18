@@ -9,7 +9,7 @@ import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
-import 'package:fitrix/features/plan/presentation/screens/week_plan_screen.dart';
+import 'package:fitrix/features/workouts/presentation/start_workout.dart';
 import 'package:fitrix/features/programs/domain/program_catalog.dart';
 import 'package:fitrix/features/programs/domain/program_progress.dart';
 import 'package:fitrix/features/programs/presentation/providers/programs_provider.dart';
@@ -176,8 +176,7 @@ class ProgramProgressScreen extends ConsumerWidget {
                                   final id = thisWeek[i].session.templateId;
                                   for (final t in templates) {
                                     if (t.id == id) {
-                                      WeekPlanScreen.startTemplate(
-                                          context, ref, t);
+                                      startWorkout(context, ref, t);
                                       return;
                                     }
                                   }

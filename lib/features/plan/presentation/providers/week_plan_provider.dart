@@ -93,3 +93,9 @@ final todaysOpenSessionsProvider = Provider<List<PlannedSession>>((ref) {
         s,
   ];
 });
+
+/// Today on the week plan (see [todayPlanOf]).
+final todayPlanProvider = Provider<TodayPlan>((ref) => todayPlanOf(
+    ref.watch(weekPlanProvider),
+    ref.watch(workoutHistoryProvider),
+    ref.watch(todayProvider)));

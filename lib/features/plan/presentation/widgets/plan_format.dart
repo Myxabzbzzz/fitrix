@@ -78,3 +78,10 @@ class PlanChip extends StatelessWidget {
             style: AppText.captionStrong.copyWith(color: foreground)),
       );
 }
+
+/// The day of an upcoming session: "Friday" within the coming week,
+/// "Wed 21" further out.
+String upcomingDayLabel(BuildContext context, DateTime today, DateTime day) =>
+    addDays(dateOnly(today), 6).isBefore(day)
+        ? weekdayAndDate(context, day)
+        : weekdayLong(context, day);

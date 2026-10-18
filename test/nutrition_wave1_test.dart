@@ -453,6 +453,39 @@ void main() {
       expect(day.single.protein, greaterThan(20));
     });
 
+    testWidgets('over target says "n kcal over", not "Goal reached"',
+        (t) async {
+      final c = await pump(t, const NutritionScreen());
+      final target = c.read(targetsProvider)!.kcal;
+      await c
+          .read(foodLogProvider.notifier)
+          .add(_entry('big', DateTime(2026, 10, 17, 9), kcal: target + 800));
+      await t.pumpAndSettle();
+      expect(find.text('800 kcal over'), findsOneWidget);
+      expect(find.text('Goal reached for today'), findsNothing);
+    });
+
+    testWidgets('within 50 kcal of the target says "Goal reached"', (t) async {
+      for (final delta in [-50, 0, 50]) {
+        final c = await pump(t, const NutritionScreen());
+        final target = c.read(targetsProvider)!.kcal;
+        await c.read(foodLogProvider.notifier).add(
+            _entry('e$delta', DateTime(2026, 10, 17, 9), kcal: target + delta));
+        await t.pumpAndSettle();
+        expect(find.text('Goal reached for today'), findsOneWidget,
+            reason: 'delta $delta');
+        expect(find.textContaining('kcal over'), findsNothing);
+        await t.pumpWidget(const SizedBox());
+      }
+      final c = await pump(t, const NutritionScreen());
+      final target = c.read(targetsProvider)!.kcal;
+      await c
+          .read(foodLogProvider.notifier)
+          .add(_entry('u', DateTime(2026, 10, 17, 9), kcal: target - 51));
+      await t.pumpAndSettle();
+      expect(find.text('51 kcal'), findsOneWidget);
+    });
+
     testWidgets('incomplete profile shows the card instead of the ring',
         (t) async {
       await pump(t, const NutritionScreen(), values: {'user_name': 'Alex'});

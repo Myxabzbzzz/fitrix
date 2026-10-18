@@ -395,6 +395,8 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
 }
 
 class _RingSide extends StatelessWidget {
+  static const _onTargetKcal = 50;
+
   final int left;
   final int burned;
   final VoidCallback onHow;
@@ -414,9 +416,12 @@ class _RingSide extends StatelessWidget {
         Text(l10n.nutritionLeftToday,
             style: AppText.caption.copyWith(color: palette.textSecondary)),
         Text(
-          left > 0
-              ? l10n.nutritionKcal(fmt.format(left))
-              : l10n.nutritionGoalReached,
+          // Within ±50 kcal counts as on target; past it says how far over.
+          left.abs() <= _onTargetKcal
+              ? l10n.nutritionGoalReached
+              : left > 0
+                  ? l10n.nutritionKcal(fmt.format(left))
+                  : l10n.nutritionKcalOver(fmt.format(-left)),
           style: AppText.headingM.copyWith(color: palette.textPrimary),
         ),
         if (burned > 0) ...[

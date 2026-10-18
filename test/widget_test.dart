@@ -192,7 +192,8 @@ void main() {
 
     await tester.tap(find.text('GYM'));
     await tester.pumpAndSettle();
-    expect(find.text('TODAY'), findsOneWidget);
+    // No week plan: no plan is marked Today.
+    expect(find.text('TODAY'), findsNothing);
     expect(find.text('Chest and Biceps'), findsOneWidget);
 
     await tester.tap(find.text('Start').first);

@@ -2923,5 +2923,26 @@
       }
     }
   },
-  "programDetailsTooltip": "Program details"
+  "programDetailsTooltip": "Program details",
+  "nutritionKcalOver": "{kcal} kcal over",
+  "@nutritionKcalOver": {
+    "placeholders": {
+      "kcal": {
+        "type": "String"
+      }
+    }
+  },
+  "homeDoneForToday": "Done for today",
+  "homeNextSession": "Next: {day} · {title}",
+  "@homeNextSession": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "homeNothingNext": "Nothing else planned yet"
 }

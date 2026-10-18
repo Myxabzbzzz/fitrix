@@ -259,11 +259,14 @@ void main() {
       return c;
     }
 
-    test('todaysGymTemplate follows the plan, falls back to first gym',
+    test('todaysGymTemplate follows the plan; first gym only without one',
         () async {
       var c = await container([_s('a', 14, templateId: 'gym-legs')], []);
       expect(c.read(todaysGymTemplateProvider)!.id, 'gym-legs');
+      // A rest day on a planned week: no session to adjust.
       c = await container([_s('a', 15, templateId: 'gym-legs')], []);
+      expect(c.read(todaysGymTemplateProvider), isNull);
+      c = await container([], []);
       expect(c.read(todaysGymTemplateProvider)!.id,
           WorkoutCatalog.defaults.first.id);
     });

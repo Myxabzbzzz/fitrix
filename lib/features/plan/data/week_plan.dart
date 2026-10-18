@@ -240,3 +240,70 @@ bool wouldBeThirdHardDayInARow(
   }
   return run >= 3;
 }
+
+/// What today holds on the week plan.
+enum TodayKind {
+  /// A session today is still open ([TodayPlan.session]).
+  session,
+
+  /// Nothing planned today.
+  rest,
+
+  /// Today's sessions are all done.
+  done,
+
+  /// The plan has nothing this week or later: screens fall back to the
+  /// user's first plan.
+  unplanned,
+}
+
+class TodayPlan {
+  final TodayKind kind;
+
+  /// Today's first open session, for [TodayKind.session].
+  final PlannedSession? session;
+
+  /// The first session after today (earliest day, then plan order).
+  final PlannedSession? next;
+
+  const TodayPlan(this.kind, {this.session, this.next});
+}
+
+/// Whether the plan is in use: it has a session this week (Mon-Sun) or
+/// later.
+bool planInUse(List<PlannedSession> plan, DateTime today) {
+  final monday = weekStartOf(today);
+  return plan.any((s) => !s.day.isBefore(monday));
+}
+
+/// The first session of [plan] after [today] that passes [where], earliest
+/// day first (plan order within a day).
+PlannedSession? nextSessionAfter(List<PlannedSession> plan, DateTime today,
+    {bool Function(PlannedSession)? where}) {
+  final day = dateOnly(today);
+  PlannedSession? next;
+  for (final s in plan) {
+    if (!s.day.isAfter(day) || (where != null && !where(s))) continue;
+    if (next == null || s.day.isBefore(next.day)) next = s;
+  }
+  return next;
+}
+
+/// Today on the plan: its open session, or a rest / done day with the next
+/// session; [TodayKind.unplanned] when the plan is not in use.
+TodayPlan todayPlanOf(
+    List<PlannedSession> plan, List<CompletedWorkout> history, DateTime today) {
+  final day = dateOnly(today);
+  if (!planInUse(plan, day)) return const TodayPlan(TodayKind.unplanned);
+  final todays = [
+    for (final s in plan)
+      if (s.day == day) s
+  ];
+  for (final s in todays) {
+    if (statusOf(s, history, day) != SessionStatus.done) {
+      return TodayPlan(TodayKind.session, session: s);
+    }
+  }
+  return TodayPlan(todays.isEmpty ? TodayKind.rest : TodayKind.done,
+      next: nextSessionAfter(plan, day));
+}

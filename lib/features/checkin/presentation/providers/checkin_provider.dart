@@ -3,6 +3,7 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/data/checkin_store.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -58,7 +59,8 @@ final todayReadinessProvider = Provider<Readiness?>((ref) {
 });
 
 /// Today's planned gym session: the first one on the week plan that isn't
-/// done yet. Without one the first gym template stands in.
+/// done yet. Null on a rest day or once it's done. Only while the plan is
+/// not in use (nothing this week or later) the first gym template stands in.
 final todaysGymTemplateProvider = Provider<WorkoutTemplate?>((ref) {
   final templates = ref.watch(workoutTemplatesProvider);
   for (final s in ref.watch(todaysOpenSessionsProvider)) {
@@ -67,6 +69,7 @@ final todaysGymTemplateProvider = Provider<WorkoutTemplate?>((ref) {
       if (t.id == s.templateId) return t;
     }
   }
+  if (ref.watch(todayPlanProvider).kind != TodayKind.unplanned) return null;
   for (final t in templates) {
     if (t.sport == Sport.gym) return t;
   }

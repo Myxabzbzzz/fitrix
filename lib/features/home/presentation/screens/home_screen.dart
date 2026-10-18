@@ -9,9 +9,13 @@ import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/feature_tile.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_card.dart';
+import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
 import 'package:fitrix/features/plan/presentation/widgets/plan_format.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/features/workouts/presentation/start_workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Home dashboard: a grid of feature tiles (My progress, My nutrition, Felix,
@@ -159,8 +163,9 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-/// Today's workout (first plan of the user's first sport) with a Start /
-/// Continue button.
+/// Today on the week plan: today's open session with a Start / Continue
+/// button, or "Rest day" / "Done for today" with the next session. Only
+/// while the plan is not in use the user's first plan stands in.
 class _TodayCard extends ConsumerWidget {
   const _TodayCard();
 
@@ -169,21 +174,42 @@ class _TodayCard extends ConsumerWidget {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final templates = ref.watch(workoutTemplatesProvider);
-    // Today's first open session on the week plan; without one, the first
-    // plan of the first sport.
-    final planned = ref.watch(todaysOpenSessionsProvider).firstOrNull;
-    final plannedTemplate = planned == null
-        ? null
-        : templates.where((t) => t.id == planned.templateId).firstOrNull;
-    if (planned == null && templates.isEmpty) return const SizedBox.shrink();
-    final today = plannedTemplate ?? (planned == null ? templates.first : null);
-    final name = planned?.title ?? today!.name;
-    final meta = today != null
-        ? l10n.homeTodayMeta(
-            today.exercises.length, today.estimatedDuration.inMinutes)
-        : '${planDuration(l10n, planned!.minutes)} · '
-            '${intensityLabel(l10n, planned.intensity)}';
+    final plan = ref.watch(todayPlanProvider);
     final active = ref.watch(activeWorkoutProvider);
+
+    final String title;
+    final String meta;
+    WorkoutTemplate? template;
+    switch (plan.kind) {
+      case TodayKind.unplanned:
+        if (templates.isEmpty) return const SizedBox.shrink();
+        template = templates.first;
+        title = template.name;
+        meta = l10n.homeTodayMeta(
+            template.exercises.length, template.estimatedDuration.inMinutes);
+      case TodayKind.session:
+        final session = plan.session!;
+        template =
+            templates.where((t) => t.id == session.templateId).firstOrNull;
+        title = session.title;
+        meta = template != null
+            ? l10n.homeTodayMeta(
+                template.exercises.length, template.estimatedDuration.inMinutes)
+            : '${planDuration(l10n, session.minutes)} · '
+                '${intensityLabel(l10n, session.intensity)}';
+      case TodayKind.rest:
+      case TodayKind.done:
+        title = plan.kind == TodayKind.rest
+            ? l10n.planRestDay
+            : l10n.homeDoneForToday;
+        final next = plan.next;
+        meta = next == null
+            ? l10n.homeNothingNext
+            : l10n.homeNextSession(
+                upcomingDayLabel(context, ref.watch(todayProvider), next.day),
+                next.title);
+    }
+    final start = template;
 
     // The card opens the week plan; its Start button starts the workout.
     return Semantics(
@@ -205,7 +231,7 @@ class _TodayCard extends ConsumerWidget {
                     Text(l10n.homeToday.toUpperCase(),
                         style: AppText.microStrong
                             .copyWith(color: palette.accent)),
-                    Text(name,
+                    Text(title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppText.headingS
@@ -218,18 +244,14 @@ class _TodayCard extends ConsumerWidget {
                   ],
                 ),
               ),
-              if (today != null) ...[
+              if (start != null) ...[
                 const SizedBox(width: AppSpacing.sm),
                 AppButton(
-                  label: active == null ? l10n.homeStart : l10n.homeContinue,
+                  label: active?.template.id == start.id
+                      ? l10n.homeContinue
+                      : l10n.homeStart,
                   size: AppButtonSize.small,
-                  onPressed: () {
-                    if (active == null) {
-                      ref.read(activeWorkoutProvider.notifier).start(today);
-                    }
-                    ref.read(activeWorkoutExpandedProvider.notifier).state =
-                        true;
-                  },
+                  onPressed: () => startWorkout(context, ref, start),
                 ),
               ],
             ],

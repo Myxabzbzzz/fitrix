@@ -19,6 +19,7 @@ import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/features/workouts/presentation/start_workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Today's recovery: score ring, what shaped it, the adjusted plan and the
@@ -103,22 +104,12 @@ class _Content extends ConsumerWidget {
         : sparingSwaps(template, checkIn.sore, catalog);
     final shown = applied.isNotEmpty ? applied : suggested;
 
-    void start() {
-      if (template == null) return;
-      if (ref.read(activeWorkoutProvider) == null) {
-        ref
-            .read(activeWorkoutProvider.notifier)
-            .start(applySwaps(template, applied));
-      }
-      ref.read(activeWorkoutExpandedProvider.notifier).state = true;
-    }
-
     final startButton = template == null
         ? null
         : AppButton(
             label: l10n.recoveryStartWorkout,
             expand: true,
-            onPressed: start,
+            onPressed: () => startWorkout(context, ref, template),
           );
 
     return SingleChildScrollView(

@@ -971,5 +971,9 @@
   "programsPickedLevelText": "{name} · haftada {perWeek} kun · {level}. Tajribangizga mos.",
   "programsStartEyebrow": "Boshlash uchun",
   "programsStartText": "{name} · haftada {perWeek} kun · {level}. Aniqroq tanlov uchun «Men haqimda» bo‘limida maqsad va tajribangizni kiriting.",
-  "programDetailsTooltip": "Dastur haqida"
+  "programDetailsTooltip": "Dastur haqida",
+  "nutritionKcalOver": "{kcal} kkal ortiqcha",
+  "homeDoneForToday": "Bugun uchun tayyor",
+  "homeNextSession": "Keyingisi: {day} · {title}",
+  "homeNothingNext": "Hozircha boshqa reja yo‘q"
 }

@@ -3596,4 +3596,20 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get programDetailsTooltip => 'Dastur haqida';
+
+  @override
+  String nutritionKcalOver(String kcal) {
+    return '$kcal kkal ortiqcha';
+  }
+
+  @override
+  String get homeDoneForToday => 'Bugun uchun tayyor';
+
+  @override
+  String homeNextSession(String day, String title) {
+    return 'Keyingisi: $day · $title';
+  }
+
+  @override
+  String get homeNothingNext => 'Hozircha boshqa reja yo‘q';
 }
