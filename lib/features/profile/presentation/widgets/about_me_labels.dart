@@ -1,4 +1,3 @@
-
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/profile/data/models/profile_row.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';

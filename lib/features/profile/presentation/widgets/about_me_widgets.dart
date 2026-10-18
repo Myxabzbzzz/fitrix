@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
