@@ -205,7 +205,7 @@ void main() {
       expect(find.text('Alex Smith'), findsOneWidget);
       expect(find.text('back@x.com'), findsOneWidget);
       expect(find.text('72.5'), findsOneWidget);
-      expect(find.text('kg now'), findsOneWidget);
+      expect(find.text('kg · weight'), findsOneWidget);
     });
 
     testWidgets('errors: rate limit and no connection', (tester) async {
@@ -469,8 +469,8 @@ void main() {
       AppRouter.router.go(AppRouter.profile);
       await tester.pumpAndSettle();
 
-      Future<void> fill(String field, String text) => tester.enterText(
-          find.byKey(Key('profile-$field')), text);
+      Future<void> fill(String field, String text) =>
+          tester.enterText(find.byKey(Key('profile-$field')), text);
       await fill('name', 'Alex');
       await fill('age', '300');
       await fill('weight', 'heavy');
@@ -587,7 +587,11 @@ void main() {
     }
 
     Future<void> tapKey(WidgetTester tester, String key) async {
+      // The Profile list is longer than an SE screen: scroll to the row.
+      await tester.scrollUntilVisible(find.byKey(Key(key)), 100,
+          scrollable: find.byType(Scrollable).first);
       await tester.ensureVisible(find.byKey(Key(key)));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(Key(key)));
       await tester.pumpAndSettle();
     }
@@ -633,8 +637,8 @@ void main() {
       await tapKey(tester, 'delete-account-continue');
       await tapKey(tester, 'delete-account-confirm');
 
-      expect(find.textContaining("Couldn't delete your account"),
-          findsOneWidget);
+      expect(
+          find.textContaining("Couldn't delete your account"), findsOneWidget);
       expect(find.text('Deleting your account…'), findsNothing);
       expect(h.auth.userId, 'user-old');
       expect(h.prefs.getString('user_name'), 'Alex');
@@ -647,8 +651,8 @@ void main() {
       h.auth.appleAccounts.add('old@x.com');
 
       await tapKey(tester, 'delete-account');
-      expect(find.textContaining('Apple will ask you to confirm'),
-          findsOneWidget);
+      expect(
+          find.textContaining('Apple will ask you to confirm'), findsOneWidget);
       await tapKey(tester, 'delete-account-continue');
       await tapKey(tester, 'delete-account-confirm');
 

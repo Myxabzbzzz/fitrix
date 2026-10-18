@@ -2017,4 +2017,280 @@ class AppLocalizationsEs extends AppLocalizations {
   String gymExercisesSub(int n) {
     return '$n con técnica y tus mejores series';
   }
+
+  @override
+  String get profileEditTooltip => 'Editar perfil';
+
+  @override
+  String get profileMySports => 'Mis deportes';
+
+  @override
+  String profileSportsSelected(int n) {
+    return '$n seleccionados';
+  }
+
+  @override
+  String get profileWeightLabel => 'kg · peso';
+
+  @override
+  String get profileHeightLabel => 'cm · altura';
+
+  @override
+  String get profileAgeLabel => 'años · edad';
+
+  @override
+  String get profileSettings => 'Ajustes';
+
+  @override
+  String get hrZonesTitle => 'Zonas de frecuencia cardíaca';
+
+  @override
+  String profileHrZonesSummary(int rest, int max) {
+    return 'Reposo $rest · máx $max lpm';
+  }
+
+  @override
+  String get profileHrZonesSetUp => 'Configurar';
+
+  @override
+  String get profileConnectedApps => 'Apps conectadas';
+
+  @override
+  String profileConnectedAppsCount(int connected, int total) {
+    return '$connected de $total conectadas';
+  }
+
+  @override
+  String get hrZonesMax => 'FC máx';
+
+  @override
+  String get hrZonesRest => 'FC en reposo';
+
+  @override
+  String get hrZonesLthr => 'LTHR';
+
+  @override
+  String get hrZonesEdit => 'Editar frecuencias';
+
+  @override
+  String get hrZonesKarvonen => 'Karvonen';
+
+  @override
+  String get hrZonesFriel => 'LTHR (Friel)';
+
+  @override
+  String get hrZonesKarvonenTitle => 'Zonas Karvonen';
+
+  @override
+  String get hrZonesKarvonenSub => '% de reserva';
+
+  @override
+  String get hrZonesFrielTitle => 'Zonas LTHR';
+
+  @override
+  String get hrZonesColZone => 'ZONA';
+
+  @override
+  String get hrZonesColBpm => 'LPM';
+
+  @override
+  String get hrZonesColHrr => '50–100% reserva';
+
+  @override
+  String get hrZonesColLthr => '% DE LTHR';
+
+  @override
+  String hrZonesLthrValue(int lthr) {
+    return 'LTHR $lthr lpm';
+  }
+
+  @override
+  String hrZonesFormula(int reserve) {
+    return 'FC = reposo + % × (máx − reposo). Tu reserva es $reserve lpm.';
+  }
+
+  @override
+  String hrZonesZ2Tip(int low, int high) {
+    return 'La mayor parte de tu carrera debe estar en Z2, $low–$high lpm. Z4 solo para intervalos cortos.';
+  }
+
+  @override
+  String get hrZonesHowTitle => 'Cómo medir la FC máxima';
+
+  @override
+  String get hrZonesHowBody =>
+      'Calienta 15 min y haz dos esfuerzos duros de 3–4 min cuesta arriba. La FC más alta que veas es tu máxima.';
+
+  @override
+  String hrZonesTanaka(int age, int max) {
+    return '¿Sin prueba aún? Estimación de Tanaka: 208 − 0,7 × $age = $max lpm (±10).';
+  }
+
+  @override
+  String get hrZonesRestingTip => 'FC en reposo: mídela al despertar, tumbado.';
+
+  @override
+  String get hrZonesFrielNote =>
+      'Zonas Friel para correr. Prueba LTHR: corre 30 min en solitario a tope; la FC media de los últimos 20 min es tu LTHR.';
+
+  @override
+  String get hrZonesNeedAge =>
+      'Añade tu edad al perfil para estimar tu FC máxima.';
+
+  @override
+  String get hrZonesCompleteProfile => 'Completa tu perfil';
+
+  @override
+  String get hrZonesNeedRates =>
+      'Añade tu FC en reposo y máxima para ver tus zonas.';
+
+  @override
+  String get hrZonesNeedLthr => 'Añade tu LTHR para ver las zonas Friel.';
+
+  @override
+  String get hrZoneRecovery => 'Recuperación';
+
+  @override
+  String get hrZoneAerobic => 'Aeróbica';
+
+  @override
+  String get hrZoneTempo => 'Tempo';
+
+  @override
+  String get hrZoneThreshold => 'Umbral';
+
+  @override
+  String get hrZoneVo2max => 'VO2máx';
+
+  @override
+  String get hrZoneSubThr => 'Sub-umbral';
+
+  @override
+  String get hrZoneThreshPlus => 'Umbral+';
+
+  @override
+  String get hrZoneCapacity => 'Capacidad';
+
+  @override
+  String get hrZoneAnaerobic => 'Anaerób.';
+
+  @override
+  String get editProfileTitle => 'Editar perfil';
+
+  @override
+  String get editProfileBody => 'Cuerpo';
+
+  @override
+  String get editProfilePerformance => 'Rendimiento';
+
+  @override
+  String get editProfileSex => 'Sexo';
+
+  @override
+  String get sexMale => 'Hombre';
+
+  @override
+  String get sexFemale => 'Mujer';
+
+  @override
+  String get editProfileRestingHr => 'FC en reposo';
+
+  @override
+  String get editProfileMaxHr => 'FC máx';
+
+  @override
+  String get editProfileLthr => 'LTHR (opcional)';
+
+  @override
+  String get editProfileFtp => 'FTP en ciclismo';
+
+  @override
+  String get editProfileFiveK => 'Mejor marca en 5 km';
+
+  @override
+  String get unitBpm => 'lpm';
+
+  @override
+  String get unitWatts => 'W';
+
+  @override
+  String get unitMinSec => 'min:seg';
+
+  @override
+  String get unitYears => 'años';
+
+  @override
+  String get editProfileSave => 'Guardar';
+
+  @override
+  String editProfileErrHr(int min, int max) {
+    return 'Introduce $min–$max lpm';
+  }
+
+  @override
+  String get editProfileErrRestMax =>
+      'La FC en reposo debe ser menor que la máxima';
+
+  @override
+  String editProfileErrFtp(int min, int max) {
+    return 'Introduce $min–$max W';
+  }
+
+  @override
+  String get editProfileErrFiveK => 'Introduce un tiempo de 12:00 a 60:00';
+
+  @override
+  String get connectedAppsTitle => 'Apps conectadas';
+
+  @override
+  String get connectedAppsWhyHeader => 'POR QUÉ CONECTAR';
+
+  @override
+  String get connectedAppsWhyBody =>
+      'Conecta un reloj y tu chequeo matutino se rellena solo: sueño, FC en reposo y VFC. Lo uso para ajustar el plan de hoy.';
+
+  @override
+  String get connectedAppsAppleDesc =>
+      'Sueño, frecuencia cardíaca, pasos, peso';
+
+  @override
+  String get connectedAppsGarminDesc => 'Actividades, FC, sueño, VFC';
+
+  @override
+  String get connectedAppsStravaDesc => 'Carreras, rutas en bici y esquí';
+
+  @override
+  String get connectedAppsWhoopDesc => 'Recuperación, esfuerzo, sueño, VFC';
+
+  @override
+  String get connectedAppsNotConnected => 'No conectada';
+
+  @override
+  String get connectedAppsConnect => 'Conectar';
+
+  @override
+  String get connectedAppsFooter =>
+      'Puedes desconectar cualquier app cuando quieras. Los datos siguen en tu cuenta hasta que los borres.';
+
+  @override
+  String connectedAppsSheetTitle(String app) {
+    return 'Conectar $app';
+  }
+
+  @override
+  String get connectedAppsSheetSubtitle => 'Qué podría leer FITRIX';
+
+  @override
+  String get connectedAppsSheetPrivacy =>
+      'FITRIX solo lee datos y nunca publica.';
+
+  @override
+  String get connectedAppsSheetSoon =>
+      'Conectar apps aún no está disponible. Lo añadiremos en una próxima actualización.';
+
+  @override
+  String get connectedAppsComingSoon => 'Llegará en una próxima actualización';
+
+  @override
+  String get connectedAppsClose => 'Cerrar';
 }

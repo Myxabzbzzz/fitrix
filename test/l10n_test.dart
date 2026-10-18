@@ -23,8 +23,9 @@ import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 import 'package:fitrix/main.dart';
 
-Map<String, dynamic> _arb(String language) => jsonDecode(
-    File('lib/l10n/app_$language.arb').readAsStringSync()) as Map<String, dynamic>;
+Map<String, dynamic> _arb(String language) =>
+    jsonDecode(File('lib/l10n/app_$language.arb').readAsStringSync())
+        as Map<String, dynamic>;
 
 Set<String> _placeholders(String text) =>
     RegExp(r'\{(\w+)\}').allMatches(text).map((m) => m.group(1)!).toSet();
@@ -95,7 +96,7 @@ void main() {
       expect(find.text('Обо мне'), findsOneWidget);
       expect(find.text('Выйти'), findsOneWidget);
       expect(find.text('72'), findsOneWidget);
-      expect(find.text('кг сейчас'), findsOneWidget);
+      expect(find.text('кг · вес'), findsOneWidget);
     });
 
     testWidgets('changing the language from Profile returns to Profile',
@@ -214,9 +215,27 @@ void main() {
 
   group('home tiles', () {
     const labels = {
-      'ru': ['МОЙ\nПРОГРЕСС', 'МОЁ\nПИТАНИЕ', 'МОИ\nТРЕНИРОВКИ', 'МАГАЗИН', 'КАРТА\nFITRIX'],
-      'uz': ['MENING\nNATIJAM', 'MENING\nOVQATIM', 'MENING\nMASHG‘ULOT', 'DO‘KON', 'FITRIX\nXARITASI'],
-      'es': ['MI\nPROGRESO', 'MI\nNUTRICIÓN', 'MIS\nENTRENOS', 'TIENDA', 'MAPA\nFITRIX'],
+      'ru': [
+        'МОЙ\nПРОГРЕСС',
+        'МОЁ\nПИТАНИЕ',
+        'МОИ\nТРЕНИРОВКИ',
+        'МАГАЗИН',
+        'КАРТА\nFITRIX'
+      ],
+      'uz': [
+        'MENING\nNATIJAM',
+        'MENING\nOVQATIM',
+        'MENING\nMASHG‘ULOT',
+        'DO‘KON',
+        'FITRIX\nXARITASI'
+      ],
+      'es': [
+        'MI\nPROGRESO',
+        'MI\nNUTRICIÓN',
+        'MIS\nENTRENOS',
+        'TIENDA',
+        'MAPA\nFITRIX'
+      ],
     };
     for (final language in labels.keys) {
       testWidgets('are localized and fit their tiles on iPhone SE in $language',
@@ -240,12 +259,14 @@ void main() {
         for (final label in labels[language]!) {
           final finder = find.text(label);
           expect(finder, findsOneWidget, reason: label);
-          final tile = find.ancestor(
-              of: finder, matching: find.byType(FeatureTile));
+          final tile =
+              find.ancestor(of: finder, matching: find.byType(FeatureTile));
           expect(tile, findsOneWidget, reason: label);
           final text = tester.getRect(finder);
           final bounds = tester.getRect(tile);
-          expect(bounds.contains(text.topLeft) && bounds.contains(text.bottomRight),
+          expect(
+              bounds.contains(text.topLeft) &&
+                  bounds.contains(text.bottomRight),
               isTrue,
               reason: '$label: $text outside $bounds');
           // The label's own width is not clipped to the tile.
@@ -256,8 +277,7 @@ void main() {
                     DefaultTextStyle.of(tester.element(finder)).style),
             textDirection: TextDirection.ltr,
           )..layout();
-          expect(painter.width, lessThanOrEqualTo(bounds.width),
-              reason: label);
+          expect(painter.width, lessThanOrEqualTo(bounds.width), reason: label);
         }
         expect(tester.takeException(), isNull);
       });

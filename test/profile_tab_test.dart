@@ -77,6 +77,9 @@ void main() {
 
   testWidgets('theme control writes themeModeProvider', (tester) async {
     final container = await pump(tester);
+    // Settings sit below the fold on an SE-sized screen now.
+    await tester.ensureVisible(find.text('Dark'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Dark'));
     await tester.pumpAndSettle();
     expect(container.read(themeModeProvider), ThemeMode.dark);

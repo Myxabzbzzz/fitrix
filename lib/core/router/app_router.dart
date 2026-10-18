@@ -15,6 +15,9 @@ import 'package:fitrix/features/transition/presentation/screens/chat_transition_
 import 'package:fitrix/features/checkin/presentation/screens/recovery_screen.dart';
 import 'package:fitrix/features/plan/presentation/screens/week_plan_screen.dart';
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
+import 'package:fitrix/features/profile/presentation/screens/connected_apps_screen.dart';
+import 'package:fitrix/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:fitrix/features/profile/presentation/screens/hr_zones_screen.dart';
 import 'package:fitrix/features/shell/presentation/fading_branch_container.dart';
 import 'package:fitrix/features/shell/presentation/main_shell.dart';
 import 'package:fitrix/features/exercises/presentation/add_exercise_screen.dart';
@@ -47,6 +50,9 @@ class AppRouter {
   static const String felix = '/felix';
   static const String me = '/me';
   static const String aboutMe = '/me/about';
+  static const String hrZones = '/me/zones';
+  static const String editProfile = '/me/edit';
+  static const String connectedApps = '/me/apps';
 
   // Home sections
   static const String workouts = '/home/workouts';
@@ -353,6 +359,22 @@ class AppRouter {
                         // Leaving by another route (e.g. re-tapping the
                         // Profile tab) asks about unsaved edits too.
                         onExit: aboutMeOnExit,
+                      ),
+                      GoRoute(
+                        path: 'zones',
+                        name: 'hrZones',
+                        builder: (context, state) => const HrZonesScreen(),
+                      ),
+                      GoRoute(
+                        path: 'edit',
+                        name: 'editProfile',
+                        builder: (context, state) => const EditProfileScreen(),
+                      ),
+                      GoRoute(
+                        path: 'apps',
+                        name: 'connectedApps',
+                        builder: (context, state) =>
+                            const ConnectedAppsScreen(),
                       ),
                     ],
                   ),

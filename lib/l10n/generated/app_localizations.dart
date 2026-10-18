@@ -3354,6 +3354,498 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{n} with technique and your best sets'**
   String gymExercisesSub(int n);
+
+  /// No description provided for @profileEditTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get profileEditTooltip;
+
+  /// No description provided for @profileMySports.
+  ///
+  /// In en, this message translates to:
+  /// **'My sports'**
+  String get profileMySports;
+
+  /// No description provided for @profileSportsSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} selected'**
+  String profileSportsSelected(int n);
+
+  /// No description provided for @profileWeightLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'kg · weight'**
+  String get profileWeightLabel;
+
+  /// No description provided for @profileHeightLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'cm · height'**
+  String get profileHeightLabel;
+
+  /// No description provided for @profileAgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'years · age'**
+  String get profileAgeLabel;
+
+  /// No description provided for @profileSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get profileSettings;
+
+  /// No description provided for @hrZonesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Heart-rate zones'**
+  String get hrZonesTitle;
+
+  /// No description provided for @profileHrZonesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest {rest} · max {max} bpm'**
+  String profileHrZonesSummary(int rest, int max);
+
+  /// No description provided for @profileHrZonesSetUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up'**
+  String get profileHrZonesSetUp;
+
+  /// No description provided for @profileConnectedApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected apps'**
+  String get profileConnectedApps;
+
+  /// No description provided for @profileConnectedAppsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{connected} of {total} connected'**
+  String profileConnectedAppsCount(int connected, int total);
+
+  /// No description provided for @hrZonesMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Max HR'**
+  String get hrZonesMax;
+
+  /// No description provided for @hrZonesRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Resting HR'**
+  String get hrZonesRest;
+
+  /// No description provided for @hrZonesLthr.
+  ///
+  /// In en, this message translates to:
+  /// **'LTHR'**
+  String get hrZonesLthr;
+
+  /// No description provided for @hrZonesEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit heart rates'**
+  String get hrZonesEdit;
+
+  /// No description provided for @hrZonesKarvonen.
+  ///
+  /// In en, this message translates to:
+  /// **'Karvonen'**
+  String get hrZonesKarvonen;
+
+  /// No description provided for @hrZonesFriel.
+  ///
+  /// In en, this message translates to:
+  /// **'LTHR (Friel)'**
+  String get hrZonesFriel;
+
+  /// No description provided for @hrZonesKarvonenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Karvonen zones'**
+  String get hrZonesKarvonenTitle;
+
+  /// No description provided for @hrZonesKarvonenSub.
+  ///
+  /// In en, this message translates to:
+  /// **'% of reserve'**
+  String get hrZonesKarvonenSub;
+
+  /// No description provided for @hrZonesFrielTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'LTHR zones'**
+  String get hrZonesFrielTitle;
+
+  /// No description provided for @hrZonesColZone.
+  ///
+  /// In en, this message translates to:
+  /// **'ZONE'**
+  String get hrZonesColZone;
+
+  /// No description provided for @hrZonesColBpm.
+  ///
+  /// In en, this message translates to:
+  /// **'BPM'**
+  String get hrZonesColBpm;
+
+  /// No description provided for @hrZonesColHrr.
+  ///
+  /// In en, this message translates to:
+  /// **'50–100% HRR'**
+  String get hrZonesColHrr;
+
+  /// No description provided for @hrZonesColLthr.
+  ///
+  /// In en, this message translates to:
+  /// **'% OF LTHR'**
+  String get hrZonesColLthr;
+
+  /// No description provided for @hrZonesLthrValue.
+  ///
+  /// In en, this message translates to:
+  /// **'LTHR {lthr} bpm'**
+  String hrZonesLthrValue(int lthr);
+
+  /// No description provided for @hrZonesFormula.
+  ///
+  /// In en, this message translates to:
+  /// **'HR = rest + % × (max − rest). Your reserve is {reserve} bpm.'**
+  String hrZonesFormula(int reserve);
+
+  /// No description provided for @hrZonesZ2Tip.
+  ///
+  /// In en, this message translates to:
+  /// **'Most of your running should sit in Z2, {low}–{high} bpm. Z4 only for short intervals.'**
+  String hrZonesZ2Tip(int low, int high);
+
+  /// No description provided for @hrZonesHowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to measure max HR'**
+  String get hrZonesHowTitle;
+
+  /// No description provided for @hrZonesHowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm up 15 min, then run a hard 3–4 min uphill effort twice. The highest HR you see is your max.'**
+  String get hrZonesHowBody;
+
+  /// No description provided for @hrZonesTanaka.
+  ///
+  /// In en, this message translates to:
+  /// **'No test yet? Tanaka estimate: 208 − 0.7 × {age} = {max} bpm (±10).'**
+  String hrZonesTanaka(int age, int max);
+
+  /// No description provided for @hrZonesRestingTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Resting HR: measure on waking, lying down.'**
+  String get hrZonesRestingTip;
+
+  /// No description provided for @hrZonesFrielNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Friel zones for running. LTHR test: run 30 min solo all-out, average HR of the last 20 min is your LTHR.'**
+  String get hrZonesFrielNote;
+
+  /// No description provided for @hrZonesNeedAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your age to your profile to get an estimate of your max HR.'**
+  String get hrZonesNeedAge;
+
+  /// No description provided for @hrZonesCompleteProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get hrZonesCompleteProfile;
+
+  /// No description provided for @hrZonesNeedRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your resting and max HR to see your zones.'**
+  String get hrZonesNeedRates;
+
+  /// No description provided for @hrZonesNeedLthr.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your LTHR to see Friel zones.'**
+  String get hrZonesNeedLthr;
+
+  /// No description provided for @hrZoneRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get hrZoneRecovery;
+
+  /// No description provided for @hrZoneAerobic.
+  ///
+  /// In en, this message translates to:
+  /// **'Aerobic'**
+  String get hrZoneAerobic;
+
+  /// No description provided for @hrZoneTempo.
+  ///
+  /// In en, this message translates to:
+  /// **'Tempo'**
+  String get hrZoneTempo;
+
+  /// No description provided for @hrZoneThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Threshold'**
+  String get hrZoneThreshold;
+
+  /// No description provided for @hrZoneVo2max.
+  ///
+  /// In en, this message translates to:
+  /// **'VO2max'**
+  String get hrZoneVo2max;
+
+  /// No description provided for @hrZoneSubThr.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub-thr.'**
+  String get hrZoneSubThr;
+
+  /// No description provided for @hrZoneThreshPlus.
+  ///
+  /// In en, this message translates to:
+  /// **'Thresh.+'**
+  String get hrZoneThreshPlus;
+
+  /// No description provided for @hrZoneCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity'**
+  String get hrZoneCapacity;
+
+  /// No description provided for @hrZoneAnaerobic.
+  ///
+  /// In en, this message translates to:
+  /// **'Anaerob.'**
+  String get hrZoneAnaerobic;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get editProfileTitle;
+
+  /// No description provided for @editProfileBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Body'**
+  String get editProfileBody;
+
+  /// No description provided for @editProfilePerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance'**
+  String get editProfilePerformance;
+
+  /// No description provided for @editProfileSex.
+  ///
+  /// In en, this message translates to:
+  /// **'Sex'**
+  String get editProfileSex;
+
+  /// No description provided for @sexMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get sexMale;
+
+  /// No description provided for @sexFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get sexFemale;
+
+  /// No description provided for @editProfileRestingHr.
+  ///
+  /// In en, this message translates to:
+  /// **'Resting HR'**
+  String get editProfileRestingHr;
+
+  /// No description provided for @editProfileMaxHr.
+  ///
+  /// In en, this message translates to:
+  /// **'Max HR'**
+  String get editProfileMaxHr;
+
+  /// No description provided for @editProfileLthr.
+  ///
+  /// In en, this message translates to:
+  /// **'LTHR (optional)'**
+  String get editProfileLthr;
+
+  /// No description provided for @editProfileFtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycling FTP'**
+  String get editProfileFtp;
+
+  /// No description provided for @editProfileFiveK.
+  ///
+  /// In en, this message translates to:
+  /// **'Running 5K personal best'**
+  String get editProfileFiveK;
+
+  /// No description provided for @unitBpm.
+  ///
+  /// In en, this message translates to:
+  /// **'bpm'**
+  String get unitBpm;
+
+  /// No description provided for @unitWatts.
+  ///
+  /// In en, this message translates to:
+  /// **'W'**
+  String get unitWatts;
+
+  /// No description provided for @unitMinSec.
+  ///
+  /// In en, this message translates to:
+  /// **'min:sec'**
+  String get unitMinSec;
+
+  /// No description provided for @unitYears.
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get unitYears;
+
+  /// No description provided for @editProfileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get editProfileSave;
+
+  /// No description provided for @editProfileErrHr.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter {min}–{max} bpm'**
+  String editProfileErrHr(int min, int max);
+
+  /// No description provided for @editProfileErrRestMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Resting HR must be lower than max HR'**
+  String get editProfileErrRestMax;
+
+  /// No description provided for @editProfileErrFtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter {min}–{max} W'**
+  String editProfileErrFtp(int min, int max);
+
+  /// No description provided for @editProfileErrFiveK.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a time from 12:00 to 60:00'**
+  String get editProfileErrFiveK;
+
+  /// No description provided for @connectedAppsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected apps'**
+  String get connectedAppsTitle;
+
+  /// No description provided for @connectedAppsWhyHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'WHY CONNECT'**
+  String get connectedAppsWhyHeader;
+
+  /// No description provided for @connectedAppsWhyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect a watch and your morning check-in fills itself: sleep, resting HR and HRV. I use it to adjust today\'s plan.'**
+  String get connectedAppsWhyBody;
+
+  /// No description provided for @connectedAppsAppleDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep, heart rate, steps, weight'**
+  String get connectedAppsAppleDesc;
+
+  /// No description provided for @connectedAppsGarminDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Activities, HR, sleep, HRV'**
+  String get connectedAppsGarminDesc;
+
+  /// No description provided for @connectedAppsStravaDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Runs, rides and ski activities'**
+  String get connectedAppsStravaDesc;
+
+  /// No description provided for @connectedAppsWhoopDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery, strain, sleep, HRV'**
+  String get connectedAppsWhoopDesc;
+
+  /// No description provided for @connectedAppsNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get connectedAppsNotConnected;
+
+  /// No description provided for @connectedAppsConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connectedAppsConnect;
+
+  /// No description provided for @connectedAppsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'You can disconnect any app at any time. Data stays on your account until you delete it.'**
+  String get connectedAppsFooter;
+
+  /// No description provided for @connectedAppsSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect {app}'**
+  String connectedAppsSheetTitle(String app);
+
+  /// No description provided for @connectedAppsSheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What FITRIX could read'**
+  String get connectedAppsSheetSubtitle;
+
+  /// No description provided for @connectedAppsSheetPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'FITRIX only reads data and never posts.'**
+  String get connectedAppsSheetPrivacy;
+
+  /// No description provided for @connectedAppsSheetSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting apps is not available yet. We will add it in a later update.'**
+  String get connectedAppsSheetSoon;
+
+  /// No description provided for @connectedAppsComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming in a later update'**
+  String get connectedAppsComingSoon;
+
+  /// No description provided for @connectedAppsClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get connectedAppsClose;
 }
 
 class _AppLocalizationsDelegate

@@ -1963,4 +1963,280 @@ class AppLocalizationsUz extends AppLocalizations {
   String gymExercisesSub(int n) {
     return '$n ta mashq: texnika va eng yaxshi natijalar';
   }
+
+  @override
+  String get profileEditTooltip => 'Profilni tahrirlash';
+
+  @override
+  String get profileMySports => 'Mening sport turlarim';
+
+  @override
+  String profileSportsSelected(int n) {
+    return 'Tanlangan: $n';
+  }
+
+  @override
+  String get profileWeightLabel => 'kg · vazn';
+
+  @override
+  String get profileHeightLabel => 'sm · bo‘y';
+
+  @override
+  String get profileAgeLabel => 'yosh · yosh';
+
+  @override
+  String get profileSettings => 'Sozlamalar';
+
+  @override
+  String get hrZonesTitle => 'Yurak urishi zonalari';
+
+  @override
+  String profileHrZonesSummary(int rest, int max) {
+    return 'Tinch $rest · maks $max urish/daq';
+  }
+
+  @override
+  String get profileHrZonesSetUp => 'Sozlash';
+
+  @override
+  String get profileConnectedApps => 'Ulangan ilovalar';
+
+  @override
+  String profileConnectedAppsCount(int connected, int total) {
+    return '$total tadan $connected tasi ulangan';
+  }
+
+  @override
+  String get hrZonesMax => 'Maks. puls';
+
+  @override
+  String get hrZonesRest => 'Tinch holat pulsi';
+
+  @override
+  String get hrZonesLthr => 'LTHR';
+
+  @override
+  String get hrZonesEdit => 'Pulsni tahrirlash';
+
+  @override
+  String get hrZonesKarvonen => 'Karvonen';
+
+  @override
+  String get hrZonesFriel => 'LTHR (Friel)';
+
+  @override
+  String get hrZonesKarvonenTitle => 'Karvonen zonalari';
+
+  @override
+  String get hrZonesKarvonenSub => 'zaxiradan %';
+
+  @override
+  String get hrZonesFrielTitle => 'LTHR zonalari';
+
+  @override
+  String get hrZonesColZone => 'ZONA';
+
+  @override
+  String get hrZonesColBpm => 'URISH/DAQ';
+
+  @override
+  String get hrZonesColHrr => '50–100% zaxira';
+
+  @override
+  String get hrZonesColLthr => 'LTHR %';
+
+  @override
+  String hrZonesLthrValue(int lthr) {
+    return 'LTHR $lthr urish/daq';
+  }
+
+  @override
+  String hrZonesFormula(int reserve) {
+    return 'Puls = tinch + % × (maks − tinch). Zaxirangiz: $reserve urish/daq.';
+  }
+
+  @override
+  String hrZonesZ2Tip(int low, int high) {
+    return 'Yugurishning ko‘p qismi Z2 da bo‘lsin, $low–$high urish/daq. Z4 faqat qisqa intervallar uchun.';
+  }
+
+  @override
+  String get hrZonesHowTitle => 'Maksimal pulsni qanday o‘lchash';
+
+  @override
+  String get hrZonesHowBody =>
+      '15 daqiqa isining, so‘ng tepalikka 3–4 daqiqa qattiq yugurishni ikki marta bajaring. Ko‘rgan eng yuqori pulsingiz maksimumingiz.';
+
+  @override
+  String hrZonesTanaka(int age, int max) {
+    return 'Hali test yo‘qmi? Tanaka bahosi: 208 − 0,7 × $age = $max urish/daq (±10).';
+  }
+
+  @override
+  String get hrZonesRestingTip =>
+      'Tinch holat pulsi: uyg‘onganda, yotgan holda o‘lchang.';
+
+  @override
+  String get hrZonesFrielNote =>
+      'Friel zonalari yugurish uchun. LTHR testi: yolg‘iz 30 daqiqa to‘liq kuch bilan yuguring, oxirgi 20 daqiqadagi o‘rtacha puls LTHR bo‘ladi.';
+
+  @override
+  String get hrZonesNeedAge =>
+      'Maksimal pulsni baholash uchun profilingizga yoshingizni kiriting.';
+
+  @override
+  String get hrZonesCompleteProfile => 'Profilni to‘ldirish';
+
+  @override
+  String get hrZonesNeedRates =>
+      'Zonalarni ko‘rish uchun tinch va maksimal pulsni kiriting.';
+
+  @override
+  String get hrZonesNeedLthr => 'Friel zonalarini ko‘rish uchun LTHR kiriting.';
+
+  @override
+  String get hrZoneRecovery => 'Tiklanish';
+
+  @override
+  String get hrZoneAerobic => 'Aerob';
+
+  @override
+  String get hrZoneTempo => 'Tempo';
+
+  @override
+  String get hrZoneThreshold => 'Bo‘sag‘a';
+
+  @override
+  String get hrZoneVo2max => 'VO2max';
+
+  @override
+  String get hrZoneSubThr => 'Bo‘sag‘a osti';
+
+  @override
+  String get hrZoneThreshPlus => 'Bo‘sag‘a+';
+
+  @override
+  String get hrZoneCapacity => 'Sig‘im';
+
+  @override
+  String get hrZoneAnaerobic => 'Anaerob';
+
+  @override
+  String get editProfileTitle => 'Profilni tahrirlash';
+
+  @override
+  String get editProfileBody => 'Tana';
+
+  @override
+  String get editProfilePerformance => 'Natijalar';
+
+  @override
+  String get editProfileSex => 'Jins';
+
+  @override
+  String get sexMale => 'Erkak';
+
+  @override
+  String get sexFemale => 'Ayol';
+
+  @override
+  String get editProfileRestingHr => 'Tinch holat pulsi';
+
+  @override
+  String get editProfileMaxHr => 'Maks. puls';
+
+  @override
+  String get editProfileLthr => 'LTHR (ixtiyoriy)';
+
+  @override
+  String get editProfileFtp => 'Velosiped FTP';
+
+  @override
+  String get editProfileFiveK => '5 km shaxsiy rekord';
+
+  @override
+  String get unitBpm => 'urish/daq';
+
+  @override
+  String get unitWatts => 'Vt';
+
+  @override
+  String get unitMinSec => 'daq:son';
+
+  @override
+  String get unitYears => 'yosh';
+
+  @override
+  String get editProfileSave => 'Saqlash';
+
+  @override
+  String editProfileErrHr(int min, int max) {
+    return '$min–$max urish/daq kiriting';
+  }
+
+  @override
+  String get editProfileErrRestMax =>
+      'Tinch puls maksimal pulsdan past bo‘lishi kerak';
+
+  @override
+  String editProfileErrFtp(int min, int max) {
+    return '$min–$max Vt kiriting';
+  }
+
+  @override
+  String get editProfileErrFiveK => '12:00 dan 60:00 gacha vaqt kiriting';
+
+  @override
+  String get connectedAppsTitle => 'Ulangan ilovalar';
+
+  @override
+  String get connectedAppsWhyHeader => 'NEGA ULASH KERAK';
+
+  @override
+  String get connectedAppsWhyBody =>
+      'Soatni ulang, ertalabki tekshiruv o‘zi to‘ladi: uyqu, tinch puls va HRV. Men bundan bugungi rejani moslashtirish uchun foydalanaman.';
+
+  @override
+  String get connectedAppsAppleDesc => 'Uyqu, puls, qadamlar, vazn';
+
+  @override
+  String get connectedAppsGarminDesc => 'Mashg‘ulotlar, puls, uyqu, HRV';
+
+  @override
+  String get connectedAppsStravaDesc => 'Yugurish, velosiped va chang‘i';
+
+  @override
+  String get connectedAppsWhoopDesc => 'Tiklanish, yuklama, uyqu, HRV';
+
+  @override
+  String get connectedAppsNotConnected => 'Ulanmagan';
+
+  @override
+  String get connectedAppsConnect => 'Ulash';
+
+  @override
+  String get connectedAppsFooter =>
+      'Istalgan ilovani istalgan vaqt uzishingiz mumkin. Ma‘lumotlar o‘chirmaguningizcha hisobingizda qoladi.';
+
+  @override
+  String connectedAppsSheetTitle(String app) {
+    return '$app ni ulash';
+  }
+
+  @override
+  String get connectedAppsSheetSubtitle => 'FITRIX nimalarni o‘qiy oladi';
+
+  @override
+  String get connectedAppsSheetPrivacy =>
+      'FITRIX faqat ma‘lumotlarni o‘qiydi va hech narsa joylamaydi.';
+
+  @override
+  String get connectedAppsSheetSoon =>
+      'Ilovalarni ulash hozircha mavjud emas. Keyingi yangilanishda qo‘shamiz.';
+
+  @override
+  String get connectedAppsComingSoon => 'Keyingi yangilanishda';
+
+  @override
+  String get connectedAppsClose => 'Yopish';
 }

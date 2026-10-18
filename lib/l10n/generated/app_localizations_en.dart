@@ -2012,4 +2012,278 @@ class AppLocalizationsEn extends AppLocalizations {
   String gymExercisesSub(int n) {
     return '$n with technique and your best sets';
   }
+
+  @override
+  String get profileEditTooltip => 'Edit profile';
+
+  @override
+  String get profileMySports => 'My sports';
+
+  @override
+  String profileSportsSelected(int n) {
+    return '$n selected';
+  }
+
+  @override
+  String get profileWeightLabel => 'kg · weight';
+
+  @override
+  String get profileHeightLabel => 'cm · height';
+
+  @override
+  String get profileAgeLabel => 'years · age';
+
+  @override
+  String get profileSettings => 'Settings';
+
+  @override
+  String get hrZonesTitle => 'Heart-rate zones';
+
+  @override
+  String profileHrZonesSummary(int rest, int max) {
+    return 'Rest $rest · max $max bpm';
+  }
+
+  @override
+  String get profileHrZonesSetUp => 'Set up';
+
+  @override
+  String get profileConnectedApps => 'Connected apps';
+
+  @override
+  String profileConnectedAppsCount(int connected, int total) {
+    return '$connected of $total connected';
+  }
+
+  @override
+  String get hrZonesMax => 'Max HR';
+
+  @override
+  String get hrZonesRest => 'Resting HR';
+
+  @override
+  String get hrZonesLthr => 'LTHR';
+
+  @override
+  String get hrZonesEdit => 'Edit heart rates';
+
+  @override
+  String get hrZonesKarvonen => 'Karvonen';
+
+  @override
+  String get hrZonesFriel => 'LTHR (Friel)';
+
+  @override
+  String get hrZonesKarvonenTitle => 'Karvonen zones';
+
+  @override
+  String get hrZonesKarvonenSub => '% of reserve';
+
+  @override
+  String get hrZonesFrielTitle => 'LTHR zones';
+
+  @override
+  String get hrZonesColZone => 'ZONE';
+
+  @override
+  String get hrZonesColBpm => 'BPM';
+
+  @override
+  String get hrZonesColHrr => '50–100% HRR';
+
+  @override
+  String get hrZonesColLthr => '% OF LTHR';
+
+  @override
+  String hrZonesLthrValue(int lthr) {
+    return 'LTHR $lthr bpm';
+  }
+
+  @override
+  String hrZonesFormula(int reserve) {
+    return 'HR = rest + % × (max − rest). Your reserve is $reserve bpm.';
+  }
+
+  @override
+  String hrZonesZ2Tip(int low, int high) {
+    return 'Most of your running should sit in Z2, $low–$high bpm. Z4 only for short intervals.';
+  }
+
+  @override
+  String get hrZonesHowTitle => 'How to measure max HR';
+
+  @override
+  String get hrZonesHowBody =>
+      'Warm up 15 min, then run a hard 3–4 min uphill effort twice. The highest HR you see is your max.';
+
+  @override
+  String hrZonesTanaka(int age, int max) {
+    return 'No test yet? Tanaka estimate: 208 − 0.7 × $age = $max bpm (±10).';
+  }
+
+  @override
+  String get hrZonesRestingTip => 'Resting HR: measure on waking, lying down.';
+
+  @override
+  String get hrZonesFrielNote =>
+      'Friel zones for running. LTHR test: run 30 min solo all-out, average HR of the last 20 min is your LTHR.';
+
+  @override
+  String get hrZonesNeedAge =>
+      'Add your age to your profile to get an estimate of your max HR.';
+
+  @override
+  String get hrZonesCompleteProfile => 'Complete your profile';
+
+  @override
+  String get hrZonesNeedRates =>
+      'Add your resting and max HR to see your zones.';
+
+  @override
+  String get hrZonesNeedLthr => 'Add your LTHR to see Friel zones.';
+
+  @override
+  String get hrZoneRecovery => 'Recovery';
+
+  @override
+  String get hrZoneAerobic => 'Aerobic';
+
+  @override
+  String get hrZoneTempo => 'Tempo';
+
+  @override
+  String get hrZoneThreshold => 'Threshold';
+
+  @override
+  String get hrZoneVo2max => 'VO2max';
+
+  @override
+  String get hrZoneSubThr => 'Sub-thr.';
+
+  @override
+  String get hrZoneThreshPlus => 'Thresh.+';
+
+  @override
+  String get hrZoneCapacity => 'Capacity';
+
+  @override
+  String get hrZoneAnaerobic => 'Anaerob.';
+
+  @override
+  String get editProfileTitle => 'Edit profile';
+
+  @override
+  String get editProfileBody => 'Body';
+
+  @override
+  String get editProfilePerformance => 'Performance';
+
+  @override
+  String get editProfileSex => 'Sex';
+
+  @override
+  String get sexMale => 'Male';
+
+  @override
+  String get sexFemale => 'Female';
+
+  @override
+  String get editProfileRestingHr => 'Resting HR';
+
+  @override
+  String get editProfileMaxHr => 'Max HR';
+
+  @override
+  String get editProfileLthr => 'LTHR (optional)';
+
+  @override
+  String get editProfileFtp => 'Cycling FTP';
+
+  @override
+  String get editProfileFiveK => 'Running 5K personal best';
+
+  @override
+  String get unitBpm => 'bpm';
+
+  @override
+  String get unitWatts => 'W';
+
+  @override
+  String get unitMinSec => 'min:sec';
+
+  @override
+  String get unitYears => 'years';
+
+  @override
+  String get editProfileSave => 'Save';
+
+  @override
+  String editProfileErrHr(int min, int max) {
+    return 'Enter $min–$max bpm';
+  }
+
+  @override
+  String get editProfileErrRestMax => 'Resting HR must be lower than max HR';
+
+  @override
+  String editProfileErrFtp(int min, int max) {
+    return 'Enter $min–$max W';
+  }
+
+  @override
+  String get editProfileErrFiveK => 'Enter a time from 12:00 to 60:00';
+
+  @override
+  String get connectedAppsTitle => 'Connected apps';
+
+  @override
+  String get connectedAppsWhyHeader => 'WHY CONNECT';
+
+  @override
+  String get connectedAppsWhyBody =>
+      'Connect a watch and your morning check-in fills itself: sleep, resting HR and HRV. I use it to adjust today\'s plan.';
+
+  @override
+  String get connectedAppsAppleDesc => 'Sleep, heart rate, steps, weight';
+
+  @override
+  String get connectedAppsGarminDesc => 'Activities, HR, sleep, HRV';
+
+  @override
+  String get connectedAppsStravaDesc => 'Runs, rides and ski activities';
+
+  @override
+  String get connectedAppsWhoopDesc => 'Recovery, strain, sleep, HRV';
+
+  @override
+  String get connectedAppsNotConnected => 'Not connected';
+
+  @override
+  String get connectedAppsConnect => 'Connect';
+
+  @override
+  String get connectedAppsFooter =>
+      'You can disconnect any app at any time. Data stays on your account until you delete it.';
+
+  @override
+  String connectedAppsSheetTitle(String app) {
+    return 'Connect $app';
+  }
+
+  @override
+  String get connectedAppsSheetSubtitle => 'What FITRIX could read';
+
+  @override
+  String get connectedAppsSheetPrivacy =>
+      'FITRIX only reads data and never posts.';
+
+  @override
+  String get connectedAppsSheetSoon =>
+      'Connecting apps is not available yet. We will add it in a later update.';
+
+  @override
+  String get connectedAppsComingSoon => 'Coming in a later update';
+
+  @override
+  String get connectedAppsClose => 'Close';
 }

@@ -2055,4 +2055,280 @@ class AppLocalizationsRu extends AppLocalizations {
   String gymExercisesSub(int n) {
     return '$n с техникой и вашими рекордами';
   }
+
+  @override
+  String get profileEditTooltip => 'Редактировать профиль';
+
+  @override
+  String get profileMySports => 'Мои виды спорта';
+
+  @override
+  String profileSportsSelected(int n) {
+    return 'Выбрано: $n';
+  }
+
+  @override
+  String get profileWeightLabel => 'кг · вес';
+
+  @override
+  String get profileHeightLabel => 'см · рост';
+
+  @override
+  String get profileAgeLabel => 'лет · возраст';
+
+  @override
+  String get profileSettings => 'Настройки';
+
+  @override
+  String get hrZonesTitle => 'Пульсовые зоны';
+
+  @override
+  String profileHrZonesSummary(int rest, int max) {
+    return 'Покой $rest · макс $max уд/мин';
+  }
+
+  @override
+  String get profileHrZonesSetUp => 'Настроить';
+
+  @override
+  String get profileConnectedApps => 'Подключённые приложения';
+
+  @override
+  String profileConnectedAppsCount(int connected, int total) {
+    return 'Подключено $connected из $total';
+  }
+
+  @override
+  String get hrZonesMax => 'Макс. пульс';
+
+  @override
+  String get hrZonesRest => 'Пульс покоя';
+
+  @override
+  String get hrZonesLthr => 'ПАНО';
+
+  @override
+  String get hrZonesEdit => 'Изменить пульс';
+
+  @override
+  String get hrZonesKarvonen => 'Карвонен';
+
+  @override
+  String get hrZonesFriel => 'ПАНО (Фрил)';
+
+  @override
+  String get hrZonesKarvonenTitle => 'Зоны по Карвонену';
+
+  @override
+  String get hrZonesKarvonenSub => '% от резерва';
+
+  @override
+  String get hrZonesFrielTitle => 'Зоны по ПАНО';
+
+  @override
+  String get hrZonesColZone => 'ЗОНА';
+
+  @override
+  String get hrZonesColBpm => 'УД/МИН';
+
+  @override
+  String get hrZonesColHrr => '50–100% резерва';
+
+  @override
+  String get hrZonesColLthr => '% ОТ ПАНО';
+
+  @override
+  String hrZonesLthrValue(int lthr) {
+    return 'ПАНО $lthr уд/мин';
+  }
+
+  @override
+  String hrZonesFormula(int reserve) {
+    return 'Пульс = покой + % × (макс − покой). Ваш резерв: $reserve уд/мин.';
+  }
+
+  @override
+  String hrZonesZ2Tip(int low, int high) {
+    return 'Большую часть бега держите в Z2, $low–$high уд/мин. Z4 только для коротких интервалов.';
+  }
+
+  @override
+  String get hrZonesHowTitle => 'Как измерить максимальный пульс';
+
+  @override
+  String get hrZonesHowBody =>
+      'Разминайтесь 15 минут, затем дважды пробегите 3–4 минуты в горку изо всех сил. Наибольший пульс и есть ваш максимум.';
+
+  @override
+  String hrZonesTanaka(int age, int max) {
+    return 'Ещё нет теста? Оценка Танаки: 208 − 0,7 × $age = $max уд/мин (±10).';
+  }
+
+  @override
+  String get hrZonesRestingTip =>
+      'Пульс покоя: измеряйте после пробуждения, лёжа.';
+
+  @override
+  String get hrZonesFrielNote =>
+      'Зоны Фрила для бега. Тест ПАНО: 30 минут бега в одиночку на максимум, средний пульс последних 20 минут и есть ваш ПАНО.';
+
+  @override
+  String get hrZonesNeedAge =>
+      'Добавьте возраст в профиль, чтобы получить оценку максимального пульса.';
+
+  @override
+  String get hrZonesCompleteProfile => 'Заполнить профиль';
+
+  @override
+  String get hrZonesNeedRates =>
+      'Добавьте пульс покоя и максимальный пульс, чтобы увидеть зоны.';
+
+  @override
+  String get hrZonesNeedLthr => 'Добавьте ПАНО, чтобы увидеть зоны Фрила.';
+
+  @override
+  String get hrZoneRecovery => 'Восстановление';
+
+  @override
+  String get hrZoneAerobic => 'Аэробная';
+
+  @override
+  String get hrZoneTempo => 'Темповая';
+
+  @override
+  String get hrZoneThreshold => 'Пороговая';
+
+  @override
+  String get hrZoneVo2max => 'МПК';
+
+  @override
+  String get hrZoneSubThr => 'Суб-порог';
+
+  @override
+  String get hrZoneThreshPlus => 'Порог+';
+
+  @override
+  String get hrZoneCapacity => 'Ёмкость';
+
+  @override
+  String get hrZoneAnaerobic => 'Анаэроб.';
+
+  @override
+  String get editProfileTitle => 'Редактировать профиль';
+
+  @override
+  String get editProfileBody => 'Тело';
+
+  @override
+  String get editProfilePerformance => 'Результаты';
+
+  @override
+  String get editProfileSex => 'Пол';
+
+  @override
+  String get sexMale => 'Мужской';
+
+  @override
+  String get sexFemale => 'Женский';
+
+  @override
+  String get editProfileRestingHr => 'Пульс покоя';
+
+  @override
+  String get editProfileMaxHr => 'Макс. пульс';
+
+  @override
+  String get editProfileLthr => 'ПАНО (необязательно)';
+
+  @override
+  String get editProfileFtp => 'FTP в велоспорте';
+
+  @override
+  String get editProfileFiveK => 'Личный рекорд на 5 км';
+
+  @override
+  String get unitBpm => 'уд/мин';
+
+  @override
+  String get unitWatts => 'Вт';
+
+  @override
+  String get unitMinSec => 'мин:сек';
+
+  @override
+  String get unitYears => 'лет';
+
+  @override
+  String get editProfileSave => 'Сохранить';
+
+  @override
+  String editProfileErrHr(int min, int max) {
+    return 'Введите $min–$max уд/мин';
+  }
+
+  @override
+  String get editProfileErrRestMax =>
+      'Пульс покоя должен быть ниже максимального';
+
+  @override
+  String editProfileErrFtp(int min, int max) {
+    return 'Введите $min–$max Вт';
+  }
+
+  @override
+  String get editProfileErrFiveK => 'Введите время от 12:00 до 60:00';
+
+  @override
+  String get connectedAppsTitle => 'Подключённые приложения';
+
+  @override
+  String get connectedAppsWhyHeader => 'ЗАЧЕМ ПОДКЛЮЧАТЬ';
+
+  @override
+  String get connectedAppsWhyBody =>
+      'Подключите часы, и утренний чек-ин заполнится сам: сон, пульс покоя и ВСР. Я использую это, чтобы подстроить план на сегодня.';
+
+  @override
+  String get connectedAppsAppleDesc => 'Сон, пульс, шаги, вес';
+
+  @override
+  String get connectedAppsGarminDesc => 'Тренировки, пульс, сон, ВСР';
+
+  @override
+  String get connectedAppsStravaDesc => 'Бег, велозаезды и лыжи';
+
+  @override
+  String get connectedAppsWhoopDesc => 'Восстановление, нагрузка, сон, ВСР';
+
+  @override
+  String get connectedAppsNotConnected => 'Не подключено';
+
+  @override
+  String get connectedAppsConnect => 'Подключить';
+
+  @override
+  String get connectedAppsFooter =>
+      'Любое приложение можно отключить в любой момент. Данные остаются в вашем аккаунте, пока вы их не удалите.';
+
+  @override
+  String connectedAppsSheetTitle(String app) {
+    return 'Подключить $app';
+  }
+
+  @override
+  String get connectedAppsSheetSubtitle => 'Что FITRIX сможет читать';
+
+  @override
+  String get connectedAppsSheetPrivacy =>
+      'FITRIX только читает данные и ничего не публикует.';
+
+  @override
+  String get connectedAppsSheetSoon =>
+      'Подключение приложений пока недоступно. Мы добавим его в одном из следующих обновлений.';
+
+  @override
+  String get connectedAppsComingSoon => 'Появится в одном из обновлений';
+
+  @override
+  String get connectedAppsClose => 'Закрыть';
 }

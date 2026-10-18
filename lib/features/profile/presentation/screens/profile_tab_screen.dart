@@ -14,7 +14,11 @@ import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/auth/presentation/sign_in_prompt.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
+import 'package:fitrix/features/profile/data/performance_store.dart';
 import 'package:fitrix/features/profile/domain/streak.dart';
+import 'package:fitrix/features/profile/presentation/screens/connected_apps_screen.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -172,6 +176,43 @@ class ProfileTabScreen extends ConsumerWidget {
       DateTime.now(),
     );
     final weight = profile?.weight;
+    final perf = ref.watch(performanceProfileProvider);
+
+    String dash(String? v) => v == null || v.isEmpty ? '—' : v;
+    String levelLabel(String level) => switch (level) {
+          'Beginner' => l10n.programLevelBeginner,
+          'Intermediate' => l10n.programLevelMedium,
+          'Advanced' => l10n.programLevelAdvanced,
+          _ => level,
+        };
+    String goalLabel(String goal) {
+      final i = AppConstants.fitnessGoals.indexOf(goal);
+      return switch (i) {
+        0 => l10n.aboutGoalBuild,
+        1 => l10n.aboutGoalEndurance,
+        2 => l10n.aboutGoalLose,
+        3 => l10n.aboutGoalHealthy,
+        4 => l10n.aboutGoalTrack,
+        _ => goal,
+      };
+    }
+
+    final subtitle = [
+      if (profile != null && profile.experience.trim().isNotEmpty)
+        levelLabel(profile.experience.trim()),
+      if (profile != null && profile.goal.trim().isNotEmpty)
+        goalLabel(profile.goal.trim()),
+    ].join(' · ');
+    final selectedSports = [
+      for (final s in Sport.values)
+        if (profile?.sports
+                .any((x) => x.toLowerCase() == s.label.toLowerCase()) ??
+            false)
+          s,
+    ];
+    final hrSummary = perf.restingHr != null && perf.maxHr != null
+        ? l10n.profileHrZonesSummary(perf.restingHr!, perf.maxHr!)
+        : l10n.profileHrZonesSetUp;
 
     Widget stat(String value, String label) => Expanded(
           child: Container(
@@ -201,6 +242,7 @@ class ProfileTabScreen extends ConsumerWidget {
       required IconData icon,
       required String label,
       Color? color,
+      String? subtitle,
       Widget? trailing,
       VoidCallback? onTap,
     }) =>
@@ -219,10 +261,20 @@ class ProfileTabScreen extends ConsumerWidget {
                   Icon(icon, size: 20, color: color ?? palette.textPrimary),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
-                    child: Text(label,
-                        style: AppText.bodyStrong.copyWith(
-                          color: color ?? palette.textPrimary,
-                        )),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(label,
+                            style: AppText.bodyStrong.copyWith(
+                              color: color ?? palette.textPrimary,
+                            )),
+                        if (subtitle != null)
+                          Text(subtitle,
+                              style: AppText.caption.copyWith(
+                                color: palette.textSecondary,
+                              )),
+                      ],
+                    ),
                   ),
                   if (trailing != null) trailing,
                 ],
@@ -255,7 +307,7 @@ class ProfileTabScreen extends ConsumerWidget {
             onTap: () => ref.read(themeModeProvider.notifier).set(mode),
             child: Container(
               constraints: const BoxConstraints(minHeight: 32, minWidth: 44),
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: selected ? palette.background : Colors.transparent,
@@ -277,7 +329,16 @@ class ProfileTabScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.only(bottom: AppSpacing.lg),
           children: [
-            ScreenTitle(l10n.profileTitle),
+            ScreenTitle(
+              l10n.profileTitle,
+              trailing: IconButton(
+                key: const Key('profile-edit'),
+                tooltip: l10n.profileEditTooltip,
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                color: palette.textPrimary,
+                onPressed: () => context.push(AppRouter.editProfile),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               child: Row(
@@ -304,6 +365,12 @@ class ProfileTabScreen extends ConsumerWidget {
                             style: AppText.headingM.copyWith(
                               color: palette.textPrimary,
                             )),
+                        if (subtitle.isNotEmpty)
+                          Text(subtitle,
+                              key: const Key('profile-subtitle'),
+                              style: AppText.caption.copyWith(
+                                color: palette.textSecondary,
+                              )),
                         if (email != null && email.isNotEmpty)
                           Text(email,
                               key: const Key('account-email'),
@@ -325,12 +392,99 @@ class ProfileTabScreen extends ConsumerWidget {
                   const SizedBox(width: AppSpacing.sm),
                   stat('$streak', l10n.profileDayStreak),
                   const SizedBox(width: AppSpacing.sm),
-                  stat(weight == null || weight.isEmpty ? '—' : weight,
-                      l10n.profileKgNow),
                 ],
               ),
             ),
+            const SizedBox(height: AppSpacing.sm),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: Row(
+                children: [
+                  stat(dash(weight), l10n.profileWeightLabel),
+                  const SizedBox(width: AppSpacing.sm),
+                  stat(dash(profile?.height), l10n.profileHeightLabel),
+                  const SizedBox(width: AppSpacing.sm),
+                  stat(dash(profile?.age), l10n.profileAgeLabel),
+                ],
+              ),
+            ),
+            if (selectedSports.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      Expanded(
+                        child: Text(l10n.profileMySports,
+                            style: AppText.headingS
+                                .copyWith(color: palette.textPrimary)),
+                      ),
+                      Text(l10n.profileSportsSelected(selectedSports.length),
+                          style: AppText.caption
+                              .copyWith(color: palette.textSecondary)),
+                    ]),
+                    const SizedBox(height: AppSpacing.xs),
+                    Wrap(
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        for (final s in selectedSports)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.sm,
+                                vertical: AppSpacing.xxs),
+                            decoration: BoxDecoration(
+                              borderRadius: AppRadius.fullAll,
+                              border: Border.all(color: palette.textPrimary),
+                            ),
+                            child:
+                                Row(mainAxisSize: MainAxisSize.min, children: [
+                              Icon(Icons.check,
+                                  size: 14, color: palette.textPrimary),
+                              const SizedBox(width: AppSpacing.xxs),
+                              Text(s.localizedLabel(l10n),
+                                  style: AppText.captionStrong
+                                      .copyWith(color: palette.textPrimary)),
+                            ]),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.md),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: list([
+                row(
+                  key: const Key('profile-hr-zones'),
+                  icon: Icons.favorite_border,
+                  label: l10n.hrZonesTitle,
+                  subtitle: hrSummary,
+                  trailing: chevron(),
+                  onTap: () => context.push(AppRouter.hrZones),
+                ),
+                row(
+                  key: const Key('profile-connected-apps'),
+                  icon: Icons.sync,
+                  label: l10n.profileConnectedApps,
+                  subtitle: l10n.profileConnectedAppsCount(
+                      connectedAppsCount, ConnectableApp.values.length),
+                  trailing: chevron(),
+                  onTap: () => context.push(AppRouter.connectedApps),
+                ),
+              ]),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: Text(l10n.profileSettings,
+                  style: AppText.headingS.copyWith(color: palette.textPrimary)),
+            ),
+            const SizedBox(height: AppSpacing.xs),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               child: list([

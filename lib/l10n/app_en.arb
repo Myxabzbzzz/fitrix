@@ -1517,5 +1517,175 @@
         "type": "int"
       }
     }
-  }
+  },
+  "profileEditTooltip": "Edit profile",
+  "profileMySports": "My sports",
+  "profileSportsSelected": "{n} selected",
+  "@profileSportsSelected": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "profileWeightLabel": "kg · weight",
+  "profileHeightLabel": "cm · height",
+  "profileAgeLabel": "years · age",
+  "profileSettings": "Settings",
+  "hrZonesTitle": "Heart-rate zones",
+  "profileHrZonesSummary": "Rest {rest} · max {max} bpm",
+  "@profileHrZonesSummary": {
+    "placeholders": {
+      "rest": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "profileHrZonesSetUp": "Set up",
+  "profileConnectedApps": "Connected apps",
+  "profileConnectedAppsCount": "{connected} of {total} connected",
+  "@profileConnectedAppsCount": {
+    "placeholders": {
+      "connected": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "hrZonesMax": "Max HR",
+  "hrZonesRest": "Resting HR",
+  "hrZonesLthr": "LTHR",
+  "hrZonesEdit": "Edit heart rates",
+  "hrZonesKarvonen": "Karvonen",
+  "hrZonesFriel": "LTHR (Friel)",
+  "hrZonesKarvonenTitle": "Karvonen zones",
+  "hrZonesKarvonenSub": "% of reserve",
+  "hrZonesFrielTitle": "LTHR zones",
+  "hrZonesColZone": "ZONE",
+  "hrZonesColBpm": "BPM",
+  "hrZonesColHrr": "50–100% HRR",
+  "hrZonesColLthr": "% OF LTHR",
+  "hrZonesLthrValue": "LTHR {lthr} bpm",
+  "@hrZonesLthrValue": {
+    "placeholders": {
+      "lthr": {
+        "type": "int"
+      }
+    }
+  },
+  "hrZonesFormula": "HR = rest + % × (max − rest). Your reserve is {reserve} bpm.",
+  "@hrZonesFormula": {
+    "placeholders": {
+      "reserve": {
+        "type": "int"
+      }
+    }
+  },
+  "hrZonesZ2Tip": "Most of your running should sit in Z2, {low}–{high} bpm. Z4 only for short intervals.",
+  "@hrZonesZ2Tip": {
+    "placeholders": {
+      "low": {
+        "type": "int"
+      },
+      "high": {
+        "type": "int"
+      }
+    }
+  },
+  "hrZonesHowTitle": "How to measure max HR",
+  "hrZonesHowBody": "Warm up 15 min, then run a hard 3–4 min uphill effort twice. The highest HR you see is your max.",
+  "hrZonesTanaka": "No test yet? Tanaka estimate: 208 − 0.7 × {age} = {max} bpm (±10).",
+  "@hrZonesTanaka": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "hrZonesRestingTip": "Resting HR: measure on waking, lying down.",
+  "hrZonesFrielNote": "Friel zones for running. LTHR test: run 30 min solo all-out, average HR of the last 20 min is your LTHR.",
+  "hrZonesNeedAge": "Add your age to your profile to get an estimate of your max HR.",
+  "hrZonesCompleteProfile": "Complete your profile",
+  "hrZonesNeedRates": "Add your resting and max HR to see your zones.",
+  "hrZonesNeedLthr": "Add your LTHR to see Friel zones.",
+  "hrZoneRecovery": "Recovery",
+  "hrZoneAerobic": "Aerobic",
+  "hrZoneTempo": "Tempo",
+  "hrZoneThreshold": "Threshold",
+  "hrZoneVo2max": "VO2max",
+  "hrZoneSubThr": "Sub-thr.",
+  "hrZoneThreshPlus": "Thresh.+",
+  "hrZoneCapacity": "Capacity",
+  "hrZoneAnaerobic": "Anaerob.",
+  "editProfileTitle": "Edit profile",
+  "editProfileBody": "Body",
+  "editProfilePerformance": "Performance",
+  "editProfileSex": "Sex",
+  "sexMale": "Male",
+  "sexFemale": "Female",
+  "editProfileRestingHr": "Resting HR",
+  "editProfileMaxHr": "Max HR",
+  "editProfileLthr": "LTHR (optional)",
+  "editProfileFtp": "Cycling FTP",
+  "editProfileFiveK": "Running 5K personal best",
+  "unitBpm": "bpm",
+  "unitWatts": "W",
+  "unitMinSec": "min:sec",
+  "unitYears": "years",
+  "editProfileSave": "Save",
+  "editProfileErrHr": "Enter {min}–{max} bpm",
+  "@editProfileErrHr": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "editProfileErrRestMax": "Resting HR must be lower than max HR",
+  "editProfileErrFtp": "Enter {min}–{max} W",
+  "@editProfileErrFtp": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "editProfileErrFiveK": "Enter a time from 12:00 to 60:00",
+  "connectedAppsTitle": "Connected apps",
+  "connectedAppsWhyHeader": "WHY CONNECT",
+  "connectedAppsWhyBody": "Connect a watch and your morning check-in fills itself: sleep, resting HR and HRV. I use it to adjust today's plan.",
+  "connectedAppsAppleDesc": "Sleep, heart rate, steps, weight",
+  "connectedAppsGarminDesc": "Activities, HR, sleep, HRV",
+  "connectedAppsStravaDesc": "Runs, rides and ski activities",
+  "connectedAppsWhoopDesc": "Recovery, strain, sleep, HRV",
+  "connectedAppsNotConnected": "Not connected",
+  "connectedAppsConnect": "Connect",
+  "connectedAppsFooter": "You can disconnect any app at any time. Data stays on your account until you delete it.",
+  "connectedAppsSheetTitle": "Connect {app}",
+  "@connectedAppsSheetTitle": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsSheetSubtitle": "What FITRIX could read",
+  "connectedAppsSheetPrivacy": "FITRIX only reads data and never posts.",
+  "connectedAppsSheetSoon": "Connecting apps is not available yet. We will add it in a later update.",
+  "connectedAppsComingSoon": "Coming in a later update",
+  "connectedAppsClose": "Close"
 }
