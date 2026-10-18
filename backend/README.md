@@ -86,6 +86,15 @@ npm run dev
 npm start
 ```
 
+### Against the cloud Supabase project
+```bash
+./start.sh
+```
+Reads `SUPABASE_URL` from `../env/cloud.json` (unless already set in the
+shell), warns if Ollama is not running or the model (`OLLAMA_MODEL`, default
+`qwen3:8b`) is not pulled, then runs `node server.js`. It prints only the
+Supabase host, never keys.
+
 Server will start on: `http://localhost:3000`
 
 ## Authentication
@@ -437,6 +446,11 @@ backend/
 ├── auth.js            # Supabase token verification (JWKS/HS256), rate limit
 ├── prompt.js          # System prompt per topic/profile, input validation
 ├── plainText.js       # Strips markdown from (streamed) replies
+├── actions.js         # Validates the action block Felix may append (weight, plans)
+├── fallback.js        # Plan-to-JSON fallback call
+├── images.js          # Photo validation (size, base64)
+├── exercise-names.json # Exercise names Felix may use in plans (read by prompt.js)
+├── start.sh           # Start against the cloud Supabase project (env/cloud.json)
 ├── *.test.js          # Unit tests: npm test (testTokens.js: test helpers)
 ├── .env.example       # Configuration template (copy to .env)
 ├── package.json       # Dependencies

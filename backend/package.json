@@ -1,7 +1,7 @@
 {
   "name": "fitrix-backend",
   "version": "1.0.0",
-  "description": "Backend API for FITRIX app with Ollama integration",
+  "description": "Backend API for the FITRIX app: Felix chat proxy to a local Ollama model, with Supabase sign-in",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

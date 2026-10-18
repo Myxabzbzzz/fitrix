@@ -49,6 +49,10 @@ You should see:
 🔥 Model qwen3:8b loaded
 ```
 
+To run against the cloud Supabase project instead (the one the phone build
+uses), run `backend/start.sh`: it takes `SUPABASE_URL` from `env/cloud.json`
+and warns if Ollama or the model is missing.
+
 Ollama itself must be running (the menu-bar app, or `ollama serve`).
 Chatting requires signing in in the app; to hack on the backend without
 sign-in, start it with `AUTH_MODE=off npm start` (never expose that).
@@ -87,6 +91,20 @@ paid Apple Developer account).
   ```bash
   flutter run --dart-define=API_BASE_URL=http://<mac-ip>:3000
   ```
+
+- **Install on a physical iPhone without losing data** — check-ins, plans,
+  nutrition and Felix plans live only on the phone, and `flutter install`
+  uninstalls the app first (wiping them). Build and install over the top:
+
+  ```bash
+  flutter build ios --release --dart-define-from-file=env/cloud.json \
+    --dart-define=API_BASE_URL=http://<mac-ip>:3000
+  xcrun devicectl device install app --device <device-id> build/ios/iphoneos/Runner.app
+  ```
+
+  (`xcrun devicectl list devices` shows the id.) If it complains about an
+  invalid signature on a framework: `rm -rf build/ios build/native_assets`
+  and build again.
 
 - **Physical Android phone** — same `--dart-define` with the Mac's Wi-Fi
   address, phone on the same network. Android 9+ blocks plain `http://`
@@ -193,5 +211,5 @@ templates, SMTP, `--dart-define`s, backend env) is in
 | Supabase DB             | 55322 | (same)                                           |
 | Supabase Studio         | 55323 | (same)                                           |
 | Mailpit (sign-in codes) | 55324 | (same)                                           |
-| Backend                 | 3000  | `cd backend && npm start`                        |
+| Backend                 | 3000  | `cd backend && npm start` (or `backend/start.sh` for cloud Supabase) |
 | App                     | –     | `flutter run`                                    |

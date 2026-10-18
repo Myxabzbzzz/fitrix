@@ -14,23 +14,28 @@ Platforms in this repo: iOS, Android, macOS and web.
   [Google and Apple sign-in](#google-and-apple-sign-in)); until then they
   say "coming soon"
 
-**Main app** (5-tab bar: Discover · Shop · Home · Felix · Profile)
-- **Home** — tiles for My progress, My nutrition, Felix, My workouts, Shop,
-  Fitrix map
-- **My workouts** — sports → workout plans (today's workout, Start/Edit, add
-  your own)
-- **Active workout** — sets table (previous / kg / reps / done), live timer,
-  collapses to a mini bar above the tab bar and survives an app restart
-- **My progress** — strength charts and recent sessions from your saved
-  workouts; body weight and calories are sample data for now
-- **My nutrition** — calorie ring and macros (sample data)
-- **Felix chats** — general assistant plus a trainer chat per sport; replies
-  stream in word by word
-- **About me** — profile data and Sign out (clears everything on the device)
-- Discover, Shop and Fitrix map are "Coming soon" placeholders
+**Main app** (5-tab bar: Discover · Shop · Home · Felix · About me). Each
+folder in `lib/features/` is one area:
 
-Light and dark themes follow the system setting. The language picker saves
-your choice, but the UI is English-only for now.
+| Folder | What it does |
+|--------|--------------|
+| `intro`, `language`, `auth`, `transition` | Onboarding screens: intro, language picker, email-code / Google / Apple sign-in, hand-off to the Felix chat |
+| `profile` | Profile setup, About me tab, edit profile, heart-rate zones, connected apps, sign out and account deletion |
+| `home`, `shell` | Home tiles and the tab bar with its animated tab switching |
+| `checkin` | Daily check-in (how you feel) and the Recovery screen with a readiness score |
+| `workouts` | Sports and workout plans, active workout (sets table, rest timer, mini bar that survives a restart), history |
+| `exercises` | Exercise library, exercise detail, add your own exercise |
+| `plan` | Week plan: what to train on which day |
+| `programs` | Multi-week training programs: browse, start, track progress |
+| `progress` | Strength charts, lift detail, records, training load, body weight |
+| `nutrition` | Calorie ring and macros, add food, food detail, micronutrients, daily targets |
+| `chat` | Felix: general assistant plus a trainer chat per sport; streamed replies, photos, and plans/weight changes applied after you tap to confirm |
+| `content` | Discover articles; the data layer (Supabase, with a bundled copy offline) shared with Shop |
+| `shop` | Product catalog, cart and placing an order request (no payments) |
+| `map` | Fitrix map with on-device routing (walk, metro, car) over bundled street data |
+
+Light and dark themes follow the system setting. The app is in English,
+Russian, Uzbek and Spanish (see [Translations](#translations)).
 
 ## Running it
 
@@ -62,6 +67,22 @@ Over USB you can skip that with `adb reverse tcp:3000 tcp:3000` and
 If the backend isn't reachable at all, the onboarding chat falls back to
 canned replies so the flow can still be completed. If the backend is up but
 the model fails, the chat shows the error with "Tap to retry".
+
+### Install on an iPhone without losing data
+
+Check-ins, plans, nutrition and Felix plans are stored only on the phone.
+`flutter install` uninstalls the app first and wipes them, so build a
+release and install over the existing app:
+
+```bash
+flutter build ios --release --dart-define-from-file=env/cloud.json \
+  --dart-define=API_BASE_URL=http://<mac LAN IP>:3000
+xcrun devicectl device install app --device <device id> build/ios/iphoneos/Runner.app
+```
+
+If `devicectl` complains about an invalid signature on a framework, run
+`rm -rf build/ios build/native_assets` and build again. To run the backend
+against the cloud project for the phone use `backend/start.sh`.
 
 ## Backend
 
@@ -481,15 +502,14 @@ a string, edit **all four** files, then run `flutter gen-l10n` (or
 `flutter pub get`) to regenerate `lib/l10n/generated/`.
 `test/l10n_test.dart` fails if a language misses a key or a placeholder.
 
-Translated so far: intro, language picker, About me (sign-out and account
-deletion). The other screens are still English and move over screen by
-screen. Uzbek texts need a check by a native speaker.
+Uzbek texts need a check by a native speaker.
 
 ## Data storage
 
-Everything is stored on the device with `shared_preferences`: language,
+Training data is stored on the device with `shared_preferences`: language,
 email, profile, onboarding status, chat histories, workout plans, the workout
-in progress and workout history. Sign out deletes all of it.
+in progress and workout history, check-ins, week plan, programs and
+nutrition. Sign out deletes all of it.
 
 ## Project structure
 
@@ -502,12 +522,12 @@ lib/
 │   ├── theme/          # Material themes, AppPalette design tokens
 │   └── widgets/        # Logo, tiles, pills, page titles
 ├── features/
-│   ├── intro/ language/ auth/ profile/ transition/   # onboarding
+│   ├── intro/ language/ auth/ transition/              # onboarding
 │   ├── home/ shell/                                    # Home + tab bar
-│   ├── workouts/       # plans, active workout, history, storage
-│   ├── progress/       # charts
-│   ├── nutrition/
-│   └── chat/           # Felix: streaming API client, chats, bubbles
+│   ├── profile/ checkin/ plan/ programs/               # you, daily check-in, week plan, programs
+│   ├── workouts/ exercises/ progress/ nutrition/       # training and food
+│   ├── chat/           # Felix: streaming API client, chats, bubbles
+│   └── content/ shop/ map/                             # articles, shop, map
 └── main.dart           # loads storage, then starts the app
 ```
 
