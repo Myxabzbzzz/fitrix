@@ -65,8 +65,10 @@ class AppPalette {
   /// Good / on target.
   final Color success;
 
-  /// Opaque secondary text and form errors (ThemeData text styles, sign-in).
+  /// Opaque secondary text (ThemeData bodySmall/labelSmall).
   final Color textMuted;
+
+  /// Hint / placeholder text in inputs.
   final Color textHint;
 
   /// Text field fill

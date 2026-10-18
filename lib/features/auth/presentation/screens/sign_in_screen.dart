@@ -370,7 +370,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   _errorMessage(AppLocalizations.of(context), error),
                   key: const Key('sign-in-error'),
                   textAlign: TextAlign.center,
-                  style: AppText.bodyRegular.copyWith(color: AppPalette.of(context).error),
+                  style: AppText.bodyRegular
+                      .copyWith(color: AppPalette.of(context).error),
                 ),
               ),
       );
