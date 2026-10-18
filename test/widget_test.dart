@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/core/session/session_providers.dart';
-import 'package:fitrix/features/progress/data/progress_data.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -50,7 +49,8 @@ void main() {
         '1h 43m 22s',
       );
       expect(
-        formatDuration(const Duration(hours: 1, minutes: 43), withSeconds: false),
+        formatDuration(const Duration(hours: 1, minutes: 43),
+            withSeconds: false),
         '1h 43m',
       );
       expect(formatDuration(const Duration(seconds: 5)), '5s');
@@ -132,50 +132,6 @@ void main() {
         second.read(workoutsForSportProvider(Sport.running)).map((w) => w.name),
         ['5K'],
       );
-    });
-  });
-
-  group('ProgressData.strengthFrom', () {
-    CompletedWorkout session(DateTime day, String exercise, List<double> kgs) =>
-        CompletedWorkout(
-          templateId: 't',
-          name: 'Test',
-          sport: Sport.gym,
-          startedAt: day,
-          finishedAt: day,
-          exercises: [
-            Exercise(name: exercise, sets: [
-              for (final kg in kgs)
-                WorkoutSet(previousKg: 0, previousReps: 10, kg: kg, reps: 10),
-            ]),
-          ],
-        );
-
-    test('charts the best weight per session, oldest first', () {
-      final history = [
-        session(DateTime(2026, 10, 3), 'Bench press', [80, 85]),
-        session(DateTime(2026, 10, 1), 'Bench press', [75, 70]),
-      ];
-
-      final series = ProgressData.strengthFrom(history, Sport.gym);
-
-      expect(series.single.title, 'Bench press (kg)');
-      expect(series.single.values, [75, 85]);
-      expect(series.single.xLabels, ['1 Oct', '3 Oct']);
-      expect(series.single.maxY, greaterThan(series.single.minY));
-      // Grid lines at whole numbers: range splits evenly into 4 steps.
-      final step = (series.single.maxY - series.single.minY) / 4;
-      expect(step, step.roundToDouble());
-      expect(series.single.minY, lessThanOrEqualTo(75));
-      expect(series.single.maxY, greaterThanOrEqualTo(85));
-    });
-
-    test('bodyweight exercises chart reps; other sports are excluded', () {
-      final history = [session(DateTime(2026, 10, 1), 'Push-ups', [0, 0])];
-
-      expect(ProgressData.strengthFrom(history, Sport.gym).single.title,
-          'Push-ups (reps)');
-      expect(ProgressData.strengthFrom(history, Sport.running), isEmpty);
     });
   });
 

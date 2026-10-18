@@ -27,7 +27,11 @@ import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/screens/my_workouts_screen.dart';
 import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_screen.dart';
 import 'package:fitrix/features/workouts/presentation/screens/workout_complete_screen.dart';
+import 'package:fitrix/features/progress/presentation/screens/body_weight_screen.dart';
+import 'package:fitrix/features/progress/presentation/screens/lift_detail_screen.dart';
 import 'package:fitrix/features/progress/presentation/screens/progress_screen.dart';
+import 'package:fitrix/features/progress/presentation/screens/records_screen.dart';
+import 'package:fitrix/features/progress/presentation/screens/training_load_screen.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/add_food_screen.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/food_detail_screen.dart';
@@ -65,6 +69,9 @@ class AppRouter {
   static const String exerciseLibrary = '/home/workouts/exercises';
   static const String addExercise = '/home/workouts/exercises/add';
   static const String progress = '/home/progress';
+  static const String progressLoad = '/home/progress/load';
+  static const String progressRecords = '/home/progress/records';
+  static const String progressWeight = '/home/progress/weight';
   static const String nutrition = '/home/nutrition';
   static const String nutritionAdd = '/home/nutrition/add';
   static const String nutritionMicros = '/home/nutrition/micros';
@@ -87,6 +94,10 @@ class AppRouter {
   /// at [index] instead of adding.
   static String addExerciseTo({bool replace = false, int index = 0}) =>
       '$addExercise?mode=${replace ? 'replace' : 'add'}&index=$index';
+
+  /// The detail screen of one lift; [name] is the exercise name.
+  static String progressLift(String name) =>
+      '$progress/lift/${Uri.encodeComponent(name)}';
 
   static String sportWorkouts(Sport sport) => '$workouts/${sport.name}';
 
@@ -309,6 +320,45 @@ class AppRouter {
                           state,
                           const ProgressScreen(),
                         ),
+                        routes: [
+                          GoRoute(
+                            path: 'load',
+                            name: 'progressLoad',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              const TrainingLoadScreen(),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'records',
+                            name: 'progressRecords',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              const RecordsScreen(),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'lift/:name',
+                            name: 'progressLift',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              LiftDetailScreen(
+                                  name: state.pathParameters['name']!),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'weight',
+                            name: 'progressWeight',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              const BodyWeightScreen(),
+                            ),
+                          ),
+                        ],
                       ),
                       GoRoute(
                         path: 'nutrition',

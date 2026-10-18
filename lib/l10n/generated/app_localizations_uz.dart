@@ -2744,4 +2744,449 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get targetsSave => 'Me’yorlarni saqlash';
+
+  @override
+  String get progressOverall => 'Umumiy';
+
+  @override
+  String get progressEmpty => 'Yuklamani ko‘rish uchun mashg‘ulotni yozing';
+
+  @override
+  String get progressLoadThisWeek => 'Shu haftadagi yuklama';
+
+  @override
+  String get progressLoadNote => 'seans RPE × daq';
+
+  @override
+  String get progressAu => 'shartli birlik';
+
+  @override
+  String progressPercentOfUsual(int percent) {
+    return 'odatdagidan $percent%';
+  }
+
+  @override
+  String get progressFitness => 'Tayyorgarlik';
+
+  @override
+  String get progressFatigue => 'Charchoq';
+
+  @override
+  String get progressForm => 'Holat';
+
+  @override
+  String get progress42Day => '42 kunlik yuklama';
+
+  @override
+  String get progress7Day => '7 kunlik yuklama';
+
+  @override
+  String get progressEstimated =>
+      'Taxminiy: ba’zi mashg‘ulotlar uchun zo‘riqish 6 deb olingan';
+
+  @override
+  String get progressFormFresh => 'Tetik';
+
+  @override
+  String get progressFormNeutral => 'O‘rtacha';
+
+  @override
+  String get progressFormTired => 'Charchagan';
+
+  @override
+  String get progressRecords => 'Rekordlar';
+
+  @override
+  String get progressRecordsThisWeek => 'shu hafta';
+
+  @override
+  String get progressBalance => 'Yuklama balansi';
+
+  @override
+  String get progressBandLow => 'Past';
+
+  @override
+  String get progressBandSweet => 'Optimal';
+
+  @override
+  String get progressBandRisky => 'Xavfli';
+
+  @override
+  String get progressBalanceLow => 'Juda kam';
+
+  @override
+  String get progressBalanceSweet => 'Optimal 0,8–1,3';
+
+  @override
+  String get progressBalanceRisky => 'Xavfli';
+
+  @override
+  String get progressFelixInsight => 'Felix fikri';
+
+  @override
+  String get progressInsightLow =>
+      'So‘nggi yuklamangiz odatdagidan past. 0,8 dan oshish uchun shu hafta yana bitta mashg‘ulot qo‘shing.';
+
+  @override
+  String get progressInsightSweet =>
+      'Yuklamangiz optimal oraliqda. Ritmni saqlang va yengil bo‘lgan joyda og‘irlikni oshiring.';
+
+  @override
+  String get progressInsightRisky =>
+      'Yuklamangiz odatdagidan oshib ketdi. Keyingi mashg‘ulotlarni yengilroq qiling va yaxshi uxlang.';
+
+  @override
+  String get progressLiftsE1rm => 'Mashqlar · e1RM';
+
+  @override
+  String get progressBodyWeight => 'Tana vazni';
+
+  @override
+  String get loadTitle => 'Mashg‘ulot yuklamasi';
+
+  @override
+  String loadSubtitle(String sport) {
+    return '$sport · seans RPE × daqiqa';
+  }
+
+  @override
+  String get loadAllSports => 'Barcha sport turlari';
+
+  @override
+  String loadWeeks(int count) {
+    return '$count hafta';
+  }
+
+  @override
+  String get loadFitnessExplain =>
+      '42 kunlik o‘rtacha yuklamangiz. Muntazam mashq qilsangiz sekin o‘sadi.';
+
+  @override
+  String get loadFatigueExplain =>
+      '7 kunlik yuklamangiz. Og‘ir haftalardan keyin ko‘tariladi, dam olsangiz tez tushadi.';
+
+  @override
+  String get loadFormExplain =>
+      'Tayyorgarlik minus charchoq. Musbat bo‘lsa tetiksiz: musobaqa, sinov yoki rekord vaqti.';
+
+  @override
+  String get loadByWeek => 'Haftalar bo‘yicha';
+
+  @override
+  String loadAvg(String value) {
+    return 'shartli birlik · o‘rtacha $value';
+  }
+
+  @override
+  String get loadThisWeek => 'Shu';
+
+  @override
+  String get loadNextWeek => 'Keyingi hafta';
+
+  @override
+  String loadAim(String value) {
+    return 'Taxminan $value shartli birlikni maqsad qiling, so‘nggi o‘rtacha haftangizga yaqin.';
+  }
+
+  @override
+  String get loadChartEmpty => 'Yuklama haqida ma’lumot hali kam';
+
+  @override
+  String get recordsTitle => 'Rekordlar';
+
+  @override
+  String recordsSummary(int count, int sports) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ta shaxsiy rekord',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      sports,
+      locale: localeName,
+      other: '$sports ta sport turi',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String get recordsAll => 'Hammasi';
+
+  @override
+  String get recordsThisMonth => 'Shu oy';
+
+  @override
+  String get recordsBestStreak => 'Eng yaxshi seriya';
+
+  @override
+  String recordsWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hafta',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recordsMonthCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ta rekord',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recordsPr => 'PR';
+
+  @override
+  String recordsE1rm(String exercise, String value) {
+    return '$exercise · e1RM $value';
+  }
+
+  @override
+  String recordsRepsLine(int count, String exercise) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count takror',
+    );
+    return '$exercise · $_temp0';
+  }
+
+  @override
+  String recordsGainWhen(String gain, String when) {
+    return '$gain · $when';
+  }
+
+  @override
+  String recordsGainReps(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '+$count takror',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recordsToday => 'bugun';
+
+  @override
+  String get recordsYesterday => 'kecha';
+
+  @override
+  String recordsDaysAgo(int count) {
+    return '$count kun oldin';
+  }
+
+  @override
+  String get recordsEmpty =>
+      'Rekordlar hali yo‘q. Mashg‘ulotda avvalgi natijani yangilang, u shu yerda paydo bo‘ladi.';
+
+  @override
+  String get liftTitle => 'Mashqlar';
+
+  @override
+  String get liftEstimated => 'Taxminiy 1TM · Epley';
+
+  @override
+  String liftSince(String date, String kg, String reps, String since) {
+    return '$since dan beri · eng yaxshi yondashuv $kg × $reps, $date';
+  }
+
+  @override
+  String liftBestSet(String date, String kg, String reps) {
+    return 'eng yaxshi yondashuv $kg × $reps, $date';
+  }
+
+  @override
+  String get liftChartE1rm => 'e1RM';
+
+  @override
+  String get liftChartTop => 'Eng yaxshi yondashuv vazni';
+
+  @override
+  String get liftStrengthLevel => 'Kuch darajasi';
+
+  @override
+  String get liftLevelBeginner => 'Boshlang‘ich';
+
+  @override
+  String get liftLevelNovice => 'Yangi boshlovchi';
+
+  @override
+  String get liftLevelIntermediate => 'O‘rta';
+
+  @override
+  String get liftLevelAdvanced => 'Ilg‘or';
+
+  @override
+  String get liftLevelElite => 'Elita';
+
+  @override
+  String liftRatio(String ratio) {
+    return '$ratio × tana vazni';
+  }
+
+  @override
+  String liftNextBand(String kg, String level, String ratio) {
+    return '$level — $ratio × · $kg';
+  }
+
+  @override
+  String get liftTopBand => 'Eng yuqori daraja egallangan';
+
+  @override
+  String get liftNeedWeight =>
+      'Kuch darajasini ko‘rish uchun tana vazningizni yozing.';
+
+  @override
+  String get liftNextSession => 'Keyingi mashg‘ulot';
+
+  @override
+  String get liftReserve => '2 takror zaxirada';
+
+  @override
+  String get liftColSet => 'Yondashuv';
+
+  @override
+  String get liftCol1rm => '%1TM';
+
+  @override
+  String get liftColLoad => 'Og‘irlik';
+
+  @override
+  String get liftColReps => 'Takror';
+
+  @override
+  String get liftTopSet => 'Asosiy';
+
+  @override
+  String get liftBackOff => 'Yengil';
+
+  @override
+  String get liftVolume => 'Hajm';
+
+  @override
+  String get liftFelix => 'Felix';
+
+  @override
+  String liftPaceUp(String kg) {
+    return 'Barqaror: haftasiga $kg.';
+  }
+
+  @override
+  String liftPaceTo(String date, String kg, String ratio) {
+    return 'Barqaror: haftasiga $kg. Shu sur’atda $ratio × tana vazniga taxminan $date da yetasiz.';
+  }
+
+  @override
+  String get liftPaceFlat =>
+      'So‘nggi paytda e1RM o‘smayapti. Bir yengil hafta, keyin yana oldinga.';
+
+  @override
+  String get liftNone =>
+      'Og‘irlikli mashq bilan mashg‘ulotni tugating, mashqlar shu yerda ko‘rinadi.';
+
+  @override
+  String bodyPerWeek(String value) {
+    return '$value / hafta';
+  }
+
+  @override
+  String bodyTrendLine(String goal, int weeks) {
+    return '$weeks haftalik trend · maqsad: $goal';
+  }
+
+  @override
+  String bodyTrendNone(String goal) {
+    return 'Trend uchun o‘lchovlar hali kam · maqsad: $goal';
+  }
+
+  @override
+  String bodyGoalLoseFat(String unit) {
+    return 'yog‘ni kamaytirish −0,3…−0,7 $unit / hafta';
+  }
+
+  @override
+  String bodyGoalMaintain(String unit) {
+    return 'vaznni saqlash ±0,2 $unit / hafta';
+  }
+
+  @override
+  String bodyGoalLeanBulk(String unit) {
+    return 'sof massa +0,2…+0,4 $unit / hafta';
+  }
+
+  @override
+  String get bodyGoalNameLoseFat => 'yog‘ni kamaytirish';
+
+  @override
+  String get bodyGoalNameMaintain => 'saqlash';
+
+  @override
+  String get bodyGoalNameLeanBulk => 'sof massa';
+
+  @override
+  String bodyOffTrack(String goal) {
+    return 'Maqsaddan chetda: $goal';
+  }
+
+  @override
+  String bodyAdd(int kcal) {
+    return 'Trend maqsaddan past. Kuniga taxminan $kcal kkal qo‘shing, asosan mashg‘ulot atrofida uglevodlar.';
+  }
+
+  @override
+  String bodyCut(int kcal) {
+    return 'Trend maqsaddan yuqori. Kuniga taxminan $kcal kkal kamaytiring, asosan yog‘ va shirin ichimliklardan.';
+  }
+
+  @override
+  String get bodyUpdateTargets => 'Normalarimni yangilash';
+
+  @override
+  String get bodyRange8 => '8 hafta';
+
+  @override
+  String get bodyRange26 => '6 oy';
+
+  @override
+  String get bodyRange52 => 'Yil';
+
+  @override
+  String get bodyLegendTrend => 'Trend';
+
+  @override
+  String get bodyLegendWeighIns => 'O‘lchovlar';
+
+  @override
+  String get bodyLegendGoal => 'Maqsad oralig‘i';
+
+  @override
+  String get bodyToday => 'Bugun';
+
+  @override
+  String get bodyWeighIns => 'O‘lchovlar';
+
+  @override
+  String get bodyWeighInsNote => 'ertalab, hojatxonadan keyin';
+
+  @override
+  String get bodyLog => 'Bugungi vaznni yozish';
+
+  @override
+  String get bodySheetTitle => 'Bugungi vazn';
+
+  @override
+  String get bodySave => 'Saqlash';
+
+  @override
+  String get bodyWeightRange => '20 dan 400 kg gacha vazn kiriting.';
+
+  @override
+  String get bodyEmpty => 'Trendni ko‘rish uchun vazningizni yozing.';
 }

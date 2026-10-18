@@ -2836,4 +2836,466 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get targetsSave => 'Сохранить нормы';
+
+  @override
+  String get progressOverall => 'Всего';
+
+  @override
+  String get progressEmpty => 'Запишите тренировку, чтобы увидеть нагрузку';
+
+  @override
+  String get progressLoadThisWeek => 'Нагрузка за неделю';
+
+  @override
+  String get progressLoadNote => 'RPE сессии × мин';
+
+  @override
+  String get progressAu => 'у.е.';
+
+  @override
+  String progressPercentOfUsual(int percent) {
+    return '$percent% от вашей нормы';
+  }
+
+  @override
+  String get progressFitness => 'Форма';
+
+  @override
+  String get progressFatigue => 'Усталость';
+
+  @override
+  String get progressForm => 'Свежесть';
+
+  @override
+  String get progress42Day => 'нагрузка за 42 дня';
+
+  @override
+  String get progress7Day => 'нагрузка за 7 дней';
+
+  @override
+  String get progressEstimated =>
+      'Оценка: для части тренировок усилие принято равным 6';
+
+  @override
+  String get progressFormFresh => 'Свеж';
+
+  @override
+  String get progressFormNeutral => 'Нейтрально';
+
+  @override
+  String get progressFormTired => 'Устал';
+
+  @override
+  String get progressRecords => 'Рекорды';
+
+  @override
+  String get progressRecordsThisWeek => 'за неделю';
+
+  @override
+  String get progressBalance => 'Баланс нагрузки';
+
+  @override
+  String get progressBandLow => 'Низкая';
+
+  @override
+  String get progressBandSweet => 'Оптимум';
+
+  @override
+  String get progressBandRisky => 'Риск';
+
+  @override
+  String get progressBalanceLow => 'Мало';
+
+  @override
+  String get progressBalanceSweet => 'Оптимум 0,8–1,3';
+
+  @override
+  String get progressBalanceRisky => 'Риск';
+
+  @override
+  String get progressFelixInsight => 'Совет Феликса';
+
+  @override
+  String get progressInsightLow =>
+      'Последняя нагрузка ниже вашей обычной. Добавьте одну тренировку на этой неделе, чтобы вернуться выше 0,8.';
+
+  @override
+  String get progressInsightSweet =>
+      'Нагрузка в оптимальной зоне. Держите ритм и добавляйте вес там, где подходы даются легко.';
+
+  @override
+  String get progressInsightRisky =>
+      'Нагрузка выросла выше привычной. Сделайте ближайшие тренировки легче и хорошо спите.';
+
+  @override
+  String get progressLiftsE1rm => 'Упражнения · e1RM';
+
+  @override
+  String get progressBodyWeight => 'Вес тела';
+
+  @override
+  String get loadTitle => 'Тренировочная нагрузка';
+
+  @override
+  String loadSubtitle(String sport) {
+    return '$sport · RPE сессии × минуты';
+  }
+
+  @override
+  String get loadAllSports => 'Все виды спорта';
+
+  @override
+  String loadWeeks(int count) {
+    return '$count нед.';
+  }
+
+  @override
+  String get loadFitnessExplain =>
+      'Ваша средняя нагрузка за 42 дня. Растёт медленно, если тренируетесь регулярно.';
+
+  @override
+  String get loadFatigueExplain =>
+      'Ваша нагрузка за 7 дней. Скачет после тяжёлых недель и быстро падает с отдыхом.';
+
+  @override
+  String get loadFormExplain =>
+      'Форма минус усталость. Плюс значит свежесть: время для старта, теста или рекорда.';
+
+  @override
+  String get loadByWeek => 'По неделям';
+
+  @override
+  String loadAvg(String value) {
+    return 'у.е. · в среднем $value';
+  }
+
+  @override
+  String get loadThisWeek => 'Эта';
+
+  @override
+  String get loadNextWeek => 'Следующая неделя';
+
+  @override
+  String loadAim(String value) {
+    return 'Цельтесь примерно в $value у.е., рядом с вашей недавней средней неделей.';
+  }
+
+  @override
+  String get loadChartEmpty => 'Пока мало данных о нагрузке';
+
+  @override
+  String get recordsTitle => 'Рекорды';
+
+  @override
+  String recordsSummary(int count, int sports) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count личных рекорда',
+      many: '$count личных рекордов',
+      few: '$count личных рекорда',
+      one: '$count личный рекорд',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      sports,
+      locale: localeName,
+      other: '$sports вида спорта',
+      many: '$sports видов спорта',
+      few: '$sports вида спорта',
+      one: '$sports вид спорта',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String get recordsAll => 'Все';
+
+  @override
+  String get recordsThisMonth => 'В этом месяце';
+
+  @override
+  String get recordsBestStreak => 'Лучшая серия';
+
+  @override
+  String recordsWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count недели',
+      many: '$count недель',
+      few: '$count недели',
+      one: '$count неделя',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recordsMonthCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count рекорда',
+      many: '$count рекордов',
+      few: '$count рекорда',
+      one: '$count рекорд',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recordsPr => 'PR';
+
+  @override
+  String recordsE1rm(String exercise, String value) {
+    return '$exercise · e1RM $value';
+  }
+
+  @override
+  String recordsRepsLine(int count, String exercise) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count повторения',
+      many: '$count повторений',
+      few: '$count повторения',
+      one: '$count повторение',
+    );
+    return '$exercise · $_temp0';
+  }
+
+  @override
+  String recordsGainWhen(String gain, String when) {
+    return '$gain · $when';
+  }
+
+  @override
+  String recordsGainReps(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '+$count повторения',
+      many: '+$count повторений',
+      few: '+$count повторения',
+      one: '+$count повторение',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recordsToday => 'сегодня';
+
+  @override
+  String get recordsYesterday => 'вчера';
+
+  @override
+  String recordsDaysAgo(int count) {
+    return '$count дн. назад';
+  }
+
+  @override
+  String get recordsEmpty =>
+      'Рекордов пока нет. Побейте прошлый результат на тренировке, и он появится здесь.';
+
+  @override
+  String get liftTitle => 'Упражнения';
+
+  @override
+  String get liftEstimated => 'Расчётный 1ПМ · Эпли';
+
+  @override
+  String liftSince(String date, String kg, String reps, String since) {
+    return 'с $since · лучший подход $kg × $reps, $date';
+  }
+
+  @override
+  String liftBestSet(String date, String kg, String reps) {
+    return 'лучший подход $kg × $reps, $date';
+  }
+
+  @override
+  String get liftChartE1rm => 'e1RM';
+
+  @override
+  String get liftChartTop => 'Вес лучшего подхода';
+
+  @override
+  String get liftStrengthLevel => 'Уровень силы';
+
+  @override
+  String get liftLevelBeginner => 'Начальный';
+
+  @override
+  String get liftLevelNovice => 'Новичок';
+
+  @override
+  String get liftLevelIntermediate => 'Средний';
+
+  @override
+  String get liftLevelAdvanced => 'Продвинутый';
+
+  @override
+  String get liftLevelElite => 'Элита';
+
+  @override
+  String liftRatio(String ratio) {
+    return '$ratio × вес тела';
+  }
+
+  @override
+  String liftNextBand(String kg, String level, String ratio) {
+    return '$level при $ratio × · $kg';
+  }
+
+  @override
+  String get liftTopBand => 'Высший уровень достигнут';
+
+  @override
+  String get liftNeedWeight => 'Запишите вес тела, чтобы увидеть уровень силы.';
+
+  @override
+  String get liftNextSession => 'Следующая тренировка';
+
+  @override
+  String get liftReserve => '2 повторения в запасе';
+
+  @override
+  String get liftColSet => 'Подход';
+
+  @override
+  String get liftCol1rm => '%1ПМ';
+
+  @override
+  String get liftColLoad => 'Вес';
+
+  @override
+  String get liftColReps => 'Повт.';
+
+  @override
+  String get liftTopSet => 'Рабочий';
+
+  @override
+  String get liftBackOff => 'Облегчённый';
+
+  @override
+  String get liftVolume => 'Объём';
+
+  @override
+  String get liftFelix => 'Феликс';
+
+  @override
+  String liftPaceUp(String kg) {
+    return 'Стабильно $kg в неделю.';
+  }
+
+  @override
+  String liftPaceTo(String date, String kg, String ratio) {
+    return 'Стабильно $kg в неделю. В таком темпе вы достигнете $ratio × веса тела примерно к $date.';
+  }
+
+  @override
+  String get liftPaceFlat =>
+      'Ваш e1RM в последнее время не растёт. Лёгкая неделя, а затем снова вперёд.';
+
+  @override
+  String get liftNone =>
+      'Завершите тренировку с упражнением с весом, и оно появится здесь.';
+
+  @override
+  String bodyPerWeek(String value) {
+    return '$value / нед.';
+  }
+
+  @override
+  String bodyTrendLine(String goal, int weeks) {
+    return 'Тренд за $weeks нед. · цель: $goal';
+  }
+
+  @override
+  String bodyTrendNone(String goal) {
+    return 'Для тренда пока мало взвешиваний · цель: $goal';
+  }
+
+  @override
+  String bodyGoalLoseFat(String unit) {
+    return 'снижение жира −0,3…−0,7 $unit / нед.';
+  }
+
+  @override
+  String bodyGoalMaintain(String unit) {
+    return 'поддержание ±0,2 $unit / нед.';
+  }
+
+  @override
+  String bodyGoalLeanBulk(String unit) {
+    return 'чистый набор +0,2…+0,4 $unit / нед.';
+  }
+
+  @override
+  String get bodyGoalNameLoseFat => 'снижение жира';
+
+  @override
+  String get bodyGoalNameMaintain => 'поддержание';
+
+  @override
+  String get bodyGoalNameLeanBulk => 'чистый набор';
+
+  @override
+  String bodyOffTrack(String goal) {
+    return 'Мимо цели: $goal';
+  }
+
+  @override
+  String bodyAdd(int kcal) {
+    return 'Тренд ниже цели. Добавьте около $kcal ккал в день, в основном углеводы вокруг тренировок.';
+  }
+
+  @override
+  String bodyCut(int kcal) {
+    return 'Тренд выше цели. Уберите около $kcal ккал в день, в основном жиры и сладкие напитки.';
+  }
+
+  @override
+  String get bodyUpdateTargets => 'Обновить мои нормы';
+
+  @override
+  String get bodyRange8 => '8 недель';
+
+  @override
+  String get bodyRange26 => '6 месяцев';
+
+  @override
+  String get bodyRange52 => 'Год';
+
+  @override
+  String get bodyLegendTrend => 'Тренд';
+
+  @override
+  String get bodyLegendWeighIns => 'Взвешивания';
+
+  @override
+  String get bodyLegendGoal => 'Целевой коридор';
+
+  @override
+  String get bodyToday => 'Сегодня';
+
+  @override
+  String get bodyWeighIns => 'Взвешивания';
+
+  @override
+  String get bodyWeighInsNote => 'утром, после туалета';
+
+  @override
+  String get bodyLog => 'Записать вес сегодня';
+
+  @override
+  String get bodySheetTitle => 'Вес сегодня';
+
+  @override
+  String get bodySave => 'Сохранить';
+
+  @override
+  String get bodyWeightRange => 'Введите вес от 20 до 400 кг.';
+
+  @override
+  String get bodyEmpty => 'Запишите вес, чтобы увидеть тренд.';
 }

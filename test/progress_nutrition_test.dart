@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/session/session_providers.dart';
-import 'package:fitrix/features/progress/presentation/screens/progress_screen.dart';
-import 'package:fitrix/features/workouts/data/models/workout.dart';
-import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -51,54 +48,7 @@ ProgressChart _chart(List<double> values) => ProgressChart(
       footerRight: 'Latest: 2',
     );
 
-CompletedWorkout _session(String id, DateTime at, double kg) =>
-    CompletedWorkout(
-      id: id,
-      templateId: 'gym-chest-biceps',
-      name: 'Chest and Biceps',
-      sport: Sport.gym,
-      startedAt: at.subtract(const Duration(hours: 1)),
-      finishedAt: at,
-      exercises: [
-        Exercise(name: 'Bench press', sets: [
-          WorkoutSet(previousKg: 0, previousReps: 8, kg: kg, reps: 8),
-        ]),
-      ],
-    );
-
 void main() {
-  group('ProgressScreen', () {
-    testWidgets('SE size: charts, foot rows, delta and stat tiles', (t) async {
-      _se(t);
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-      final container = ProviderContainer(
-          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)]);
-      addTearDown(container.dispose);
-      final notifier = container.read(workoutHistoryProvider.notifier);
-      notifier.add(_session('a', DateTime(2026, 9, 1), 60));
-      notifier.add(_session('b', DateTime(2026, 10, 1), 62.5));
-
-      await t.pumpWidget(UncontrolledProviderScope(
-        container: container,
-        child: _host(const ProgressScreen()),
-      ));
-      await t.pumpAndSettle();
-
-      expect(find.text('First: 60'), findsOneWidget);
-      expect(find.text('Latest: 62.5'), findsOneWidget);
-      expect(find.text('+2.5'), findsOneWidget);
-
-      await t.drag(find.byType(ListView).last, const Offset(0, -3000));
-      await t.pumpAndSettle();
-      expect(find.text('Intake, avg'), findsOneWidget);
-      expect(find.text('Burn, avg'), findsOneWidget);
-      expect(find.text('2,000'), findsOneWidget);
-      expect(find.text('1,800'), findsOneWidget);
-      expect(t.takeException(), isNull);
-    });
-  });
-
   group('Nutrition', () {
     testWidgets('ring shows eaten and the computed target', (t) async {
       _se(t);

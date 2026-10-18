@@ -4639,6 +4639,702 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save targets'**
   String get targetsSave;
+
+  /// No description provided for @progressOverall.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall'**
+  String get progressOverall;
+
+  /// No description provided for @progressEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Log a workout to see your load'**
+  String get progressEmpty;
+
+  /// No description provided for @progressLoadThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Load this week'**
+  String get progressLoadThisWeek;
+
+  /// No description provided for @progressLoadNote.
+  ///
+  /// In en, this message translates to:
+  /// **'session RPE × min'**
+  String get progressLoadNote;
+
+  /// No description provided for @progressAu.
+  ///
+  /// In en, this message translates to:
+  /// **'AU'**
+  String get progressAu;
+
+  /// No description provided for @progressPercentOfUsual.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of your usual'**
+  String progressPercentOfUsual(int percent);
+
+  /// No description provided for @progressFitness.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitness'**
+  String get progressFitness;
+
+  /// No description provided for @progressFatigue.
+  ///
+  /// In en, this message translates to:
+  /// **'Fatigue'**
+  String get progressFatigue;
+
+  /// No description provided for @progressForm.
+  ///
+  /// In en, this message translates to:
+  /// **'Form'**
+  String get progressForm;
+
+  /// No description provided for @progress42Day.
+  ///
+  /// In en, this message translates to:
+  /// **'42-day load'**
+  String get progress42Day;
+
+  /// No description provided for @progress7Day.
+  ///
+  /// In en, this message translates to:
+  /// **'7-day load'**
+  String get progress7Day;
+
+  /// No description provided for @progressEstimated.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated: some sessions use a default effort of 6'**
+  String get progressEstimated;
+
+  /// No description provided for @progressFormFresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Fresh'**
+  String get progressFormFresh;
+
+  /// No description provided for @progressFormNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get progressFormNeutral;
+
+  /// No description provided for @progressFormTired.
+  ///
+  /// In en, this message translates to:
+  /// **'Tired'**
+  String get progressFormTired;
+
+  /// No description provided for @progressRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get progressRecords;
+
+  /// No description provided for @progressRecordsThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'this week'**
+  String get progressRecordsThisWeek;
+
+  /// No description provided for @progressBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Load balance'**
+  String get progressBalance;
+
+  /// No description provided for @progressBandLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get progressBandLow;
+
+  /// No description provided for @progressBandSweet.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweet spot'**
+  String get progressBandSweet;
+
+  /// No description provided for @progressBandRisky.
+  ///
+  /// In en, this message translates to:
+  /// **'Risky'**
+  String get progressBandRisky;
+
+  /// No description provided for @progressBalanceLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Too little'**
+  String get progressBalanceLow;
+
+  /// No description provided for @progressBalanceSweet.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweet spot 0.8–1.3'**
+  String get progressBalanceSweet;
+
+  /// No description provided for @progressBalanceRisky.
+  ///
+  /// In en, this message translates to:
+  /// **'Risky'**
+  String get progressBalanceRisky;
+
+  /// No description provided for @progressFelixInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix insight'**
+  String get progressFelixInsight;
+
+  /// No description provided for @progressInsightLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your recent load is below your usual. Add one session this week to get back above 0.8.'**
+  String get progressInsightLow;
+
+  /// No description provided for @progressInsightSweet.
+  ///
+  /// In en, this message translates to:
+  /// **'Your load is in the sweet spot. Keep the rhythm and add weight where sets feel easy.'**
+  String get progressInsightSweet;
+
+  /// No description provided for @progressInsightRisky.
+  ///
+  /// In en, this message translates to:
+  /// **'Your load jumped above what you are used to. Keep the next sessions easier and sleep well.'**
+  String get progressInsightRisky;
+
+  /// No description provided for @progressLiftsE1rm.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifts · e1RM'**
+  String get progressLiftsE1rm;
+
+  /// No description provided for @progressBodyWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Body weight'**
+  String get progressBodyWeight;
+
+  /// No description provided for @loadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Training load'**
+  String get loadTitle;
+
+  /// No description provided for @loadSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{sport} · session RPE × minutes'**
+  String loadSubtitle(String sport);
+
+  /// No description provided for @loadAllSports.
+  ///
+  /// In en, this message translates to:
+  /// **'All sports'**
+  String get loadAllSports;
+
+  /// No description provided for @loadWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} weeks'**
+  String loadWeeks(int count);
+
+  /// No description provided for @loadFitnessExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Your 42-day average load. Goes up slowly when you train consistently.'**
+  String get loadFitnessExplain;
+
+  /// No description provided for @loadFatigueExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Your 7-day load. Jumps after hard weeks and drops fast with rest.'**
+  String get loadFatigueExplain;
+
+  /// No description provided for @loadFormExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitness minus fatigue. Positive means fresh: race, test or PR.'**
+  String get loadFormExplain;
+
+  /// No description provided for @loadByWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'By week'**
+  String get loadByWeek;
+
+  /// No description provided for @loadAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'AU · avg {value}'**
+  String loadAvg(String value);
+
+  /// No description provided for @loadThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This'**
+  String get loadThisWeek;
+
+  /// No description provided for @loadNextWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get loadNextWeek;
+
+  /// No description provided for @loadAim.
+  ///
+  /// In en, this message translates to:
+  /// **'Aim for about {value} AU, close to your recent weekly average.'**
+  String loadAim(String value);
+
+  /// No description provided for @loadChartEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough load yet'**
+  String get loadChartEmpty;
+
+  /// No description provided for @recordsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get recordsTitle;
+
+  /// No description provided for @recordsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} personal record} other{{count} personal records}} · {sports, plural, one{{sports} sport} other{{sports} sports}}'**
+  String recordsSummary(int count, int sports);
+
+  /// No description provided for @recordsAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get recordsAll;
+
+  /// No description provided for @recordsThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get recordsThisMonth;
+
+  /// No description provided for @recordsBestStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Best streak'**
+  String get recordsBestStreak;
+
+  /// No description provided for @recordsWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} week} other{{count} weeks}}'**
+  String recordsWeeks(int count);
+
+  /// No description provided for @recordsMonthCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} record} other{{count} records}}'**
+  String recordsMonthCount(int count);
+
+  /// No description provided for @recordsPr.
+  ///
+  /// In en, this message translates to:
+  /// **'PR'**
+  String get recordsPr;
+
+  /// No description provided for @recordsE1rm.
+  ///
+  /// In en, this message translates to:
+  /// **'{exercise} · e1RM {value}'**
+  String recordsE1rm(String exercise, String value);
+
+  /// No description provided for @recordsRepsLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{exercise} · {count, plural, one{{count} rep} other{{count} reps}}'**
+  String recordsRepsLine(int count, String exercise);
+
+  /// No description provided for @recordsGainWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'{gain} · {when}'**
+  String recordsGainWhen(String gain, String when);
+
+  /// No description provided for @recordsGainReps.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{+{count} rep} other{+{count} reps}}'**
+  String recordsGainReps(int count);
+
+  /// No description provided for @recordsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get recordsToday;
+
+  /// No description provided for @recordsYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'yesterday'**
+  String get recordsYesterday;
+
+  /// No description provided for @recordsDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String recordsDaysAgo(int count);
+
+  /// No description provided for @recordsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No records yet. Beat a previous best in a workout and it shows up here.'**
+  String get recordsEmpty;
+
+  /// No description provided for @liftTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifts'**
+  String get liftTitle;
+
+  /// No description provided for @liftEstimated.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated 1RM · Epley'**
+  String get liftEstimated;
+
+  /// No description provided for @liftSince.
+  ///
+  /// In en, this message translates to:
+  /// **'since {since} · best set {kg} × {reps} on {date}'**
+  String liftSince(String date, String kg, String reps, String since);
+
+  /// No description provided for @liftBestSet.
+  ///
+  /// In en, this message translates to:
+  /// **'best set {kg} × {reps} on {date}'**
+  String liftBestSet(String date, String kg, String reps);
+
+  /// No description provided for @liftChartE1rm.
+  ///
+  /// In en, this message translates to:
+  /// **'e1RM'**
+  String get liftChartE1rm;
+
+  /// No description provided for @liftChartTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Top set load'**
+  String get liftChartTop;
+
+  /// No description provided for @liftStrengthLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength level'**
+  String get liftStrengthLevel;
+
+  /// No description provided for @liftLevelBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get liftLevelBeginner;
+
+  /// No description provided for @liftLevelNovice.
+  ///
+  /// In en, this message translates to:
+  /// **'Novice'**
+  String get liftLevelNovice;
+
+  /// No description provided for @liftLevelIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get liftLevelIntermediate;
+
+  /// No description provided for @liftLevelAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get liftLevelAdvanced;
+
+  /// No description provided for @liftLevelElite.
+  ///
+  /// In en, this message translates to:
+  /// **'Elite'**
+  String get liftLevelElite;
+
+  /// No description provided for @liftRatio.
+  ///
+  /// In en, this message translates to:
+  /// **'{ratio} × body weight'**
+  String liftRatio(String ratio);
+
+  /// No description provided for @liftNextBand.
+  ///
+  /// In en, this message translates to:
+  /// **'{level} at {ratio} × · {kg}'**
+  String liftNextBand(String kg, String level, String ratio);
+
+  /// No description provided for @liftTopBand.
+  ///
+  /// In en, this message translates to:
+  /// **'Top level reached'**
+  String get liftTopBand;
+
+  /// No description provided for @liftNeedWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Log your body weight to see your strength level.'**
+  String get liftNeedWeight;
+
+  /// No description provided for @liftNextSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Next session'**
+  String get liftNextSession;
+
+  /// No description provided for @liftReserve.
+  ///
+  /// In en, this message translates to:
+  /// **'2 reps in reserve'**
+  String get liftReserve;
+
+  /// No description provided for @liftColSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set'**
+  String get liftColSet;
+
+  /// No description provided for @liftCol1rm.
+  ///
+  /// In en, this message translates to:
+  /// **'%1RM'**
+  String get liftCol1rm;
+
+  /// No description provided for @liftColLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Load'**
+  String get liftColLoad;
+
+  /// No description provided for @liftColReps.
+  ///
+  /// In en, this message translates to:
+  /// **'Reps'**
+  String get liftColReps;
+
+  /// No description provided for @liftTopSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Top set'**
+  String get liftTopSet;
+
+  /// No description provided for @liftBackOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Back-off'**
+  String get liftBackOff;
+
+  /// No description provided for @liftVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get liftVolume;
+
+  /// No description provided for @liftFelix.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix'**
+  String get liftFelix;
+
+  /// No description provided for @liftPaceUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Steady {kg} a week.'**
+  String liftPaceUp(String kg);
+
+  /// No description provided for @liftPaceTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Steady {kg} a week. At this pace you reach {ratio} × body weight around {date}.'**
+  String liftPaceTo(String date, String kg, String ratio);
+
+  /// No description provided for @liftPaceFlat.
+  ///
+  /// In en, this message translates to:
+  /// **'Your e1RM has been flat lately. A lighter week, then push again.'**
+  String get liftPaceFlat;
+
+  /// No description provided for @liftNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish a workout with a weighted exercise to see your lifts here.'**
+  String get liftNone;
+
+  /// No description provided for @bodyPerWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} / wk'**
+  String bodyPerWeek(String value);
+
+  /// No description provided for @bodyTrendLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{weeks}-week trend · goal: {goal}'**
+  String bodyTrendLine(String goal, int weeks);
+
+  /// No description provided for @bodyTrendNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough weigh-ins for a trend yet · goal: {goal}'**
+  String bodyTrendNone(String goal);
+
+  /// No description provided for @bodyGoalLoseFat.
+  ///
+  /// In en, this message translates to:
+  /// **'lose fat −0.3 to −0.7 {unit} / wk'**
+  String bodyGoalLoseFat(String unit);
+
+  /// No description provided for @bodyGoalMaintain.
+  ///
+  /// In en, this message translates to:
+  /// **'maintain ±0.2 {unit} / wk'**
+  String bodyGoalMaintain(String unit);
+
+  /// No description provided for @bodyGoalLeanBulk.
+  ///
+  /// In en, this message translates to:
+  /// **'lean bulk +0.2 to +0.4 {unit} / wk'**
+  String bodyGoalLeanBulk(String unit);
+
+  /// No description provided for @bodyGoalNameLoseFat.
+  ///
+  /// In en, this message translates to:
+  /// **'fat loss'**
+  String get bodyGoalNameLoseFat;
+
+  /// No description provided for @bodyGoalNameMaintain.
+  ///
+  /// In en, this message translates to:
+  /// **'maintenance'**
+  String get bodyGoalNameMaintain;
+
+  /// No description provided for @bodyGoalNameLeanBulk.
+  ///
+  /// In en, this message translates to:
+  /// **'lean bulk'**
+  String get bodyGoalNameLeanBulk;
+
+  /// No description provided for @bodyOffTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Off track for {goal}'**
+  String bodyOffTrack(String goal);
+
+  /// No description provided for @bodyAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Your trend is below your goal. Add about {kcal} kcal a day, mostly carbs around workouts.'**
+  String bodyAdd(int kcal);
+
+  /// No description provided for @bodyCut.
+  ///
+  /// In en, this message translates to:
+  /// **'Your trend is above your goal. Cut about {kcal} kcal a day, mostly from fats and sweet drinks.'**
+  String bodyCut(int kcal);
+
+  /// No description provided for @bodyUpdateTargets.
+  ///
+  /// In en, this message translates to:
+  /// **'Update my targets'**
+  String get bodyUpdateTargets;
+
+  /// No description provided for @bodyRange8.
+  ///
+  /// In en, this message translates to:
+  /// **'8 weeks'**
+  String get bodyRange8;
+
+  /// No description provided for @bodyRange26.
+  ///
+  /// In en, this message translates to:
+  /// **'6 months'**
+  String get bodyRange26;
+
+  /// No description provided for @bodyRange52.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get bodyRange52;
+
+  /// No description provided for @bodyLegendTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Trend'**
+  String get bodyLegendTrend;
+
+  /// No description provided for @bodyLegendWeighIns.
+  ///
+  /// In en, this message translates to:
+  /// **'Weigh-ins'**
+  String get bodyLegendWeighIns;
+
+  /// No description provided for @bodyLegendGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal range'**
+  String get bodyLegendGoal;
+
+  /// No description provided for @bodyToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get bodyToday;
+
+  /// No description provided for @bodyWeighIns.
+  ///
+  /// In en, this message translates to:
+  /// **'Weigh-ins'**
+  String get bodyWeighIns;
+
+  /// No description provided for @bodyWeighInsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'morning, after the toilet'**
+  String get bodyWeighInsNote;
+
+  /// No description provided for @bodyLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Log today\'s weight'**
+  String get bodyLog;
+
+  /// No description provided for @bodySheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s weight'**
+  String get bodySheetTitle;
+
+  /// No description provided for @bodySave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get bodySave;
+
+  /// No description provided for @bodyWeightRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a weight between 20 and 400 kg.'**
+  String get bodyWeightRange;
+
+  /// No description provided for @bodyEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Log your weight to see your trend.'**
+  String get bodyEmpty;
 }
 
 class _AppLocalizationsDelegate

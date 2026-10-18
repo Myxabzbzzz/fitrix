@@ -2123,5 +2123,359 @@
   },
   "targetsCarbsNote": "The rest of the calories",
   "targetsAuto": "auto",
-  "targetsSave": "Save targets"
+  "targetsSave": "Save targets",
+  "progressOverall": "Overall",
+  "progressEmpty": "Log a workout to see your load",
+  "progressLoadThisWeek": "Load this week",
+  "progressLoadNote": "session RPE × min",
+  "progressAu": "AU",
+  "progressPercentOfUsual": "{percent}% of your usual",
+  "@progressPercentOfUsual": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "progressFitness": "Fitness",
+  "progressFatigue": "Fatigue",
+  "progressForm": "Form",
+  "progress42Day": "42-day load",
+  "progress7Day": "7-day load",
+  "progressEstimated": "Estimated: some sessions use a default effort of 6",
+  "progressFormFresh": "Fresh",
+  "progressFormNeutral": "Neutral",
+  "progressFormTired": "Tired",
+  "progressRecords": "Records",
+  "progressRecordsThisWeek": "this week",
+  "progressBalance": "Load balance",
+  "progressBandLow": "Low",
+  "progressBandSweet": "Sweet spot",
+  "progressBandRisky": "Risky",
+  "progressBalanceLow": "Too little",
+  "progressBalanceSweet": "Sweet spot 0.8–1.3",
+  "progressBalanceRisky": "Risky",
+  "progressFelixInsight": "Felix insight",
+  "progressInsightLow": "Your recent load is below your usual. Add one session this week to get back above 0.8.",
+  "progressInsightSweet": "Your load is in the sweet spot. Keep the rhythm and add weight where sets feel easy.",
+  "progressInsightRisky": "Your load jumped above what you are used to. Keep the next sessions easier and sleep well.",
+  "progressLiftsE1rm": "Lifts · e1RM",
+  "progressBodyWeight": "Body weight",
+  "loadTitle": "Training load",
+  "loadSubtitle": "{sport} · session RPE × minutes",
+  "@loadSubtitle": {
+    "placeholders": {
+      "sport": {
+        "type": "String"
+      }
+    }
+  },
+  "loadAllSports": "All sports",
+  "loadWeeks": "{count} weeks",
+  "@loadWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "loadFitnessExplain": "Your 42-day average load. Goes up slowly when you train consistently.",
+  "loadFatigueExplain": "Your 7-day load. Jumps after hard weeks and drops fast with rest.",
+  "loadFormExplain": "Fitness minus fatigue. Positive means fresh: race, test or PR.",
+  "loadByWeek": "By week",
+  "loadAvg": "AU · avg {value}",
+  "@loadAvg": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "loadThisWeek": "This",
+  "loadNextWeek": "Next week",
+  "loadAim": "Aim for about {value} AU, close to your recent weekly average.",
+  "@loadAim": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "loadChartEmpty": "Not enough load yet",
+  "recordsTitle": "Records",
+  "recordsSummary": "{count, plural, one{{count} personal record} other{{count} personal records}} · {sports, plural, one{{sports} sport} other{{sports} sports}}",
+  "@recordsSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "sports": {
+        "type": "int"
+      }
+    }
+  },
+  "recordsAll": "All",
+  "recordsThisMonth": "This month",
+  "recordsBestStreak": "Best streak",
+  "recordsWeeks": "{count, plural, one{{count} week} other{{count} weeks}}",
+  "@recordsWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recordsMonthCount": "{count, plural, one{{count} record} other{{count} records}}",
+  "@recordsMonthCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recordsPr": "PR",
+  "recordsE1rm": "{exercise} · e1RM {value}",
+  "@recordsE1rm": {
+    "placeholders": {
+      "exercise": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsRepsLine": "{exercise} · {count, plural, one{{count} rep} other{{count} reps}}",
+  "@recordsRepsLine": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "exercise": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsGainWhen": "{gain} · {when}",
+  "@recordsGainWhen": {
+    "placeholders": {
+      "gain": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsGainReps": "{count, plural, one{+{count} rep} other{+{count} reps}}",
+  "@recordsGainReps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recordsToday": "today",
+  "recordsYesterday": "yesterday",
+  "recordsDaysAgo": "{count} days ago",
+  "@recordsDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recordsEmpty": "No records yet. Beat a previous best in a workout and it shows up here.",
+  "liftTitle": "Lifts",
+  "liftEstimated": "Estimated 1RM · Epley",
+  "liftSince": "since {since} · best set {kg} × {reps} on {date}",
+  "@liftSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "kg": {
+        "type": "String"
+      },
+      "reps": {
+        "type": "String"
+      },
+      "since": {
+        "type": "String"
+      }
+    }
+  },
+  "liftBestSet": "best set {kg} × {reps} on {date}",
+  "@liftBestSet": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "kg": {
+        "type": "String"
+      },
+      "reps": {
+        "type": "String"
+      }
+    }
+  },
+  "liftChartE1rm": "e1RM",
+  "liftChartTop": "Top set load",
+  "liftStrengthLevel": "Strength level",
+  "liftLevelBeginner": "Beginner",
+  "liftLevelNovice": "Novice",
+  "liftLevelIntermediate": "Intermediate",
+  "liftLevelAdvanced": "Advanced",
+  "liftLevelElite": "Elite",
+  "liftRatio": "{ratio} × body weight",
+  "@liftRatio": {
+    "placeholders": {
+      "ratio": {
+        "type": "String"
+      }
+    }
+  },
+  "liftNextBand": "{level} at {ratio} × · {kg}",
+  "@liftNextBand": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      },
+      "level": {
+        "type": "String"
+      },
+      "ratio": {
+        "type": "String"
+      }
+    }
+  },
+  "liftTopBand": "Top level reached",
+  "liftNeedWeight": "Log your body weight to see your strength level.",
+  "liftNextSession": "Next session",
+  "liftReserve": "2 reps in reserve",
+  "liftColSet": "Set",
+  "liftCol1rm": "%1RM",
+  "liftColLoad": "Load",
+  "liftColReps": "Reps",
+  "liftTopSet": "Top set",
+  "liftBackOff": "Back-off",
+  "liftVolume": "Volume",
+  "liftFelix": "Felix",
+  "liftPaceUp": "Steady {kg} a week.",
+  "@liftPaceUp": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "liftPaceTo": "Steady {kg} a week. At this pace you reach {ratio} × body weight around {date}.",
+  "@liftPaceTo": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "kg": {
+        "type": "String"
+      },
+      "ratio": {
+        "type": "String"
+      }
+    }
+  },
+  "liftPaceFlat": "Your e1RM has been flat lately. A lighter week, then push again.",
+  "liftNone": "Finish a workout with a weighted exercise to see your lifts here.",
+  "bodyPerWeek": "{value} / wk",
+  "@bodyPerWeek": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "bodyTrendLine": "{weeks}-week trend · goal: {goal}",
+  "@bodyTrendLine": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      },
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "bodyTrendNone": "Not enough weigh-ins for a trend yet · goal: {goal}",
+  "@bodyTrendNone": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "bodyGoalLoseFat": "lose fat −0.3 to −0.7 {unit} / wk",
+  "@bodyGoalLoseFat": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "bodyGoalMaintain": "maintain ±0.2 {unit} / wk",
+  "@bodyGoalMaintain": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "bodyGoalLeanBulk": "lean bulk +0.2 to +0.4 {unit} / wk",
+  "@bodyGoalLeanBulk": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "bodyGoalNameLoseFat": "fat loss",
+  "bodyGoalNameMaintain": "maintenance",
+  "bodyGoalNameLeanBulk": "lean bulk",
+  "bodyOffTrack": "Off track for {goal}",
+  "@bodyOffTrack": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "bodyAdd": "Your trend is below your goal. Add about {kcal} kcal a day, mostly carbs around workouts.",
+  "@bodyAdd": {
+    "placeholders": {
+      "kcal": {
+        "type": "int"
+      }
+    }
+  },
+  "bodyCut": "Your trend is above your goal. Cut about {kcal} kcal a day, mostly from fats and sweet drinks.",
+  "@bodyCut": {
+    "placeholders": {
+      "kcal": {
+        "type": "int"
+      }
+    }
+  },
+  "bodyUpdateTargets": "Update my targets",
+  "bodyRange8": "8 weeks",
+  "bodyRange26": "6 months",
+  "bodyRange52": "Year",
+  "bodyLegendTrend": "Trend",
+  "bodyLegendWeighIns": "Weigh-ins",
+  "bodyLegendGoal": "Goal range",
+  "bodyToday": "Today",
+  "bodyWeighIns": "Weigh-ins",
+  "bodyWeighInsNote": "morning, after the toilet",
+  "bodyLog": "Log today's weight",
+  "bodySheetTitle": "Today's weight",
+  "bodySave": "Save",
+  "bodyWeightRange": "Enter a weight between 20 and 400 kg.",
+  "bodyEmpty": "Log your weight to see your trend."
 }

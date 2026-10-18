@@ -2798,4 +2798,455 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get targetsSave => 'Guardar objetivos';
+
+  @override
+  String get progressOverall => 'General';
+
+  @override
+  String get progressEmpty => 'Registra un entrenamiento para ver tu carga';
+
+  @override
+  String get progressLoadThisWeek => 'Carga de esta semana';
+
+  @override
+  String get progressLoadNote => 'RPE de sesión × min';
+
+  @override
+  String get progressAu => 'UA';
+
+  @override
+  String progressPercentOfUsual(int percent) {
+    return '$percent% de lo habitual';
+  }
+
+  @override
+  String get progressFitness => 'Forma física';
+
+  @override
+  String get progressFatigue => 'Fatiga';
+
+  @override
+  String get progressForm => 'Frescura';
+
+  @override
+  String get progress42Day => 'carga de 42 días';
+
+  @override
+  String get progress7Day => 'carga de 7 días';
+
+  @override
+  String get progressEstimated =>
+      'Estimado: algunas sesiones usan un esfuerzo de 6 por defecto';
+
+  @override
+  String get progressFormFresh => 'Fresco';
+
+  @override
+  String get progressFormNeutral => 'Neutral';
+
+  @override
+  String get progressFormTired => 'Cansado';
+
+  @override
+  String get progressRecords => 'Récords';
+
+  @override
+  String get progressRecordsThisWeek => 'esta semana';
+
+  @override
+  String get progressBalance => 'Equilibrio de carga';
+
+  @override
+  String get progressBandLow => 'Baja';
+
+  @override
+  String get progressBandSweet => 'Punto ideal';
+
+  @override
+  String get progressBandRisky => 'Riesgo';
+
+  @override
+  String get progressBalanceLow => 'Muy poca';
+
+  @override
+  String get progressBalanceSweet => 'Punto ideal 0,8–1,3';
+
+  @override
+  String get progressBalanceRisky => 'Riesgo';
+
+  @override
+  String get progressFelixInsight => 'Consejo de Felix';
+
+  @override
+  String get progressInsightLow =>
+      'Tu carga reciente está por debajo de lo habitual. Añade una sesión esta semana para volver por encima de 0,8.';
+
+  @override
+  String get progressInsightSweet =>
+      'Tu carga está en el punto ideal. Mantén el ritmo y sube peso donde las series sean fáciles.';
+
+  @override
+  String get progressInsightRisky =>
+      'Tu carga subió por encima de lo habitual. Haz las próximas sesiones más suaves y duerme bien.';
+
+  @override
+  String get progressLiftsE1rm => 'Levantamientos · e1RM';
+
+  @override
+  String get progressBodyWeight => 'Peso corporal';
+
+  @override
+  String get loadTitle => 'Carga de entrenamiento';
+
+  @override
+  String loadSubtitle(String sport) {
+    return '$sport · RPE de sesión × minutos';
+  }
+
+  @override
+  String get loadAllSports => 'Todos los deportes';
+
+  @override
+  String loadWeeks(int count) {
+    return '$count semanas';
+  }
+
+  @override
+  String get loadFitnessExplain =>
+      'Tu carga media de 42 días. Sube despacio cuando entrenas con constancia.';
+
+  @override
+  String get loadFatigueExplain =>
+      'Tu carga de 7 días. Salta tras semanas duras y baja rápido con descanso.';
+
+  @override
+  String get loadFormExplain =>
+      'Forma menos fatiga. Positivo significa fresco: carrera, prueba o récord.';
+
+  @override
+  String get loadByWeek => 'Por semana';
+
+  @override
+  String loadAvg(String value) {
+    return 'UA · media $value';
+  }
+
+  @override
+  String get loadThisWeek => 'Esta';
+
+  @override
+  String get loadNextWeek => 'Próxima semana';
+
+  @override
+  String loadAim(String value) {
+    return 'Apunta a unas $value UA, cerca de tu media semanal reciente.';
+  }
+
+  @override
+  String get loadChartEmpty => 'Aún hay poca carga';
+
+  @override
+  String get recordsTitle => 'Récords';
+
+  @override
+  String recordsSummary(int count, int sports) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count récords personales',
+      one: '$count récord personal',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      sports,
+      locale: localeName,
+      other: '$sports deportes',
+      one: '$sports deporte',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String get recordsAll => 'Todos';
+
+  @override
+  String get recordsThisMonth => 'Este mes';
+
+  @override
+  String get recordsBestStreak => 'Mejor racha';
+
+  @override
+  String recordsWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count semanas',
+      one: '$count semana',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recordsMonthCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count récords',
+      one: '$count récord',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recordsPr => 'PR';
+
+  @override
+  String recordsE1rm(String exercise, String value) {
+    return '$exercise · e1RM $value';
+  }
+
+  @override
+  String recordsRepsLine(int count, String exercise) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count repeticiones',
+      one: '$count repetición',
+    );
+    return '$exercise · $_temp0';
+  }
+
+  @override
+  String recordsGainWhen(String gain, String when) {
+    return '$gain · $when';
+  }
+
+  @override
+  String recordsGainReps(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '+$count repeticiones',
+      one: '+$count repetición',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recordsToday => 'hoy';
+
+  @override
+  String get recordsYesterday => 'ayer';
+
+  @override
+  String recordsDaysAgo(int count) {
+    return 'hace $count días';
+  }
+
+  @override
+  String get recordsEmpty =>
+      'Aún no hay récords. Supera tu mejor marca en un entrenamiento y aparecerá aquí.';
+
+  @override
+  String get liftTitle => 'Levantamientos';
+
+  @override
+  String get liftEstimated => '1RM estimado · Epley';
+
+  @override
+  String liftSince(String date, String kg, String reps, String since) {
+    return 'desde $since · mejor serie $kg × $reps el $date';
+  }
+
+  @override
+  String liftBestSet(String date, String kg, String reps) {
+    return 'mejor serie $kg × $reps el $date';
+  }
+
+  @override
+  String get liftChartE1rm => 'e1RM';
+
+  @override
+  String get liftChartTop => 'Carga de la mejor serie';
+
+  @override
+  String get liftStrengthLevel => 'Nivel de fuerza';
+
+  @override
+  String get liftLevelBeginner => 'Principiante';
+
+  @override
+  String get liftLevelNovice => 'Novato';
+
+  @override
+  String get liftLevelIntermediate => 'Intermedio';
+
+  @override
+  String get liftLevelAdvanced => 'Avanzado';
+
+  @override
+  String get liftLevelElite => 'Élite';
+
+  @override
+  String liftRatio(String ratio) {
+    return '$ratio × peso corporal';
+  }
+
+  @override
+  String liftNextBand(String kg, String level, String ratio) {
+    return '$level a $ratio × · $kg';
+  }
+
+  @override
+  String get liftTopBand => 'Nivel máximo alcanzado';
+
+  @override
+  String get liftNeedWeight =>
+      'Registra tu peso corporal para ver tu nivel de fuerza.';
+
+  @override
+  String get liftNextSession => 'Próxima sesión';
+
+  @override
+  String get liftReserve => '2 repeticiones en reserva';
+
+  @override
+  String get liftColSet => 'Serie';
+
+  @override
+  String get liftCol1rm => '%1RM';
+
+  @override
+  String get liftColLoad => 'Carga';
+
+  @override
+  String get liftColReps => 'Reps';
+
+  @override
+  String get liftTopSet => 'Serie top';
+
+  @override
+  String get liftBackOff => 'Descarga';
+
+  @override
+  String get liftVolume => 'Volumen';
+
+  @override
+  String get liftFelix => 'Felix';
+
+  @override
+  String liftPaceUp(String kg) {
+    return 'Constante: $kg a la semana.';
+  }
+
+  @override
+  String liftPaceTo(String date, String kg, String ratio) {
+    return 'Constante: $kg a la semana. A este ritmo llegas a $ratio × tu peso corporal hacia $date.';
+  }
+
+  @override
+  String get liftPaceFlat =>
+      'Tu e1RM lleva un tiempo estancado. Una semana ligera y vuelve a apretar.';
+
+  @override
+  String get liftNone =>
+      'Termina un entrenamiento con un ejercicio con peso para ver tus levantamientos aquí.';
+
+  @override
+  String bodyPerWeek(String value) {
+    return '$value / sem.';
+  }
+
+  @override
+  String bodyTrendLine(String goal, int weeks) {
+    return 'Tendencia de $weeks semanas · objetivo: $goal';
+  }
+
+  @override
+  String bodyTrendNone(String goal) {
+    return 'Aún hay pocos pesajes para una tendencia · objetivo: $goal';
+  }
+
+  @override
+  String bodyGoalLoseFat(String unit) {
+    return 'perder grasa −0,3 a −0,7 $unit / sem.';
+  }
+
+  @override
+  String bodyGoalMaintain(String unit) {
+    return 'mantener ±0,2 $unit / sem.';
+  }
+
+  @override
+  String bodyGoalLeanBulk(String unit) {
+    return 'volumen limpio +0,2 a +0,4 $unit / sem.';
+  }
+
+  @override
+  String get bodyGoalNameLoseFat => 'pérdida de grasa';
+
+  @override
+  String get bodyGoalNameMaintain => 'mantenimiento';
+
+  @override
+  String get bodyGoalNameLeanBulk => 'volumen limpio';
+
+  @override
+  String bodyOffTrack(String goal) {
+    return 'Fuera de rumbo: $goal';
+  }
+
+  @override
+  String bodyAdd(int kcal) {
+    return 'Tu tendencia está por debajo del objetivo. Añade unas $kcal kcal al día, sobre todo carbohidratos alrededor del entrenamiento.';
+  }
+
+  @override
+  String bodyCut(int kcal) {
+    return 'Tu tendencia está por encima del objetivo. Quita unas $kcal kcal al día, sobre todo de grasas y bebidas azucaradas.';
+  }
+
+  @override
+  String get bodyUpdateTargets => 'Actualizar mis objetivos';
+
+  @override
+  String get bodyRange8 => '8 semanas';
+
+  @override
+  String get bodyRange26 => '6 meses';
+
+  @override
+  String get bodyRange52 => 'Año';
+
+  @override
+  String get bodyLegendTrend => 'Tendencia';
+
+  @override
+  String get bodyLegendWeighIns => 'Pesajes';
+
+  @override
+  String get bodyLegendGoal => 'Rango objetivo';
+
+  @override
+  String get bodyToday => 'Hoy';
+
+  @override
+  String get bodyWeighIns => 'Pesajes';
+
+  @override
+  String get bodyWeighInsNote => 'por la mañana, tras ir al baño';
+
+  @override
+  String get bodyLog => 'Registrar el peso de hoy';
+
+  @override
+  String get bodySheetTitle => 'Peso de hoy';
+
+  @override
+  String get bodySave => 'Guardar';
+
+  @override
+  String get bodyWeightRange => 'Introduce un peso entre 20 y 400 kg.';
+
+  @override
+  String get bodyEmpty => 'Registra tu peso para ver tu tendencia.';
 }
