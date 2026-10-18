@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -55,12 +56,6 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
         onPlaceOrder: _placeOrder,
       );
 
-  void _snack(SnackBar bar) {
-    final m = ScaffoldMessenger.of(context);
-    m.hideCurrentSnackBar();
-    m.showSnackBar(bar);
-  }
-
   Future<void> _placeOrder() async {
     if (_busy.value) return;
     final l10n = AppLocalizations.of(context);
@@ -91,13 +86,13 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
           cartNotifier.remove(e.key);
         }
       }
-      if (mounted) _snack(SnackBar(content: Text(l10n.shopOrderPlaced)));
+      if (mounted) showAppSnack(context, l10n.shopOrderPlaced);
     } on SignInRequired {
       if (mounted) promptSignIn();
     } on OrderException catch (e) {
       debugPrint('Order rejected: ${e.message}');
       if (mounted) {
-        _snack(SnackBar(content: Text(l10n.shopOrderUnavailable)));
+        showAppSnack(context, l10n.shopOrderUnavailable);
       }
     } catch (_) {
       if (mounted) _retryBar(l10n);
@@ -106,10 +101,11 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     }
   }
 
-  void _retryBar(AppLocalizations l10n) => _snack(SnackBar(
-        content: Text(l10n.shopOrderFailed),
+  void _retryBar(AppLocalizations l10n) => showAppSnack(
+        context,
+        l10n.shopOrderFailed,
         action: SnackBarAction(label: l10n.shopRetry, onPressed: _placeOrder),
-      ));
+      );
 
   void _showPro() {
     final l10n = AppLocalizations.of(context);

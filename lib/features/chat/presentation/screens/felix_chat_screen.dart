@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -120,15 +121,11 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
     setState(() => _pendingPhoto = null);
   }
 
-  void _snack(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
-  }
-
   Future<void> _toggleDictation() async {
     final ok = await _dictation.toggle();
-    if (!ok && mounted) _snack(AppLocalizations.of(context).chatMicDenied);
+    if (!ok && mounted) {
+      showAppSnack(context, AppLocalizations.of(context).chatMicDenied);
+    }
   }
 
   Future<void> _addPhoto() async {
@@ -161,17 +158,17 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
     try {
       path = await ref.read(photoServiceProvider).pick(source);
     } on PhotoTooLargeException {
-      if (mounted) _snack(l10n.chatPhotoTooLarge);
+      if (mounted) showAppSnack(context, l10n.chatPhotoTooLarge);
       return;
     } catch (_) {
-      if (mounted) _snack(l10n.chatPhotoFailed);
+      if (mounted) showAppSnack(context, l10n.chatPhotoFailed);
       return;
     }
     if (path == null || !mounted) return;
     final docs = await chatDocsDir();
     if (File(resolveChatPhoto(docs, path)).lengthSync() > maxChatPhotoBytes) {
       await deleteChatPhoto(path);
-      if (mounted) _snack(l10n.chatPhotoTooLarge);
+      if (mounted) showAppSnack(context, l10n.chatPhotoTooLarge);
       return;
     }
     if (!mounted) return;
