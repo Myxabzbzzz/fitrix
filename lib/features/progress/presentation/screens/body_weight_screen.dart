@@ -58,7 +58,11 @@ class _BodyWeightScreenState extends ConsumerState<BodyWeightScreen> {
 
     final trend = weeklyTrendKg(all, now);
     final range = _goalRange(goal);
-    final adj = trend == null ? null : kcalAdjustment(trend, goal);
+    // One decision from the goal band drives both the headline colour and
+    // the off-track card.
+    final onTrack =
+        trend != null && trend >= range.lo - 1e-9 && trend <= range.hi + 1e-9;
+    final adj = trend == null || onTrack ? null : kcalAdjustment(trend, goal);
     final goalText = switch (goal) {
       Goal.loseFat => l10n.bodyGoalLoseFat(unit),
       Goal.maintain => l10n.bodyGoalMaintain(unit),
@@ -135,8 +139,6 @@ class _BodyWeightScreenState extends ConsumerState<BodyWeightScreen> {
         : '${v > 0 ? '+' : '−'}${NumberFormat('0.0', locale).format(v.abs())}';
 
     final latest = all.isEmpty ? null : all.last;
-    final onTrack =
-        trend != null && trend >= range.lo - 1e-9 && trend <= range.hi + 1e-9;
     final listed = all.reversed.take(20).toList();
 
     return Scaffold(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,7 @@ import 'package:fitrix/features/progress/presentation/screens/lift_detail_screen
 import 'package:fitrix/features/progress/presentation/screens/progress_screen.dart';
 import 'package:fitrix/features/progress/presentation/screens/records_screen.dart';
 import 'package:fitrix/features/progress/presentation/screens/training_load_screen.dart';
+import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
@@ -97,7 +99,134 @@ List<Map<String, Object>> _weighIns() => [
         },
     ];
 
+ExerciseCatalog _catalog() => ExerciseCatalog([
+      for (final e
+          in jsonDecode(File('assets/data/exercises.json').readAsStringSync())
+              as List)
+        ExerciseInfo.fromJson(e as Map<String, dynamic>),
+    ]);
+
+CompletedWorkout _lift(DateTime day, String name, double kg, int reps) =>
+    CompletedWorkout(
+      id: 'l${day.toIso8601String()}-$name',
+      templateId: 't',
+      name: 'Lift',
+      sport: Sport.gym,
+      startedAt: DateTime(day.year, day.month, day.day, 18),
+      finishedAt: DateTime(day.year, day.month, day.day, 19),
+      sessionRpe: 7,
+      exercises: [
+        Exercise(name: name, sets: [
+          WorkoutSet(
+              previousKg: 0,
+              previousReps: reps,
+              kg: kg,
+              reps: reps,
+              done: true),
+        ]),
+      ],
+    );
+
+/// Nine weigh-ins a week apart whose trend is [perWeek] kg/week.
+List<Map<String, Object>> _trend(double perWeek) => [
+      for (var i = 0; i < 9; i++)
+        {
+          'at': DateTime(2026, 10, 18 - i * 7).toIso8601String(),
+          'kg': 80 - perWeek * i,
+        },
+    ];
+
+String _goalPref(Goal g) => jsonEncode({'goal': g.name});
+
 void main() {
+  group('lift identity', () {
+    final c = _catalog();
+    test('only the five barbell lifts get a strength level', () {
+      expect(liftKeyFor('Back squat', c), 'squat');
+      expect(liftKeyFor('Squat', c), 'squat');
+      expect(liftKeyFor('Bench press', c), 'bench');
+      expect(liftKeyFor('Barbell row', c), 'row');
+      expect(liftKeyFor('Overhead press', c), 'ohp');
+      expect(liftKeyFor('Deadlift', c), 'deadlift');
+      for (final n in [
+        'Hack squat',
+        'Front squat',
+        'Dumbbell row',
+        'One-arm dumbbell row',
+        'Chest-supported row',
+        'Seated cable row',
+        'Machine row',
+        'T-bar row',
+        'Close-grip bench press',
+        'Dumbbell bench press',
+        'Romanian deadlift',
+        'Something unknown',
+      ]) {
+        expect(liftKeyFor(n, c), isNull, reason: n);
+      }
+      expect(liftKeyFor('Back squat', null), isNull);
+    });
+
+    test('aliases of one exercise merge into one lift', () {
+      final h = [
+        _lift(DateTime(2026, 10, 1), 'Squat', 100, 5),
+        _lift(DateTime(2026, 10, 8), 'Back squat', 105, 5),
+      ];
+      final lifts = liftsIn(h, c);
+      expect(lifts, hasLength(1));
+      expect(lifts.single.name, 'Back squat');
+      expect(lifts.single.sessions, 2);
+      expect(liftSeries(h, 'Back squat', c), hasLength(2));
+      expect(liftSeries(h, 'Squat', c), hasLength(2));
+    });
+  });
+
+  group('lift screen strength level', () {
+    testWidgets('hack squat has none, back squat has one', (t) async {
+      _se(t);
+      final h = [
+        _lift(DateTime(2026, 10, 1), 'Hack squat', 200, 10),
+        _lift(DateTime(2026, 10, 8), 'Back squat', 100, 8),
+      ];
+      await t.pumpWidget(
+          await _host(const LiftDetailScreen(name: 'Hack squat'), history: h));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('strength-level')), findsNothing);
+      await t.pumpWidget(
+          await _host(const LiftDetailScreen(name: 'Back squat'), history: h));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('strength-level')), findsOneWidget);
+    });
+  });
+
+  group('body weight off-track card', () {
+    Future<void> pump(WidgetTester t, double perWeek, Goal g) async {
+      _se(t);
+      await t.pumpWidget(await _host(const BodyWeightScreen(),
+          weighIns: _trend(perWeek),
+          extra: {'nutrition_settings_v1': _goalPref(g)}));
+      await t.pumpAndSettle();
+    }
+
+    for (final (trend, goal) in [
+      (-0.35, Goal.loseFat),
+      (0.15, Goal.maintain),
+      (0.2, Goal.leanBulk),
+    ]) {
+      testWidgets('$goal at $trend/wk is on track: no card', (t) async {
+        await pump(t, trend, goal);
+        expect(find.text('Update my targets'), findsNothing);
+      });
+    }
+
+    testWidgets('lean bulk at -0.15/wk shows the card with 500 kcal',
+        (t) async {
+      await pump(t, -0.15, Goal.leanBulk);
+      expect(find.text('Update my targets'), findsOneWidget);
+      expect(find.textContaining('500 kcal'), findsOneWidget);
+    });
+  });
+
   group('progress math', () {
     test('weeklyTrendKg recovers a -0.15 kg/week series', () {
       final now = DateTime(2026, 10, 18);

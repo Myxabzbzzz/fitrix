@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
 import 'package:fitrix/features/progress/data/body_weight_store.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -156,24 +157,20 @@ String strengthLevel(String lift, double e1rm, double bodyKg,
     strengthInfo(lift, e1rm, bodyKg, female: female)?.level ??
     strengthLevels.first;
 
-/// The lift key an exercise name counts as, or null.
-String? liftKeyFor(String exercise) {
-  final n = exercise.toLowerCase();
-  bool has(String s) => n.contains(s);
-  if (has('bench press') &&
-      !has('dumbbell') &&
-      !has('incline') &&
-      !has('decline')) {
-    return 'bench';
-  }
-  if (has('squat') && !has('split') && !has('goblet')) return 'squat';
-  if (has('deadlift') && !has('romanian') && !has('stiff')) return 'deadlift';
-  if (RegExp(r'\brow\b').hasMatch(n) && !has('upright')) return 'row';
-  if (has('overhead press') || has('military press') || has('shoulder press')) {
-    return 'ohp';
-  }
-  return null;
-}
+/// Catalog ids of the five barbell lifts that have strength standards.
+const _strengthLiftIds = {
+  'bench-press': 'bench',
+  'back-squat': 'squat',
+  'deadlift': 'deadlift',
+  'barbell-row': 'row',
+  'overhead-press': 'ohp',
+};
+
+/// The lift key ([_bands]) an exercise counts as, or null. Resolved through
+/// the catalog so aliases work and machine / dumbbell / front variants get
+/// no barbell standard. Null without a catalog.
+String? liftKeyFor(String exercise, ExerciseCatalog? catalog) =>
+    _strengthLiftIds[catalog?.byName(exercise)?.id];
 
 /// A record with the sport of the workout it was set in.
 class RecordEntry {
@@ -222,9 +219,20 @@ class LiftPoint {
 
 String liftKey(String name) => name.trim().toLowerCase();
 
+/// Identity of an exercise: its catalog id and name when [raw] resolves
+/// (names and aliases), else the lowercased name.
+({String key, String name}) canonicalLift(
+    String raw, ExerciseCatalog? catalog) {
+  final info = catalog?.byName(raw);
+  return info != null
+      ? (key: info.id, name: info.name)
+      : (key: liftKey(raw), name: raw.trim());
+}
+
 /// Exercises with weighted working sets in [history], most trained first,
-/// as (display name, sessions).
-List<({String name, int sessions})> liftsIn(List<CompletedWorkout> history) {
+/// as (display name, sessions). Aliases of one catalog entry are one lift.
+List<({String name, int sessions})> liftsIn(
+    List<CompletedWorkout> history, ExerciseCatalog? catalog) {
   final names = <String, String>{};
   final counts = <String, int>{};
   for (final w in history) {
@@ -232,9 +240,9 @@ List<({String name, int sessions})> liftsIn(List<CompletedWorkout> history) {
     for (final e in w.exercises) {
       final has = e.sets.any((s) => !s.warmup && s.kg > 0 && s.reps > 0);
       if (!has) continue;
-      final k = liftKey(e.name);
-      names.putIfAbsent(k, () => e.name);
-      if (seen.add(k)) counts[k] = (counts[k] ?? 0) + 1;
+      final id = canonicalLift(e.name, catalog);
+      names.putIfAbsent(id.key, () => id.name);
+      if (seen.add(id.key)) counts[id.key] = (counts[id.key] ?? 0) + 1;
     }
   }
   final keys = counts.keys.toList()
@@ -243,13 +251,14 @@ List<({String name, int sessions})> liftsIn(List<CompletedWorkout> history) {
 }
 
 /// Sessions of [exercise], oldest first.
-List<LiftPoint> liftSeries(List<CompletedWorkout> history, String exercise) {
-  final k = liftKey(exercise);
+List<LiftPoint> liftSeries(
+    List<CompletedWorkout> history, String exercise, ExerciseCatalog? catalog) {
+  final k = canonicalLift(exercise, catalog).key;
   final out = <LiftPoint>[];
   for (final w in history) {
     WorkoutSet? best;
     for (final e in w.exercises) {
-      if (liftKey(e.name) != k) continue;
+      if (canonicalLift(e.name, catalog).key != k) continue;
       for (final s in e.sets) {
         if (s.warmup || s.kg <= 0 || s.reps <= 0) continue;
         if (best == null || e1rm(s.kg, s.reps) > e1rm(best.kg, best.reps)) {

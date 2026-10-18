@@ -7,6 +7,7 @@ import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/profile/data/performance_store.dart';
 import 'package:fitrix/features/progress/domain/progress_math.dart';
@@ -37,7 +38,8 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
     final locale = Localizations.localeOf(context).toString();
     final today = ref.watch(todayProvider);
     final history = ref.watch(workoutHistoryProvider);
-    final lifts = liftsIn(history);
+    final catalog = ref.watch(exerciseCatalogProvider).valueOrNull;
+    final lifts = liftsIn(history, catalog);
     final female = ref.watch(performanceProfileProvider).sex == Sex.female;
     final weighIns = ref.watch(bodyWeightProvider);
     final bodyKg = weighIns.isNotEmpty
@@ -74,10 +76,11 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
       ]);
     }
 
-    final wanted = liftKey(_picked ?? widget.name);
-    final current = lifts.firstWhere((l) => liftKey(l.name) == wanted,
+    final wanted = canonicalLift(_picked ?? widget.name, catalog).key;
+    final current = lifts.firstWhere(
+        (l) => canonicalLift(l.name, catalog).key == wanted,
         orElse: () => lifts.first);
-    final series = liftSeries(history, current.name);
+    final series = liftSeries(history, current.name, catalog);
     final best = series.reduce((a, b) => b.e1rm > a.e1rm ? b : a);
     final first = series.first;
     final dateFmt = DateFormat('d MMM', locale);
@@ -110,7 +113,7 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
         : null;
 
     // Strength level.
-    final key = liftKeyFor(current.name);
+    final key = liftKeyFor(current.name, catalog);
     final info = key == null || bodyKg == null
         ? null
         : strengthInfo(key, best.e1rm, bodyKg, female: female);

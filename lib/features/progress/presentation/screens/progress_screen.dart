@@ -10,6 +10,7 @@ import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/core/widgets/sync_refresh.dart';
+import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/progress/domain/progress_math.dart';
 import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
 import 'package:fitrix/features/progress/presentation/widgets/progress_widgets.dart';
@@ -74,7 +75,8 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
     ];
     final recordsThisWeek =
         records.where((r) => !r.record.date.isBefore(start)).length;
-    final lifts = liftsIn(history);
+    final catalog = ref.watch(exerciseCatalogProvider).valueOrNull;
+    final lifts = liftsIn(history, catalog);
     final latestWeight = weighIns.isEmpty ? null : weighIns.last.kg;
 
     final form = summary.form;
