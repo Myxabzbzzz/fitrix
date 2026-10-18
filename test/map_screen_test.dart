@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/shell/presentation/main_shell.dart';
 import 'package:fitrix/features/content/data/models.dart';
@@ -511,12 +512,79 @@ void main() {
     expect(routing.calls, isNotEmpty);
   });
 
-  testWidgets('dark theme wraps tiles in a colour filter', (tester) async {
+  ColorFilter tileFilter(WidgetTester tester) => tester
+      .widget<ColorFiltered>(find.descendant(
+          of: find.byType(FlutterMap), matching: find.byType(ColorFiltered)))
+      .colorFilter;
+
+  testWidgets('dark theme uses the soft tile matrix, light the identity',
+      (tester) async {
     await _pump(tester, themeMode: ThemeMode.dark);
     expect(
-        find.descendant(
-            of: find.byType(FlutterMap), matching: find.byType(ColorFiltered)),
-        findsWidgets);
+        tileFilter(tester),
+        const ColorFilter.matrix(<double>[
+          0.1713, -0.8644, -0.087, 0, 210.9, //
+          -0.2577, -0.4354, -0.087, 0, 210.9,
+          -0.2577, -0.8644, 0.342, 0, 210.9,
+          0, 0, 0, 1, 0,
+        ]));
+    await _pump(tester, themeMode: ThemeMode.light);
+    expect(
+        tileFilter(tester),
+        const ColorFilter.matrix(<double>[
+          1, 0, 0, 0, 0, //
+          0, 1, 0, 0, 0,
+          0, 0, 1, 0, 0,
+          0, 0, 0, 1, 0,
+        ]));
+  });
+
+  for (final mode in [ThemeMode.light, ThemeMode.dark]) {
+    testWidgets('attribution is shown in $mode', (tester) async {
+      await _pump(tester, themeMode: mode);
+      expect(find.text('© OpenStreetMap contributors'), findsOneWidget);
+    });
+  }
+
+  testWidgets('dark attribution chip: tile @85% with textSecondary',
+      (tester) async {
+    await _pump(tester, themeMode: ThemeMode.dark);
+    final text = tester.widget<Text>(find.text('© OpenStreetMap contributors'));
+    final box = tester.widget<DecoratedBox>(find
+        .ancestor(
+            of: find.text('© OpenStreetMap contributors'),
+            matching: find.byType(DecoratedBox))
+        .first);
+    final ctx = tester.element(find.byType(FlutterMap));
+    final palette = AppPalette.of(ctx);
+    expect(text.style!.color, palette.textSecondary);
+    expect((box.decoration as BoxDecoration).color,
+        palette.tile.withValues(alpha: 0.85));
+  });
+
+  testWidgets('dark route casing is background @60%', (tester) async {
+    await _pump(tester, themeMode: ThemeMode.dark);
+    await tester.tap(find.text('Show route'));
+    await tester.pumpAndSettle();
+    final ctx = tester.element(find.byType(FlutterMap));
+    final palette = AppPalette.of(ctx);
+    final layer = tester.widget<PolylineLayer>(find.byType(PolylineLayer));
+    final colors = layer.polylines.map((p) => p.color).toList();
+    expect(colors, contains(palette.background.withValues(alpha: 0.6)));
+    expect(colors, contains(palette.accent));
+  });
+
+  test('map overlays use palette tokens only', () {
+    final bad = RegExp(r'Colors\.(?!transparent)\w+|Color\(0x');
+    for (final f in Directory('lib/features/map/presentation')
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((f) => f.path.endsWith('.dart'))) {
+      final hits = f
+          .readAsLinesSync()
+          .where((l) => !l.trimLeft().startsWith('//') && bad.hasMatch(l));
+      expect(hits, isEmpty, reason: f.path);
+    }
   });
 
   testWidgets('SE size: no overflow, card stays above the bottom edge',

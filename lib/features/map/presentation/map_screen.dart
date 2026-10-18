@@ -361,7 +361,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
         // provider never disposed) when the theme changes.
         ColorFiltered(
             colorFilter: dark ? _darkTiles : _identityTiles, child: tiles),
-        if (routeShown && plan != null) ..._routeLayers(palette, plan),
+        if (routeShown && plan != null) ..._routeLayers(palette, plan, dark),
         MarkerLayer(
           markers: [
             if (me != null)
@@ -386,22 +386,21 @@ class _MapScreenState extends ConsumerState<MapScreen>
               ),
           ],
         ),
-        const _Attribution(),
+        _Attribution(dark: dark),
       ],
     );
   }
 
-  List<Widget> _routeLayers(AppPalette palette, RoutePlan plan) {
+  List<Widget> _routeLayers(AppPalette palette, RoutePlan plan, bool dark) {
+    final casing = palette.background.withValues(alpha: dark ? 0.6 : 0.9);
     final casings = <Polyline>[];
     final lines = <Polyline>[];
     final stations = <CircleMarker>[];
     for (final leg in plan.legs) {
       if (leg.kind == 'metro') {
         final color = leg.lineColor ?? palette.accent;
-        casings.add(Polyline(
-            points: leg.points,
-            strokeWidth: 10,
-            color: palette.background.withValues(alpha: 0.9)));
+        casings
+            .add(Polyline(points: leg.points, strokeWidth: 10, color: casing));
         lines.add(Polyline(points: leg.points, strokeWidth: 6, color: color));
         for (final pt in leg.points) {
           stations.add(CircleMarker(
@@ -420,10 +419,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
           pattern: StrokePattern.dashed(segments: const [4, 8]),
         ));
       } else {
-        casings.add(Polyline(
-            points: leg.points,
-            strokeWidth: 9,
-            color: palette.background.withValues(alpha: 0.9)));
+        casings
+            .add(Polyline(points: leg.points, strokeWidth: 9, color: casing));
         lines.add(Polyline(
             points: leg.points, strokeWidth: 5, color: palette.accent));
       }
@@ -442,11 +439,12 @@ const ColorFilter _identityTiles = ColorFilter.matrix(<double>[
   0, 0, 0, 1, 0,
 ]);
 
-/// Inverts the light OSM tiles and dims them for the dark theme.
+/// "Soft" dark map (design/map-dark): keeps hues recognisable (parks stay
+/// green, water blue) instead of a plain invert.
 const ColorFilter _darkTiles = ColorFilter.matrix(<double>[
-  -0.85, 0, 0, 0, 216.75, //
-  0, -0.85, 0, 0, 216.75,
-  0, 0, -0.85, 0, 216.75,
+  0.1713, -0.8644, -0.087, 0, 210.9, //
+  -0.2577, -0.4354, -0.087, 0, 210.9,
+  -0.2577, -0.8644, 0.342, 0, 210.9,
   0, 0, 0, 1, 0,
 ]);
 
@@ -465,6 +463,7 @@ class _Pin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final dark = Theme.of(context).brightness == Brightness.dark;
     final icon = Icon(_kindIcon(place.kind),
         size: 16, color: selected ? palette.onAccent : palette.accent);
     return Semantics(
@@ -478,10 +477,12 @@ class _Pin extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: selected ? palette.accent : palette.background,
+              color: selected
+                  ? palette.accent
+                  : (dark ? palette.tile : palette.background),
               borderRadius: AppRadius.fullAll,
-              border:
-                  Border.all(color: selected ? palette.accent : palette.border),
+              border: Border.all(
+                  color: selected ? palette.accent : palette.border, width: 1),
             ),
             child: SizedBox(
               height: 30,
@@ -545,7 +546,9 @@ class _MeDot extends StatelessWidget {
 
 /// "© OpenStreetMap contributors", always visible in the map's corner.
 class _Attribution extends StatelessWidget {
-  const _Attribution();
+  const _Attribution({required this.dark});
+
+  final bool dark;
 
   @override
   Widget build(BuildContext context) {
@@ -554,7 +557,9 @@ class _Attribution extends StatelessWidget {
       alignment: Alignment.bottomRight,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: palette.background.withValues(alpha: 0.8),
+          color: dark
+              ? palette.tile.withValues(alpha: 0.85)
+              : palette.background.withValues(alpha: 0.8),
           borderRadius:
               const BorderRadius.only(topLeft: Radius.circular(AppRadius.sm)),
         ),
@@ -565,7 +570,8 @@ class _Attribution extends StatelessWidget {
             '© OpenStreetMap contributors',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppText.micro.copyWith(color: palette.textPrimary),
+            style: AppText.micro.copyWith(
+                color: dark ? palette.textSecondary : palette.textPrimary),
           ),
         ),
       ),
