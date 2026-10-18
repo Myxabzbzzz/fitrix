@@ -57,10 +57,12 @@ class CoachCard extends StatelessWidget {
                 Text(eyebrow.toUpperCase(),
                     style:
                         AppText.captionStrong.copyWith(color: palette.accent)),
-                const SizedBox(height: AppSpacing.xs),
-                Text(title,
-                    style:
-                        AppText.headingS.copyWith(color: palette.textPrimary)),
+                if (title.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(title,
+                      style: AppText.headingS
+                          .copyWith(color: palette.textPrimary)),
+                ],
                 const SizedBox(height: AppSpacing.xs),
                 Text(message,
                     style:

@@ -1,0 +1,665 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/core/widgets/coach_card.dart';
+import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
+import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart';
+import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
+import 'package:fitrix/features/plan/presentation/widgets/add_session_sheet.dart';
+import 'package:fitrix/features/plan/presentation/widgets/plan_format.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
+
+/// "This week": the Mon-Sun plan, its training load, Felix's advice and a
+/// way to add sessions.
+class WeekPlanScreen extends ConsumerWidget {
+  const WeekPlanScreen({super.key});
+
+  /// Starts [template] like the Gym screen does, asking first when another
+  /// workout is running.
+  static Future<void> startTemplate(
+      BuildContext context, WidgetRef ref, WorkoutTemplate template) async {
+    final active = ref.read(activeWorkoutProvider);
+    if (active != null && active.template.id != template.id) {
+      final replace = await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          final l10n = AppLocalizations.of(context);
+          return AlertDialog(
+            title: Text(l10n.gymFinishCurrentTitle),
+            content: Text(
+              l10n.gymFinishCurrentBody(active.template.name, template.name),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(l10n.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(l10n.gymStart),
+              ),
+            ],
+          );
+        },
+      );
+      if (replace != true || !context.mounted) return;
+    }
+    if (active == null || active.template.id != template.id) {
+      ref.read(activeWorkoutProvider.notifier).start(template);
+    }
+    ref.read(activeWorkoutExpandedProvider.notifier).state = true;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final today = ref.watch(todayProvider);
+    final plan = ref.watch(weekPlanProvider);
+    final history = ref.watch(workoutHistoryProvider);
+    final templates = ref.watch(workoutTemplatesProvider);
+    final catalog = ref.watch(exerciseCatalogProvider).valueOrNull;
+    final dismissed = ref.watch(dismissedSuggestionsProvider);
+    final readiness = ref.watch(todayReadinessProvider);
+
+    final start = weekStartOf(today);
+    final days = [for (var i = 0; i < 7; i++) addDays(start, i)];
+    final week = [
+      for (final s in plan)
+        if (!s.day.isBefore(start) && !s.day.isAfter(days.last)) s,
+    ];
+    SessionStatus status(PlannedSession s) => statusOf(s, history, today);
+    final doneCount = week.where((s) => status(s) == SessionStatus.done).length;
+
+    var suggestion = catalog == null
+        ? null
+        : suggestPlanChange(plan, today, catalog, templates: templates);
+    if (suggestion != null &&
+        dismissed.contains(
+            DismissedSuggestionsNotifier.keyFor(suggestion.sessionId, today))) {
+      suggestion = null;
+    }
+
+    final locale = Localizations.localeOf(context).toString();
+    final range = start.month == days.last.month
+        ? '${start.day}–${days.last.day} '
+            '${DateFormat.MMM(locale).format(days.last)}'
+        : '${DateFormat('d MMM', locale).format(start)} – '
+            '${DateFormat('d MMM', locale).format(days.last)}';
+
+    final seeds = _seedSessions(templates, start, today);
+    final showSeedOffer = week.isEmpty && seeds.isNotEmpty;
+
+    return Scaffold(
+      backgroundColor: palette.background,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ScreenTitle(
+              l10n.planTitle,
+              trailing: IconButton(
+                key: const Key('plan-add'),
+                tooltip: l10n.planAddSession,
+                icon: Icon(Icons.add, color: palette.textPrimary),
+                onPressed: () => showAddSessionSheet(context),
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md, 0, AppSpacing.md, AppSpacing.lg),
+                children: [
+                  Text(
+                    '$range · ${l10n.planSummary(week.length, doneCount)}',
+                    style: AppText.bodyRegular
+                        .copyWith(color: palette.textSecondary),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  _DayStrip(
+                    days: days,
+                    today: today,
+                    sessions: week,
+                    status: status,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  _LoadCard(
+                    hard: hardInNext3Days(plan, today),
+                    recovery: readiness?.score,
+                  ),
+                  if (suggestion != null) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    _FelixCard(
+                      suggestion: suggestion,
+                      plan: plan,
+                      today: today,
+                    ),
+                  ],
+                  if (showSeedOffer) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    _SeedOffer(seeds: seeds),
+                  ],
+                  for (final d in days) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    _DaySection(
+                      day: d,
+                      today: today,
+                      sessions: [
+                        for (final s in week)
+                          if (s.day == d) s,
+                      ],
+                      history: history,
+                      templates: templates,
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.md),
+                  AppButton(
+                    label: l10n.planAddSession,
+                    icon: Icons.add,
+                    style: AppButtonStyle.secondary,
+                    size: AppButtonSize.large,
+                    expand: true,
+                    onPressed: () => showAddSessionSheet(context),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// One session per gym plan on Mon, Wed and Fri of the week, for days from
+/// today on.
+List<PlannedSession> _seedSessions(
+    List<WorkoutTemplate> templates, DateTime weekStart, DateTime today) {
+  final gym = [
+    for (final t in templates)
+      if (t.sport == Sport.gym) t,
+  ];
+  const offsets = [0, 2, 4];
+  final out = <PlannedSession>[];
+  for (var i = 0; i < gym.length && i < offsets.length; i++) {
+    final day = addDays(weekStart, offsets[i]);
+    if (day.isBefore(today)) continue;
+    out.add(PlannedSession(
+      id: const Uuid().v4(),
+      day: day,
+      sport: Sport.gym,
+      title: gym[i].name,
+      templateId: gym[i].id,
+      minutes: gym[i].estimatedDuration.inMinutes,
+      intensity: intensityOfTemplate(gym[i]),
+    ));
+  }
+  return out;
+}
+
+class _DayStrip extends StatelessWidget {
+  final List<DateTime> days;
+  final DateTime today;
+  final List<PlannedSession> sessions;
+  final SessionStatus Function(PlannedSession) status;
+
+  const _DayStrip({
+    required this.days,
+    required this.today,
+    required this.sessions,
+    required this.status,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Row(
+      children: [
+        for (var i = 0; i < days.length; i++) ...[
+          if (i > 0) const SizedBox(width: AppSpacing.xxs),
+          Expanded(
+            child: Builder(builder: (context) {
+              final d = days[i];
+              final isToday = d == today;
+              final fg = isToday ? palette.onPillSelected : palette.textPrimary;
+              final mine = [
+                for (final s in sessions)
+                  if (s.day == d) s,
+              ];
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                decoration: BoxDecoration(
+                  color: isToday ? palette.pillSelected : palette.tile,
+                  borderRadius: AppRadius.smAll,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      weekdayShort(context, d).characters.first.toUpperCase(),
+                      style: AppText.micro.copyWith(
+                          color: isToday ? fg : palette.textSecondary),
+                    ),
+                    Text('${d.day}',
+                        style: AppText.bodyStrong.copyWith(color: fg)),
+                    const SizedBox(height: AppSpacing.xxs),
+                    SizedBox(
+                      height: 4,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          for (final s in mine.take(3))
+                            Container(
+                              width: 4,
+                              height: 4,
+                              margin: const EdgeInsets.symmetric(horizontal: 1),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: status(s) == SessionStatus.done
+                                    ? palette.textSecondary
+                                    : palette.accent,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _LoadCard extends StatelessWidget {
+  final int hard;
+  final int? recovery;
+
+  const _LoadCard({required this.hard, required this.recovery});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final level = hard >= 3 ? 2 : (hard == 2 ? 1 : 0);
+    final label =
+        [l10n.planLoadEasy, l10n.planLoadNormal, l10n.planLoadHigh][level];
+    final color = level == 2 ? palette.danger : palette.accent;
+    final caption = [
+      l10n.planLoadCaption(hard),
+      if (recovery != null) l10n.planRecoveryToday(recovery!),
+    ].join(' ');
+
+    Widget segment(Color c) => Expanded(
+          child: Container(
+            height: 4,
+            decoration:
+                BoxDecoration(color: c, borderRadius: AppRadius.fullAll),
+          ),
+        );
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration:
+          BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(l10n.planLoadTitle,
+                    style:
+                        AppText.headingS.copyWith(color: palette.textPrimary)),
+              ),
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
+              const SizedBox(width: AppSpacing.xxs),
+              Text(label,
+                  key: const Key('plan-load-label'),
+                  style: AppText.bodyStrong.copyWith(color: color)),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            height: 16,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Row(
+                  children: [
+                    segment(palette.accent),
+                    const SizedBox(width: AppSpacing.xxs),
+                    segment(palette.accent),
+                    const SizedBox(width: AppSpacing.xxs),
+                    segment(palette.danger),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment(level - 1.0, 0),
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: palette.tile,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: color, width: 3),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xxs),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              for (final t in [
+                l10n.planLoadEasy,
+                l10n.planLoadNormal,
+                l10n.planLoadHigh
+              ])
+                Text(t,
+                    style:
+                        AppText.caption.copyWith(color: palette.textSecondary)),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(caption,
+              style: AppText.body14.copyWith(color: palette.textPrimary)),
+        ],
+      ),
+    );
+  }
+}
+
+class _FelixCard extends ConsumerWidget {
+  final PlanSuggestion suggestion;
+  final List<PlannedSession> plan;
+  final DateTime today;
+
+  const _FelixCard({
+    required this.suggestion,
+    required this.plan,
+    required this.today,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final moved = plan.firstWhere((s) => s.id == suggestion.sessionId);
+    final other = plan.firstWhere((s) => s.id == suggestion.otherSessionId);
+    final text = l10n.planFelixText(
+      other.title,
+      weekdayLong(context, other.day),
+      moved.title,
+      weekdayLong(context, moved.day),
+      weekdayLong(context, suggestion.to),
+    );
+    return KeyedSubtree(
+      key: const Key('plan-felix-card'),
+      child: CoachCard(
+        eyebrow: l10n.planFelixLabel,
+        title: '',
+        message: text,
+        imageAsset: 'assets/images/felix_robot.png',
+        imageWidth: 56,
+        imageHeight: 80,
+        primaryLabel: l10n.planOptimize,
+        onPrimary: () => ref
+            .read(weekPlanProvider.notifier)
+            .move(suggestion.sessionId, suggestion.to),
+        secondaryLabel: l10n.planKeep,
+        onSecondary: () => ref
+            .read(dismissedSuggestionsProvider.notifier)
+            .dismiss(suggestion.sessionId, today),
+      ),
+    );
+  }
+}
+
+class _SeedOffer extends ConsumerWidget {
+  final List<PlannedSession> seeds;
+  const _SeedOffer({required this.seeds});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration:
+          BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.planEmptyTitle,
+              style: AppText.headingS.copyWith(color: palette.textPrimary)),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(l10n.planEmptyBody,
+              style: AppText.caption.copyWith(color: palette.textSecondary)),
+          const SizedBox(height: AppSpacing.sm),
+          AppButton(
+            label: l10n.planPlanWeek,
+            onPressed: () => ref.read(weekPlanProvider.notifier).addAll(seeds),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DaySection extends ConsumerWidget {
+  final DateTime day;
+  final DateTime today;
+  final List<PlannedSession> sessions;
+  final List<CompletedWorkout> history;
+  final List<WorkoutTemplate> templates;
+
+  const _DaySection({
+    required this.day,
+    required this.today,
+    required this.sessions,
+    required this.history,
+    required this.templates,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final isToday = day == today;
+    final statuses = [for (final s in sessions) statusOf(s, history, today)];
+    final label = weekdayAndDate(context, day);
+    final String? trailing;
+    if (sessions.isEmpty) {
+      trailing = null;
+    } else if (statuses.every((s) => s == SessionStatus.done)) {
+      trailing = l10n.planDoneCount(sessions.length);
+    } else if (statuses.contains(SessionStatus.missed)) {
+      trailing = l10n.planMissedHeader;
+    } else {
+      trailing = l10n.planPlannedCount(sessions.length);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                isToday ? l10n.planTodayDay(label) : label,
+                style: AppText.headingS.copyWith(
+                    color: isToday ? palette.accent : palette.textPrimary),
+              ),
+            ),
+            if (trailing != null)
+              Text(trailing,
+                  style:
+                      AppText.caption.copyWith(color: palette.textSecondary)),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        if (sessions.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.smAll,
+              border: Border.all(color: palette.border),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.dark_mode_outlined,
+                    size: 20, color: palette.textSecondary),
+                const SizedBox(width: AppSpacing.sm),
+                Text(l10n.planRestDay,
+                    style:
+                        AppText.body14.copyWith(color: palette.textSecondary)),
+              ],
+            ),
+          )
+        else
+          Container(
+            decoration: BoxDecoration(
+                color: palette.tile, borderRadius: AppRadius.smAll),
+            child: Column(
+              children: [
+                for (var i = 0; i < sessions.length; i++) ...[
+                  if (i > 0) Divider(height: 1, color: palette.border),
+                  _SessionRow(
+                    session: sessions[i],
+                    status: statuses[i],
+                    history: history,
+                    templates: templates,
+                  ),
+                ],
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _SessionRow extends ConsumerWidget {
+  final PlannedSession session;
+  final SessionStatus status;
+  final List<CompletedWorkout> history;
+  final List<WorkoutTemplate> templates;
+
+  const _SessionRow({
+    required this.session,
+    required this.status,
+    required this.history,
+    required this.templates,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final s = session;
+    final template = templates.where((t) => t.id == s.templateId).firstOrNull;
+
+    final String meta;
+    if (status == SessionStatus.done) {
+      final w = completedFor(s, history)!;
+      final d =
+          planDuration(l10n, w.finishedAt.difference(w.startedAt).inMinutes);
+      meta = w.sessionRpe == null ? d : l10n.planDoneMeta(d, w.sessionRpe!);
+    } else if (template != null) {
+      meta = l10n.planExercisesMeta(
+          template.exercises.length, planDuration(l10n, s.minutes));
+    } else {
+      meta = planDuration(l10n, s.minutes);
+    }
+
+    Widget trailing;
+    switch (status) {
+      case SessionStatus.done:
+        trailing = Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+              color: palette.pillSelected, shape: BoxShape.circle),
+          child: Icon(Icons.check, size: 16, color: palette.onPillSelected),
+        );
+      case SessionStatus.missed:
+        trailing = PlanChip(
+          label: l10n.planMissed,
+          background: palette.danger.withValues(alpha: 0.12),
+          foreground: palette.danger,
+        );
+      case SessionStatus.today when template != null:
+        trailing = AppButton(
+          key: Key('plan-start-${s.id}'),
+          label: l10n.gymStart,
+          size: AppButtonSize.small,
+          onPressed: () => WeekPlanScreen.startTemplate(context, ref, template),
+        );
+      default:
+        trailing = PlanChip.intensity(context, s.intensity);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+                color: palette.accentSoft, borderRadius: AppRadius.smAll),
+            child: Icon(_icon(s.sport), size: 20, color: palette.accent),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(s.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style:
+                        AppText.headingS.copyWith(color: palette.textPrimary)),
+                Text(meta,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style:
+                        AppText.caption.copyWith(color: palette.textSecondary)),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          trailing,
+        ],
+      ),
+    );
+  }
+
+  IconData _icon(Sport sport) => switch (sport) {
+        Sport.gym => Icons.fitness_center,
+        Sport.fitness => Icons.self_improvement,
+        Sport.cycling => Icons.directions_bike,
+        Sport.running => Icons.directions_run,
+        Sport.football => Icons.sports_soccer,
+        Sport.winterSports => Icons.downhill_skiing,
+      };
+}

@@ -4,8 +4,11 @@ import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/feature_tile.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart';
+import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -45,6 +48,13 @@ class MyWorkoutsScreen extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(
                     AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.lg),
                 children: [
+                  Builder(
+                    builder: (cardContext) => _WeekPlanCard(
+                      onTap: () =>
+                          openWithReveal(cardContext, AppRouter.weekPlan),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
                   for (final sport in _sports) ...[
                     SizedBox(
                       height: 120,
@@ -79,6 +89,64 @@ class MyWorkoutsScreen extends ConsumerWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// "This week" entry above the sport tiles.
+class _WeekPlanCard extends ConsumerWidget {
+  final VoidCallback onTap;
+  const _WeekPlanCard({required this.onTap});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final today = ref.watch(todayProvider);
+    final history = ref.watch(workoutHistoryProvider);
+    final start = weekStartOf(today);
+    final end = addDays(start, 6);
+    final week = [
+      for (final s in ref.watch(weekPlanProvider))
+        if (!s.day.isBefore(start) && !s.day.isAfter(end)) s,
+    ];
+    final done = week
+        .where((s) => statusOf(s, history, today) == SessionStatus.done)
+        .length;
+
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          decoration:
+              BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.planTitle,
+                        style: AppText.headingS
+                            .copyWith(color: palette.textPrimary)),
+                    Text(
+                      week.isEmpty
+                          ? l10n.planEntryEmpty
+                          : l10n.planSummary(week.length, done),
+                      style: AppText.caption
+                          .copyWith(color: palette.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: palette.textSecondary),
+            ],
+          ),
         ),
       ),
     );

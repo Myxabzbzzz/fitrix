@@ -1633,4 +1633,174 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recoveryNoCheckinBody =>
       'Check in to see how recovered you are and what shaped it.';
+
+  @override
+  String get planTitle => 'This week';
+
+  @override
+  String planSummary(int n, int m) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n sessions',
+      one: '$n session',
+    );
+    return '$_temp0 · $m done';
+  }
+
+  @override
+  String get planLoadTitle => 'Training load';
+
+  @override
+  String get planLoadEasy => 'Easy';
+
+  @override
+  String get planLoadNormal => 'Normal';
+
+  @override
+  String get planLoadHigh => 'High';
+
+  @override
+  String planLoadCaption(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n hard sessions in the next 3 days.',
+      one: '$n hard session in the next 3 days.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planRecoveryToday(int score) {
+    return 'Recovery today $score%.';
+  }
+
+  @override
+  String get planFelixLabel => 'FELIX SUGGESTS';
+
+  @override
+  String planFelixText(
+      String a, String aDay, String b, String bDay, String target) {
+    return '$a ($aDay) and $b ($bDay) are both hard. Move $b to $target so your legs recover.';
+  }
+
+  @override
+  String get planOptimize => 'Optimize plan';
+
+  @override
+  String get planKeep => 'Keep';
+
+  @override
+  String planTodayDay(String day) {
+    return 'Today · $day';
+  }
+
+  @override
+  String planDoneCount(int n) {
+    return '$n done';
+  }
+
+  @override
+  String planPlannedCount(int n) {
+    return '$n planned';
+  }
+
+  @override
+  String get planMissedHeader => 'missed';
+
+  @override
+  String get planMissed => 'Missed';
+
+  @override
+  String get planRestDay => 'Rest day';
+
+  @override
+  String planExercisesMeta(int count, String duration) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count exercises',
+      one: '$count exercise',
+    );
+    return '$_temp0 · $duration';
+  }
+
+  @override
+  String planDurationHM(int h, int m) {
+    return '${h}h ${m}m';
+  }
+
+  @override
+  String planDurationH(int h) {
+    return '${h}h';
+  }
+
+  @override
+  String planDurationM(int m) {
+    return '$m min';
+  }
+
+  @override
+  String get planIntensityEasy => 'Easy';
+
+  @override
+  String get planIntensityNormal => 'Normal';
+
+  @override
+  String get planIntensityHard => 'Hard';
+
+  @override
+  String planDoneMeta(String duration, int rpe) {
+    return '$duration · RPE $rpe';
+  }
+
+  @override
+  String get planAddSession => 'Add session';
+
+  @override
+  String get planAddTitle => 'Add a session';
+
+  @override
+  String get planWorkoutLabel => 'WORKOUT';
+
+  @override
+  String get planDayLabel => 'DAY';
+
+  @override
+  String planAddButton(String title, String day) {
+    return 'Add $title · $day';
+  }
+
+  @override
+  String planWarnThird(String day) {
+    return '$day would be your 3rd hard day in a row';
+  }
+
+  @override
+  String planWarnAuto(String day) {
+    return '$day gives you more time to recover. Felix picked it for you.';
+  }
+
+  @override
+  String get planWarnPick => 'Pick another day to keep your recovery.';
+
+  @override
+  String get planGenericFootball => 'Football 7×7';
+
+  @override
+  String get planSkiing => 'Skiing';
+
+  @override
+  String get planEmptyTitle => 'No plan yet';
+
+  @override
+  String get planEmptyBody =>
+      'Set up your gym workouts for the rest of this week in one tap.';
+
+  @override
+  String get planPlanWeek => 'Plan my week';
+
+  @override
+  String get planEntryEmpty => 'Plan your training week';
 }

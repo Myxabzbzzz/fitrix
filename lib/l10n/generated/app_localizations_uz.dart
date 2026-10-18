@@ -1594,4 +1594,174 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get recoveryNoCheckinBody =>
       'Tiklanish darajangizni va unga nima ta’sir qilganini ko‘rish uchun belgilang.';
+
+  @override
+  String get planTitle => 'Shu hafta';
+
+  @override
+  String planSummary(int n, int m) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n mashg‘ulot',
+      one: '$n mashg‘ulot',
+    );
+    return '$_temp0 · bajarildi: $m';
+  }
+
+  @override
+  String get planLoadTitle => 'Mashq yuklamasi';
+
+  @override
+  String get planLoadEasy => 'Past';
+
+  @override
+  String get planLoadNormal => 'O‘rtacha';
+
+  @override
+  String get planLoadHigh => 'Yuqori';
+
+  @override
+  String planLoadCaption(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Keyingi 3 kunda $n ta og‘ir mashg‘ulot.',
+      one: 'Keyingi 3 kunda $n ta og‘ir mashg‘ulot.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planRecoveryToday(int score) {
+    return 'Bugun tiklanish: $score%.';
+  }
+
+  @override
+  String get planFelixLabel => 'FELIX TAKLIF QILADI';
+
+  @override
+  String planFelixText(
+      String a, String aDay, String b, String bDay, String target) {
+    return '$a ($aDay) va $b ($bDay) ikkalasi ham og‘ir. Oyoqlar tiklanishi uchun $b ni $target ga ko‘chiring.';
+  }
+
+  @override
+  String get planOptimize => 'Rejani optimallashtirish';
+
+  @override
+  String get planKeep => 'Qoldirish';
+
+  @override
+  String planTodayDay(String day) {
+    return 'Bugun · $day';
+  }
+
+  @override
+  String planDoneCount(int n) {
+    return 'bajarildi: $n';
+  }
+
+  @override
+  String planPlannedCount(int n) {
+    return 'rejalashtirildi: $n';
+  }
+
+  @override
+  String get planMissedHeader => 'o‘tkazib yuborilgan';
+
+  @override
+  String get planMissed => 'O‘tkazib yuborildi';
+
+  @override
+  String get planRestDay => 'Dam olish kuni';
+
+  @override
+  String planExercisesMeta(int count, String duration) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mashq',
+      one: '$count mashq',
+    );
+    return '$_temp0 · $duration';
+  }
+
+  @override
+  String planDurationHM(int h, int m) {
+    return '$h soat $m daq';
+  }
+
+  @override
+  String planDurationH(int h) {
+    return '$h soat';
+  }
+
+  @override
+  String planDurationM(int m) {
+    return '$m daq';
+  }
+
+  @override
+  String get planIntensityEasy => 'Yengil';
+
+  @override
+  String get planIntensityNormal => 'O‘rtacha';
+
+  @override
+  String get planIntensityHard => 'Og‘ir';
+
+  @override
+  String planDoneMeta(String duration, int rpe) {
+    return '$duration · RPE $rpe';
+  }
+
+  @override
+  String get planAddSession => 'Mashg‘ulot qo‘shish';
+
+  @override
+  String get planAddTitle => 'Mashg‘ulot qo‘shish';
+
+  @override
+  String get planWorkoutLabel => 'MASHQ';
+
+  @override
+  String get planDayLabel => 'KUN';
+
+  @override
+  String planAddButton(String title, String day) {
+    return 'Qo‘shish: $title · $day';
+  }
+
+  @override
+  String planWarnThird(String day) {
+    return '$day ketma-ket 3-og‘ir kun bo‘ladi';
+  }
+
+  @override
+  String planWarnAuto(String day) {
+    return '$day tiklanish uchun ko‘proq vaqt beradi. Felix uni siz uchun tanladi.';
+  }
+
+  @override
+  String get planWarnPick => 'Tiklanishni saqlash uchun boshqa kunni tanlang.';
+
+  @override
+  String get planGenericFootball => 'Futbol 7×7';
+
+  @override
+  String get planSkiing => 'Chang‘i';
+
+  @override
+  String get planEmptyTitle => 'Reja hali yo‘q';
+
+  @override
+  String get planEmptyBody =>
+      'Shu haftaning qolgan kunlari uchun zal mashqlarini bir bosishda rejalashtiring.';
+
+  @override
+  String get planPlanWeek => 'Haftamni rejalashtirish';
+
+  @override
+  String get planEntryEmpty => 'Mashq haftasini rejalashtiring';
 }

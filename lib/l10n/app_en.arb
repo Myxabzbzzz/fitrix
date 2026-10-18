@@ -1207,5 +1207,177 @@
     }
   },
   "recoveryNoCheckin": "No check-in yet",
-  "recoveryNoCheckinBody": "Check in to see how recovered you are and what shaped it."
+  "recoveryNoCheckinBody": "Check in to see how recovered you are and what shaped it.",
+  "planTitle": "This week",
+  "planSummary": "{n, plural, one{{n} session} other{{n} sessions}} · {m} done",
+  "@planSummary": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "planLoadTitle": "Training load",
+  "planLoadEasy": "Easy",
+  "planLoadNormal": "Normal",
+  "planLoadHigh": "High",
+  "planLoadCaption": "{n, plural, one{{n} hard session in the next 3 days.} other{{n} hard sessions in the next 3 days.}}",
+  "@planLoadCaption": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "planRecoveryToday": "Recovery today {score}%.",
+  "@planRecoveryToday": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "planFelixLabel": "FELIX SUGGESTS",
+  "planFelixText": "{a} ({aDay}) and {b} ({bDay}) are both hard. Move {b} to {target} so your legs recover.",
+  "@planFelixText": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "aDay": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      },
+      "bDay": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "planOptimize": "Optimize plan",
+  "planKeep": "Keep",
+  "planTodayDay": "Today · {day}",
+  "@planTodayDay": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "planDoneCount": "{n} done",
+  "@planDoneCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "planPlannedCount": "{n} planned",
+  "@planPlannedCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "planMissedHeader": "missed",
+  "planMissed": "Missed",
+  "planRestDay": "Rest day",
+  "planExercisesMeta": "{count, plural, one{{count} exercise} other{{count} exercises}} · {duration}",
+  "@planExercisesMeta": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "planDurationHM": "{h}h {m}m",
+  "@planDurationHM": {
+    "placeholders": {
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "planDurationH": "{h}h",
+  "@planDurationH": {
+    "placeholders": {
+      "h": {
+        "type": "int"
+      }
+    }
+  },
+  "planDurationM": "{m} min",
+  "@planDurationM": {
+    "placeholders": {
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "planIntensityEasy": "Easy",
+  "planIntensityNormal": "Normal",
+  "planIntensityHard": "Hard",
+  "planDoneMeta": "{duration} · RPE {rpe}",
+  "@planDoneMeta": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      },
+      "rpe": {
+        "type": "int"
+      }
+    }
+  },
+  "planAddSession": "Add session",
+  "planAddTitle": "Add a session",
+  "planWorkoutLabel": "WORKOUT",
+  "planDayLabel": "DAY",
+  "planAddButton": "Add {title} · {day}",
+  "@planAddButton": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "planWarnThird": "{day} would be your 3rd hard day in a row",
+  "@planWarnThird": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "planWarnAuto": "{day} gives you more time to recover. Felix picked it for you.",
+  "@planWarnAuto": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "planWarnPick": "Pick another day to keep your recovery.",
+  "planGenericFootball": "Football 7×7",
+  "planSkiing": "Skiing",
+  "planEmptyTitle": "No plan yet",
+  "planEmptyBody": "Set up your gym workouts for the rest of this week in one tap.",
+  "planPlanWeek": "Plan my week",
+  "planEntryEmpty": "Plan your training week"
 }

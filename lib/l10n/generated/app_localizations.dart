@@ -2759,6 +2759,247 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check in to see how recovered you are and what shaped it.'**
   String get recoveryNoCheckinBody;
+
+  /// No description provided for @planTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get planTitle;
+
+  /// No description provided for @planSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, one{{n} session} other{{n} sessions}} · {m} done'**
+  String planSummary(int n, int m);
+
+  /// No description provided for @planLoadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Training load'**
+  String get planLoadTitle;
+
+  /// No description provided for @planLoadEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get planLoadEasy;
+
+  /// No description provided for @planLoadNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get planLoadNormal;
+
+  /// No description provided for @planLoadHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get planLoadHigh;
+
+  /// No description provided for @planLoadCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, one{{n} hard session in the next 3 days.} other{{n} hard sessions in the next 3 days.}}'**
+  String planLoadCaption(int n);
+
+  /// No description provided for @planRecoveryToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery today {score}%.'**
+  String planRecoveryToday(int score);
+
+  /// No description provided for @planFelixLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'FELIX SUGGESTS'**
+  String get planFelixLabel;
+
+  /// No description provided for @planFelixText.
+  ///
+  /// In en, this message translates to:
+  /// **'{a} ({aDay}) and {b} ({bDay}) are both hard. Move {b} to {target} so your legs recover.'**
+  String planFelixText(
+      String a, String aDay, String b, String bDay, String target);
+
+  /// No description provided for @planOptimize.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimize plan'**
+  String get planOptimize;
+
+  /// No description provided for @planKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get planKeep;
+
+  /// No description provided for @planTodayDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Today · {day}'**
+  String planTodayDay(String day);
+
+  /// No description provided for @planDoneCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} done'**
+  String planDoneCount(int n);
+
+  /// No description provided for @planPlannedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} planned'**
+  String planPlannedCount(int n);
+
+  /// No description provided for @planMissedHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'missed'**
+  String get planMissedHeader;
+
+  /// No description provided for @planMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed'**
+  String get planMissed;
+
+  /// No description provided for @planRestDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest day'**
+  String get planRestDay;
+
+  /// No description provided for @planExercisesMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} exercise} other{{count} exercises}} · {duration}'**
+  String planExercisesMeta(int count, String duration);
+
+  /// No description provided for @planDurationHM.
+  ///
+  /// In en, this message translates to:
+  /// **'{h}h {m}m'**
+  String planDurationHM(int h, int m);
+
+  /// No description provided for @planDurationH.
+  ///
+  /// In en, this message translates to:
+  /// **'{h}h'**
+  String planDurationH(int h);
+
+  /// No description provided for @planDurationM.
+  ///
+  /// In en, this message translates to:
+  /// **'{m} min'**
+  String planDurationM(int m);
+
+  /// No description provided for @planIntensityEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get planIntensityEasy;
+
+  /// No description provided for @planIntensityNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get planIntensityNormal;
+
+  /// No description provided for @planIntensityHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get planIntensityHard;
+
+  /// No description provided for @planDoneMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'{duration} · RPE {rpe}'**
+  String planDoneMeta(String duration, int rpe);
+
+  /// No description provided for @planAddSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Add session'**
+  String get planAddSession;
+
+  /// No description provided for @planAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a session'**
+  String get planAddTitle;
+
+  /// No description provided for @planWorkoutLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'WORKOUT'**
+  String get planWorkoutLabel;
+
+  /// No description provided for @planDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DAY'**
+  String get planDayLabel;
+
+  /// No description provided for @planAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add {title} · {day}'**
+  String planAddButton(String title, String day);
+
+  /// No description provided for @planWarnThird.
+  ///
+  /// In en, this message translates to:
+  /// **'{day} would be your 3rd hard day in a row'**
+  String planWarnThird(String day);
+
+  /// No description provided for @planWarnAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'{day} gives you more time to recover. Felix picked it for you.'**
+  String planWarnAuto(String day);
+
+  /// No description provided for @planWarnPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick another day to keep your recovery.'**
+  String get planWarnPick;
+
+  /// No description provided for @planGenericFootball.
+  ///
+  /// In en, this message translates to:
+  /// **'Football 7×7'**
+  String get planGenericFootball;
+
+  /// No description provided for @planSkiing.
+  ///
+  /// In en, this message translates to:
+  /// **'Skiing'**
+  String get planSkiing;
+
+  /// No description provided for @planEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No plan yet'**
+  String get planEmptyTitle;
+
+  /// No description provided for @planEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your gym workouts for the rest of this week in one tap.'**
+  String get planEmptyBody;
+
+  /// No description provided for @planPlanWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan my week'**
+  String get planPlanWeek;
+
+  /// No description provided for @planEntryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan your training week'**
+  String get planEntryEmpty;
 }
 
 class _AppLocalizationsDelegate

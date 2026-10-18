@@ -13,6 +13,7 @@ import 'package:fitrix/features/chat/presentation/screens/chat_screen.dart';
 import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
 import 'package:fitrix/features/transition/presentation/screens/chat_transition_screen.dart';
 import 'package:fitrix/features/checkin/presentation/screens/recovery_screen.dart';
+import 'package:fitrix/features/plan/presentation/screens/week_plan_screen.dart';
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
 import 'package:fitrix/features/shell/presentation/fading_branch_container.dart';
 import 'package:fitrix/features/shell/presentation/main_shell.dart';
@@ -51,6 +52,7 @@ class AppRouter {
   static const String nutrition = '/home/nutrition';
   static const String fitrixMap = '/home/map';
   static const String recovery = '/home/checkin/recovery';
+  static const String weekPlan = '/home/plan';
 
   static String article(String id) => '$discover/article/$id';
 
@@ -261,6 +263,15 @@ class AppRouter {
                           context,
                           state,
                           const RecoveryScreen(),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'plan',
+                        name: 'weekPlan',
+                        pageBuilder: (context, state) => circleRevealPage(
+                          context,
+                          state,
+                          const WeekPlanScreen(),
                         ),
                       ),
                       GoRoute(

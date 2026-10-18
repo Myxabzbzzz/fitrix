@@ -1664,4 +1664,181 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get recoveryNoCheckinBody =>
       'Отметьтесь, чтобы увидеть уровень восстановления и что на него повлияло.';
+
+  @override
+  String get planTitle => 'Эта неделя';
+
+  @override
+  String planSummary(int n, int m) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n занятия',
+      many: '$n занятий',
+      few: '$n занятия',
+      one: '$n занятие',
+    );
+    return '$_temp0 · выполнено: $m';
+  }
+
+  @override
+  String get planLoadTitle => 'Нагрузка';
+
+  @override
+  String get planLoadEasy => 'Низкая';
+
+  @override
+  String get planLoadNormal => 'Средняя';
+
+  @override
+  String get planLoadHigh => 'Высокая';
+
+  @override
+  String planLoadCaption(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n тяжёлой тренировки в ближайшие 3 дня.',
+      many: '$n тяжёлых тренировок в ближайшие 3 дня.',
+      few: '$n тяжёлые тренировки в ближайшие 3 дня.',
+      one: '$n тяжёлая тренировка в ближайшие 3 дня.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planRecoveryToday(int score) {
+    return 'Восстановление сегодня: $score%.';
+  }
+
+  @override
+  String get planFelixLabel => 'FELIX ПРЕДЛАГАЕТ';
+
+  @override
+  String planFelixText(
+      String a, String aDay, String b, String bDay, String target) {
+    return '$a ($aDay) и $b ($bDay) — обе тяжёлые. Перенесите «$b» на $target, чтобы ноги восстановились.';
+  }
+
+  @override
+  String get planOptimize => 'Оптимизировать';
+
+  @override
+  String get planKeep => 'Оставить';
+
+  @override
+  String planTodayDay(String day) {
+    return 'Сегодня · $day';
+  }
+
+  @override
+  String planDoneCount(int n) {
+    return 'выполнено: $n';
+  }
+
+  @override
+  String planPlannedCount(int n) {
+    return 'запланировано: $n';
+  }
+
+  @override
+  String get planMissedHeader => 'пропущено';
+
+  @override
+  String get planMissed => 'Пропущено';
+
+  @override
+  String get planRestDay => 'День отдыха';
+
+  @override
+  String planExercisesMeta(int count, String duration) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count упражнения',
+      many: '$count упражнений',
+      few: '$count упражнения',
+      one: '$count упражнение',
+    );
+    return '$_temp0 · $duration';
+  }
+
+  @override
+  String planDurationHM(int h, int m) {
+    return '$h ч $m мин';
+  }
+
+  @override
+  String planDurationH(int h) {
+    return '$h ч';
+  }
+
+  @override
+  String planDurationM(int m) {
+    return '$m мин';
+  }
+
+  @override
+  String get planIntensityEasy => 'Легко';
+
+  @override
+  String get planIntensityNormal => 'Средне';
+
+  @override
+  String get planIntensityHard => 'Тяжело';
+
+  @override
+  String planDoneMeta(String duration, int rpe) {
+    return '$duration · RPE $rpe';
+  }
+
+  @override
+  String get planAddSession => 'Добавить занятие';
+
+  @override
+  String get planAddTitle => 'Новое занятие';
+
+  @override
+  String get planWorkoutLabel => 'ТРЕНИРОВКА';
+
+  @override
+  String get planDayLabel => 'ДЕНЬ';
+
+  @override
+  String planAddButton(String title, String day) {
+    return 'Добавить: $title · $day';
+  }
+
+  @override
+  String planWarnThird(String day) {
+    return '$day станет третьим тяжёлым днём подряд';
+  }
+
+  @override
+  String planWarnAuto(String day) {
+    return '$day даёт больше времени на восстановление. Felix выбрал его за вас.';
+  }
+
+  @override
+  String get planWarnPick =>
+      'Выберите другой день, чтобы сохранить восстановление.';
+
+  @override
+  String get planGenericFootball => 'Футбол 7×7';
+
+  @override
+  String get planSkiing => 'Лыжи';
+
+  @override
+  String get planEmptyTitle => 'Плана пока нет';
+
+  @override
+  String get planEmptyBody =>
+      'Расставьте силовые тренировки на остаток недели одним нажатием.';
+
+  @override
+  String get planPlanWeek => 'Спланировать неделю';
+
+  @override
+  String get planEntryEmpty => 'Спланируйте неделю тренировок';
 }

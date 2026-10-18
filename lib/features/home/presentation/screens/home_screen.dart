@@ -9,6 +9,8 @@ import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/feature_tile.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_card.dart';
+import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
+import 'package:fitrix/features/plan/presentation/widgets/plan_format.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -167,8 +169,20 @@ class _TodayCard extends ConsumerWidget {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final templates = ref.watch(workoutTemplatesProvider);
-    if (templates.isEmpty) return const SizedBox.shrink();
-    final today = templates.first;
+    // Today's first open session on the week plan; without one, the first
+    // plan of the first sport.
+    final planned = ref.watch(todaysOpenSessionsProvider).firstOrNull;
+    final plannedTemplate = planned == null
+        ? null
+        : templates.where((t) => t.id == planned.templateId).firstOrNull;
+    if (planned == null && templates.isEmpty) return const SizedBox.shrink();
+    final today = plannedTemplate ?? (planned == null ? templates.first : null);
+    final name = planned?.title ?? today!.name;
+    final meta = today != null
+        ? l10n.homeTodayMeta(
+            today.exercises.length, today.estimatedDuration.inMinutes)
+        : '${planDuration(l10n, planned!.minutes)} · '
+            '${intensityLabel(l10n, planned.intensity)}';
     final active = ref.watch(activeWorkoutProvider);
 
     return Container(
@@ -183,30 +197,31 @@ class _TodayCard extends ConsumerWidget {
               children: [
                 Text(l10n.homeToday.toUpperCase(),
                     style: AppText.microStrong.copyWith(color: palette.accent)),
-                Text(today.name,
+                Text(name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style:
                         AppText.headingS.copyWith(color: palette.textPrimary)),
                 Text(
-                  l10n.homeTodayMeta(today.exercises.length,
-                      today.estimatedDuration.inMinutes),
+                  meta,
                   style: AppText.caption.copyWith(color: palette.textSecondary),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
-          AppButton(
-            label: active == null ? l10n.homeStart : l10n.homeContinue,
-            size: AppButtonSize.small,
-            onPressed: () {
-              if (active == null) {
-                ref.read(activeWorkoutProvider.notifier).start(today);
-              }
-              ref.read(activeWorkoutExpandedProvider.notifier).state = true;
-            },
-          ),
+          if (today != null) ...[
+            const SizedBox(width: AppSpacing.sm),
+            AppButton(
+              label: active == null ? l10n.homeStart : l10n.homeContinue,
+              size: AppButtonSize.small,
+              onPressed: () {
+                if (active == null) {
+                  ref.read(activeWorkoutProvider.notifier).start(today);
+                }
+                ref.read(activeWorkoutExpandedProvider.notifier).state = true;
+              },
+            ),
+          ],
         ],
       ),
     );
