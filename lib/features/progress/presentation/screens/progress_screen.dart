@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -10,6 +11,7 @@ import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/core/widgets/sync_refresh.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/progress/domain/progress_math.dart';
 import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
@@ -295,6 +297,23 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                           imageAsset: 'assets/images/felix_robot.png',
                           imageWidth: 56,
                           imageHeight: 80,
+                          onAsk: () => askFelix(
+                            context,
+                            ref,
+                            topic: sport == null
+                                ? AssistantTopic.app
+                                : AssistantTopic.all
+                                    .firstWhere((t) => t.sport == sport),
+                            draft: l10n.progressAskDraft(
+                              '${fmt.format(weekTotal)} ${l10n.progressAu}',
+                              NumberFormat('0.00', locale).format(acwr),
+                              switch (band) {
+                                AcwrBand.low => l10n.progressBalanceLow,
+                                AcwrBand.sweetSpot => l10n.progressBalanceSweet,
+                                AcwrBand.risky => l10n.progressBalanceRisky,
+                              },
+                            ),
+                          ),
                         ),
                       ],
                     ],

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/profile/data/performance_store.dart';
@@ -14,6 +16,7 @@ import 'package:fitrix/features/progress/domain/progress_math.dart';
 import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
 import 'package:fitrix/features/progress/presentation/widgets/multi_line_chart.dart';
 import 'package:fitrix/features/progress/presentation/widgets/progress_widgets.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -356,6 +359,13 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
           imageAsset: 'assets/images/felix_robot.png',
           imageWidth: 56,
           imageHeight: 80,
+          onAsk: () => askFelix(
+            context,
+            ref,
+            topic: AssistantTopic.all.firstWhere((t) => t.sport == Sport.gym),
+            draft: l10n.liftAskDraft(current.name,
+                kgText(context, double.parse(best.e1rm.toStringAsFixed(1)))),
+          ),
         ),
       ],
     ]);

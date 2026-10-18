@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
@@ -466,6 +468,17 @@ class _FelixCard extends ConsumerWidget {
         onSecondary: () => ref
             .read(dismissedSuggestionsProvider.notifier)
             .dismiss(suggestion.sessionId, today),
+        onAsk: () => askFelix(
+          context,
+          ref,
+          topic: AssistantTopic.all.firstWhere((t) => t.sport == Sport.gym),
+          draft: l10n.planAskDraft(
+            other.title,
+            weekdayLong(context, other.day),
+            moved.title,
+            weekdayLong(context, moved.day),
+          ),
+        ),
       ),
     );
   }
@@ -490,7 +503,7 @@ class _SeedOffer extends ConsumerWidget {
           Text(l10n.planEmptyTitle,
               style: AppText.headingS.copyWith(color: palette.textPrimary)),
           const SizedBox(height: AppSpacing.xxs),
-          Text(l10n.planEmptyBody,
+          Text(nextWeek ? l10n.planEmptyBodyNextWeek : l10n.planEmptyBody,
               style: AppText.caption.copyWith(color: palette.textSecondary)),
           const SizedBox(height: AppSpacing.sm),
           if (seeds.isNotEmpty)

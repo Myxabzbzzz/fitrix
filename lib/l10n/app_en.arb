@@ -11,8 +11,8 @@
   "unitCm": "cm",
   "signOut": "Sign out",
   "signOutTitle": "Sign out?",
-  "signOutLocalBody": "Your profile, chats and workouts are stored only on this device and will be deleted.",
-  "signOutAccountBody": "Your profile, workouts and chats are saved to your account and will be removed from this device. Sign in with the same email to get them back.",
+  "signOutLocalBody": "Everything you logged is stored only on this device and will be deleted: profile, workouts, chats, check-ins, plans, food and body weight.",
+  "signOutAccountBody": "Your profile, workouts and chats are saved to your account and will be removed from this device. Sign in with the same email to get them back. Check-ins, plans, food and body weight are kept only on this device and will be deleted.",
   "deleteAccount": "Delete account",
   "deleteAccountTitle": "Delete account?",
   "deleteAccountBody": "This permanently deletes your FITRIX account and everything in it: your profile, workout plans, workout history and chats with Felix, on all your devices.",
@@ -240,7 +240,7 @@
   "shopProBlurb": "Unlimited chats with Felix, custom plans and form checks.",
   "shopProButton": "Learn more",
   "shopProSoonTitle": "FITRIX Pro is coming soon",
-  "shopProSoonBody": "We’ll let you know as soon as it’s ready.",
+  "shopProSoonBody": "It isn’t available yet. It will appear here in a later update.",
   "shopGotIt": "Got it",
   "shopNothingFound": "Nothing found for “{query}”.",
   "@shopNothingFound": {
@@ -450,7 +450,7 @@
   "workoutColKg": "Kg",
   "workoutColReps": "Reps",
   "gymCoachFirstTitle": "Ready for your first workout?",
-  "gymCoachFirstMessage": "Start with {workout}. Felix will adjust the plan after it.",
+  "gymCoachFirstMessage": "Start with {workout}. Next time Felix suggests weights from what you log.",
   "@gymCoachFirstMessage": {
     "placeholders": {
       "workout": {
@@ -963,8 +963,8 @@
   "workoutTileRecords": "Records",
   "workoutTileLoad": "Load",
   "workoutOverallTitle": "How hard was it overall?",
-  "workoutOverallHint": "Optional. Felix uses it to plan your next sessions.",
-  "workoutOverallCaption": "RPE {n} · {label}. Felix uses it to plan tomorrow.",
+  "workoutOverallHint": "Optional. It counts toward your training load and recovery score.",
+  "workoutOverallCaption": "RPE {n} · {label}. Counts toward your training load.",
   "@workoutOverallCaption": {
     "placeholders": {
       "n": {
@@ -1035,7 +1035,7 @@
     }
   },
   "homeGreetingEveningNoName": "Good evening",
-  "checkinCardPrompt": "How do you feel today? 20 seconds, and Felix tunes your plan.",
+  "checkinCardPrompt": "How do you feel today? 20 seconds to see how ready you are to train.",
   "checkinCardAction": "Check in",
   "checkinCardRecovered": "{score}% recovered",
   "@checkinCardRecovered": {
@@ -1667,14 +1667,14 @@
   "editProfileErrFiveK": "Enter a time from 12:00 to 60:00",
   "connectedAppsTitle": "Connected apps",
   "connectedAppsWhyHeader": "WHY CONNECT",
-  "connectedAppsWhyBody": "Connect a watch and your morning check-in fills itself: sleep, resting HR and HRV. I use it to adjust today's plan.",
+  "connectedAppsWhyBody": "When connecting arrives in a later update, a watch could fill in sleep, resting HR and HRV for your morning check-in. Until then, you fill in the check-in yourself.",
   "connectedAppsAppleDesc": "Sleep, heart rate, steps, weight",
   "connectedAppsGarminDesc": "Activities, HR, sleep, HRV",
   "connectedAppsStravaDesc": "Runs, rides and ski activities",
   "connectedAppsWhoopDesc": "Recovery, strain, sleep, HRV",
   "connectedAppsNotConnected": "Not connected",
   "connectedAppsConnect": "Connect",
-  "connectedAppsFooter": "You can disconnect any app at any time. Data stays on your account until you delete it.",
+  "connectedAppsFooter": "Once apps can be connected, you will be able to disconnect any of them at any time.",
   "connectedAppsSheetTitle": "Connect {app}",
   "@connectedAppsSheetTitle": {
     "placeholders": {
@@ -1684,7 +1684,7 @@
     }
   },
   "connectedAppsSheetSubtitle": "What FITRIX could read",
-  "connectedAppsSheetPrivacy": "FITRIX only reads data and never posts.",
+  "connectedAppsSheetPrivacy": "When this arrives, FITRIX will only read data and never post.",
   "connectedAppsSheetSoon": "Connecting apps is not available yet. We will add it in a later update.",
   "connectedAppsComingSoon": "Coming in a later update",
   "connectedAppsClose": "Close",
@@ -2711,7 +2711,7 @@
         }
       }
     },
-  "programDeloadNote": "Week {w} is a deload",
+  "programDeloadNote": "Week {w} is a deload: do about half your usual sets.",
     "@programDeloadNote": {
       "placeholders": {
         "w": {
@@ -2776,5 +2776,152 @@
           "type": "int"
         }
       }
+    },
+  "coachAskFelix": "Ask Felix",
+  "gymAskFirstDraft": "I'm about to do my first {sport} workout. What should I focus on?",
+  "@gymAskFirstDraft": {
+    "placeholders": {
+      "sport": {
+        "type": "String"
+      }
     }
+  },
+  "gymAskBackDraft": "My last workout was {days, plural, one{{days} day} other{{days} days}} ago. How should I get back into training?",
+  "@gymAskBackDraft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "recoveryAskDraft": "My readiness today is {score}% ({label}). Sleep {sleep}, soreness: {soreness}. How hard should I train today?",
+  "@recoveryAskDraft": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      },
+      "label": {
+        "type": "String"
+      },
+      "sleep": {
+        "type": "String"
+      },
+      "soreness": {
+        "type": "String"
+      }
+    }
+  },
+  "planAskDraft": "{a} on {aDay} and {b} on {bDay} are both hard. How should I arrange my week?",
+  "@planAskDraft": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "aDay": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      },
+      "bDay": {
+        "type": "String"
+      }
+    }
+  },
+  "progressAskDraft": "My training load this week is {week} and my load balance is {balance} ({band}). What should I do next week?",
+  "@progressAskDraft": {
+    "placeholders": {
+      "week": {
+        "type": "String"
+      },
+      "balance": {
+        "type": "String"
+      },
+      "band": {
+        "type": "String"
+      }
+    }
+  },
+  "liftAskDraft": "My {lift} e1RM is {e1rm}. How do I keep it climbing?",
+  "@liftAskDraft": {
+    "placeholders": {
+      "lift": {
+        "type": "String"
+      },
+      "e1rm": {
+        "type": "String"
+      }
+    }
+  },
+  "bodyAskDraft": "My weight is {weight}, changing {trend} a week. My goal: {goal}. How should I change what I eat?",
+  "@bodyAskDraft": {
+    "placeholders": {
+      "weight": {
+        "type": "String"
+      },
+      "trend": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionAskDraft": "I have {kcal} kcal and {protein} g of protein left today. What should I eat for dinner?",
+  "@nutritionAskDraft": {
+    "placeholders": {
+      "kcal": {
+        "type": "String"
+      },
+      "protein": {
+        "type": "String"
+      }
+    }
+  },
+  "nutritionCantFindDraft": "Estimate the calories in: ",
+  "planEmptyBodyNextWeek": "Set up your gym workouts for next week in one tap.",
+  "programsPickedGoalText": "{name} · {perWeek} days a week · {level}. Matches your goal.",
+  "@programsPickedGoalText": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "perWeek": {
+        "type": "int"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "programsPickedLevelText": "{name} · {perWeek} days a week · {level}. Matches your experience.",
+  "@programsPickedLevelText": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "perWeek": {
+        "type": "int"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "programsStartEyebrow": "A place to start",
+  "programsStartText": "{name} · {perWeek} days a week · {level}. Add your goal and experience in About me for a closer match.",
+  "@programsStartText": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "perWeek": {
+        "type": "int"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "programDetailsTooltip": "Program details"
 }

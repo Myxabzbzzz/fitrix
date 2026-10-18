@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/core/widgets/ask_felix_link.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/core/widgets/section_header.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
@@ -13,7 +15,9 @@ import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_sheet.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_text.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/readiness_ring.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -154,6 +158,26 @@ class _Content extends ConsumerWidget {
               textAlign: TextAlign.center,
               style:
                   AppText.bodyRegular.copyWith(color: palette.textSecondary)),
+          Center(
+            child: AskFelixLink(
+              onTap: () => askFelix(
+                context,
+                ref,
+                topic:
+                    AssistantTopic.all.firstWhere((t) => t.sport == Sport.gym),
+                draft: l10n.recoveryAskDraft(
+                  readiness.score,
+                  l10n.readinessLabel(readiness.label),
+                  l10n.sleepText(checkIn.sleep),
+                  [
+                    l10n.sorenessName(checkIn.soreness).toLowerCase(),
+                    if (checkIn.sore.isNotEmpty)
+                      '(${l10n.areasText(checkIn.sore)})',
+                  ].join(' '),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: AppSpacing.lg),
           SectionHeader(l10n.recoveryShaped),
           const SizedBox(height: AppSpacing.xs),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -9,6 +10,7 @@ import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/progress/data/body_weight_store.dart';
@@ -231,6 +233,16 @@ class _BodyWeightScreenState extends ConsumerState<BodyWeightScreen> {
                       imageHeight: 80,
                       primaryLabel: l10n.bodyUpdateTargets,
                       onPrimary: () => context.push(AppRouter.nutritionTargets),
+                      onAsk: () => askFelix(
+                        context,
+                        ref,
+                        topic: AssistantTopic.app,
+                        draft: l10n.bodyAskDraft(
+                          kgText(context, latest!.kg),
+                          '${signed(trend!)} $unit',
+                          goalText,
+                        ),
+                      ),
                     ),
                   ],
                   if (listed.isNotEmpty) ...[

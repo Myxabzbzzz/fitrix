@@ -43,11 +43,11 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get signOutLocalBody =>
-      'Profilingiz, chatlar va mashg‘ulotlar faqat shu qurilmada saqlanadi va o‘chiriladi.';
+      'Siz yozgan hamma narsa faqat shu qurilmada saqlanadi va o‘chiriladi: profil, mashg‘ulotlar, chatlar, tekshiruvlar, rejalar, ovqatlanish va vazn.';
 
   @override
   String get signOutAccountBody =>
-      'Profilingiz, mashg‘ulotlar va chatlar hisobingizda saqlangan va shu qurilmadan o‘chiriladi. Ularni qaytarish uchun o‘sha email bilan kiring.';
+      'Profilingiz, mashg‘ulotlar va chatlar hisobingizda saqlangan va shu qurilmadan o‘chiriladi. Ularni qaytarish uchun o‘sha email bilan kiring. Tekshiruvlar, rejalar, ovqatlanish va vazn faqat shu qurilmada saqlanadi va o‘chiriladi.';
 
   @override
   String get deleteAccount => 'Hisobni o‘chirish';
@@ -406,7 +406,8 @@ class AppLocalizationsUz extends AppLocalizations {
   String get shopProSoonTitle => 'FITRIX Pro tez orada';
 
   @override
-  String get shopProSoonBody => 'Tayyor bo‘lishi bilan xabar beramiz.';
+  String get shopProSoonBody =>
+      'Hozircha mavjud emas. Keyingi yangilanishlardan birida shu yerda paydo bo‘ladi.';
 
   @override
   String get shopGotIt => 'Tushunarli';
@@ -650,7 +651,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String gymCoachFirstMessage(String workout) {
-    return 'Bugun $workout bilan boshlang. Undan keyin Felix rejani moslashtiradi.';
+    return 'Bugun $workout bilan boshlang. Keyingi safar Felix yozganlaringiz asosida vazn taklif qiladi.';
   }
 
   @override
@@ -1301,11 +1302,11 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get workoutOverallHint =>
-      'Majburiy emas. Felix keyingi mashg‘ulotlarni rejalashda foydalanadi.';
+      'Majburiy emas. Mashg‘ulot yuklamasi va tiklanish bahosida hisobga olinadi.';
 
   @override
   String workoutOverallCaption(int n, String label) {
-    return 'RPE $n · $label. Felix ertangi rejani tuzishda foydalanadi.';
+    return 'RPE $n · $label. Mashg‘ulot yuklamasida hisobga olinadi.';
   }
 
   @override
@@ -1386,7 +1387,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get checkinCardPrompt =>
-      'Bugun o‘zingizni qanday his qilyapsiz? 20 soniya, va Felix rejangizni moslaydi.';
+      'Bugun o‘zingizni qanday his qilyapsiz? 20 soniyada mashg‘ulotga qanchalik tayyorligingizni bilib oling.';
 
   @override
   String get checkinCardAction => 'Belgilash';
@@ -2194,7 +2195,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get connectedAppsWhyBody =>
-      'Soatni ulang, ertalabki tekshiruv o‘zi to‘ladi: uyqu, tinch puls va HRV. Men bundan bugungi rejani moslashtirish uchun foydalanaman.';
+      'Ulash keyingi yangilanishlardan birida paydo bo‘lganda, soat ertalabki tekshiruv uchun uyqu, tinch puls va HRVni o‘zi to‘ldira oladi. Hozircha tekshiruvni o‘zingiz to‘ldirasiz.';
 
   @override
   String get connectedAppsAppleDesc => 'Uyqu, puls, qadamlar, vazn';
@@ -2216,7 +2217,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get connectedAppsFooter =>
-      'Istalgan ilovani istalgan vaqt uzishingiz mumkin. Ma‘lumotlar o‘chirmaguningizcha hisobingizda qoladi.';
+      'Ilovalarni ulash imkoni paydo bo‘lgach, istalganini istalgan vaqtda uzishingiz mumkin bo‘ladi.';
 
   @override
   String connectedAppsSheetTitle(String app) {
@@ -2228,7 +2229,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get connectedAppsSheetPrivacy =>
-      'FITRIX faqat ma‘lumotlarni o‘qiydi va hech narsa joylamaydi.';
+      'Bu imkoniyat paydo bo‘lganda, FITRIX faqat ma‘lumotlarni o‘qiydi va hech narsa joylamaydi.';
 
   @override
   String get connectedAppsSheetSoon =>
@@ -3447,7 +3448,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String programDeloadNote(int w) {
-    return '$w-hafta — yengillashtirilgan hafta';
+    return '$w-hafta — yengillashtirilgan hafta: odatdagi yondashuvlarning taxminan yarmini bajaring.';
   }
 
   @override
@@ -3523,4 +3524,76 @@ class AppLocalizationsUz extends AppLocalizations {
   String programKgReps(String kg, int reps) {
     return '$kg kg × $reps';
   }
+
+  @override
+  String get coachAskFelix => 'Felixdan so‘rash';
+
+  @override
+  String gymAskFirstDraft(String sport) {
+    return 'Birinchi mashg‘ulotim ($sport) oldidaman. Nimaga e‘tibor beray?';
+  }
+
+  @override
+  String gymAskBackDraft(int days) {
+    return 'Oxirgi mashg‘ulotim $days kun oldin bo‘lgan. Mashg‘ulotlarga qanday qaytsam bo‘ladi?';
+  }
+
+  @override
+  String recoveryAskDraft(
+      int score, String label, String sleep, String soreness) {
+    return 'Bugungi tayyorligim $score% ($label). Uyqu $sleep, mushak og‘rig‘i: $soreness. Bugun qanchalik og‘ir mashq qilsam bo‘ladi?';
+  }
+
+  @override
+  String planAskDraft(String a, String aDay, String b, String bDay) {
+    return '$a ($aDay) va $b ($bDay) ikkalasi ham og‘ir. Haftamni qanday tuzsam bo‘ladi?';
+  }
+
+  @override
+  String progressAskDraft(String week, String balance, String band) {
+    return 'Bu haftadagi yuklamam $week, yuklama balansi $balance ($band). Keyingi haftada nima qilay?';
+  }
+
+  @override
+  String liftAskDraft(String lift, String e1rm) {
+    return '$lift bo‘yicha e1RM — $e1rm. O‘sishni qanday davom ettiray?';
+  }
+
+  @override
+  String bodyAskDraft(String weight, String trend, String goal) {
+    return 'Vaznim $weight, haftasiga $trend o‘zgaryapti. Maqsadim: $goal. Ovqatlanishimni qanday o‘zgartiray?';
+  }
+
+  @override
+  String nutritionAskDraft(String kcal, String protein) {
+    return 'Bugunga $kcal kkal va $protein g oqsil qoldi. Kechki ovqatga nima yeyay?';
+  }
+
+  @override
+  String get nutritionCantFindDraft => 'Bu taomning kaloriyasini baholang: ';
+
+  @override
+  String get planEmptyBodyNextWeek =>
+      'Keyingi hafta uchun zal mashqlarini bir bosishda rejalashtiring.';
+
+  @override
+  String programsPickedGoalText(String name, int perWeek, String level) {
+    return '$name · haftada $perWeek kun · $level. Maqsadingizga mos.';
+  }
+
+  @override
+  String programsPickedLevelText(String name, int perWeek, String level) {
+    return '$name · haftada $perWeek kun · $level. Tajribangizga mos.';
+  }
+
+  @override
+  String get programsStartEyebrow => 'Boshlash uchun';
+
+  @override
+  String programsStartText(String name, int perWeek, String level) {
+    return '$name · haftada $perWeek kun · $level. Aniqroq tanlov uchun «Men haqimda» bo‘limida maqsad va tajribangizni kiriting.';
+  }
+
+  @override
+  String get programDetailsTooltip => 'Dastur haqida';
 }

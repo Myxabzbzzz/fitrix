@@ -84,7 +84,15 @@ class ProgramProgressScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ScreenTitle(p.name),
+            ScreenTitle(
+              p.name,
+              trailing: IconButton(
+                key: const Key('program-open-detail'),
+                tooltip: l10n.programDetailsTooltip,
+                icon: Icon(Icons.tune, color: palette.textPrimary),
+                onPressed: () => context.push(AppRouter.program(p.id)),
+              ),
+            ),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(

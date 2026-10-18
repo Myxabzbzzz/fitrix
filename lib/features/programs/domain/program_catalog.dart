@@ -176,8 +176,23 @@ String? programLevelFor(String experience) {
   return null;
 }
 
+/// How well a program matches the profile's goal and experience.
+enum ProgramFit { goalAndLevel, goal, level, none }
+
+ProgramFit programFit(TrainingProgram p, String goal, String experience) {
+  final g = programGoalFor(goal);
+  final l = programLevelFor(experience);
+  final goalOk = g != null && p.goals.contains(g);
+  final levelOk = l != null && p.level == l;
+  if (goalOk && levelOk) return ProgramFit.goalAndLevel;
+  if (goalOk) return ProgramFit.goal;
+  if (levelOk) return ProgramFit.level;
+  return ProgramFit.none;
+}
+
 /// The first program that matches the goal and the level; failing that the
-/// first matching the goal, then the level; failing that the first program.
+/// first matching the goal, then the level; failing that the first program
+/// ([programFit] then says [ProgramFit.none]).
 TrainingProgram? pickProgram(
     List<TrainingProgram> programs, String goal, String experience) {
   if (programs.isEmpty) return null;

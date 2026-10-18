@@ -506,8 +506,8 @@
   "deloadWeek": 7,
   "progressionRules": [
    "Double progression: Hit the top of the rep range on every set, then add 2.5 kg upper or 5 kg lower.",
-   "Deload in week 7: Same exercises, half the sets, so fatigue drops before the last block.",
-   "Volume builds: 10 to 16 sets per muscle a week over 6 weeks."
+   "Deload in week 7: Keep the same exercises but do about half your usual sets, so fatigue drops before the last block.",
+   "Build volume: Over weeks 1 to 6, add sets yourself, from about 10 to 16 per muscle a week."
   ],
   "sessions": [
    {

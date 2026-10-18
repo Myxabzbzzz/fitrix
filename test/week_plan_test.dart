@@ -449,6 +449,10 @@ void main() {
     testWidgets('empty plan offers Plan my week', (tester) async {
       final c = await pump(tester, const []);
       expect(find.text('Plan my week'), findsOneWidget);
+      expect(
+          find.text('Set up your gym workouts for the rest of this week in '
+              'one tap.'),
+          findsOneWidget);
       await tester.tap(find.text('Plan my week'));
       await tester.pumpAndSettle();
       final store = WeekPlanStore(c.read(sharedPreferencesProvider));
@@ -489,6 +493,8 @@ void main() {
       final saturday = DateTime(2026, 10, 17, 9);
       final c = await pump(tester, const [], now: saturday);
       expect(find.text('Plan my week'), findsNothing);
+      expect(find.text('Set up your gym workouts for next week in one tap.'),
+          findsOneWidget);
       await tester.tap(find.text('Plan next week'));
       await tester.pumpAndSettle();
       final days = [

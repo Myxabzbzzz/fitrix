@@ -171,13 +171,13 @@ abstract class AppLocalizations {
   /// No description provided for @signOutLocalBody.
   ///
   /// In en, this message translates to:
-  /// **'Your profile, chats and workouts are stored only on this device and will be deleted.'**
+  /// **'Everything you logged is stored only on this device and will be deleted: profile, workouts, chats, check-ins, plans, food and body weight.'**
   String get signOutLocalBody;
 
   /// No description provided for @signOutAccountBody.
   ///
   /// In en, this message translates to:
-  /// **'Your profile, workouts and chats are saved to your account and will be removed from this device. Sign in with the same email to get them back.'**
+  /// **'Your profile, workouts and chats are saved to your account and will be removed from this device. Sign in with the same email to get them back. Check-ins, plans, food and body weight are kept only on this device and will be deleted.'**
   String get signOutAccountBody;
 
   /// No description provided for @deleteAccount.
@@ -777,7 +777,7 @@ abstract class AppLocalizations {
   /// No description provided for @shopProSoonBody.
   ///
   /// In en, this message translates to:
-  /// **'We’ll let you know as soon as it’s ready.'**
+  /// **'It isn’t available yet. It will appear here in a later update.'**
   String get shopProSoonBody;
 
   /// No description provided for @shopGotIt.
@@ -1167,7 +1167,7 @@ abstract class AppLocalizations {
   /// No description provided for @gymCoachFirstMessage.
   ///
   /// In en, this message translates to:
-  /// **'Start with {workout}. Felix will adjust the plan after it.'**
+  /// **'Start with {workout}. Next time Felix suggests weights from what you log.'**
   String gymCoachFirstMessage(String workout);
 
   /// No description provided for @gymCoachBackTitle.
@@ -2259,13 +2259,13 @@ abstract class AppLocalizations {
   /// No description provided for @workoutOverallHint.
   ///
   /// In en, this message translates to:
-  /// **'Optional. Felix uses it to plan your next sessions.'**
+  /// **'Optional. It counts toward your training load and recovery score.'**
   String get workoutOverallHint;
 
   /// No description provided for @workoutOverallCaption.
   ///
   /// In en, this message translates to:
-  /// **'RPE {n} · {label}. Felix uses it to plan tomorrow.'**
+  /// **'RPE {n} · {label}. Counts toward your training load.'**
   String workoutOverallCaption(int n, String label);
 
   /// No description provided for @workoutRpeVeryEasy.
@@ -2403,7 +2403,7 @@ abstract class AppLocalizations {
   /// No description provided for @checkinCardPrompt.
   ///
   /// In en, this message translates to:
-  /// **'How do you feel today? 20 seconds, and Felix tunes your plan.'**
+  /// **'How do you feel today? 20 seconds to see how ready you are to train.'**
   String get checkinCardPrompt;
 
   /// No description provided for @checkinCardAction.
@@ -3766,7 +3766,7 @@ abstract class AppLocalizations {
   /// No description provided for @connectedAppsWhyBody.
   ///
   /// In en, this message translates to:
-  /// **'Connect a watch and your morning check-in fills itself: sleep, resting HR and HRV. I use it to adjust today\'s plan.'**
+  /// **'When connecting arrives in a later update, a watch could fill in sleep, resting HR and HRV for your morning check-in. Until then, you fill in the check-in yourself.'**
   String get connectedAppsWhyBody;
 
   /// No description provided for @connectedAppsAppleDesc.
@@ -3808,7 +3808,7 @@ abstract class AppLocalizations {
   /// No description provided for @connectedAppsFooter.
   ///
   /// In en, this message translates to:
-  /// **'You can disconnect any app at any time. Data stays on your account until you delete it.'**
+  /// **'Once apps can be connected, you will be able to disconnect any of them at any time.'**
   String get connectedAppsFooter;
 
   /// No description provided for @connectedAppsSheetTitle.
@@ -3826,7 +3826,7 @@ abstract class AppLocalizations {
   /// No description provided for @connectedAppsSheetPrivacy.
   ///
   /// In en, this message translates to:
-  /// **'FITRIX only reads data and never posts.'**
+  /// **'When this arrives, FITRIX will only read data and never post.'**
   String get connectedAppsSheetPrivacy;
 
   /// No description provided for @connectedAppsSheetSoon.
@@ -5705,7 +5705,7 @@ abstract class AppLocalizations {
   /// No description provided for @programDeloadNote.
   ///
   /// In en, this message translates to:
-  /// **'Week {w} is a deload'**
+  /// **'Week {w} is a deload: do about half your usual sets.'**
   String programDeloadNote(int w);
 
   /// No description provided for @programTileSessions.
@@ -5839,6 +5839,103 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{kg} kg × {reps}'**
   String programKgReps(String kg, int reps);
+
+  /// No description provided for @coachAskFelix.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Felix'**
+  String get coachAskFelix;
+
+  /// No description provided for @gymAskFirstDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m about to do my first {sport} workout. What should I focus on?'**
+  String gymAskFirstDraft(String sport);
+
+  /// No description provided for @gymAskBackDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'My last workout was {days, plural, one{{days} day} other{{days} days}} ago. How should I get back into training?'**
+  String gymAskBackDraft(int days);
+
+  /// No description provided for @recoveryAskDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'My readiness today is {score}% ({label}). Sleep {sleep}, soreness: {soreness}. How hard should I train today?'**
+  String recoveryAskDraft(
+      int score, String label, String sleep, String soreness);
+
+  /// No description provided for @planAskDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'{a} on {aDay} and {b} on {bDay} are both hard. How should I arrange my week?'**
+  String planAskDraft(String a, String aDay, String b, String bDay);
+
+  /// No description provided for @progressAskDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'My training load this week is {week} and my load balance is {balance} ({band}). What should I do next week?'**
+  String progressAskDraft(String week, String balance, String band);
+
+  /// No description provided for @liftAskDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'My {lift} e1RM is {e1rm}. How do I keep it climbing?'**
+  String liftAskDraft(String lift, String e1rm);
+
+  /// No description provided for @bodyAskDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'My weight is {weight}, changing {trend} a week. My goal: {goal}. How should I change what I eat?'**
+  String bodyAskDraft(String weight, String trend, String goal);
+
+  /// No description provided for @nutritionAskDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'I have {kcal} kcal and {protein} g of protein left today. What should I eat for dinner?'**
+  String nutritionAskDraft(String kcal, String protein);
+
+  /// No description provided for @nutritionCantFindDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate the calories in: '**
+  String get nutritionCantFindDraft;
+
+  /// No description provided for @planEmptyBodyNextWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your gym workouts for next week in one tap.'**
+  String get planEmptyBodyNextWeek;
+
+  /// No description provided for @programsPickedGoalText.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {perWeek} days a week · {level}. Matches your goal.'**
+  String programsPickedGoalText(String name, int perWeek, String level);
+
+  /// No description provided for @programsPickedLevelText.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {perWeek} days a week · {level}. Matches your experience.'**
+  String programsPickedLevelText(String name, int perWeek, String level);
+
+  /// No description provided for @programsStartEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'A place to start'**
+  String get programsStartEyebrow;
+
+  /// No description provided for @programsStartText.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {perWeek} days a week · {level}. Add your goal and experience in About me for a closer match.'**
+  String programsStartText(String name, int perWeek, String level);
+
+  /// No description provided for @programDetailsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Program details'**
+  String get programDetailsTooltip;
 }
 
 class _AppLocalizationsDelegate

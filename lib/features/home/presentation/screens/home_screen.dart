@@ -185,44 +185,56 @@ class _TodayCard extends ConsumerWidget {
             '${intensityLabel(l10n, planned.intensity)}';
     final active = ref.watch(activeWorkoutProvider);
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration:
-          BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l10n.homeToday.toUpperCase(),
-                    style: AppText.microStrong.copyWith(color: palette.accent)),
-                Text(name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style:
-                        AppText.headingS.copyWith(color: palette.textPrimary)),
-                Text(
-                  meta,
-                  style: AppText.caption.copyWith(color: palette.textSecondary),
+    // The card opens the week plan; its Start button starts the workout.
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        key: const Key('home-today-card'),
+        behavior: HitTestBehavior.opaque,
+        onTap: () => openWithReveal(context, AppRouter.weekPlan),
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          decoration:
+              BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.homeToday.toUpperCase(),
+                        style: AppText.microStrong
+                            .copyWith(color: palette.accent)),
+                    Text(name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.headingS
+                            .copyWith(color: palette.textPrimary)),
+                    Text(
+                      meta,
+                      style: AppText.caption
+                          .copyWith(color: palette.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+              if (today != null) ...[
+                const SizedBox(width: AppSpacing.sm),
+                AppButton(
+                  label: active == null ? l10n.homeStart : l10n.homeContinue,
+                  size: AppButtonSize.small,
+                  onPressed: () {
+                    if (active == null) {
+                      ref.read(activeWorkoutProvider.notifier).start(today);
+                    }
+                    ref.read(activeWorkoutExpandedProvider.notifier).state =
+                        true;
+                  },
                 ),
               ],
-            ),
+            ],
           ),
-          if (today != null) ...[
-            const SizedBox(width: AppSpacing.sm),
-            AppButton(
-              label: active == null ? l10n.homeStart : l10n.homeContinue,
-              size: AppButtonSize.small,
-              onPressed: () {
-                if (active == null) {
-                  ref.read(activeWorkoutProvider.notifier).start(today);
-                }
-                ref.read(activeWorkoutExpandedProvider.notifier).state = true;
-              },
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }

@@ -69,8 +69,12 @@ class _ProgramsScreenState extends ConsumerState<ProgramsScreen> {
     final info = ref.watch(activeProgramInfoProvider);
     final profile = ref.watch(profileProvider).valueOrNull;
     final programs = catalog?.programs ?? const <TrainingProgram>[];
-    final picked =
-        pickProgram(programs, profile?.goal ?? '', profile?.experience ?? '');
+    final goal = profile?.goal ?? '';
+    final experience = profile?.experience ?? '';
+    final picked = pickProgram(programs, goal, experience);
+    // Without a goal or experience to match, the first program is only a
+    // place to start, not a pick.
+    final fit = picked == null ? null : programFit(picked, goal, experience);
     final shown = [
       for (final p in programs)
         if (_matches(p)) p
@@ -100,11 +104,16 @@ class _ProgramsScreenState extends ConsumerState<ProgramsScreen> {
                     KeyedSubtree(
                       key: const Key('programs-picked'),
                       child: CoachCard(
-                        eyebrow: l10n.programsPickedEyebrow,
+                        eyebrow: fit == ProgramFit.none
+                            ? l10n.programsStartEyebrow
+                            : l10n.programsPickedEyebrow,
                         title: '',
-                        message: l10n.programsPickedText(
-                            picked.name,
-                            picked.perWeek,
+                        message: (switch (fit!) {
+                          ProgramFit.goalAndLevel => l10n.programsPickedText,
+                          ProgramFit.goal => l10n.programsPickedGoalText,
+                          ProgramFit.level => l10n.programsPickedLevelText,
+                          ProgramFit.none => l10n.programsStartText,
+                        })(picked.name, picked.perWeek,
                             programLevelLabel(l10n, picked.level)),
                         imageAsset: 'assets/images/felix_robot.png',
                         imageWidth: 56,
@@ -163,7 +172,10 @@ class _ProgramsScreenState extends ConsumerState<ProgramsScreen> {
                               .copyWith(color: palette.textSecondary)),
                     ),
                   for (final p in shown) ...[
-                    _ProgramCard(program: p, felixPick: p.id == picked?.id),
+                    _ProgramCard(
+                        program: p,
+                        felixPick:
+                            p.id == picked?.id && fit != ProgramFit.none),
                     const SizedBox(height: AppSpacing.sm),
                   ],
                 ],

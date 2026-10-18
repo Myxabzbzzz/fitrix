@@ -43,11 +43,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signOutLocalBody =>
-      'Your profile, chats and workouts are stored only on this device and will be deleted.';
+      'Everything you logged is stored only on this device and will be deleted: profile, workouts, chats, check-ins, plans, food and body weight.';
 
   @override
   String get signOutAccountBody =>
-      'Your profile, workouts and chats are saved to your account and will be removed from this device. Sign in with the same email to get them back.';
+      'Your profile, workouts and chats are saved to your account and will be removed from this device. Sign in with the same email to get them back. Check-ins, plans, food and body weight are kept only on this device and will be deleted.';
 
   @override
   String get deleteAccount => 'Delete account';
@@ -412,7 +412,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shopProSoonTitle => 'FITRIX Pro is coming soon';
 
   @override
-  String get shopProSoonBody => 'We’ll let you know as soon as it’s ready.';
+  String get shopProSoonBody =>
+      'It isn’t available yet. It will appear here in a later update.';
 
   @override
   String get shopGotIt => 'Got it';
@@ -671,7 +672,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String gymCoachFirstMessage(String workout) {
-    return 'Start with $workout. Felix will adjust the plan after it.';
+    return 'Start with $workout. Next time Felix suggests weights from what you log.';
   }
 
   @override
@@ -1335,11 +1336,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workoutOverallHint =>
-      'Optional. Felix uses it to plan your next sessions.';
+      'Optional. It counts toward your training load and recovery score.';
 
   @override
   String workoutOverallCaption(int n, String label) {
-    return 'RPE $n · $label. Felix uses it to plan tomorrow.';
+    return 'RPE $n · $label. Counts toward your training load.';
   }
 
   @override
@@ -1420,7 +1421,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkinCardPrompt =>
-      'How do you feel today? 20 seconds, and Felix tunes your plan.';
+      'How do you feel today? 20 seconds to see how ready you are to train.';
 
   @override
   String get checkinCardAction => 'Check in';
@@ -2241,7 +2242,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectedAppsWhyBody =>
-      'Connect a watch and your morning check-in fills itself: sleep, resting HR and HRV. I use it to adjust today\'s plan.';
+      'When connecting arrives in a later update, a watch could fill in sleep, resting HR and HRV for your morning check-in. Until then, you fill in the check-in yourself.';
 
   @override
   String get connectedAppsAppleDesc => 'Sleep, heart rate, steps, weight';
@@ -2263,7 +2264,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectedAppsFooter =>
-      'You can disconnect any app at any time. Data stays on your account until you delete it.';
+      'Once apps can be connected, you will be able to disconnect any of them at any time.';
 
   @override
   String connectedAppsSheetTitle(String app) {
@@ -2275,7 +2276,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectedAppsSheetPrivacy =>
-      'FITRIX only reads data and never posts.';
+      'When this arrives, FITRIX will only read data and never post.';
 
   @override
   String get connectedAppsSheetSoon =>
@@ -3498,7 +3499,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String programDeloadNote(int w) {
-    return 'Week $w is a deload';
+    return 'Week $w is a deload: do about half your usual sets.';
   }
 
   @override
@@ -3574,4 +3575,82 @@ class AppLocalizationsEn extends AppLocalizations {
   String programKgReps(String kg, int reps) {
     return '$kg kg × $reps';
   }
+
+  @override
+  String get coachAskFelix => 'Ask Felix';
+
+  @override
+  String gymAskFirstDraft(String sport) {
+    return 'I\'m about to do my first $sport workout. What should I focus on?';
+  }
+
+  @override
+  String gymAskBackDraft(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '$days day',
+    );
+    return 'My last workout was $_temp0 ago. How should I get back into training?';
+  }
+
+  @override
+  String recoveryAskDraft(
+      int score, String label, String sleep, String soreness) {
+    return 'My readiness today is $score% ($label). Sleep $sleep, soreness: $soreness. How hard should I train today?';
+  }
+
+  @override
+  String planAskDraft(String a, String aDay, String b, String bDay) {
+    return '$a on $aDay and $b on $bDay are both hard. How should I arrange my week?';
+  }
+
+  @override
+  String progressAskDraft(String week, String balance, String band) {
+    return 'My training load this week is $week and my load balance is $balance ($band). What should I do next week?';
+  }
+
+  @override
+  String liftAskDraft(String lift, String e1rm) {
+    return 'My $lift e1RM is $e1rm. How do I keep it climbing?';
+  }
+
+  @override
+  String bodyAskDraft(String weight, String trend, String goal) {
+    return 'My weight is $weight, changing $trend a week. My goal: $goal. How should I change what I eat?';
+  }
+
+  @override
+  String nutritionAskDraft(String kcal, String protein) {
+    return 'I have $kcal kcal and $protein g of protein left today. What should I eat for dinner?';
+  }
+
+  @override
+  String get nutritionCantFindDraft => 'Estimate the calories in: ';
+
+  @override
+  String get planEmptyBodyNextWeek =>
+      'Set up your gym workouts for next week in one tap.';
+
+  @override
+  String programsPickedGoalText(String name, int perWeek, String level) {
+    return '$name · $perWeek days a week · $level. Matches your goal.';
+  }
+
+  @override
+  String programsPickedLevelText(String name, int perWeek, String level) {
+    return '$name · $perWeek days a week · $level. Matches your experience.';
+  }
+
+  @override
+  String get programsStartEyebrow => 'A place to start';
+
+  @override
+  String programsStartText(String name, int perWeek, String level) {
+    return '$name · $perWeek days a week · $level. Add your goal and experience in About me for a closer match.';
+  }
+
+  @override
+  String get programDetailsTooltip => 'Program details';
 }

@@ -1,7 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -9,6 +12,7 @@ import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/nutrition/data/dinner_idea.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
@@ -301,21 +305,31 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
         runSpacing: AppSpacing.xs,
         children: [
           for (final r in ranked.take(3))
-            Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-              decoration: BoxDecoration(
-                  color: palette.tile, borderRadius: AppRadius.fullAll),
-              child: Text.rich(TextSpan(children: [
-                TextSpan(
-                    text: microName(l10n, r.key),
-                    style: AppText.captionStrong
-                        .copyWith(color: palette.textPrimary)),
-                TextSpan(
-                    text: '  ${r.pct.round()}%',
-                    style: AppText.captionStrong.copyWith(
-                        color: r.pct < 60 ? palette.warning : palette.success)),
-              ])),
+            Semantics(
+              button: true,
+              child: GestureDetector(
+                key: const ValueKey('low-micro-chip'),
+                behavior: HitTestBehavior.opaque,
+                onTap: () => context.push(AppRouter.nutritionMicros),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+                  decoration: BoxDecoration(
+                      color: palette.tile, borderRadius: AppRadius.fullAll),
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(
+                        text: microName(l10n, r.key),
+                        style: AppText.captionStrong
+                            .copyWith(color: palette.textPrimary)),
+                    TextSpan(
+                        text: '  ${r.pct.round()}%',
+                        style: AppText.captionStrong.copyWith(
+                            color: r.pct < 60
+                                ? palette.warning
+                                : palette.success)),
+                  ])),
+                ),
+              ),
             ),
         ],
       ),
@@ -363,6 +377,17 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
           },
           secondaryLabel: ideas.length > 1 ? l10n.nutritionOtherIdea : null,
           onSecondary: () => setState(() => _ideaIndex++),
+          onAsk: () => askFelix(
+            context,
+            ref,
+            topic: AssistantTopic.app,
+            draft: l10n.nutritionAskDraft(
+              NumberFormat.decimalPattern(
+                      Localizations.localeOf(context).toString())
+                  .format(math.max(0, kcal - eaten)),
+              '${gap.round()}',
+            ),
+          ),
         ),
       ),
     ];

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/workout_card.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
-import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
 import 'package:fitrix/features/workouts/domain/coach_message.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
@@ -114,11 +112,20 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
     );
   }
 
-  /// Opens this sport's Felix trainer chat (the Felix tab).
-  void _askFelix() {
-    ref.read(selectedAssistantTopicProvider.notifier).state =
-        AssistantTopic.all.firstWhere((t) => t.sport == _sport);
-    context.go(AppRouter.felix);
+  /// Opens this sport's Felix trainer chat (the Felix tab) with a question
+  /// about what the coach card says, ready to send.
+  void _askFelix(({CoachMessageKind kind, int days, String today}) coach) {
+    final l10n = AppLocalizations.of(context);
+    askFelix(
+      context,
+      ref,
+      topic: AssistantTopic.all.firstWhere((t) => t.sport == _sport),
+      draft: switch (coach.kind) {
+        CoachMessageKind.firstWorkout =>
+          l10n.gymAskFirstDraft(_sport.localizedLabel(l10n)),
+        CoachMessageKind.welcomeBack => l10n.gymAskBackDraft(coach.days),
+      },
+    );
   }
 
   @override
@@ -224,7 +231,7 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                             ? null
                             : () => _start(workouts.first),
                         secondaryLabel: l10n.gymAskFelix,
-                        onSecondary: _askFelix,
+                        onSecondary: () => _askFelix(coach),
                       ),
                     ],
                   ],

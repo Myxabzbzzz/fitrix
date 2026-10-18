@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/core/widgets/ask_felix_link.dart';
 
 class CoachCard extends StatelessWidget {
   final String eyebrow;
@@ -15,6 +16,9 @@ class CoachCard extends StatelessWidget {
   final String? secondaryLabel;
   final VoidCallback? onSecondary;
 
+  /// Shows an "Ask Felix" link under the message (and buttons) when set.
+  final VoidCallback? onAsk;
+
   const CoachCard({
     super.key,
     required this.eyebrow,
@@ -27,6 +31,7 @@ class CoachCard extends StatelessWidget {
     this.onPrimary,
     this.secondaryLabel,
     this.onSecondary,
+    this.onAsk,
   });
 
   @override
@@ -92,6 +97,7 @@ class CoachCard extends StatelessWidget {
                     ],
                   ),
                 ],
+                if (onAsk != null) AskFelixLink(onTap: onAsk!),
               ],
             ),
           ),

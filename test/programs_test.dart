@@ -111,6 +111,14 @@ void main() {
           'gzclp');
       expect(pickProgram(catalog.programs, '', '')!.id, 'gzclp');
     });
+
+    test('programFit says whether the pick matched anything', () {
+      expect(programFit(ul4, 'Build muscle', 'Intermediate'),
+          ProgramFit.goalAndLevel);
+      expect(programFit(ul4, 'Build muscle', 'Beginner'), ProgramFit.goal);
+      expect(programFit(ul4, 'Lose fat', 'Intermediate'), ProgramFit.level);
+      expect(programFit(ul4, '', ''), ProgramFit.none);
+    });
   });
 
   group('schedule', () {
@@ -469,6 +477,11 @@ void main() {
       expect(find.byKey(const Key('programs-card-gzclp')), findsOneWidget);
       expect(find.byKey(const Key('programs-active-card')), findsNothing);
       expect(find.byKey(const Key('programs-picked')), findsOneWidget);
+      // No goal or experience in the profile: a neutral starting point, not
+      // a claimed fit.
+      expect(find.text('A PLACE TO START'), findsOneWidget);
+      expect(find.textContaining('A good fit'), findsNothing);
+      expect(find.text('Felix pick'), findsNothing);
       expect(find.text('5 programs'), findsOneWidget);
       await tester.tap(find.text('5+'));
       await tester.pumpAndSettle();
