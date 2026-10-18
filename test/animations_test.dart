@@ -11,7 +11,6 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/widgets/feature_tile.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
-import 'package:fitrix/features/progress/presentation/widgets/progress_chart.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
@@ -318,46 +317,6 @@ void main() {
       messages.value = [...messages.value, msg('b')];
       await tester.pump();
       expect(opacityOf(tester, 'b'), 1);
-      expect(tester.hasRunningAnimations, isFalse);
-    });
-  });
-
-  group('charts', () {
-    Future<void> pumpChart(WidgetTester tester) => tester.pumpWidget(
-          const MaterialApp(
-            home: Scaffold(
-              body: ProgressChart(
-                title: 'Weight',
-                values: [70, 72, 75],
-                xLabels: ['1', '2', '3'],
-                minY: 60,
-                maxY: 80,
-              ),
-            ),
-          ),
-        );
-
-    double drawn(WidgetTester tester) {
-      final paint = tester
-          .widgetList<CustomPaint>(find.byType(CustomPaint))
-          .firstWhere(
-              (p) => p.painter.runtimeType.toString() == '_ChartPainter');
-      return ((paint.painter as dynamic).progress as Animation<double>).value;
-    }
-
-    testWidgets('the line draws in when the chart appears', (tester) async {
-      await pumpChart(tester);
-      expect(drawn(tester), 0);
-      await tester.pump(const Duration(milliseconds: 150));
-      expect(drawn(tester), inExclusiveRange(0, 1));
-      await tester.pumpAndSettle();
-      expect(drawn(tester), 1);
-    });
-
-    testWidgets('reduced motion: the line is drawn at once', (tester) async {
-      _reduceMotion(tester);
-      await pumpChart(tester);
-      expect(drawn(tester), 1);
       expect(tester.hasRunningAnimations, isFalse);
     });
   });

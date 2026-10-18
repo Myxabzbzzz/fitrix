@@ -150,12 +150,6 @@ abstract class AppLocalizations {
   /// **'kg'**
   String get unitKg;
 
-  /// No description provided for @unitCm.
-  ///
-  /// In en, this message translates to:
-  /// **'cm'**
-  String get unitCm;
-
   /// No description provided for @signOut.
   ///
   /// In en, this message translates to:
@@ -276,84 +270,6 @@ abstract class AppLocalizations {
   /// **'My progress'**
   String get progressTitle;
 
-  /// No description provided for @progressStrength.
-  ///
-  /// In en, this message translates to:
-  /// **'Strength'**
-  String get progressStrength;
-
-  /// No description provided for @progressNoWorkouts.
-  ///
-  /// In en, this message translates to:
-  /// **'No {sport} workouts yet. Finish one with at least one set checked off and your progress will show up here.'**
-  String progressNoWorkouts(String sport);
-
-  /// No description provided for @progressRecentWorkouts.
-  ///
-  /// In en, this message translates to:
-  /// **'Recent workouts'**
-  String get progressRecentWorkouts;
-
-  /// No description provided for @progressBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Body'**
-  String get progressBody;
-
-  /// No description provided for @progressSampleNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Sample data — tracking is coming soon.'**
-  String get progressSampleNote;
-
-  /// No description provided for @progressFirst.
-  ///
-  /// In en, this message translates to:
-  /// **'First: {value}'**
-  String progressFirst(String value);
-
-  /// No description provided for @progressLatest.
-  ///
-  /// In en, this message translates to:
-  /// **'Latest: {value}'**
-  String progressLatest(String value);
-
-  /// No description provided for @progressCurrent.
-  ///
-  /// In en, this message translates to:
-  /// **'Current: {value}'**
-  String progressCurrent(String value);
-
-  /// No description provided for @progressMonthAgo.
-  ///
-  /// In en, this message translates to:
-  /// **'One month ago: {value}'**
-  String progressMonthAgo(String value);
-
-  /// No description provided for @progressIntake.
-  ///
-  /// In en, this message translates to:
-  /// **'Intake, avg'**
-  String get progressIntake;
-
-  /// No description provided for @progressBurn.
-  ///
-  /// In en, this message translates to:
-  /// **'Burn, avg'**
-  String get progressBurn;
-
-  /// No description provided for @progressKcalPerDay.
-  ///
-  /// In en, this message translates to:
-  /// **'kcal / day'**
-  String get progressKcalPerDay;
-
-  /// No description provided for @progressSets.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, one{{count} set} other{{count} sets}}'**
-  String progressSets(int count);
-
   /// No description provided for @nutritionTitle.
   ///
   /// In en, this message translates to:
@@ -365,12 +281,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'of {goal} kcal'**
   String nutritionOfGoal(String goal);
-
-  /// No description provided for @nutritionLeft.
-  ///
-  /// In en, this message translates to:
-  /// **'{kcal} kcal left today'**
-  String nutritionLeft(String kcal);
 
   /// No description provided for @nutritionGoalReached.
   ///
@@ -402,35 +312,17 @@ abstract class AppLocalizations {
   /// **'Breakfast'**
   String get nutritionBreakfast;
 
-  /// No description provided for @nutritionBreakfastItems.
-  ///
-  /// In en, this message translates to:
-  /// **'Oatmeal, banana, coffee'**
-  String get nutritionBreakfastItems;
-
   /// No description provided for @nutritionLunch.
   ///
   /// In en, this message translates to:
   /// **'Lunch'**
   String get nutritionLunch;
 
-  /// No description provided for @nutritionLunchItems.
-  ///
-  /// In en, this message translates to:
-  /// **'Chicken, rice, salad'**
-  String get nutritionLunchItems;
-
   /// No description provided for @nutritionSnack.
   ///
   /// In en, this message translates to:
   /// **'Snack'**
   String get nutritionSnack;
-
-  /// No description provided for @nutritionSnackItems.
-  ///
-  /// In en, this message translates to:
-  /// **'Yogurt and nuts'**
-  String get nutritionSnackItems;
 
   /// No description provided for @nutritionDinner.
   ///
@@ -450,24 +342,6 @@ abstract class AppLocalizations {
   /// **'{kcal} kcal'**
   String nutritionKcal(String kcal);
 
-  /// No description provided for @nutritionTipEyebrow.
-  ///
-  /// In en, this message translates to:
-  /// **'Felix tip'**
-  String get nutritionTipEyebrow;
-
-  /// No description provided for @nutritionTipTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Protein at dinner'**
-  String get nutritionTipTitle;
-
-  /// No description provided for @nutritionTipMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'For dinner, aim for about 40 g of protein. Chicken, rice and greens fit your plan.'**
-  String get nutritionTipMessage;
-
   /// No description provided for @profileTitle.
   ///
   /// In en, this message translates to:
@@ -485,12 +359,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'day streak'**
   String get profileDayStreak;
-
-  /// No description provided for @profileKgNow.
-  ///
-  /// In en, this message translates to:
-  /// **'kg now'**
-  String get profileKgNow;
 
   /// No description provided for @profileLanguage.
   ///
@@ -1062,12 +930,6 @@ abstract class AppLocalizations {
   /// **'{n} km'**
   String mapKilometers(String n);
 
-  /// No description provided for @workoutSetsProgress.
-  ///
-  /// In en, this message translates to:
-  /// **'{total, plural, one{{done} of {total} set} other{{done} of {total} sets}}'**
-  String workoutSetsProgress(int done, int total);
-
   /// No description provided for @workoutSetCount.
   ///
   /// In en, this message translates to:
@@ -1091,12 +953,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No sets are checked off, so this workout won’t be saved.'**
   String get workoutFinishNoSets;
-
-  /// No description provided for @workoutFinishSummary.
-  ///
-  /// In en, this message translates to:
-  /// **'{total, plural, one{{done} of {total} set completed.} other{{done} of {total} sets completed.}} The workout will be saved to your history.'**
-  String workoutFinishSummary(int done, int total);
 
   /// No description provided for @workoutKeepGoing.
   ///
@@ -1385,18 +1241,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap to retry'**
   String get chatTapToRetry;
-
-  /// No description provided for @progressWeightTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'My weight (kg)'**
-  String get progressWeightTitle;
-
-  /// No description provided for @progressCaloriesTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Calories: intake vs burn'**
-  String get progressCaloriesTitle;
 
   /// No description provided for @signInCodeResent.
   ///
@@ -1932,12 +1776,6 @@ abstract class AppLocalizations {
   /// **'Update weight: {from} → {to} kg'**
   String chatActionWeightChange(String from, String to);
 
-  /// No description provided for @chatActionWorkoutTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, one{Add {count} workout to {sport}} other{Add {count} workouts to {sport}}}'**
-  String chatActionWorkoutTitle(int count, String sport);
-
   /// No description provided for @chatActionWorkoutExercises.
   ///
   /// In en, this message translates to:
@@ -1955,12 +1793,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{kcal} kcal in total'**
   String chatActionMealTotal(String kcal);
-
-  /// No description provided for @chatActionWorkoutsAdded.
-  ///
-  /// In en, this message translates to:
-  /// **'Workouts added to {sport}'**
-  String chatActionWorkoutsAdded(String sport);
 
   /// No description provided for @chatActionOpen.
   ///
@@ -2105,12 +1937,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Similar: {names}'**
   String workoutMenuSimilar(String names);
-
-  /// No description provided for @workoutMenuNoSimilar.
-  ///
-  /// In en, this message translates to:
-  /// **'No similar exercises in the library'**
-  String get workoutMenuNoSimilar;
 
   /// No description provided for @workoutMenuWarmup.
   ///

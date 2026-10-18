@@ -52,9 +52,6 @@ class AppConstants {
     return 'http://localhost:3000';
   }
 
-  /// Chat endpoint path (appended to apiBaseUrl), replies in one response
-  static const String chatEndpoint = '/chat';
-
   /// Streaming chat endpoint: NDJSON lines of {"delta"} / {"done"} / {"error"}
   static const String chatStreamEndpoint = '/chat/stream';
 
@@ -124,17 +121,6 @@ class AppConstants {
   // ==========================================================================
   // APP TEXT CONTENT & BRANDING
   // ==========================================================================
-
-  /// Application name displayed in UI
-  static const String appName = 'FITRIX';
-
-  /// First subtitle line on intro screen
-  /// "The Fitness Matrix"
-  static const String appSubtitle1 = 'The Fitness Matrix';
-
-  /// Second subtitle line on intro screen
-  /// "Based on Artificial intelligence"
-  static const String appSubtitle2 = 'Based on Artificial intelligence';
 
   // ==========================================================================
   // FELIX AI ASSISTANT CONFIGURATION

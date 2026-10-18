@@ -33,9 +33,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get unitKg => 'кг';
 
   @override
-  String get unitCm => 'см';
-
-  @override
   String get signOut => 'Выйти';
 
   @override
@@ -114,76 +111,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get progressTitle => 'Мой прогресс';
 
   @override
-  String get progressStrength => 'Сила';
-
-  @override
-  String progressNoWorkouts(String sport) {
-    return 'Тренировок ($sport) пока нет. Завершите одну, отметив хотя бы один подход, и здесь появится ваш прогресс.';
-  }
-
-  @override
-  String get progressRecentWorkouts => 'Последние тренировки';
-
-  @override
-  String get progressBody => 'Тело';
-
-  @override
-  String get progressSampleNote =>
-      'Пример данных — отслеживание скоро появится.';
-
-  @override
-  String progressFirst(String value) {
-    return 'Первое: $value';
-  }
-
-  @override
-  String progressLatest(String value) {
-    return 'Последнее: $value';
-  }
-
-  @override
-  String progressCurrent(String value) {
-    return 'Сейчас: $value';
-  }
-
-  @override
-  String progressMonthAgo(String value) {
-    return 'Месяц назад: $value';
-  }
-
-  @override
-  String get progressIntake => 'Потреблено, в среднем';
-
-  @override
-  String get progressBurn => 'Сожжено, в среднем';
-
-  @override
-  String get progressKcalPerDay => 'ккал / день';
-
-  @override
-  String progressSets(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count подхода',
-      many: '$count подходов',
-      few: '$count подхода',
-      one: '$count подход',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get nutritionTitle => 'Моё питание';
 
   @override
   String nutritionOfGoal(String goal) {
     return 'из $goal ккал';
-  }
-
-  @override
-  String nutritionLeft(String kcal) {
-    return 'Осталось $kcal ккал на сегодня';
   }
 
   @override
@@ -202,19 +134,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get nutritionBreakfast => 'Завтрак';
 
   @override
-  String get nutritionBreakfastItems => 'Овсянка, банан, кофе';
-
-  @override
   String get nutritionLunch => 'Обед';
 
   @override
-  String get nutritionLunchItems => 'Курица, рис, салат';
-
-  @override
   String get nutritionSnack => 'Перекус';
-
-  @override
-  String get nutritionSnackItems => 'Йогурт и орехи';
 
   @override
   String get nutritionDinner => 'Ужин';
@@ -228,16 +151,6 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get nutritionTipEyebrow => 'Совет Феликса';
-
-  @override
-  String get nutritionTipTitle => 'Белок на ужин';
-
-  @override
-  String get nutritionTipMessage =>
-      'На ужин возьмите около 40 г белка. Курица, рис и зелень подойдут вашему плану.';
-
-  @override
   String get profileTitle => 'Профиль';
 
   @override
@@ -245,9 +158,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileDayStreak => 'дней подряд';
-
-  @override
-  String get profileKgNow => 'кг сейчас';
 
   @override
   String get profileLanguage => 'Язык';
@@ -604,19 +514,6 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String workoutSetsProgress(int done, int total) {
-    String _temp0 = intl.Intl.pluralLogic(
-      total,
-      locale: localeName,
-      other: '$done из $total подхода',
-      many: '$done из $total подходов',
-      few: '$done из $total подходов',
-      one: '$done из $total подхода',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String workoutSetCount(int n) {
     String _temp0 = intl.Intl.pluralLogic(
       n,
@@ -640,19 +537,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get workoutFinishNoSets =>
       'Ни один подход не отмечен, поэтому тренировка не будет сохранена.';
-
-  @override
-  String workoutFinishSummary(int done, int total) {
-    String _temp0 = intl.Intl.pluralLogic(
-      total,
-      locale: localeName,
-      other: 'Выполнено $done из $total подхода.',
-      many: 'Выполнено $done из $total подходов.',
-      few: 'Выполнено $done из $total подходов.',
-      one: 'Выполнено $done из $total подхода.',
-    );
-    return '$_temp0 Тренировка будет сохранена в вашей истории.';
-  }
 
   @override
   String get workoutKeepGoing => 'Продолжить';
@@ -814,12 +698,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatTapToRetry => 'Нажмите, чтобы повторить';
-
-  @override
-  String get progressWeightTitle => 'Мой вес (кг)';
-
-  @override
-  String get progressCaloriesTitle => 'Калории: потреблено и сожжено';
 
   @override
   String signInCodeResent(String email) {
@@ -1125,19 +1003,6 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String chatActionWorkoutTitle(int count, String sport) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Добавить $count тренировки в «$sport»',
-      many: 'Добавить $count тренировок в «$sport»',
-      few: 'Добавить $count тренировки в «$sport»',
-      one: 'Добавить $count тренировку в «$sport»',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String chatActionWorkoutExercises(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1156,11 +1021,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String chatActionMealTotal(String kcal) {
     return 'Всего $kcal ккал';
-  }
-
-  @override
-  String chatActionWorkoutsAdded(String sport) {
-    return 'Тренировки добавлены: $sport';
   }
 
   @override
@@ -1258,9 +1118,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String workoutMenuSimilar(String names) {
     return 'Похожие: $names';
   }
-
-  @override
-  String get workoutMenuNoSimilar => 'В библиотеке нет похожих упражнений';
 
   @override
   String get workoutMenuWarmup => 'Добавить разминочные подходы';

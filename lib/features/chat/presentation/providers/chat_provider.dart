@@ -10,7 +10,6 @@ import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
-import 'package:fitrix/features/chat/data/services/photo_service.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
@@ -252,14 +251,5 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
     if (state.valueOrNull == null) return;
     _updateReply(id, (m) => m.copyWith(actionApplied: false));
     await _repository.saveMessages(state.requireValue);
-  }
-
-  Future<void> clearMessages() async {
-    for (final m in state.valueOrNull ?? const <ChatMessage>[]) {
-      final photo = m.imagePath;
-      if (photo != null) await deleteChatPhoto(photo);
-    }
-    await _repository.saveMessages([]);
-    await _loadMessages();
   }
 }

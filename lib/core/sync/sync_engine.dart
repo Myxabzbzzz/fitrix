@@ -88,8 +88,6 @@ class SyncEngine {
   String? _lastError;
   bool _syncing = false;
 
-  bool get isDisposed => _disposed;
-
   /// Starts listening for local changes and runs the first sync.
   void start() {
     _changes = local.changes.listen((_) => _schedule());

@@ -61,9 +61,6 @@ List<String> microKeysFor(MicroFilter f) => switch (f) {
       MicroFilter.all => microKeys,
     };
 
-/// Unit of a micro key ("mcg" or "mg").
-String microUnit(String key) => key.endsWith('_mcg') ? 'mcg' : 'mg';
-
 /// Per-day totals averaged over the days that have entries; the second value
 /// is how many such days there were.
 ({Map<String, double> avg, int days}) averageMicros(

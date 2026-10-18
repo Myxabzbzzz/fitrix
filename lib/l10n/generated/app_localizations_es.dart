@@ -33,9 +33,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get unitKg => 'kg';
 
   @override
-  String get unitCm => 'cm';
-
-  @override
   String get signOut => 'Cerrar sesión';
 
   @override
@@ -112,74 +109,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get progressTitle => 'Mi progreso';
 
   @override
-  String get progressStrength => 'Fuerza';
-
-  @override
-  String progressNoWorkouts(String sport) {
-    return 'Aún no hay entrenamientos de $sport. Termina uno con al menos una serie marcada y tu progreso aparecerá aquí.';
-  }
-
-  @override
-  String get progressRecentWorkouts => 'Entrenamientos recientes';
-
-  @override
-  String get progressBody => 'Cuerpo';
-
-  @override
-  String get progressSampleNote =>
-      'Datos de ejemplo: el seguimiento llegará pronto.';
-
-  @override
-  String progressFirst(String value) {
-    return 'Primero: $value';
-  }
-
-  @override
-  String progressLatest(String value) {
-    return 'Último: $value';
-  }
-
-  @override
-  String progressCurrent(String value) {
-    return 'Actual: $value';
-  }
-
-  @override
-  String progressMonthAgo(String value) {
-    return 'Hace un mes: $value';
-  }
-
-  @override
-  String get progressIntake => 'Ingesta, media';
-
-  @override
-  String get progressBurn => 'Gasto, media';
-
-  @override
-  String get progressKcalPerDay => 'kcal / día';
-
-  @override
-  String progressSets(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count series',
-      one: '$count serie',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get nutritionTitle => 'Mi nutrición';
 
   @override
   String nutritionOfGoal(String goal) {
     return 'de $goal kcal';
-  }
-
-  @override
-  String nutritionLeft(String kcal) {
-    return 'Quedan $kcal kcal hoy';
   }
 
   @override
@@ -198,19 +132,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get nutritionBreakfast => 'Desayuno';
 
   @override
-  String get nutritionBreakfastItems => 'Avena, plátano, café';
-
-  @override
   String get nutritionLunch => 'Almuerzo';
 
   @override
-  String get nutritionLunchItems => 'Pollo, arroz, ensalada';
-
-  @override
   String get nutritionSnack => 'Merienda';
-
-  @override
-  String get nutritionSnackItems => 'Yogur y frutos secos';
 
   @override
   String get nutritionDinner => 'Cena';
@@ -224,16 +149,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get nutritionTipEyebrow => 'Consejo de Felix';
-
-  @override
-  String get nutritionTipTitle => 'Proteína en la cena';
-
-  @override
-  String get nutritionTipMessage =>
-      'En la cena apunta a unos 40 g de proteína. Pollo, arroz y verduras encajan en tu plan.';
-
-  @override
   String get profileTitle => 'Perfil';
 
   @override
@@ -241,9 +156,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileDayStreak => 'días seguidos';
-
-  @override
-  String get profileKgNow => 'kg ahora';
 
   @override
   String get profileLanguage => 'Idioma';
@@ -594,17 +506,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String workoutSetsProgress(int done, int total) {
-    String _temp0 = intl.Intl.pluralLogic(
-      total,
-      locale: localeName,
-      other: '$done de $total series',
-      one: '$done de $total serie',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String workoutSetCount(int n) {
     String _temp0 = intl.Intl.pluralLogic(
       n,
@@ -626,17 +527,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get workoutFinishNoSets =>
       'No hay ninguna serie marcada, así que este entrenamiento no se guardará.';
-
-  @override
-  String workoutFinishSummary(int done, int total) {
-    String _temp0 = intl.Intl.pluralLogic(
-      total,
-      locale: localeName,
-      other: '$done de $total series completadas.',
-      one: '$done de $total serie completada.',
-    );
-    return '$_temp0 El entrenamiento se guardará en tu historial.';
-  }
 
   @override
   String get workoutKeepGoing => 'Seguir';
@@ -796,12 +686,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chatTapToRetry => 'Toca para reintentar';
-
-  @override
-  String get progressWeightTitle => 'Mi peso (kg)';
-
-  @override
-  String get progressCaloriesTitle => 'Calorías: ingesta y gasto';
 
   @override
   String signInCodeResent(String email) {
@@ -1108,17 +992,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String chatActionWorkoutTitle(int count, String sport) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Añadir $count entrenamientos a $sport',
-      one: 'Añadir $count entrenamiento a $sport',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String chatActionWorkoutExercises(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1135,11 +1008,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String chatActionMealTotal(String kcal) {
     return '$kcal kcal en total';
-  }
-
-  @override
-  String chatActionWorkoutsAdded(String sport) {
-    return 'Entrenamientos añadidos a $sport';
   }
 
   @override
@@ -1237,10 +1105,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String workoutMenuSimilar(String names) {
     return 'Similares: $names';
   }
-
-  @override
-  String get workoutMenuNoSimilar =>
-      'No hay ejercicios similares en la biblioteca';
 
   @override
   String get workoutMenuWarmup => 'Añadir series de calentamiento';

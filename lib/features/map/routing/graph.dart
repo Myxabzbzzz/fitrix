@@ -195,9 +195,6 @@ class RouteGraph {
     return out;
   }
 
-  /// Whether [node] is in the largest connected component for [mode].
-  bool inMain(TravelMode mode, int node) => _main[mode]![node] == 1;
-
   /// Nearest main-component node for [mode], or -1 when the graph has none.
   int nearestNode(TravelMode mode, double pLat, double pLon) {
     final ok = _main[mode]!;

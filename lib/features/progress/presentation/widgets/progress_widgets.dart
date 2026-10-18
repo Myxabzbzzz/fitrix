@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
-import 'package:fitrix/features/progress/domain/progress_math.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -385,6 +384,3 @@ String signedPercent(double ratio) {
   final pct = (ratio * 100).round();
   return '${pct >= 0 ? '+' : '−'}${pct.abs()}%';
 }
-
-/// Week start helper re-exported for screens.
-DateTime thisWeekStart(DateTime today) => weekStart(today);

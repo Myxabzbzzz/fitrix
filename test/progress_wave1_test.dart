@@ -257,11 +257,11 @@ void main() {
       expect(kcalAdjustment(0.2, Goal.loseFat), lessThan(0));
     });
 
-    test('strengthLevel bands', () {
-      expect(strengthLevel('bench', 107.3, 78.4), 'intermediate');
-      expect(strengthLevel('bench', 40, 80), 'beginner');
-      expect(strengthLevel('squat', 250, 80), 'elite');
-      expect(strengthLevel('bench', 80, 80, female: true), 'advanced');
+    test('strengthInfo bands', () {
+      expect(strengthInfo('bench', 107.3, 78.4)?.level, 'intermediate');
+      expect(strengthInfo('bench', 40, 80)?.level, 'beginner');
+      expect(strengthInfo('squat', 250, 80)?.level, 'elite');
+      expect(strengthInfo('bench', 80, 80, female: true)?.level, 'advanced');
     });
 
     test('dailyLoads sums workouts on one local day', () {

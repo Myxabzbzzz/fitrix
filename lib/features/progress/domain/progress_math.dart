@@ -152,11 +152,6 @@ StrengthInfo? strengthInfo(String lift, double e1rm, double bodyKg,
       index, ratio, index < bands.length ? bands[index] * f : null);
 }
 
-String strengthLevel(String lift, double e1rm, double bodyKg,
-        {bool female = false}) =>
-    strengthInfo(lift, e1rm, bodyKg, female: female)?.level ??
-    strengthLevels.first;
-
 /// Catalog ids of the five barbell lifts that have strength standards.
 const _strengthLiftIds = {
   'bench-press': 'bench',

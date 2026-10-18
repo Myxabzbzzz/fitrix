@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.dart';
-import 'package:fitrix/features/progress/presentation/widgets/progress_chart.dart';
 
 Widget _host(Widget child) => MaterialApp(
       theme: AppTheme.lightTheme,
@@ -37,16 +36,6 @@ void _se(WidgetTester tester) {
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
 }
-
-ProgressChart _chart(List<double> values) => ProgressChart(
-      title: 'Bench',
-      values: values,
-      xLabels: [for (var i = 0; i < values.length; i++) '${i + 1}'],
-      minY: 0,
-      maxY: 100,
-      footerLeft: 'First: 1',
-      footerRight: 'Latest: 2',
-    );
 
 void main() {
   group('Nutrition', () {
@@ -90,48 +79,6 @@ void main() {
       ));
       await t.pump();
       expect(t.hasRunningAnimations, isFalse);
-    });
-  });
-
-  group('ProgressChart', () {
-    testWidgets('paints with 1 point', (t) async {
-      await t.pumpWidget(_host(Scaffold(body: _chart([50]))));
-      await t.pumpAndSettle();
-      expect(t.takeException(), isNull);
-    });
-
-    testWidgets('paints with 8 points and shows foot row', (t) async {
-      await t.pumpWidget(
-          _host(Scaffold(body: _chart([10, 20, 30, 40, 50, 60, 70, 80]))));
-      await t.pumpAndSettle();
-      expect(t.takeException(), isNull);
-      expect(find.text('First: 1'), findsOneWidget);
-      expect(find.text('Latest: 2'), findsOneWidget);
-    });
-
-    testWidgets('shows the delta label when given', (t) async {
-      await t.pumpWidget(_host(const Scaffold(
-        body: ProgressChart(
-          title: 'Bench',
-          values: [1, 2],
-          xLabels: ['a', 'b'],
-          minY: 0,
-          maxY: 4,
-          delta: '+1 kg',
-        ),
-      )));
-      await t.pumpAndSettle();
-      expect(find.text('+1 kg'), findsOneWidget);
-    });
-
-    testWidgets('SE size: no overflow', (t) async {
-      _se(t);
-      await t.pumpWidget(_host(Scaffold(
-          body: ListView(children: [
-        _chart([10, 20, 30, 40, 50, 60, 70, 80]),
-      ]))));
-      await t.pumpAndSettle();
-      expect(t.takeException(), isNull);
     });
   });
 }

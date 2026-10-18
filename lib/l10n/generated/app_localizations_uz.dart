@@ -33,9 +33,6 @@ class AppLocalizationsUz extends AppLocalizations {
   String get unitKg => 'kg';
 
   @override
-  String get unitCm => 'sm';
-
-  @override
   String get signOut => 'Chiqish';
 
   @override
@@ -106,73 +103,11 @@ class AppLocalizationsUz extends AppLocalizations {
   String get progressTitle => 'Mening yutuqlarim';
 
   @override
-  String get progressStrength => 'Kuch';
-
-  @override
-  String progressNoWorkouts(String sport) {
-    return 'Hozircha $sport mashg‘ulotlari yo‘q. Kamida bitta yondashuvni belgilab, birini yakunlang — yutuqlaringiz shu yerda ko‘rinadi.';
-  }
-
-  @override
-  String get progressRecentWorkouts => 'So‘nggi mashg‘ulotlar';
-
-  @override
-  String get progressBody => 'Tana';
-
-  @override
-  String get progressSampleNote =>
-      'Namunaviy ma’lumotlar — kuzatuv tez orada qo‘shiladi.';
-
-  @override
-  String progressFirst(String value) {
-    return 'Birinchi: $value';
-  }
-
-  @override
-  String progressLatest(String value) {
-    return 'Oxirgi: $value';
-  }
-
-  @override
-  String progressCurrent(String value) {
-    return 'Hozir: $value';
-  }
-
-  @override
-  String progressMonthAgo(String value) {
-    return 'Bir oy oldin: $value';
-  }
-
-  @override
-  String get progressIntake => 'Iste’mol, o‘rtacha';
-
-  @override
-  String get progressBurn => 'Sarf, o‘rtacha';
-
-  @override
-  String get progressKcalPerDay => 'kkal / kun';
-
-  @override
-  String progressSets(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count yondashuv',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get nutritionTitle => 'Mening ovqatlanishim';
 
   @override
   String nutritionOfGoal(String goal) {
     return '$goal kkaldan';
-  }
-
-  @override
-  String nutritionLeft(String kcal) {
-    return 'Bugun $kcal kkal qoldi';
   }
 
   @override
@@ -191,19 +126,10 @@ class AppLocalizationsUz extends AppLocalizations {
   String get nutritionBreakfast => 'Nonushta';
 
   @override
-  String get nutritionBreakfastItems => 'Suli bo‘tqasi, banan, qahva';
-
-  @override
   String get nutritionLunch => 'Tushlik';
 
   @override
-  String get nutritionLunchItems => 'Tovuq, guruch, salat';
-
-  @override
   String get nutritionSnack => 'Gazak';
-
-  @override
-  String get nutritionSnackItems => 'Yogurt va yong‘oq';
 
   @override
   String get nutritionDinner => 'Kechki ovqat';
@@ -217,16 +143,6 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get nutritionTipEyebrow => 'Felix maslahati';
-
-  @override
-  String get nutritionTipTitle => 'Kechki ovqatda oqsil';
-
-  @override
-  String get nutritionTipMessage =>
-      'Kechki ovqatga taxminan 40 g oqsil oling. Tovuq, guruch va ko‘kat rejangizga mos.';
-
-  @override
   String get profileTitle => 'Profil';
 
   @override
@@ -234,9 +150,6 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get profileDayStreak => 'kun ketma-ket';
-
-  @override
-  String get profileKgNow => 'kg hozir';
 
   @override
   String get profileLanguage => 'Til';
@@ -588,11 +501,6 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String workoutSetsProgress(int done, int total) {
-    return '$done / $total yondashuv';
-  }
-
-  @override
   String workoutSetCount(int n) {
     return '$n yondashuv';
   }
@@ -608,11 +516,6 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get workoutFinishNoSets =>
       'Birorta yondashuv belgilanmagan, shuning uchun mashg‘ulot saqlanmaydi.';
-
-  @override
-  String workoutFinishSummary(int done, int total) {
-    return '$total yondashuvdan $done tasi bajarildi. Mashg‘ulot tarixingizga saqlanadi.';
-  }
 
   @override
   String get workoutKeepGoing => 'Davom etish';
@@ -767,12 +670,6 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get chatTapToRetry => 'Qayta urinish uchun bosing';
-
-  @override
-  String get progressWeightTitle => 'Mening vaznim (kg)';
-
-  @override
-  String get progressCaloriesTitle => 'Kaloriya: qabul va sarf';
 
   @override
   String signInCodeResent(String email) {
@@ -1079,16 +976,6 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String chatActionWorkoutTitle(int count, String sport) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$sport bo‘limiga $count ta mashg‘ulot qo‘shish',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String chatActionWorkoutExercises(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1104,11 +991,6 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String chatActionMealTotal(String kcal) {
     return 'Jami $kcal kkal';
-  }
-
-  @override
-  String chatActionWorkoutsAdded(String sport) {
-    return 'Mashg‘ulotlar qo‘shildi: $sport';
   }
 
   @override
@@ -1206,9 +1088,6 @@ class AppLocalizationsUz extends AppLocalizations {
   String workoutMenuSimilar(String names) {
     return 'O‘xshash: $names';
   }
-
-  @override
-  String get workoutMenuNoSimilar => 'Kutubxonada o‘xshash mashqlar yo‘q';
 
   @override
   String get workoutMenuWarmup => 'Isitish yondashuvlarini qo‘shish';
