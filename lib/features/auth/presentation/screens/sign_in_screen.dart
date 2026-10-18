@@ -7,13 +7,13 @@ import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
-import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/features/auth/data/account_service.dart';
 import 'package:fitrix/features/auth/data/auth_failure.dart';
 import 'package:fitrix/features/auth/data/social_sign_in.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/auth/presentation/widgets/code_input.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/features/auth/presentation/widgets/sign_in_widgets.dart';
 
 /// Sign in with email: enter the address, then the 6-digit code from the
 /// email. New addresses get an account automatically. "Continue with
@@ -47,7 +47,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   String _email = '';
   bool _busy = false;
 
-  /// An [AuthFailure] or [_ProfileLoadFailed]; shown localized.
+  /// An [AuthFailure] or [ProfileLoadFailed]; shown localized.
   Object? _error;
 
   /// The Google / Apple sign-in in progress, for its button's spinner.
@@ -258,7 +258,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           _busy = false;
           _socialBusy = null;
           _verifiedUserId = userId;
-          _error = _ProfileLoadFailed(
+          _error = ProfileLoadFailed(
               network: AuthFailure.from(e).kind == AuthFailureKind.network);
         });
         return;
@@ -318,81 +318,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     );
   }
 
-  Widget _title(AppPalette palette, String title, String subtitle) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: AppSpacing.xl),
-          const Center(child: FitrixLogo(fontSize: 36)),
-          const SizedBox(height: AppSpacing.xl),
-          Text(
-            title,
-            style: AppText.headingL.copyWith(color: palette.textPrimary),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            subtitle,
-            style: AppText.bodyRegular.copyWith(color: palette.textSecondary),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      );
-
-  String _errorMessage(AppLocalizations l10n, Object error) {
-    if (error is _ProfileLoadFailed) {
-      return error.network
-          ? l10n.signInProfileLoadOffline
-          : l10n.signInProfileLoadFailed;
-    }
-    if (error is! AuthFailure) return l10n.signInErrUnknown;
-    final provider = error.provider ?? '';
-    return switch (error.kind) {
-      AuthFailureKind.invalidCode => l10n.signInErrInvalidCode,
-      AuthFailureKind.rateLimited => l10n.signInErrRateLimited,
-      AuthFailureKind.network => l10n.signInErrNetwork,
-      AuthFailureKind.invalidEmail => l10n.signInErrInvalidEmail,
-      AuthFailureKind.unknown => l10n.signInErrUnknown,
-      AuthFailureKind.providerDisabled =>
-        l10n.signInErrProviderDisabled(provider),
-      AuthFailureKind.providerUnavailable =>
-        l10n.signInErrProviderUnavailable(provider),
-      AuthFailureKind.socialFailed => l10n.signInErrSocialFailed(provider),
-    };
-  }
-
-  Widget _errorText(Object? error) => AnimatedSize(
-        duration: const Duration(milliseconds: 150),
-        child: error == null
-            ? const SizedBox(width: double.infinity)
-            : Padding(
-                padding: const EdgeInsets.only(top: AppSpacing.sm),
-                child: Text(
-                  _errorMessage(AppLocalizations.of(context), error),
-                  key: const Key('sign-in-error'),
-                  textAlign: TextAlign.center,
-                  style: AppText.bodyRegular
-                      .copyWith(color: AppPalette.of(context).error),
-                ),
-              ),
-      );
-
-  Widget _primaryButton(String label, VoidCallback? onPressed) => SizedBox(
-        height: 54,
-        child: ElevatedButton(
-          onPressed: _busy ? null : onPressed,
-          // Google / Apple show their progress on their own button.
-          child: _busy && _socialBusy == null
-              ? const SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2.5),
-                )
-              : Text(label),
-        ),
-      );
-
   Widget _buildEmailStep(BuildContext context) {
-    final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     // Onboarded but the session ended (signed out elsewhere, revoked).
     final signingBackIn = ref.read(appSessionProvider).onboardingComplete &&
@@ -405,9 +331,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         signingBackIn
-            ? _title(palette, l10n.signInAgainTitle, l10n.signInAgainSubtitle)
-            : _title(
-                palette, l10n.signInCreateTitle, l10n.signInCreateSubtitle),
+            ? SignInTitle(l10n.signInAgainTitle, l10n.signInAgainSubtitle)
+            : SignInTitle(l10n.signInCreateTitle, l10n.signInCreateSubtitle),
         const SizedBox(height: AppSpacing.xl),
         AutofillGroup(
           child: TextField(
@@ -426,119 +351,58 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             decoration: const InputDecoration(hintText: 'name@example.com'),
           ),
         ),
-        _errorText(_error),
+        SignInError(_error),
         const SizedBox(height: AppSpacing.lg),
         if (profileLoadFailed)
-          _primaryButton(
-            l10n.signInTryAgain,
-            () => _finishSignIn(
-              _verifiedUserId!,
-              GoRouter.of(context),
-              ref.read(accountServiceProvider),
-            ),
-          )
+          SignInPrimaryButton(
+              l10n.signInTryAgain,
+              () => _finishSignIn(
+                    _verifiedUserId!,
+                    GoRouter.of(context),
+                    ref.read(accountServiceProvider),
+                  ),
+              busy: _busy,
+              socialBusy: _socialBusy)
         else
           // "Get code" when a code is actually emailed, so it can't be
           // mistaken for "Continue with Google" below.
-          _primaryButton(
-            ref.watch(authGatewayProvider) == null
-                ? l10n.continueButton
-                : l10n.signInGetCode,
-            _continueWithEmail,
-          ),
+          SignInPrimaryButton(
+              ref.watch(authGatewayProvider) == null
+                  ? l10n.continueButton
+                  : l10n.signInGetCode,
+              _continueWithEmail,
+              busy: _busy,
+              socialBusy: _socialBusy),
         const SizedBox(height: AppSpacing.lg),
-        Row(
-          children: [
-            Expanded(child: Divider(color: palette.border)),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-              child: Text(
-                l10n.signInOr,
-                style:
-                    AppText.bodyRegular.copyWith(color: palette.textSecondary),
-              ),
-            ),
-            Expanded(child: Divider(color: palette.border)),
-          ],
-        ),
+        const SignInOrDivider(),
         const SizedBox(height: AppSpacing.lg),
-        _socialButton(
-          palette,
+        SocialSignInButton(
           key: const Key('google-sign-in'),
           provider: SocialProvider.google,
           icon: Icons.g_mobiledata,
           enabled: !profileLoadFailed,
+          busy: _busy,
+          socialBusy: _socialBusy,
+          onPressed: () => _continueWith(SocialProvider.google),
         ),
         // Sign in with Apple only exists on Apple devices.
         if (social.showAppleButton) ...[
           const SizedBox(height: AppSpacing.sm),
-          _socialButton(
-            palette,
+          SocialSignInButton(
             key: const Key('apple-sign-in'),
             provider: SocialProvider.apple,
             icon: Icons.apple,
             enabled: !profileLoadFailed,
+            busy: _busy,
+            socialBusy: _socialBusy,
+            onPressed: () => _continueWith(SocialProvider.apple),
           ),
         ],
         const SizedBox(height: AppSpacing.lg),
-        Text.rich(
-          textAlign: TextAlign.center,
-          TextSpan(
-            style: AppText.caption.copyWith(color: palette.textSecondary),
-            children: [
-              TextSpan(text: l10n.signInTermsPrefix),
-              TextSpan(
-                text: l10n.signInTerms,
-                style: const TextStyle(decoration: TextDecoration.underline),
-              ),
-              TextSpan(text: l10n.signInTermsAnd),
-              TextSpan(
-                text: l10n.signInPrivacy,
-                style: const TextStyle(decoration: TextDecoration.underline),
-              ),
-              TextSpan(text: l10n.signInTermsSuffix),
-            ],
-          ),
-        ),
+        const SignInTerms(),
       ],
     );
   }
-
-  Widget _socialButton(
-    AppPalette palette, {
-    required Key key,
-    required SocialProvider provider,
-    required IconData icon,
-    required bool enabled,
-  }) =>
-      SizedBox(
-        key: key,
-        height: 54,
-        child: OutlinedButton.icon(
-          onPressed: _busy || !enabled ? null : () => _continueWith(provider),
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: palette.border),
-            // Matches the themed button radius, like the controls above.
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          icon: _socialBusy == provider
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2.5),
-                )
-              : Icon(icon, size: 24, color: palette.textPrimary),
-          label: Text(
-            AppLocalizations.of(context).signInContinueWith(provider.label),
-            style: AppText.headingS.copyWith(
-              color: palette.textPrimary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      );
 
   Widget _buildCodeStep(BuildContext context) {
     final palette = AppPalette.of(context);
@@ -551,8 +415,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _title(
-          palette,
+        SignInTitle(
           l10n.signInCheckEmailTitle,
           l10n.signInCodePrompt('${SignInScreen.codeLength}', _email),
         ),
@@ -566,27 +429,29 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           hasError: _error != null && !profileLoadFailed,
           onCompleted: _verify,
         ),
-        _errorText(_error),
+        SignInError(_error),
         const SizedBox(height: AppSpacing.lg),
         if (profileLoadFailed)
-          _primaryButton(
-            l10n.signInTryAgain,
-            () => _finishSignIn(
-              _verifiedUserId!,
-              GoRouter.of(context),
-              ref.read(accountServiceProvider),
-            ),
-          )
+          SignInPrimaryButton(
+              l10n.signInTryAgain,
+              () => _finishSignIn(
+                    _verifiedUserId!,
+                    GoRouter.of(context),
+                    ref.read(accountServiceProvider),
+                  ),
+              busy: _busy,
+              socialBusy: _socialBusy)
         else
           // Rebuilds only the button per keystroke, not the whole screen.
           ListenableBuilder(
             listenable: _codeController,
-            builder: (context, _) => _primaryButton(
-              l10n.continueButton,
-              _codeController.text.length == SignInScreen.codeLength
-                  ? () => _verify(_codeController.text)
-                  : null,
-            ),
+            builder: (context, _) => SignInPrimaryButton(
+                l10n.continueButton,
+                _codeController.text.length == SignInScreen.codeLength
+                    ? () => _verify(_codeController.text)
+                    : null,
+                busy: _busy,
+                socialBusy: _socialBusy),
           ),
         const SizedBox(height: AppSpacing.md),
         if (!profileLoadFailed)
@@ -613,10 +478,4 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       ],
     );
   }
-}
-
-/// The account signed in but its profile couldn't be fetched.
-class _ProfileLoadFailed {
-  const _ProfileLoadFailed({required this.network});
-  final bool network;
 }
