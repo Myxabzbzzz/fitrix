@@ -148,7 +148,10 @@ List<LiftProgress> liftProgress(TrainingProgram p, ActiveProgram a,
         if (start == null) {
           final after = liftSeries(history, e.exercise, catalog)
               .where((x) => !dateOnly(x.date).isBefore(a.start));
-          if (after.isNotEmpty) start = after.first.kg;
+          if (after.isNotEmpty) {
+            final kg = workingKg(after.first.e1rm, e.repsHigh);
+            start = kg > 0 ? kg : null;
+          }
         }
         final now = startKg(e.exercise, history, e.repsHigh, catalog: catalog);
         final step = isLowerLift(e.exercise, catalog) ? 5.0 : 2.5;

@@ -122,6 +122,30 @@ void main() {
       expect(defaultWeekdays(ul4, const []), [1, 2, 4, 5]);
     });
 
+    test('UL4 + Saturday football: no Lower session on Fri, Sat or Sun', () {
+      final days = defaultWeekdays(ul4, [_football('f', 17)]);
+      expect(days, [1, 2, 3, 4]);
+      for (var i = 0; i < days.length; i++) {
+        if (ul4.sessionAt(i).name.startsWith('Lower')) {
+          expect(days[i], isNot(anyOf(5, 6, 7)));
+        }
+      }
+    });
+
+    test('every exercise of an atHome program needs no barbell or machine', () {
+      for (final p in catalog.programs.where((p) => p.atHome)) {
+        for (final s in p.sessions) {
+          for (final e in s.exercises) {
+            expect(
+                exercises.byName(e.exercise)!.equipment,
+                anyOf(Equipment.dumbbell, Equipment.bodyweight,
+                    Equipment.kettlebell),
+                reason: '${p.name}: ${e.exercise}');
+          }
+        }
+      }
+    });
+
     test('an easy non-gym session does not block days', () {
       final easy = PlannedSession(
           id: 'r',
@@ -166,6 +190,21 @@ void main() {
     });
     test('no history -> null', () {
       expect(startKg('Bench press', const [], 8), isNull);
+    });
+  });
+
+  group('lift progress', () {
+    test('first session only: Start equals Now (same measure)', () {
+      final a = ActiveProgram(
+          programId: 'upper-lower-4',
+          start: _d(12),
+          weekdays: [1, 2, 4, 5],
+          sessionTemplateIds: const {});
+      final lifts = liftProgress(ul4, a,
+          [_bench(DateTime(2026, 10, 12, 18), kg: 80, reps: 8)], exercises);
+      final bench = lifts.firstWhere((l) => l.exercise == 'Bench press');
+      expect(bench.start, isNotNull);
+      expect(bench.start, bench.now);
     });
   });
 

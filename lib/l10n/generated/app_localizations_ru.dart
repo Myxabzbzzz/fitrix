@@ -3472,7 +3472,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String programFelixText(String days, String what) {
-    return 'Дни тренировок обходят $days и день перед ним из-за: $what. Дни можно изменить при старте.';
+    return 'Дни тренировок обходят $days и дни до и после него из-за: $what. Дни можно изменить при старте.';
   }
 
   @override
@@ -3529,6 +3529,10 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get programClashHit =>
       'В этот день будут две тяжёлые тренировки. Выберите другой день.';
+
+  @override
+  String get programClashNear =>
+      'День программы стоит вплотную к нему. Берегите ноги до и после.';
 
   @override
   String get programClashAvoid =>

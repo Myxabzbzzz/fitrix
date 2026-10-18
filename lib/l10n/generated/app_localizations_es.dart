@@ -3416,7 +3416,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String programFelixText(String days, String what) {
-    return 'Los días de entreno evitan $days y el día anterior por: $what. Puedes cambiar los días al empezar.';
+    return 'Los días de entreno evitan $days y los días justo antes y después por: $what. Puedes cambiar los días al empezar.';
   }
 
   @override
@@ -3471,6 +3471,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get programClashHit =>
       'Entrenar ese día suma dos sesiones duras. Elige otro día.';
+
+  @override
+  String get programClashNear =>
+      'Un día del programa está justo al lado. Cuida las piernas antes y después.';
 
   @override
   String get programClashAvoid =>

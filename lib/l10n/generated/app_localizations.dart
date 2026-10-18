@@ -5573,7 +5573,7 @@ abstract class AppLocalizations {
   /// No description provided for @programFelixText.
   ///
   /// In en, this message translates to:
-  /// **'Training days avoid {days} and the day before because of {what}. You can change the days when you start.'**
+  /// **'Training days avoid {days} and the days right before and after it because of {what}. You can change the days when you start.'**
   String programFelixText(String days, String what);
 
   /// No description provided for @programAskFelix.
@@ -5647,6 +5647,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Training that day stacks two hard sessions. Pick another day.'**
   String get programClashHit;
+
+  /// No description provided for @programClashNear.
+  ///
+  /// In en, this message translates to:
+  /// **'A program day is right next to it. Keep your legs fresh before and after.'**
+  String get programClashNear;
 
   /// No description provided for @programClashAvoid.
   ///

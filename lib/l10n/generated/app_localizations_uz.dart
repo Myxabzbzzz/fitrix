@@ -3355,7 +3355,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String programFelixText(String days, String what) {
-    return 'Mashg‘ulot kunlari $days va undan oldingi kundan chetlab o‘tadi: $what. Boshlashda kunlarni o‘zgartirishingiz mumkin.';
+    return 'Mashg‘ulot kunlari $days va undan oldingi hamda keyingi kunlardan chetlab o‘tadi: $what. Boshlashda kunlarni o‘zgartirishingiz mumkin.';
   }
 
   @override
@@ -3410,6 +3410,10 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get programClashHit =>
       'Bu kuni ikkita og‘ir mashg‘ulot to‘planadi. Boshqa kunni tanlang.';
+
+  @override
+  String get programClashNear =>
+      'Dastur kuni unga yonma-yon. Oldin va keyin oyoqlaringizni asrang.';
 
   @override
   String get programClashAvoid =>

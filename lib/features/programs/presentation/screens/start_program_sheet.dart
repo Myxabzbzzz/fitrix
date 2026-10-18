@@ -195,7 +195,10 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
                     nonGym.firstWhere((s) => s.day.weekday == d).title),
                 body: _days.contains(d)
                     ? l10n.programClashHit
-                    : l10n.programClashAvoid,
+                    : _days.contains(d == 1 ? 7 : d - 1) ||
+                            _days.contains(d == 7 ? 1 : d + 1)
+                        ? l10n.programClashNear
+                        : l10n.programClashAvoid,
               ),
             ],
             if (weights.isNotEmpty) ...[

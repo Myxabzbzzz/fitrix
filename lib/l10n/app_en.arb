@@ -2615,7 +2615,7 @@
     },
   "programHowYouProgress": "How you progress",
   "programFelixEyebrow": "Felix adjusted it for you",
-  "programFelixText": "Training days avoid {days} and the day before because of {what}. You can change the days when you start.",
+  "programFelixText": "Training days avoid {days} and the days right before and after it because of {what}. You can change the days when you start.",
     "@programFelixText": {
       "placeholders": {
         "days": {
@@ -2682,6 +2682,7 @@
       }
     },
   "programClashHit": "Training that day stacks two hard sessions. Pick another day.",
+  "programClashNear": "A program day is right next to it. Keep your legs fresh before and after.",
   "programClashAvoid": "Program days stay clear of it, so you recover before and after.",
   "programStartWeights": "Start weights",
   "programFromRecords": "from your records",

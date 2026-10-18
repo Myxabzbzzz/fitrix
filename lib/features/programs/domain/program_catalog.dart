@@ -239,7 +239,8 @@ List<int> naiveWeekdays(TrainingProgram p) =>
 
 /// [p.perWeek] weekdays (1 = Monday). Starts from the usual spread (3 ->
 /// Mon Wed Fri, 4 -> Mon Tue Thu Fri ...) and avoids days with a hard
-/// non-gym session in [nonGymPlan] and the day before it, choosing the
+/// non-gym session in [nonGymPlan] and the days right before and after it
+/// (legs recover on both sides), choosing the
 /// closest spread of the remaining days. When too few days are free the
 /// day-before days are used first, then the hard days themselves.
 List<int> defaultWeekdays(TrainingProgram p, List<PlannedSession> nonGymPlan) {
@@ -248,14 +249,21 @@ List<int> defaultWeekdays(TrainingProgram p, List<PlannedSession> nonGymPlan) {
   final hard = hardNonGymWeekdays(nonGymPlan);
   if (hard.isEmpty) return List.of(preset);
   final before = {for (final d in hard) d == 1 ? 7 : d - 1};
+  final after = {for (final d in hard) d == 7 ? 1 : d + 1};
+  bool blocked(int d) =>
+      hard.contains(d) || before.contains(d) || after.contains(d);
   final free = [
     for (var d = 1; d <= 7; d++)
-      if (!hard.contains(d) && !before.contains(d)) d
+      if (!blocked(d)) d
   ];
   if (free.length < k) {
+    // Not enough clear days: use the days next to a hard day first (the
+    // day after before the day before), then the hard days themselves.
     final extra = [
       for (var d = 1; d <= 7; d++)
-        if (!hard.contains(d) && before.contains(d)) d,
+        if (!hard.contains(d) && after.contains(d)) d,
+      for (var d = 1; d <= 7; d++)
+        if (!hard.contains(d) && !after.contains(d) && before.contains(d)) d,
       for (var d = 1; d <= 7; d++)
         if (hard.contains(d)) d,
     ];
@@ -360,9 +368,14 @@ double? startKg(String exercise, List<CompletedWorkout> history, int reps,
   if (series.isEmpty) return null;
   final recent = series.sublist(series.length > 5 ? series.length - 5 : 0);
   final best = recent.map((p) => p.e1rm).reduce((a, b) => a > b ? a : b);
-  final kg = roundToPlate(best / (1 + (reps + 2) / 30));
+  final kg = workingKg(best, reps);
   return kg > 0 ? kg : null;
 }
+
+/// Working kg for [reps] reps at 2 reps in reserve from an e1RM, rounded to
+/// the plate.
+double workingKg(double e1rm, int reps) =>
+    roundToPlate(e1rm / (1 + (reps + 2) / 30));
 
 /// The exercises of [p] that get a start weight / progress row: barbell
 /// compounds (catalog), each once, in program order, at most [max].

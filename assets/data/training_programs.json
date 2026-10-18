@@ -194,10 +194,10 @@
     "minutes": 60,
     "exercises": [
      {
-      "exercise": "Romanian deadlift",
+      "exercise": "Kettlebell swing",
       "sets": 3,
-      "repsLow": 8,
-      "repsHigh": 12,
+      "repsLow": 10,
+      "repsHigh": 15,
       "rir": 2
      },
      {
@@ -256,9 +256,9 @@
       "rir": 2
      },
      {
-      "exercise": "Hip thrust",
+      "exercise": "Bulgarian split squat",
       "sets": 3,
-      "repsLow": 10,
+      "repsLow": 8,
       "repsHigh": 12,
       "rir": 2
      },
