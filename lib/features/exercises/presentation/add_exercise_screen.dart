@@ -11,6 +11,7 @@ import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/exercises/domain/exercise_stats.dart';
 import 'package:fitrix/features/exercises/presentation/exercise_widgets.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -32,14 +33,28 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
   String _query = '';
   final List<String> _selected = [];
 
-  void _close() {
-    // Hand the screen back to the workout it was opened from.
+  /// Hands the screen back to the workout it was opened from.
+  void _expandWorkout() {
     if (ref.read(activeWorkoutProvider) != null) {
       ref.read(activeWorkoutExpandedProvider.notifier).state = true;
     }
+  }
+
+  /// The exercise to swap, or null when not in replace mode or the index
+  /// points at nothing (then the picker adds instead).
+  int? _replaceIndex(ActiveWorkout? workout) {
+    if (!widget.replace || workout == null) return null;
+    return widget.index >= 0 && widget.index < workout.exercises.length
+        ? widget.index
+        : null;
+  }
+
+  void _close() {
     if (context.canPop()) {
+      // The PopScope below re-expands the sheet for every kind of pop.
       context.pop();
     } else {
+      _expandWorkout();
       context.go(AppRouter.workouts);
     }
   }
@@ -51,8 +66,9 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
         if (catalog.byId(id) != null) catalog.byId(id)!.name,
     ];
     if (names.isNotEmpty) {
-      if (widget.replace) {
-        notifier.replaceExercise(widget.index, names.first);
+      final at = _replaceIndex(ref.read(activeWorkoutProvider));
+      if (at != null) {
+        notifier.replaceExercise(at, names.first);
       } else {
         notifier.addExercises(names);
       }
@@ -61,7 +77,14 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => PopScope(
+        onPopInvokedWithResult: (didPop, _) {
+          if (didPop) _expandWorkout();
+        },
+        child: _buildScreen(context),
+      );
+
+  Widget _buildScreen(BuildContext context) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final workout = ref.watch(activeWorkoutProvider);
@@ -83,7 +106,7 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
             child: Text(
               workout == null
                   ? ''
-                  : widget.replace
+                  : _replaceIndex(workout) != null
                       ? l10n.addExerciseSwapTitle(workout.template.name)
                       : l10n.addExerciseTitle(workout.template.name),
               textAlign: TextAlign.center,
@@ -108,12 +131,12 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
       for (final e in workout.exercises)
         if (catalog.byName(e.name) != null) catalog.byName(e.name)!,
     ];
-    final index = widget.index.clamp(0, workout.exercises.length - 1);
+    final replaceAt = _replaceIndex(workout);
 
     if (!_groupChosen) {
       _groupChosen = true;
-      if (widget.replace && workout.exercises.isNotEmpty) {
-        _group = catalog.byName(workout.exercises[index].name)?.group;
+      if (replaceAt != null) {
+        _group = catalog.byName(workout.exercises[replaceAt].name)?.group;
       } else if (inWorkout.isNotEmpty) {
         final counts = <MuscleGroup, int>{};
         for (final e in inWorkout) {
@@ -124,10 +147,10 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
     }
 
     final names = {for (final e in inWorkout) e.id};
-    final sources = widget.replace
+    final sources = replaceAt != null
         ? [
-            if (catalog.byName(workout.exercises[index].name) != null)
-              catalog.byName(workout.exercises[index].name)!
+            if (catalog.byName(workout.exercises[replaceAt].name) != null)
+              catalog.byName(workout.exercises[replaceAt].name)!
           ]
         : inWorkout;
     final suggested = <ExerciseInfo>[];
@@ -151,7 +174,7 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
     void toggle(ExerciseInfo e) => setState(() {
           if (_selected.contains(e.id)) {
             _selected.remove(e.id);
-          } else if (widget.replace) {
+          } else if (replaceAt != null) {
             _selected
               ..clear()
               ..add(e.id);
@@ -262,7 +285,7 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
                   AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
               child: AppButton(
                 key: const ValueKey('confirm-add'),
-                label: widget.replace
+                label: replaceAt != null
                     ? l10n.addExerciseSwap
                     : l10n.addExerciseButton(n),
                 size: AppButtonSize.large,

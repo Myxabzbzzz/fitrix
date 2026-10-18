@@ -337,6 +337,57 @@ void main() {
       expect(find.byKey(const ValueKey('weekly-hint')), findsNothing);
     });
 
+    testWidgets('picker on an empty workout renders and adds', (tester) async {
+      final c = await _container(active: true);
+      final n = c.read(activeWorkoutProvider.notifier);
+      n.removeExercise(1);
+      n.removeExercise(0);
+      expect(c.read(activeWorkoutProvider)!.exercises, isEmpty);
+      await _pump(tester, c, AppRouter.addExerciseTo());
+      expect(tester.takeException(), isNull);
+      await tester.tap(_pick('dumbbell-row'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Add 1 exercise'));
+      await tester.pumpAndSettle();
+      expect(c.read(activeWorkoutProvider)!.exercises.map((e) => e.name),
+          ['Dumbbell row']);
+    });
+
+    testWidgets('replace with an out-of-range index does not throw',
+        (tester) async {
+      final c = await _container(active: true);
+      await _pump(tester, c, AppRouter.addExerciseTo(replace: true, index: 99));
+      expect(tester.takeException(), isNull);
+      await tester.tap(_pick('dumbbell-row'));
+      await tester.pumpAndSettle();
+      // No valid index: it behaves as add.
+      await tester.tap(find.text('Add 1 exercise'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(c.read(activeWorkoutProvider)!.exercises.length, 3);
+    });
+
+    testWidgets('system back from the picker re-expands the sheet',
+        (tester) async {
+      final c = await _container(active: true);
+      await _pump(tester, c, '/',
+          size: const Size(390, 844),
+          home: const Scaffold(body: ActiveWorkoutSheet()));
+      c.read(activeWorkoutExpandedProvider.notifier).state = true;
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Exercise'));
+      await tester.pumpAndSettle();
+      expect(c.read(activeWorkoutExpandedProvider), isFalse);
+      await tester
+          .state<NavigatorState>(find.byType(Navigator).last)
+          .maybePop();
+      await tester.pumpAndSettle();
+      expect(find.text('Add to Back and Triceps'), findsNothing);
+      expect(c.read(activeWorkoutExpandedProvider), isTrue);
+      expect(c.read(activeWorkoutProvider)!.exercises.length, 2);
+      await tester.pumpWidget(const SizedBox());
+    });
+
     testWidgets('live log "+ Exercise" opens the picker and returns to the log',
         (tester) async {
       final c = await _container(active: true);
