@@ -159,9 +159,22 @@ class InMemoryRemoteStore implements RemoteStore {
     (_docs[userId] ??= {})['$kind/$docId'] = RemoteDoc(
       kind: kind,
       docId: docId,
-      data: data,
+      data: _jsonbDoc(data),
       updatedAt: _now(),
     );
+  }
+
+  static Map<String, Object?>? _jsonbDoc(Map<String, Object?>? doc) =>
+      doc == null ? null : Map<String, Object?>.from(_jsonb(doc) as Map);
+
+  /// Deep copy with map keys in another order, like jsonb returns them.
+  static Object? _jsonb(Object? value) {
+    if (value is Map) {
+      final keys = value.keys.toList()..sort();
+      return {for (final k in keys.reversed) k: _jsonb(value[k])};
+    }
+    if (value is List) return [for (final v in value) _jsonb(v)];
+    return value;
   }
 
   @override
@@ -179,12 +192,12 @@ class InMemoryRemoteStore implements RemoteStore {
     _request();
     final table = _docs[userId] ??= {};
     final result = <String, DateTime>{};
+    final now = _now(); // one per batch, like Postgres now()
     for (final doc in docs) {
-      final now = _now();
       table[doc.key] = RemoteDoc(
         kind: doc.kind,
         docId: doc.docId,
-        data: doc.data,
+        data: _jsonbDoc(doc.data),
         updatedAt: now,
       );
       result[doc.key] = now;

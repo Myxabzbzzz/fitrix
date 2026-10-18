@@ -391,18 +391,36 @@ class SyncEngine {
   List<SyncedCollection> get _collections => local.collections;
 
   Future<void> _pullDocs() async {
-    final cursor = _load().docsCursor;
-    final rows = await remote.fetchDocs(userId, since: _since(cursor));
+    final kinds = [for (final c in _collections) c.kind];
+    if (kinds.isEmpty) return;
+    // One request: since the oldest cursor, or everything when some kind
+    // has none yet.
+    final cursors = _load().docsCursors;
+    DateTime? oldest;
+    var fullFetch = false;
+    for (final kind in kinds) {
+      final c = cursors[kind];
+      if (c == null) {
+        fullFetch = true;
+      } else if (oldest == null || c.isBefore(oldest)) {
+        oldest = c;
+      }
+    }
+    final rows = await remote.fetchDocs(
+      userId,
+      since: fullFetch ? null : _since(oldest),
+    );
     _checkDisposed();
 
     final state = _load();
+    final seen = rows.map((r) => r.updatedAt);
     for (final collection in _collections) {
       final kind = collection.kind;
+      final cursor = state.docsCursors[kind];
       final mine = [
         for (final r in rows)
           if (r.kind == kind) r
       ];
-      if (mine.isEmpty) continue;
       try {
         final tombstones = _forKind(state.docTombstones, kind).keys.toSet();
         final merge = mergeDocs(
@@ -410,27 +428,51 @@ class SyncEngine {
           agreed: _forKind(state.docs, kind),
           tombstones: tombstones,
           remote: mine,
+          fullPull: cursor == null,
         );
         if (merge.apply.isNotEmpty) collection.apply(merge.apply);
+        // What the store now holds is what was agreed (it may reorder,
+        // normalise or skip a doc).
+        final after = merge.apply.isEmpty ? null : collection.read();
+        final agreed = {...merge.agreed};
+        if (after != null) {
+          for (final id in merge.apply.keys) {
+            final stored = after[id];
+            if (stored == null) {
+              agreed.remove(id);
+            } else {
+              agreed[id] = docHash(stored);
+            }
+          }
+        }
         state.docs.removeWhere((k, _) => k.startsWith('$kind/'));
-        for (final e in merge.agreed.entries) {
+        for (final e in agreed.entries) {
           state.docs[_key(kind, e.key)] = e.value;
         }
+        // A full fetch saw everything up to its newest row.
+        final newest = _latest(cursor, mine.map((r) => r.updatedAt)) ??
+            (fullFetch
+                ? _latest(null, seen) ??
+                    DateTime.fromMillisecondsSinceEpoch(0, isUtc: true)
+                : null);
+        if (newest != null) state.docsCursors[kind] = newest;
       } catch (e) {
-        // A broken collection must not stop the rest; its docs stay as
-        // they were and are merged again on the next full pull.
+        // A broken collection must not stop the rest; its cursor stays so
+        // its rows are fetched again.
         debugPrint('Sync: could not merge $kind documents: $e');
       }
     }
-    // Rows of kinds this app doesn't know are skipped, but seen.
-    state.docsCursor = _latest(state.docsCursor, rows.map((r) => r.updatedAt));
+    // Rows of kinds without a collection are ignored and advance nothing.
     _save(state);
   }
 
-  /// Unsynced docs (changed ones and deletions), with the hash pushed for
-  /// each live doc.
-  ({List<RemoteDoc> docs, Map<String, String> hashes}) _pendingDocs(
-      SyncState state) {
+  /// Unsynced docs (changed ones, recreated ones and deletions), with the
+  /// hash pushed for each live doc and the tombstones they were built from.
+  ({
+    List<RemoteDoc> docs,
+    Map<String, String> hashes,
+    Map<String, int> tombstones,
+  }) _pendingDocs(SyncState state) {
     final epoch = DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
     final docs = <RemoteDoc>[];
     final hashes = <String, String>{};
@@ -440,7 +482,10 @@ class SyncEngine {
       for (final e in live.entries) {
         final key = _key(kind, e.key);
         final hash = docHash(e.value);
-        if (hash == state.docs[key]) continue;
+        // A tombstone on a live doc: deleted, then created again.
+        if (hash == state.docs[key] && !state.docTombstones.containsKey(key)) {
+          continue;
+        }
         hashes[key] = hash;
         docs.add(RemoteDoc(
             kind: kind, docId: e.key, data: e.value, updatedAt: epoch));
@@ -448,13 +493,20 @@ class SyncEngine {
       for (final key in state.docTombstones.keys) {
         if (!key.startsWith('$kind/')) continue;
         final id = key.substring(kind.length + 1);
-        // Recreated since it was deleted: the live doc wins.
         if (live.containsKey(id)) continue;
         docs.add(
             RemoteDoc(kind: kind, docId: id, data: null, updatedAt: epoch));
       }
     }
-    return (docs: docs, hashes: hashes);
+    final pushed = {for (final d in docs) d.key};
+    return (
+      docs: docs,
+      hashes: hashes,
+      tombstones: {
+        for (final e in state.docTombstones.entries)
+          if (pushed.contains(e.key)) e.key: e.value,
+      },
+    );
   }
 
   Future<void> _pushDocs() async {
@@ -467,14 +519,19 @@ class SyncEngine {
       for (final doc in pending.docs) {
         final key = doc.key;
         if (!stored.containsKey(key)) continue;
+        // A tombstone made during the push (a delete, or another one after
+        // a recreate) is not the one pushed: it stays.
+        final unchanged = state.docTombstones[key] == pending.tombstones[key];
         if (doc.isDeleted) {
-          state.docTombstones.remove(key);
-          state.docs.remove(key);
+          if (unchanged) {
+            state.docTombstones.remove(key);
+            state.docs.remove(key);
+          }
         } else {
           // The hash that was pushed, not the current one: a doc edited
           // during the push stays dirty.
           state.docs[key] = pending.hashes[key]!;
-          state.docTombstones.remove(key);
+          if (unchanged) state.docTombstones.remove(key);
         }
       }
       _save(state);

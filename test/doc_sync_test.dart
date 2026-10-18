@@ -47,6 +47,33 @@ class FakeCollection extends SyncedCollection {
   }
 }
 
+class ThrowingCollection extends FakeCollection {
+  ThrowingCollection(super.kind);
+  bool broken = true;
+
+  @override
+  void apply(Map<String, Map<String, Object?>?> pulled) {
+    if (broken) throw const FormatException('bad doc');
+    super.apply(pulled);
+  }
+}
+
+/// Drops the field `extra` when applying, like a store's fromJson.
+class NormalisingCollection extends FakeCollection {
+  NormalisingCollection(super.kind);
+
+  @override
+  void apply(Map<String, Map<String, Object?>?> pulled) => super.apply({
+        for (final e in pulled.entries)
+          e.key: e.value == null
+              ? null
+              : {
+                  for (final f in e.value!.entries)
+                    if (f.key != 'extra') f.key: f.value,
+                },
+      });
+}
+
 class TestLocal extends SyncLocal {
   TestLocal(super.ref, this._collections);
   final List<SyncedCollection> _collections;
@@ -249,7 +276,7 @@ void main() {
     expect(state.history, {'h'});
     expect(state.docs, isEmpty);
     expect(state.docTombstones, isEmpty);
-    expect(state.docsCursor, isNull);
+    expect(state.docsCursors, isEmpty);
   });
 
   test('mergeDocs: dirty docs keep local, clean ones take remote', () {
@@ -268,5 +295,127 @@ void main() {
     expect(result.apply, {'clean': doc('r')});
     expect(result.agreed['clean'], docHash(doc('r')));
     expect(result.agreed['dirty'], docHash(doc('x')));
+  });
+
+  group('fix round 1', () {
+    Map<String, DateTime> stamps() =>
+        {for (final d in remote.docsOf('u1')) d.key: d.updatedAt};
+
+    test('keys reordered by the server do not make a doc dirty', () async {
+      final r = await rig(remote, [food]);
+      food.docs['a'] = {
+        'v': 1,
+        'date': 'x',
+        'n': {'z': 1, 'b': 2},
+        'a': 70.0,
+      };
+      await r.engine.sync();
+      final first = stamps();
+      remote.putDoc('u1', 'food', 'b', {'v': 2, 'date': 'y', 'a': 1.5});
+      await r.engine.sync();
+      final second = stamps();
+      await r.engine.sync();
+      await r.engine.sync();
+      expect(food.docs.keys, containsAll(['a', 'b']));
+      expect(r.engine.pendingCount(), 0);
+      expect(stamps()['food/a'], first['food/a'], reason: 'a not re-pushed');
+      expect(stamps()['food/b'], second['food/b'], reason: 'b not echoed');
+    });
+
+    test('a store that normalises a pulled doc does not re-push it', () async {
+      final norm = NormalisingCollection('food');
+      final r = await rig(remote, [norm]);
+      remote.putDoc('u1', 'food', 'a', {'v': 1, 'extra': 'newer app'});
+      await r.engine.sync();
+      expect(norm.docs['a'], {'v': 1});
+      expect(r.engine.pendingCount(), 0);
+    });
+
+    test('a delete during that doc\'s push is pushed on the next sync',
+        () async {
+      final r = await rig(remote, [food]);
+      food.docs['a'] = doc('1');
+      remote.upsertDocsHold = Completer<void>();
+      final sync = r.engine.sync();
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      food.docs.remove('a');
+      r.local.recordDocDeleted('food', 'a');
+      remote.upsertDocsHold!.complete();
+      remote.upsertDocsHold = null;
+      await sync;
+      expect(r.state.docTombstones.keys, ['food/a']);
+      expect(r.engine.pendingCount(), 1);
+
+      await r.engine.sync();
+      expect(remote.docsOf('u1').single.isDeleted, isTrue);
+      expect(r.state.docTombstones, isEmpty);
+      expect(r.engine.pendingCount(), 0);
+    });
+
+    test('delete then recreate with identical content clears the tombstone',
+        () async {
+      final r = await rig(remote, [food]);
+      food.docs['a'] = doc('1');
+      await r.engine.sync();
+
+      r.local.recordDocDeleted('food', 'a');
+      expect(r.engine.pendingCount(), 1);
+      await r.engine.sync();
+      expect(r.state.docTombstones, isEmpty);
+      expect(r.engine.pendingCount(), 0);
+      expect(remote.docsOf('u1').single.data, doc('1'));
+
+      remote.putDoc('u1', 'food', 'a', doc('server'));
+      await r.engine.sync();
+      expect(food.docs['a'], doc('server'), reason: 'not stuck dirty');
+    });
+
+    test('kinds without a collection do not get a cursor', () async {
+      remote.putDoc('u1', 'hologram', 'x', doc('?'));
+      final r = await rig(remote, [food]);
+      await r.engine.sync();
+      expect(r.state.docsCursors.keys, ['food']);
+    });
+
+    test('a failing collection keeps its cursor and retries its rows',
+        () async {
+      final bad = ThrowingCollection('food');
+      remote.putDoc('u1', 'food', 'a', doc('1'));
+      remote.putDoc('u1', 'water', 'd', doc('2'));
+      final r = await rig(remote, [bad, water]);
+      await r.engine.sync();
+      expect(r.state.docsCursors.keys, ['water']);
+      expect(water.docs, {'d': doc('2')});
+
+      bad.broken = false;
+      await r.engine.sync();
+      expect(bad.docs, {'a': doc('1')});
+      expect(r.state.docsCursors.keys.toSet(), {'food', 'water'});
+    });
+
+    test('first sync: the server version wins over a never-agreed local doc',
+        () async {
+      remote.putDoc('u1', 'food', 'a', doc('cloud'));
+      SharedPreferences.setMockInitialValues({});
+      food.docs['a'] = doc('fresh device');
+      food.docs['b'] = doc('only here');
+      final r = await rig(remote, [food]);
+      expect(food.docs['a'], doc('cloud'));
+      expect(food.docs['b'], doc('only here'));
+      expect(remote.docsOf('u1').singleWhere((d) => d.docId == 'b').data,
+          doc('only here'),
+          reason: 'local-only docs are still uploaded');
+      expect(r.engine.pendingCount(), 0);
+    });
+
+    test('equal content on both sides is agreed, not pushed', () async {
+      remote.putDoc('u1', 'food', 'a', {'v': 1, 'k': 'x'});
+      final before = stamps();
+      food.docs['a'] = {'k': 'x', 'v': 1};
+      final r = await rig(remote, [food]);
+      expect(stamps(), before);
+      expect(r.state.docs.keys, ['food/a']);
+      expect(r.engine.pendingCount(), 0);
+    });
   });
 }

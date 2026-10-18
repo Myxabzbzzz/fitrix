@@ -22,21 +22,33 @@ bool isDocDirty(Map<String, Object?> doc, String? agreedHash) =>
 /// A doc is dirty if its hash differs from [agreed] or it has a tombstone.
 /// Remote changes apply only to non-dirty docs; a dirty doc keeps the local
 /// version, whose push then overwrites the server (last writer wins).
+///
+/// A local doc identical to the remote one is agreed, not dirty. On a
+/// [fullPull] (first sync, or sync state was lost) a local doc that was
+/// never agreed on loses to the remote version, so a fresh device can't
+/// overwrite cloud data.
 DocMergeResult mergeDocs({
   required Map<String, Map<String, Object?>> local,
   required Map<String, String> agreed,
   required Set<String> tombstones,
   required List<RemoteDoc> remote,
+  bool fullPull = false,
 }) {
   final apply = <String, Map<String, Object?>?>{};
   final result = {...agreed};
   for (final doc in remote) {
     final id = doc.docId;
     final mine = local[id];
-    final dirty = tombstones.contains(id) ||
-        (mine != null && isDocDirty(mine, agreed[id]));
-    if (dirty) continue;
     final data = doc.data;
+    final tombstone = tombstones.contains(id);
+    var dirty = tombstone || (mine != null && isDocDirty(mine, agreed[id]));
+    if (dirty && !tombstone && mine != null && data != null) {
+      // Same content on both sides, or never agreed on a full pull and the
+      // server has it: not a local change.
+      dirty =
+          docHash(mine) != docHash(data) && !(fullPull && agreed[id] == null);
+    }
+    if (dirty) continue;
     if (data == null) {
       if (mine != null) apply[id] = null;
       result.remove(id);
