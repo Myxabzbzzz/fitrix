@@ -14,7 +14,7 @@ const {
   buildSystemPrompt,
 } = require('./prompt');
 const { createActionFilter, parseAction, extractAction, SPORTS } = require('./actions');
-const { looksLikePlan, extractPlanAction } = require('./fallback');
+const { looksLikePlan, looksLikeFoodLog, extractPlanAction } = require('./fallback');
 const { validateImages } = require('./images');
 const { createPlainTextFilter, toPlainText } = require('./plainText');
 const { authConfigFromEnv, requireUser, rateLimitPerUser } = require('./auth');
@@ -383,6 +383,7 @@ function prepareTurn(body, userId, conversations) {
       model,
       tag,
       defaultSport: SPORTS.includes(topic) ? topic : undefined,
+      userText: user.content,
       finish: (reply) => logChat(tag, 'Felix', reply),
       abort: () => {},
     };
@@ -396,6 +397,7 @@ function prepareTurn(body, userId, conversations) {
     model,
     tag,
     defaultSport: SPORTS.includes(topic) ? topic : undefined,
+    userText: user.content,
     finish: (reply) => finishTurn(conversations, key, reply, tag),
     abort: () => abortTurn(conversations, key),
   };
@@ -495,14 +497,19 @@ function abortTurn(conversations, key) {
 // When the model wrote a plan but no (valid) block, ask once for the action
 // in structured form. Any failure just means no button.
 async function fallbackAction(turn, visibleText, signal) {
-  const kind = looksLikePlan(visibleText);
+  let kind = looksLikePlan(visibleText);
+  let source = visibleText;
+  if (!kind && looksLikeFoodLog(turn.userText)) {
+    kind = 'food_log';
+    source = turn.userText;
+  }
   if (!kind) return null;
   const action = await extractPlanAction({
     post: axios.post,
     url: OLLAMA_URL,
     model: OLLAMA_MODEL,
     kind,
-    text: visibleText,
+    text: source,
     defaultSport: turn.defaultSport,
     timeout: FALLBACK_TIMEOUT_MS,
     signal,

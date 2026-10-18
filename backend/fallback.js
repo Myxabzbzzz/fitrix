@@ -28,12 +28,88 @@ function looksLikePlan(text) {
   return null;
 }
 
+// ---- food-log intent (from the USER's message) ----
+// Conservative: a past-tense eating verb plus a quantity or a known food.
+// Questions, plan/recipe requests and workout talk never trigger.
+const EAT_VERB = new RegExp(
+  [
+    '\\b(?:i|i\'ve|ive)\\s+(?:just\\s+|also\\s+)?(?:had|ate|eaten|drank|drunk)\\b',
+    '\\b(?:had|ate)\\s+(?:for\\s+)?(?:breakfast|lunch|dinner|supper)\\b',
+    '(?:съел|съела|съели|поел|поела|скушал|скушала|выпил|выпила|позавтракал|позавтракала|пообедал|пообедала|поужинал|поужинала|перекусил|перекусила)',
+    '\\b(?:yedim|yeb\\s+oldim|ichdim|nonushta\\s+qildim|tushlik\\s+qildim|kechki\\s+ovqat\\s+qildim)',
+    '\\b(?:com[ií]|he\\s+comido|desayun[eé]|almorc[eé]|cen[eé]|merend[eé]|beb[ií]|tom[eé])(?![\\p{L}])',
+  ].join('|'),
+  'iu'
+);
+// \b is ASCII-only in JS, so word edges are spelled with Unicode lookarounds.
+const L = '(?<![\\p{L}])';
+const R = '(?![\\p{L}])';
+const QUESTION = new RegExp(
+  '\\?|' + L + '(?:what|how|should|can i|could i|is it|do i|which|сколько|что|как|можно ли|стоит ли|какой|какая|qancha|nima|qanday|necha|cu[aá]nt[oa]s?|qu[eé]|c[oó]mo|puedo|debo)' + R,
+  'iu'
+);
+const PLAN_OR_RECIPE = new RegExp(
+  L + '(?:plan|recipe|menu|diet|ration|ratsion|retsept|dieta|receta|men[uú]|составь|посоветуй|бы)' + R + '|план|рецепт|меню|рацион|диет',
+  'iu'
+);
+const NUMBER_WORD = new RegExp(
+  L + '(?:one|two|three|four|five|six|half|bir|ikki|uch|to[\'‘’]rt|besh|yarim|un|una|dos|tres|cuatro|cinco|medio|один|одна|одно|два|две|три|четыре|пять|полтора|половин\\S*|пару)' + R,
+  'iu'
+);
+const FOOD_WORD = new RegExp(
+  '(?<![\\p{L}])(?:egg|toast|bread|rice|chicken|beef|pasta|oat|banana|apple|milk|cheese|salad|soup|potato|fish|steak|yogurt|pizza|burger|sandwich|' +
+    'яйц|яичниц|хлеб|бутерброд|рис|кури|говяд|гречк|греч|овсянк|каш|творог|молок|сыр|салат|суп|картоф|рыб|банан|яблок|мяс|макарон|пельмен|' +
+    'tuxum|non|lepyoshka|guruch|tovuq|go[\'\u2018\u2019]sht|sut|qatiq|palov|osh|baliq|' +
+    'huevo|pan|arroz|pollo|carne|pasta|leche|queso|ensalada|sopa|pescado|manzana|pl[aá]tano)',
+  'iu'
+);
+const WORKOUT_TALK = new RegExp(
+  L + '(?:workout|training|sets?|reps?|run|ran|gym|km)' + R + '|тренировк|подход|повторен|пробежал|mashq|entren',
+  'iu'
+);
+
+/** True when the user's message reads like "I ate X" (so a food_log fits). */
+function looksLikeFoodLog(text) {
+  if (typeof text !== 'string' || !text.trim()) return false;
+  if (QUESTION.test(text) || PLAN_OR_RECIPE.test(text)) return false;
+  if (!EAT_VERB.test(text)) return false;
+  if (FOOD_WORD.test(text)) return true;
+  if (WORKOUT_TALK.test(text)) return false;
+  return /\d/.test(text) || NUMBER_WORD.test(text);
+}
+
 const str = { type: 'string' };
 const SCHEMAS = {
+  food_log: {
+    type: 'object',
+    properties: {
+      slot: { type: ['string', 'null'], enum: ['breakfast', 'lunch', 'dinner', 'snack', null] },
+      items: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 15,
+        items: {
+          type: 'object',
+          properties: {
+            name: str,
+            grams: { type: 'number' },
+            kcal: { type: 'number' },
+            protein: { type: 'number' },
+            carbs: { type: 'number' },
+            fat: { type: 'number' },
+          },
+          required: ['name', 'grams', 'kcal', 'protein', 'carbs', 'fat'],
+        },
+      },
+    },
+    required: ['slot', 'items'],
+  },
   workout_plan: {
     type: 'object',
     properties: {
       sport: { type: 'string', enum: SPORTS },
+      when: { type: ['string', 'null'], enum: ['today', 'week', null] },
+      days: { type: 'array', items: { type: 'string', enum: ['today', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] } },
       templates: {
         type: 'array',
         minItems: 1,
@@ -101,11 +177,13 @@ async function extractPlanAction({ post, url, model, kind, text, defaultSport, t
           {
             role: 'system',
             content:
-              'Convert this plan to JSON; copy names exactly. Keep the language of the text. ' +
-              (kind === 'workout_plan'
+              (kind === 'food_log' ? 'Convert the user message to JSON. ' : 'Convert this plan to JSON; copy names exactly. Keep the language of the text. ') +
+              (kind === 'food_log'
+                ? 'The user says what they ate. List each food as one item: name is a short generic food name in ENGLISH; grams is the eaten amount (egg = 50 g, slice of bread = 30 g, a quarter of non/lepyoshka = 60 g); kcal, protein, carbs, fat are totals for that amount. slot is breakfast, lunch, dinner or snack only if the user said it, otherwise null.'
+                : kind === 'workout_plan'
                 ? `One template per training session; sport is one of ${SPORTS.join(', ')}` +
                   (defaultSport ? ` (use ${defaultSport})` : '') +
-                  '; use 1 rep for timed holds.'
+                  '; use 1 rep for timed holds. Set when to "today" only if the plan is for today (then exactly one template), "week" if for the week, else null.'
                 : 'One entry per meal with its kcal.'),
           },
           { role: 'user', content: text },
@@ -120,4 +198,4 @@ async function extractPlanAction({ post, url, model, kind, text, defaultSport, t
   }
 }
 
-module.exports = { looksLikePlan, extractPlanAction };
+module.exports = { looksLikePlan, looksLikeFoodLog, extractPlanAction };

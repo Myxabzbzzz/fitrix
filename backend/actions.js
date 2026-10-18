@@ -7,6 +7,8 @@ const OPEN_TAG = '<fitrix-action';
 const CLOSE_TAG = '</fitrix-action>';
 
 const SPORTS = ['gym', 'fitness', 'cycling', 'running', 'football', 'winterSports'];
+const SLOTS = ['breakfast', 'lunch', 'dinner', 'snack'];
+const DAYS = ['today', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 const LB_TO_KG = 0.4536;
 const FENCE_TAIL = /[ \t]*`{1,3}[a-zA-Z]*[ \t]*\n?[ \t]*$/;
 
@@ -151,6 +153,8 @@ function validateAction(raw, { defaultSport } = {}) {
       return validateWorkoutPlan(raw, defaultSport);
     case 'meal_plan':
       return validateMealPlan(raw);
+    case 'food_log':
+      return validateFoodLog(raw);
     default:
       return null;
   }
@@ -220,7 +224,49 @@ function validateWorkoutPlan(raw, defaultSport) {
     }
     out.push({ name: t.name.trim(), exercises });
   }
-  return { type: 'workout_plan', sport, templates: out };
+  const plan = { type: 'workout_plan', sport, templates: out };
+  // Optional scheduling hints; absent/null keeps the old behaviour.
+  if (raw.when !== undefined && raw.when !== null) {
+    if (raw.when !== 'today' && raw.when !== 'week') return null;
+    if (raw.when === 'today' && out.length !== 1) return null;
+  }
+  if (raw.when !== undefined) plan.when = raw.when;
+  if (raw.days !== undefined && raw.days !== null) {
+    if (!Array.isArray(raw.days) || raw.days.length !== out.length) return null;
+    if (!raw.days.every((d) => DAYS.includes(d))) return null;
+    plan.days = [...raw.days];
+  }
+  return plan;
+}
+
+function validateFoodLog(raw) {
+  let slot = raw.slot === undefined ? null : raw.slot;
+  if (slot !== null && !SLOTS.includes(slot)) return null;
+  const { items } = raw;
+  if (!Array.isArray(items) || items.length < 1 || items.length > 15) return null;
+  const out = [];
+  for (const it of items) {
+    if (!it || typeof it !== 'object' || !isText(it.name, 100)) return null;
+    const grams = coerceNumber(it.grams);
+    const kcal = coerceNumber(it.kcal);
+    const protein = coerceNumber(it.protein);
+    const carbs = coerceNumber(it.carbs);
+    const fat = coerceNumber(it.fat);
+    if (!isNum(grams) || grams < 1 || grams > 3000) return null;
+    if (!isNum(kcal) || kcal < 0 || kcal > 3000) return null;
+    for (const m of [protein, carbs, fat]) {
+      if (!isNum(m) || m < 0 || m > 500) return null;
+    }
+    out.push({
+      name: it.name.trim(),
+      grams: round1(grams),
+      kcal: Math.round(kcal),
+      protein: round1(protein),
+      carbs: round1(carbs),
+      fat: round1(fat),
+    });
+  }
+  return { type: 'food_log', slot, items: out };
 }
 
 function validateMealPlan(raw) {

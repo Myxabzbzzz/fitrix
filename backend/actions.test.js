@@ -182,6 +182,7 @@ test('validateImages: rejects bad input with 400 and oversize with 413', () => {
 const ollamaRequests = [];
 const fallbackRequests = [];
 let fallbackMode = 'ok';
+let fallbackFoodMode = false;
 const PLAN_TEXT =
   'Plan:\nDay 1 - Legs\n- Squat 4x10\n- Lunge 3x12\nDay 2 - Upper\n- Bench 4x8\n- Row 3x10\nTap the button below to add it.';
 const ollama = http.createServer((req, res) => {
@@ -194,6 +195,12 @@ const ollama = http.createServer((req, res) => {
       fallbackRequests.push(data);
       if (fallbackMode === 'hang') return;
       res.writeHead(200, { 'Content-Type': 'application/json' });
+      if (fallbackFoodMode) {
+        return res.end(JSON.stringify({ message: { content: JSON.stringify({
+          slot: null,
+          items: [{ name: 'egg', grams: 100, kcal: 155, protein: 13, carbs: 1, fat: 11 }],
+        }) } }));
+      }
       return res.end(JSON.stringify({ message: { content: JSON.stringify({
         sport: 'gym',
         templates: [{ name: 'Day A', exercises: [{ name: 'Squat', sets: '4', reps: '8-12' }] }],
@@ -409,4 +416,110 @@ test('prompt: placeholders, language copy rule and removed-blocks note', () => {
   assert.ok(p.includes('Copy each name/items text exactly'));
   assert.ok(p.includes('without their blocks'));
   assert.ok(p.includes('<session 1 name>'));
+});
+
+// ---- food_log + workout when/days ----
+
+const foodItem = { name: 'chicken breast', grams: 200, kcal: 330, protein: 62, carbs: 0, fat: 7.2 };
+const food = (over = {}) => ({ type: 'food_log', slot: 'lunch', items: [foodItem], ...over });
+
+test('food_log: accepts the contract example, slot null, and trims names', () => {
+  assert.deepEqual(validateAction(food()), food());
+  assert.equal(validateAction(food({ slot: null })).slot, null);
+  assert.equal(validateAction(food({ slot: undefined })).slot, null);
+  assert.equal(validateAction(food({ items: [{ ...foodItem, name: ' egg ' }] })).items[0].name, 'egg');
+  for (const slot of ['breakfast', 'dinner', 'snack']) assert.equal(validateAction(food({ slot })).slot, slot);
+});
+
+test('food_log: rejects out-of-range numbers, bad slot, bad name, bad item count', () => {
+  const bad = (o) => assert.equal(validateAction(food({ items: [{ ...foodItem, ...o }] })), null, JSON.stringify(o));
+  bad({ grams: 0 });
+  bad({ grams: 5000 });
+  bad({ kcal: 9000 });
+  bad({ kcal: -1 });
+  bad({ protein: 501 });
+  bad({ carbs: -1 });
+  bad({ fat: 'x' });
+  bad({ name: 5 });
+  bad({ name: '' });
+  assert.equal(validateAction(food({ items: [] })), null);
+  assert.equal(validateAction(food({ items: Array(16).fill(foodItem) })), null);
+  assert.ok(validateAction(food({ items: Array(15).fill(foodItem) })));
+  assert.equal(validateAction(food({ slot: 'brunch' })), null);
+  assert.equal(validateAction(food({ items: 'egg' })), null);
+});
+
+const tpl = (n = 'A') => ({ name: n, exercises: [{ name: 'Squat', sets: 3, reps: 5 }] });
+const wp = (o) => ({ type: 'workout_plan', sport: 'gym', templates: [tpl()], ...o });
+
+test('workout_plan: when/days are optional and validated', () => {
+  assert.deepEqual(validateAction(wp()), { type: 'workout_plan', sport: 'gym', templates: [tpl()] });
+  assert.deepEqual(validateAction(wp({ when: null })).when, null);
+  const ok = validateAction(wp({ when: 'today', days: ['today'] }));
+  assert.equal(ok.when, 'today');
+  assert.deepEqual(ok.days, ['today']);
+  const week = validateAction(wp({ when: 'week', templates: [tpl('A'), tpl('B')], days: ['mon', 'thu'] }));
+  assert.deepEqual(week.days, ['mon', 'thu']);
+  assert.equal(validateAction(wp({ when: 'today', templates: [tpl('A'), tpl('B')] })), null);
+  assert.equal(validateAction(wp({ when: 'month' })), null);
+  assert.equal(validateAction(wp({ templates: [tpl('A'), tpl('B')], days: ['mon'] })), null);
+  assert.equal(validateAction(wp({ days: ['funday'] })), null);
+  assert.equal(validateAction(wp({ days: 'mon' })), null);
+});
+
+test('prompt documents Case 4 food_log (ru + en) and when/days', () => {
+  const p = buildSystemPrompt('app', null, 'en');
+  assert.match(p, /Case 4/);
+  assert.match(p, /"type":"food_log"/);
+  assert.match(p, /я съел/i);
+  assert.match(p, /I (had|ate)/);
+  assert.match(p, /50 g/);
+  assert.match(p, /"when":"today"/);
+  assert.match(p, /на сегодня/);
+  assert.match(p, /bugun uchun/);
+  assert.match(p, /para hoy/);
+});
+
+test('looksLikeFoodLog: past-tense eating in en/ru/uz/es', () => {
+  const { looksLikeFoodLog } = require('./fallback');
+  for (const t of [
+    'я съел 200 г курицы и 150 г риса',
+    'ikki tuxum yedim',
+    'comí 100 g de arroz',
+    'I had 2 eggs and toast',
+    'на завтрак съела два яйца и бутерброд',
+    'I ate a banana',
+    'Hoy desayuné 2 huevos',
+    'tushlikda 200 g guruch yedim',
+    'выпил 300 мл молока',
+  ]) assert.equal(looksLikeFoodLog(t), true, t);
+  for (const t of [
+    'what should I eat?',
+    'сколько белка в курице?',
+    'составь план питания',
+    'give me a recipe with 2 eggs',
+    'I had a great workout',
+    'I did 3 sets of squats',
+    'я съел бы что-нибудь, посоветуй',
+    'can I eat 200 g of rice after training?',
+    'qancha oqsil bor tuxumda?',
+    '¿qué debo comer?',
+    'make a meal plan for the week',
+    '',
+    null,
+  ]) assert.equal(looksLikeFoodLog(t), false, String(t));
+});
+
+test('food_log fallback: user message triggers the schema call', async () => {
+  fallbackRequests.length = 0;
+  fallbackFoodMode = true;
+  const events = await ndjson(await post('/chat/stream', { message: 'I had 2 eggs and toast', conversationId: 'fl1', history: [] }));
+  fallbackFoodMode = false;
+  assert.equal(fallbackRequests.length, 1);
+  assert.ok(fallbackRequests[0].format.properties.items);
+  assert.equal(fallbackRequests[0].messages.at(-1).content, 'I had 2 eggs and toast');
+  const a = events.find((e) => e.action).action;
+  assert.equal(a.type, 'food_log');
+  assert.equal(a.slot, null);
+  assert.equal(a.items[0].name, 'egg');
 });
