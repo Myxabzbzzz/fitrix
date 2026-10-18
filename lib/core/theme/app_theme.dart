@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
+import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 
 class AppTheme {
@@ -8,28 +8,28 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: AppPalette.light.background,
       fontFamily: AppText.body,
-      colorScheme: const ColorScheme.light(
-        primary: AppColors.primary,
-        secondary: AppColors.secondary,
-        surface: AppColors.background,
-        error: AppColors.error,
+      colorScheme: ColorScheme.light(
+        primary: AppPalette.light.textPrimary,
+        secondary: AppPalette.light.accent,
+        surface: AppPalette.light.background,
+        error: AppPalette.light.error,
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.background,
+      appBarTheme: AppBarTheme(
+        backgroundColor: AppPalette.light.background,
         elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: AppPalette.light.textPrimary),
         titleTextStyle: TextStyle(
-          color: AppColors.textPrimary,
+          color: AppPalette.light.textPrimary,
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.buttonPrimary,
-          foregroundColor: AppColors.textOnDark,
+          backgroundColor: AppPalette.light.textPrimary,
+          foregroundColor: AppPalette.light.onBubbleUser,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           shape: RoundedRectangleBorder(
@@ -43,7 +43,7 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.inputBackground,
+        fillColor: AppPalette.light.inputFill,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -54,40 +54,40 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.secondary, width: 1),
+          borderSide: BorderSide(color: AppPalette.light.accent, width: 1),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        hintStyle: const TextStyle(
-          color: AppColors.textHint,
+        hintStyle: TextStyle(
+          color: AppPalette.light.textHint,
           fontSize: 15,
           fontWeight: FontWeight.w400,
         ),
       ),
       textTheme: TextTheme(
-        displayLarge: AppText.headingXL.copyWith(color: AppColors.textPrimary),
-        displayMedium: const TextStyle(
+        displayLarge: AppText.headingXL.copyWith(color: AppPalette.light.textPrimary),
+        displayMedium: TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: AppPalette.light.textPrimary,
         ),
-        displaySmall: const TextStyle(
+        displaySmall: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: AppPalette.light.textPrimary,
         ),
-        headlineMedium: AppText.headingM.copyWith(color: AppColors.textPrimary),
-        titleLarge: const TextStyle(
+        headlineMedium: AppText.headingM.copyWith(color: AppPalette.light.textPrimary),
+        titleLarge: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: AppPalette.light.textPrimary,
         ),
-        titleMedium: AppText.headingS.copyWith(color: AppColors.textPrimary),
+        titleMedium: AppText.headingS.copyWith(color: AppPalette.light.textPrimary),
         bodyLarge: AppText.bodyRegular
-            .copyWith(fontSize: 16, color: AppColors.textPrimary),
-        bodyMedium: AppText.bodyRegular.copyWith(color: AppColors.textPrimary),
-        bodySmall: AppText.caption.copyWith(color: AppColors.textSecondary),
-        labelSmall: AppText.micro.copyWith(color: AppColors.textSecondary),
+            .copyWith(fontSize: 16, color: AppPalette.light.textPrimary),
+        bodyMedium: AppText.bodyRegular.copyWith(color: AppPalette.light.textPrimary),
+        bodySmall: AppText.caption.copyWith(color: AppPalette.light.textMuted),
+        labelSmall: AppText.micro.copyWith(color: AppPalette.light.textMuted),
       ),
     );
   }
@@ -95,29 +95,29 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
-      scaffoldBackgroundColor: AppColors.darkBackground,
+      scaffoldBackgroundColor: AppPalette.dark.background,
       fontFamily: AppText.body,
       brightness: Brightness.dark,
-      colorScheme: const ColorScheme.dark(
-        primary: AppColors.darkPrimary,
-        secondary: AppColors.darkSecondary,
-        surface: AppColors.darkBackground,
-        error: AppColors.error,
+      colorScheme: ColorScheme.dark(
+        primary: AppPalette.dark.textPrimary,
+        secondary: AppPalette.dark.accent,
+        surface: AppPalette.dark.background,
+        error: AppPalette.dark.error,
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.darkBackground,
+      appBarTheme: AppBarTheme(
+        backgroundColor: AppPalette.dark.background,
         elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.darkTextPrimary),
+        iconTheme: IconThemeData(color: AppPalette.dark.textPrimary),
         titleTextStyle: TextStyle(
-          color: AppColors.darkTextPrimary,
+          color: AppPalette.dark.textPrimary,
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.darkButtonPrimary,
-          foregroundColor: AppColors.darkTextOnDark,
+          backgroundColor: AppPalette.dark.textPrimary,
+          foregroundColor: AppPalette.dark.onBubbleUser,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           shape: RoundedRectangleBorder(
@@ -131,7 +131,7 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.darkInputBackground,
+        fillColor: AppPalette.dark.inputFill,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -143,44 +143,44 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide:
-              const BorderSide(color: AppColors.darkSecondary, width: 1),
+              BorderSide(color: AppPalette.dark.accent, width: 1),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        hintStyle: const TextStyle(
-          color: AppColors.darkTextHint,
+        hintStyle: TextStyle(
+          color: AppPalette.dark.textHint,
           fontSize: 15,
           fontWeight: FontWeight.w400,
         ),
       ),
       textTheme: TextTheme(
         displayLarge:
-            AppText.headingXL.copyWith(color: AppColors.darkTextPrimary),
-        displayMedium: const TextStyle(
+            AppText.headingXL.copyWith(color: AppPalette.dark.textPrimary),
+        displayMedium: TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.w600,
-          color: AppColors.darkTextPrimary,
+          color: AppPalette.dark.textPrimary,
         ),
-        displaySmall: const TextStyle(
+        displaySmall: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w600,
-          color: AppColors.darkTextPrimary,
+          color: AppPalette.dark.textPrimary,
         ),
         headlineMedium:
-            AppText.headingM.copyWith(color: AppColors.darkTextPrimary),
-        titleLarge: const TextStyle(
+            AppText.headingM.copyWith(color: AppPalette.dark.textPrimary),
+        titleLarge: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: AppColors.darkTextPrimary,
+          color: AppPalette.dark.textPrimary,
         ),
         titleMedium:
-            AppText.headingS.copyWith(color: AppColors.darkTextPrimary),
+            AppText.headingS.copyWith(color: AppPalette.dark.textPrimary),
         bodyLarge: AppText.bodyRegular
-            .copyWith(fontSize: 16, color: AppColors.darkTextPrimary),
+            .copyWith(fontSize: 16, color: AppPalette.dark.textPrimary),
         bodyMedium:
-            AppText.bodyRegular.copyWith(color: AppColors.darkTextPrimary),
-        bodySmall: AppText.caption.copyWith(color: AppColors.darkTextSecondary),
-        labelSmall: AppText.micro.copyWith(color: AppColors.darkTextSecondary),
+            AppText.bodyRegular.copyWith(color: AppPalette.dark.textPrimary),
+        bodySmall: AppText.caption.copyWith(color: AppPalette.dark.textMuted),
+        labelSmall: AppText.micro.copyWith(color: AppPalette.dark.textMuted),
       ),
     );
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
 
 /// Design tokens for the post-onboarding screens (Home, Workouts, Progress,
 /// Nutrition, Felix chats), taken from the "FITRIX App UI" Figma file.
@@ -66,6 +65,16 @@ class AppPalette {
   /// Good / on target.
   final Color success;
 
+  /// Opaque secondary text and form errors (ThemeData text styles, sign-in).
+  final Color textMuted;
+  final Color textHint;
+
+  /// Text field fill
+  final Color inputFill;
+
+  /// Form validation errors (sign-in message, code boxes)
+  final Color error;
+
   const AppPalette._({
     required this.background,
     required this.textPrimary,
@@ -91,13 +100,17 @@ class AppPalette {
     required this.danger,
     required this.warning,
     required this.success,
+    required this.textMuted,
+    required this.textHint,
+    required this.inputFill,
+    required this.error,
   });
 
   static const light = AppPalette._(
     background: Color(0xFFFFFFFF),
     textPrimary: Color(0xFF000000),
     textSecondary: Color(0x6E000000),
-    accent: AppColors.lightSecondary,
+    accent: Color(0xFF009ED8),
     onAccent: Color(0xFFFFFFFF),
     tile: Color(0xFFEEEEEE),
     chartCard: Color(0xFFEDEDED),
@@ -118,13 +131,17 @@ class AppPalette {
     danger: Color(0xFFD93A3F),
     warning: Color(0xFFB87A00),
     success: Color(0xFF1E8E3E),
+    textMuted: Color(0xFF666666),
+    textHint: Color(0xFF999999),
+    inputFill: Color(0xFFF5F5F5),
+    error: Color(0xFFFF453A),
   );
 
   static const dark = AppPalette._(
     background: Color(0xFF000000),
     textPrimary: Color(0xFFFFFFFF),
     textSecondary: Color(0x8CFFFFFF),
-    accent: AppColors.darkSecondary,
+    accent: Color(0xFF009ED8),
     onAccent: Color(0xFFFFFFFF),
     tile: Color(0xFF1C1C1E),
     chartCard: Color(0xFF1C1C1E),
@@ -145,6 +162,10 @@ class AppPalette {
     danger: Color(0xFFFF6B6F),
     warning: Color(0xFFFFB84D),
     success: Color(0xFF5FD38D),
+    textMuted: Color(0xFFB0B0B0),
+    textHint: Color(0xFF6C6C6C),
+    inputFill: Color(0xFF1C1C1E),
+    error: Color(0xFFFF453A),
   );
 
   static AppPalette of(BuildContext context) =>

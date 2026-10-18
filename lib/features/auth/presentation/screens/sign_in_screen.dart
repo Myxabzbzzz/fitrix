@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
@@ -371,7 +370,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   _errorMessage(AppLocalizations.of(context), error),
                   key: const Key('sign-in-error'),
                   textAlign: TextAlign.center,
-                  style: AppText.bodyRegular.copyWith(color: AppColors.error),
+                  style: AppText.bodyRegular.copyWith(color: AppPalette.of(context).error),
                 ),
               ),
       );

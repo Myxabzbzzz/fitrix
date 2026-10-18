@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fitrix/core/theme/app_colors.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 
 /// Keeps only digits and at most [length] of them. A pasted code wins over
@@ -122,7 +121,7 @@ class CodeInput extends StatelessWidget {
   Widget _box(AppPalette palette,
       {required String digit, required bool active}) {
     final borderColor = hasError
-        ? AppColors.error
+        ? palette.error
         : active
             ? palette.accent
             : palette.border;
