@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -64,6 +65,7 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
 
   void _delete() {
     ref.read(workoutTemplatesProvider.notifier).remove(widget.template.id);
+    ref.read(felixTemplateIdsProvider.notifier).remove([widget.template.id]);
     Navigator.of(context).pop();
   }
 

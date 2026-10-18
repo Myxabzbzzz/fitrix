@@ -6,6 +6,8 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/feature_tile.dart';
+import 'package:fitrix/core/widgets/felix_plan_badge.dart';
+import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
@@ -26,6 +28,11 @@ class MyWorkoutsScreen extends ConsumerWidget {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final templates = ref.watch(workoutTemplatesProvider);
+    final felixIds = ref.watch(felixTemplateIdsProvider);
+    final felixPlans = [
+      for (final t in templates)
+        if (felixIds.contains(t.id)) t,
+    ];
     final history = ref.watch(workoutHistoryProvider);
     final catalog = ref.watch(exerciseCatalogProvider).valueOrNull;
     final weekAgo = DateTime.now().subtract(const Duration(days: 7));
@@ -79,6 +86,34 @@ class MyWorkoutsScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
+                  if (felixPlans.isNotEmpty) ...[
+                    Column(
+                      key: const ValueKey('felix-plans-section'),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: AppSpacing.xxs, bottom: AppSpacing.xs),
+                          child: Text(l10n.felixPlansSection,
+                              style: AppText.headingS
+                                  .copyWith(color: palette.textPrimary)),
+                        ),
+                        for (final t in felixPlans)
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: AppSpacing.xs),
+                            child: Builder(
+                              builder: (rowContext) => _FelixPlanRow(
+                                template: t,
+                                onTap: () => openWithReveal(rowContext,
+                                    AppRouter.sportWorkouts(t.sport)),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                  ],
                   for (final sport in _sports) ...[
                     SizedBox(
                       height: 120,
@@ -210,6 +245,53 @@ class _EntryCard extends StatelessWidget {
                       Text(subtitle!,
                           style: AppText.caption
                               .copyWith(color: palette.textSecondary)),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: palette.textSecondary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A Felix-made plan: its name, sport and the "Felix plan" chip.
+class _FelixPlanRow extends StatelessWidget {
+  final WorkoutTemplate template;
+  final VoidCallback onTap;
+  const _FelixPlanRow({required this.template, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          decoration:
+              BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const FelixPlanBadge(),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(template.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.headingS
+                            .copyWith(color: palette.textPrimary)),
+                    Text(template.sport.localizedLabel(l10n),
+                        style: AppText.caption
+                            .copyWith(color: palette.textSecondary)),
                   ],
                 ),
               ),

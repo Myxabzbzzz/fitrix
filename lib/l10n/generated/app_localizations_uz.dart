@@ -3668,4 +3668,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get felixPlanAddToToday => 'Bugungi rejaga qo‘shish';
+
+  @override
+  String get felixPlansSection => 'Felixdan';
 }

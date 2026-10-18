@@ -3726,4 +3726,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get felixPlanAddToToday => 'Add to today’s plan';
+
+  @override
+  String get felixPlansSection => 'From Felix';
 }

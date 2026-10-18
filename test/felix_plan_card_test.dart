@@ -16,7 +16,9 @@ import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.d
 import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/features/workouts/presentation/screens/my_workouts_screen.dart';
 import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_screen.dart';
+import 'package:fitrix/features/workouts/presentation/widgets/edit_workout_sheet.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 WorkoutTemplate _t(String id, {Sport sport = Sport.gym}) => WorkoutTemplate(
@@ -99,6 +101,23 @@ void main() {
       expect({for (final s in out) s.day}, hasLength(3));
     });
 
+    test('an old or far football session blocks nothing; this week\'s does',
+        () {
+      List<DateTime> days(PlannedSession fb) => scheduleFelixPlan(
+          created: created,
+          when: 'week',
+          days: const [],
+          today: mon,
+          existing: [fb]).map((s) => s.day).toList();
+      final old =
+          days(_s('fb', DateTime(2026, 9, 12), Sport.football, Intensity.hard));
+      // Same weekday (Saturday) 4 weeks ago: Fri and Sun stay usable.
+      expect(old, [mon, DateTime(2026, 10, 15), DateTime(2026, 10, 18)]);
+      final now = days(
+          _s('fb', DateTime(2026, 10, 17), Sport.football, Intensity.hard));
+      expect(now.any((d) => d.weekday >= 5), isFalse);
+    });
+
     test('null when: no sessions', () {
       expect(
           scheduleFelixPlan(
@@ -159,6 +178,12 @@ void main() {
             builder: (_, __) {
               routed.add(AppRouter.workouts);
               return const Scaffold(body: Text('workouts-page'));
+            }),
+        GoRoute(
+            path: AppRouter.sportWorkouts(Sport.gym),
+            builder: (_, __) {
+              routed.add(AppRouter.sportWorkouts(Sport.gym));
+              return const Scaffold(body: Text('sport-page'));
             }),
         GoRoute(
             path: AppRouter.weekPlan,
@@ -265,7 +290,87 @@ void main() {
       expect(container.read(weekPlanProvider), isEmpty);
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
-      expect(routed, [AppRouter.workouts]);
+      expect(routed, [AppRouter.sportWorkouts(Sport.gym)]);
+    });
+
+    testWidgets('My workouts lists Felix plans; Open goes to the sport screen',
+        (tester) async {
+      await pumpCard(tester, _plan({}, n: 1));
+      await tester.tap(find.text('Add to My workouts'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      expect(routed, [AppRouter.sportWorkouts(Sport.gym)]);
+
+      await tester.pumpWidget(UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: MyWorkoutsScreen(),
+        ),
+      ));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('felix-plans-section')), findsOneWidget);
+      expect(find.text('Day 1'), findsOneWidget);
+    });
+
+    testWidgets('My workouts hides the Felix section when there are none',
+        (tester) async {
+      await pumpCard(tester, _plan({}, n: 1));
+      await tester.pumpWidget(UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: MyWorkoutsScreen(),
+        ),
+      ));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('felix-plans-section')), findsNothing);
+    });
+
+    testWidgets('undo without a batch record changes nothing and says so',
+        (tester) async {
+      await pumpCard(tester, _plan({}), applied: true);
+      final before = container.read(workoutTemplatesProvider).length;
+      await tester.tap(find.text('Undo'));
+      await tester.pumpAndSettle();
+      expect(container.read(workoutTemplatesProvider).length, before);
+      expect(find.text('Add to My workouts'), findsNothing);
+      expect(
+          find.text('Couldn’t apply this. Please try again.'), findsOneWidget);
+    });
+
+    testWidgets('deleting a Felix plan in the edit sheet drops its id',
+        (tester) async {
+      await pumpCard(tester, _plan({}, n: 1));
+      await tester.tap(find.text('Add to My workouts'));
+      await tester.pumpAndSettle();
+      final t = container.read(workoutTemplatesProvider).firstWhere(
+          (t) => container.read(felixTemplateIdsProvider).contains(t.id));
+      await tester.pumpWidget(UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          theme: AppTheme.lightTheme,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (_) => EditWorkoutSheet(template: t)),
+              child: const Text('open-sheet'),
+            ),
+          ),
+        ),
+      ));
+      await tester.tap(find.text('open-sheet'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.delete_outline));
+      await tester.pumpAndSettle();
+      expect(container.read(felixTemplateIdsProvider), isEmpty);
     });
 
     testWidgets('undo removes templates, sessions and ids', (tester) async {

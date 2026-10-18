@@ -3737,4 +3737,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get felixPlanAddToToday => 'Añadir al plan de hoy';
+
+  @override
+  String get felixPlansSection => 'De Felix';
 }

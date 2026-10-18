@@ -6038,6 +6038,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add to today’s plan'**
   String get felixPlanAddToToday;
+
+  /// No description provided for @felixPlansSection.
+  ///
+  /// In en, this message translates to:
+  /// **'From Felix'**
+  String get felixPlansSection;
 }
 
 class _AppLocalizationsDelegate

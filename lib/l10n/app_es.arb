@@ -988,5 +988,6 @@
   "felixPlanBadge": "Plan de Felix",
   "felixPlanTitleCount": "{count, plural, one{{count} entrenamiento} other{{count} entrenamientos}}",
   "felixPlanAddToWorkouts": "Añadir a Mis entrenamientos",
-  "felixPlanAddToToday": "Añadir al plan de hoy"
+  "felixPlanAddToToday": "Añadir al plan de hoy",
+  "felixPlansSection": "De Felix"
 }

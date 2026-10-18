@@ -3797,4 +3797,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get felixPlanAddToToday => 'Добавить в план на сегодня';
+
+  @override
+  String get felixPlansSection => 'От Феликса';
 }

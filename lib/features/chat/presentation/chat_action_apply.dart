@@ -183,6 +183,9 @@ Future<void> undoChatAction(
       final at = result['at'];
       if (at == null) return;
       final ids = ref.read(felixTemplateIdsProvider.notifier).batch(at.toInt());
+      // No record of what this card made: leave the card as it is (the
+      // caller reports the error) rather than offering to add it again.
+      if (ids.isEmpty) throw StateError('no Felix plan batch to undo');
       for (final id in ids) {
         ref.read(workoutTemplatesProvider.notifier).remove(id);
       }

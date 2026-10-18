@@ -988,5 +988,6 @@
   "felixPlanBadge": "Felix rejasi",
   "felixPlanTitleCount": "{count, plural, other{{count} ta mashg‘ulot}}",
   "felixPlanAddToWorkouts": "Mening mashg‘ulotlarimga qo‘shish",
-  "felixPlanAddToToday": "Bugungi rejaga qo‘shish"
+  "felixPlanAddToToday": "Bugungi rejaga qo‘shish",
+  "felixPlansSection": "Felixdan"
 }

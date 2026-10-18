@@ -140,11 +140,11 @@ class _ChatActionCardState extends ConsumerState<ChatActionCard> {
           busy: _busy,
           onApply: () => _apply(action),
           onUndo: () => _undo(action),
-          // Planned sessions: the week plan; otherwise My workouts.
+          // Planned sessions: the week plan; otherwise the sport's list.
           onOpen: () => GoRouter.maybeOf(context)?.go(
               (result?['scheduled'] ?? 0) > 0
                   ? AppRouter.weekPlan
-                  : AppRouter.workouts),
+                  : AppRouter.sportWorkouts(action.sport)),
         );
       case FoodLogAction():
         final result = widget.message.appliedResult;

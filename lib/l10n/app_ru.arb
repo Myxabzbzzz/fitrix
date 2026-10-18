@@ -988,5 +988,6 @@
   "felixPlanBadge": "План Феликса",
   "felixPlanTitleCount": "{count, plural, one{{count} тренировка} few{{count} тренировки} many{{count} тренировок} other{{count} тренировки}}",
   "felixPlanAddToWorkouts": "Добавить в мои тренировки",
-  "felixPlanAddToToday": "Добавить в план на сегодня"
+  "felixPlanAddToToday": "Добавить в план на сегодня",
+  "felixPlansSection": "От Феликса"
 }

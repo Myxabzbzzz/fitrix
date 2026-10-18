@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
-import 'package:fitrix/features/programs/domain/program_catalog.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
 /// Ids of the workout plans Felix made, kept on this device only (the
@@ -123,12 +122,19 @@ List<PlannedSession> scheduleFelixPlan({
   if (open.isNotEmpty) {
     final window = [for (var n = 0; n < 7; n++) addDays(start, n)];
     final taken = {...dayFor.values};
-    final hardWeekdays = hardNonGymWeekdays(existing);
+    // Only what is near the window counts: a football game weeks ago
+    // blocks nothing. Neighbours are compared by date.
+    final lo = addDays(start, -1), hi = addDays(start, 7);
+    final nearby = [
+      for (final s in existing)
+        if (!s.day.isBefore(lo) && !s.day.isAfter(hi)) s
+    ];
     bool hardOn(DateTime d) =>
-        existing.any((s) => s.intensity == Intensity.hard && sameDay(s.day, d));
-    bool nextToHard(DateTime d) =>
-        hardWeekdays.contains(addDays(d, -1).weekday) ||
-        hardWeekdays.contains(addDays(d, 1).weekday);
+        nearby.any((s) => s.intensity == Intensity.hard && sameDay(s.day, d));
+    bool nextToHard(DateTime d) => nearby.any((s) =>
+        s.sport != Sport.gym &&
+        s.intensity == Intensity.hard &&
+        (sameDay(s.day, addDays(d, -1)) || sameDay(s.day, addDays(d, 1))));
     final clear = [
       for (final d in window)
         if (!taken.contains(d) && !hardOn(d) && !nextToHard(d)) d
