@@ -1421,4 +1421,247 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get workoutAddExercise => 'Упражнение';
+
+  @override
+  String homeGreetingMorning(String name) {
+    return 'Доброе утро, $name';
+  }
+
+  @override
+  String get homeGreetingMorningNoName => 'Доброе утро';
+
+  @override
+  String homeGreetingAfternoon(String name) {
+    return 'Добрый день, $name';
+  }
+
+  @override
+  String get homeGreetingAfternoonNoName => 'Добрый день';
+
+  @override
+  String homeGreetingEvening(String name) {
+    return 'Добрый вечер, $name';
+  }
+
+  @override
+  String get homeGreetingEveningNoName => 'Добрый вечер';
+
+  @override
+  String get checkinCardPrompt =>
+      'Как самочувствие сегодня? 20 секунд, и Феликс подстроит ваш план.';
+
+  @override
+  String get checkinCardAction => 'Отметиться';
+
+  @override
+  String checkinCardRecovered(int score) {
+    return 'Восстановление $score%';
+  }
+
+  @override
+  String get checkinCardSeeMore => 'Что повлияло';
+
+  @override
+  String get checkinTitle => 'Утренний чек-ин';
+
+  @override
+  String get checkinSleep => 'Сон';
+
+  @override
+  String checkinSleepDuration(int hours, int minutes) {
+    return '$hours ч $minutes мин';
+  }
+
+  @override
+  String get checkinSleepLess => 'Сон на 15 минут меньше';
+
+  @override
+  String get checkinSleepMore => 'Сон на 15 минут больше';
+
+  @override
+  String get sleepQualityPoor => 'Плохо';
+
+  @override
+  String get sleepQualityOk => 'Нормально';
+
+  @override
+  String get sleepQualityGood => 'Хорошо';
+
+  @override
+  String get checkinSoreness => 'Мышечная боль';
+
+  @override
+  String get sorenessNone => 'Нет';
+
+  @override
+  String get sorenessLight => 'Лёгкая';
+
+  @override
+  String get sorenessMedium => 'Средняя';
+
+  @override
+  String get sorenessStrong => 'Сильная';
+
+  @override
+  String get bodyLegs => 'Ноги';
+
+  @override
+  String get bodyBack => 'Спина';
+
+  @override
+  String get bodyChest => 'Грудь';
+
+  @override
+  String get bodyArms => 'Руки';
+
+  @override
+  String get bodyShoulders => 'Плечи';
+
+  @override
+  String get checkinEnergy => 'Энергия';
+
+  @override
+  String get checkinStress => 'Стресс';
+
+  @override
+  String get levelLow => 'Низкая';
+
+  @override
+  String get levelOk => 'Нормальная';
+
+  @override
+  String get levelHigh => 'Высокая';
+
+  @override
+  String get stressLow => 'Низкий';
+
+  @override
+  String get stressMedium => 'Средний';
+
+  @override
+  String get stressHigh => 'Высокий';
+
+  @override
+  String get checkinSave => 'Сохранить чек-ин';
+
+  @override
+  String get readinessReady => 'Готовы к тренировке';
+
+  @override
+  String get readinessTrainLight => 'Тренируйтесь легче';
+
+  @override
+  String get readinessRest => 'Сегодня отдых';
+
+  @override
+  String get checkinHintReady => 'Тяжёлая тренировка подойдёт.';
+
+  @override
+  String checkinHintReadySore(String areas) {
+    return 'Тяжёлая тренировка подойдёт. $areas: нужен ещё день.';
+  }
+
+  @override
+  String get checkinHintLight => 'Сегодня потренируйтесь полегче.';
+
+  @override
+  String get checkinHintRest =>
+      'Не торопитесь. Восстановление тоже часть тренировки.';
+
+  @override
+  String get recoveryTitle => 'Восстановление';
+
+  @override
+  String recoverySubtitle(String time) {
+    return 'Сегодня · чек-ин в $time';
+  }
+
+  @override
+  String get recoveryRecovered => 'восстановление';
+
+  @override
+  String recoveryHintReadySore(String areas) {
+    return 'Тяжёлая тренировка подойдёт. $areas: сегодня полегче.';
+  }
+
+  @override
+  String get recoveryShaped => 'Что повлияло';
+
+  @override
+  String factorSleep(String duration) {
+    return 'Сон $duration';
+  }
+
+  @override
+  String factorSleepQuality(String quality) {
+    return 'Качество: $quality';
+  }
+
+  @override
+  String factorSoreness(String level) {
+    return 'Боль: $level';
+  }
+
+  @override
+  String factorEnergy(String level) {
+    return 'Энергия: $level';
+  }
+
+  @override
+  String factorStress(String level) {
+    return 'Стресс: $level';
+  }
+
+  @override
+  String get factorLoad => 'Тренировочная нагрузка';
+
+  @override
+  String factorLoadSub(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count тяжёлого дня',
+      many: '$count тяжёлых дней',
+      few: '$count тяжёлых дня',
+      one: '$count тяжёлый день',
+    );
+    return '$_temp0 за последние 7';
+  }
+
+  @override
+  String get recoveryPlanTitle => 'План на сегодня, с поправками';
+
+  @override
+  String recoveryPlanApplied(String plan, String swaps, String areas) {
+    return '$plan остаётся. Замены: $swaps. Это бережёт: $areas.';
+  }
+
+  @override
+  String recoveryPlanSuggested(String plan, String swaps, String areas) {
+    return '$plan можно оставить. Предлагаемые замены: $swaps, чтобы поберечь: $areas.';
+  }
+
+  @override
+  String get recoveryStartWorkout => 'Начать тренировку';
+
+  @override
+  String get recoveryUndo => 'Отменить';
+
+  @override
+  String get recoveryApplySwaps => 'Применить замены';
+
+  @override
+  String get recoveryLast7 => 'Последние 7 дней';
+
+  @override
+  String recoveryAvg(int score) {
+    return 'в среднем $score%';
+  }
+
+  @override
+  String get recoveryNoCheckin => 'Чек-ина пока нет';
+
+  @override
+  String get recoveryNoCheckinBody =>
+      'Отметьтесь, чтобы увидеть уровень восстановления и что на него повлияло.';
 }

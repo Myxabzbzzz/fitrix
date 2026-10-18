@@ -1007,5 +1007,205 @@
   "workoutDiscard": "Discard",
   "workoutDiscardTitle": "Discard this workout?",
   "workoutDiscardBody": "It won’t be saved to your history.",
-  "workoutAddExercise": "Exercise"
+  "workoutAddExercise": "Exercise",
+  "homeGreetingMorning": "Good morning, {name}",
+  "@homeGreetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreetingMorningNoName": "Good morning",
+  "homeGreetingAfternoon": "Good afternoon, {name}",
+  "@homeGreetingAfternoon": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreetingAfternoonNoName": "Good afternoon",
+  "homeGreetingEvening": "Good evening, {name}",
+  "@homeGreetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreetingEveningNoName": "Good evening",
+  "checkinCardPrompt": "How do you feel today? 20 seconds, and Felix tunes your plan.",
+  "checkinCardAction": "Check in",
+  "checkinCardRecovered": "{score}% recovered",
+  "@checkinCardRecovered": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "checkinCardSeeMore": "See what shaped it",
+  "checkinTitle": "Morning check-in",
+  "checkinSleep": "Sleep",
+  "checkinSleepDuration": "{hours} h {minutes} m",
+  "@checkinSleepDuration": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "checkinSleepLess": "Sleep 15 minutes less",
+  "checkinSleepMore": "Sleep 15 minutes more",
+  "sleepQualityPoor": "Poor",
+  "sleepQualityOk": "OK",
+  "sleepQualityGood": "Good",
+  "checkinSoreness": "Muscle soreness",
+  "sorenessNone": "None",
+  "sorenessLight": "Light",
+  "sorenessMedium": "Medium",
+  "sorenessStrong": "Strong",
+  "bodyLegs": "Legs",
+  "bodyBack": "Back",
+  "bodyChest": "Chest",
+  "bodyArms": "Arms",
+  "bodyShoulders": "Shoulders",
+  "checkinEnergy": "Energy",
+  "checkinStress": "Stress",
+  "levelLow": "Low",
+  "levelOk": "OK",
+  "levelHigh": "High",
+  "stressLow": "Low",
+  "stressMedium": "Medium",
+  "stressHigh": "High",
+  "checkinSave": "Save check-in",
+  "readinessReady": "Ready to train",
+  "readinessTrainLight": "Train light",
+  "readinessRest": "Rest today",
+  "checkinHintReady": "A hard session is fine.",
+  "checkinHintReadySore": "A hard session is fine. {areas} need one more day.",
+  "@checkinHintReadySore": {
+    "placeholders": {
+      "areas": {
+        "type": "String"
+      }
+    }
+  },
+  "checkinHintLight": "Keep it lighter today.",
+  "checkinHintRest": "Take it easy. Recovery is training too.",
+  "recoveryTitle": "Recovery",
+  "recoverySubtitle": "Today · check-in at {time}",
+  "@recoverySubtitle": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryRecovered": "recovered",
+  "recoveryHintReadySore": "A hard session is fine. Keep {areas} light today.",
+  "@recoveryHintReadySore": {
+    "placeholders": {
+      "areas": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryShaped": "What shaped it",
+  "factorSleep": "Sleep {duration}",
+  "@factorSleep": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "factorSleepQuality": "{quality} quality",
+  "@factorSleepQuality": {
+    "placeholders": {
+      "quality": {
+        "type": "String"
+      }
+    }
+  },
+  "factorSoreness": "Soreness: {level}",
+  "@factorSoreness": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "factorEnergy": "Energy: {level}",
+  "@factorEnergy": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "factorStress": "Stress: {level}",
+  "@factorStress": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "factorLoad": "Training load",
+  "factorLoadSub": "{count, plural, =1{1 hard day} other{{count} hard days}} in the last 7",
+  "@factorLoadSub": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recoveryPlanTitle": "Today’s plan, adjusted",
+  "recoveryPlanApplied": "{plan} stays. Swapped: {swaps}. This spares your {areas}.",
+  "@recoveryPlanApplied": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      },
+      "swaps": {
+        "type": "String"
+      },
+      "areas": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryPlanSuggested": "{plan} can stay. Suggested swaps: {swaps}, to spare your {areas}.",
+  "@recoveryPlanSuggested": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      },
+      "swaps": {
+        "type": "String"
+      },
+      "areas": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryStartWorkout": "Start workout",
+  "recoveryUndo": "Undo",
+  "recoveryApplySwaps": "Apply swaps",
+  "recoveryLast7": "Last 7 days",
+  "recoveryAvg": "avg {score}%",
+  "@recoveryAvg": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "recoveryNoCheckin": "No check-in yet",
+  "recoveryNoCheckinBody": "Check in to see how recovered you are and what shaped it."
 }

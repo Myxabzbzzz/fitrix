@@ -8,6 +8,7 @@ import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/feature_tile.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
+import 'package:fitrix/features/checkin/presentation/widgets/checkin_card.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -57,6 +58,8 @@ class HomeScreen extends StatelessWidget {
                     AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.lg),
                 child: Column(
                   children: [
+                    const CheckInCard(),
+                    const SizedBox(height: AppSpacing.md),
                     SizedBox(
                       height: _small * 2 + AppSpacing.md,
                       child: Row(

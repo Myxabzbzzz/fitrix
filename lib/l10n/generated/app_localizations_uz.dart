@@ -1359,4 +1359,239 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get workoutAddExercise => 'Mashq';
+
+  @override
+  String homeGreetingMorning(String name) {
+    return 'Xayrli tong, $name';
+  }
+
+  @override
+  String get homeGreetingMorningNoName => 'Xayrli tong';
+
+  @override
+  String homeGreetingAfternoon(String name) {
+    return 'Xayrli kun, $name';
+  }
+
+  @override
+  String get homeGreetingAfternoonNoName => 'Xayrli kun';
+
+  @override
+  String homeGreetingEvening(String name) {
+    return 'Xayrli kech, $name';
+  }
+
+  @override
+  String get homeGreetingEveningNoName => 'Xayrli kech';
+
+  @override
+  String get checkinCardPrompt =>
+      'Bugun o‘zingizni qanday his qilyapsiz? 20 soniya, va Felix rejangizni moslaydi.';
+
+  @override
+  String get checkinCardAction => 'Belgilash';
+
+  @override
+  String checkinCardRecovered(int score) {
+    return '$score% tiklangan';
+  }
+
+  @override
+  String get checkinCardSeeMore => 'Nimalar ta’sir qilgani';
+
+  @override
+  String get checkinTitle => 'Ertalabki tekshiruv';
+
+  @override
+  String get checkinSleep => 'Uyqu';
+
+  @override
+  String checkinSleepDuration(int hours, int minutes) {
+    return '$hours soat $minutes daq';
+  }
+
+  @override
+  String get checkinSleepLess => 'Uyquni 15 daqiqa kamaytirish';
+
+  @override
+  String get checkinSleepMore => 'Uyquni 15 daqiqa oshirish';
+
+  @override
+  String get sleepQualityPoor => 'Yomon';
+
+  @override
+  String get sleepQualityOk => 'Yaxshi emas, yomon emas';
+
+  @override
+  String get sleepQualityGood => 'Yaxshi';
+
+  @override
+  String get checkinSoreness => 'Mushaklar og‘rig‘i';
+
+  @override
+  String get sorenessNone => 'Yo‘q';
+
+  @override
+  String get sorenessLight => 'Yengil';
+
+  @override
+  String get sorenessMedium => 'O‘rtacha';
+
+  @override
+  String get sorenessStrong => 'Kuchli';
+
+  @override
+  String get bodyLegs => 'Oyoqlar';
+
+  @override
+  String get bodyBack => 'Orqa';
+
+  @override
+  String get bodyChest => 'Ko‘krak';
+
+  @override
+  String get bodyArms => 'Qo‘llar';
+
+  @override
+  String get bodyShoulders => 'Yelkalar';
+
+  @override
+  String get checkinEnergy => 'Energiya';
+
+  @override
+  String get checkinStress => 'Stress';
+
+  @override
+  String get levelLow => 'Past';
+
+  @override
+  String get levelOk => 'O‘rtacha';
+
+  @override
+  String get levelHigh => 'Yuqori';
+
+  @override
+  String get stressLow => 'Past';
+
+  @override
+  String get stressMedium => 'O‘rtacha';
+
+  @override
+  String get stressHigh => 'Yuqori';
+
+  @override
+  String get checkinSave => 'Tekshiruvni saqlash';
+
+  @override
+  String get readinessReady => 'Mashqqa tayyor';
+
+  @override
+  String get readinessTrainLight => 'Yengil mashq qiling';
+
+  @override
+  String get readinessRest => 'Bugun dam oling';
+
+  @override
+  String get checkinHintReady => 'Og‘ir mashq mumkin.';
+
+  @override
+  String checkinHintReadySore(String areas) {
+    return 'Og‘ir mashq mumkin. $areas uchun yana bir kun kerak.';
+  }
+
+  @override
+  String get checkinHintLight => 'Bugun yengilroq mashq qiling.';
+
+  @override
+  String get checkinHintRest =>
+      'Shoshilmang. Tiklanish ham mashqning bir qismi.';
+
+  @override
+  String get recoveryTitle => 'Tiklanish';
+
+  @override
+  String recoverySubtitle(String time) {
+    return 'Bugun · tekshiruv soat $time';
+  }
+
+  @override
+  String get recoveryRecovered => 'tiklanish';
+
+  @override
+  String recoveryHintReadySore(String areas) {
+    return 'Og‘ir mashq mumkin. ${areas}ni bugun yengil saqlang.';
+  }
+
+  @override
+  String get recoveryShaped => 'Nimalar ta’sir qildi';
+
+  @override
+  String factorSleep(String duration) {
+    return 'Uyqu $duration';
+  }
+
+  @override
+  String factorSleepQuality(String quality) {
+    return 'Sifati: $quality';
+  }
+
+  @override
+  String factorSoreness(String level) {
+    return 'Og‘riq: $level';
+  }
+
+  @override
+  String factorEnergy(String level) {
+    return 'Energiya: $level';
+  }
+
+  @override
+  String factorStress(String level) {
+    return 'Stress: $level';
+  }
+
+  @override
+  String get factorLoad => 'Mashq yuklamasi';
+
+  @override
+  String factorLoadSub(int count) {
+    return 'So‘nggi 7 kunda $count ta og‘ir kun';
+  }
+
+  @override
+  String get recoveryPlanTitle => 'Bugungi reja, moslangan';
+
+  @override
+  String recoveryPlanApplied(String plan, String swaps, String areas) {
+    return '$plan qoladi. Almashtirildi: $swaps. Bu ${areas}ni asraydi.';
+  }
+
+  @override
+  String recoveryPlanSuggested(String plan, String swaps, String areas) {
+    return '${plan}ni qoldirish mumkin. Taklif etilgan almashtirishlar: $swaps, ${areas}ni asrash uchun.';
+  }
+
+  @override
+  String get recoveryStartWorkout => 'Mashqni boshlash';
+
+  @override
+  String get recoveryUndo => 'Bekor qilish';
+
+  @override
+  String get recoveryApplySwaps => 'Almashtirish';
+
+  @override
+  String get recoveryLast7 => 'So‘nggi 7 kun';
+
+  @override
+  String recoveryAvg(int score) {
+    return 'o‘rtacha $score%';
+  }
+
+  @override
+  String get recoveryNoCheckin => 'Hali tekshiruv yo‘q';
+
+  @override
+  String get recoveryNoCheckinBody =>
+      'Tiklanish darajangizni va unga nima ta’sir qilganini ko‘rish uchun belgilang.';
 }

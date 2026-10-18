@@ -2363,6 +2363,402 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Exercise'**
   String get workoutAddExercise;
+
+  /// No description provided for @homeGreetingMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning, {name}'**
+  String homeGreetingMorning(String name);
+
+  /// No description provided for @homeGreetingMorningNoName.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get homeGreetingMorningNoName;
+
+  /// No description provided for @homeGreetingAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon, {name}'**
+  String homeGreetingAfternoon(String name);
+
+  /// No description provided for @homeGreetingAfternoonNoName.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get homeGreetingAfternoonNoName;
+
+  /// No description provided for @homeGreetingEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening, {name}'**
+  String homeGreetingEvening(String name);
+
+  /// No description provided for @homeGreetingEveningNoName.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get homeGreetingEveningNoName;
+
+  /// No description provided for @checkinCardPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'How do you feel today? 20 seconds, and Felix tunes your plan.'**
+  String get checkinCardPrompt;
+
+  /// No description provided for @checkinCardAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get checkinCardAction;
+
+  /// No description provided for @checkinCardRecovered.
+  ///
+  /// In en, this message translates to:
+  /// **'{score}% recovered'**
+  String checkinCardRecovered(int score);
+
+  /// No description provided for @checkinCardSeeMore.
+  ///
+  /// In en, this message translates to:
+  /// **'See what shaped it'**
+  String get checkinCardSeeMore;
+
+  /// No description provided for @checkinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning check-in'**
+  String get checkinTitle;
+
+  /// No description provided for @checkinSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep'**
+  String get checkinSleep;
+
+  /// No description provided for @checkinSleepDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} m'**
+  String checkinSleepDuration(int hours, int minutes);
+
+  /// No description provided for @checkinSleepLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep 15 minutes less'**
+  String get checkinSleepLess;
+
+  /// No description provided for @checkinSleepMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep 15 minutes more'**
+  String get checkinSleepMore;
+
+  /// No description provided for @sleepQualityPoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Poor'**
+  String get sleepQualityPoor;
+
+  /// No description provided for @sleepQualityOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get sleepQualityOk;
+
+  /// No description provided for @sleepQualityGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get sleepQualityGood;
+
+  /// No description provided for @checkinSoreness.
+  ///
+  /// In en, this message translates to:
+  /// **'Muscle soreness'**
+  String get checkinSoreness;
+
+  /// No description provided for @sorenessNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get sorenessNone;
+
+  /// No description provided for @sorenessLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get sorenessLight;
+
+  /// No description provided for @sorenessMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get sorenessMedium;
+
+  /// No description provided for @sorenessStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get sorenessStrong;
+
+  /// No description provided for @bodyLegs.
+  ///
+  /// In en, this message translates to:
+  /// **'Legs'**
+  String get bodyLegs;
+
+  /// No description provided for @bodyBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get bodyBack;
+
+  /// No description provided for @bodyChest.
+  ///
+  /// In en, this message translates to:
+  /// **'Chest'**
+  String get bodyChest;
+
+  /// No description provided for @bodyArms.
+  ///
+  /// In en, this message translates to:
+  /// **'Arms'**
+  String get bodyArms;
+
+  /// No description provided for @bodyShoulders.
+  ///
+  /// In en, this message translates to:
+  /// **'Shoulders'**
+  String get bodyShoulders;
+
+  /// No description provided for @checkinEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy'**
+  String get checkinEnergy;
+
+  /// No description provided for @checkinStress.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress'**
+  String get checkinStress;
+
+  /// No description provided for @levelLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get levelLow;
+
+  /// No description provided for @levelOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get levelOk;
+
+  /// No description provided for @levelHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get levelHigh;
+
+  /// No description provided for @stressLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get stressLow;
+
+  /// No description provided for @stressMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get stressMedium;
+
+  /// No description provided for @stressHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get stressHigh;
+
+  /// No description provided for @checkinSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save check-in'**
+  String get checkinSave;
+
+  /// No description provided for @readinessReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to train'**
+  String get readinessReady;
+
+  /// No description provided for @readinessTrainLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Train light'**
+  String get readinessTrainLight;
+
+  /// No description provided for @readinessRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest today'**
+  String get readinessRest;
+
+  /// No description provided for @checkinHintReady.
+  ///
+  /// In en, this message translates to:
+  /// **'A hard session is fine.'**
+  String get checkinHintReady;
+
+  /// No description provided for @checkinHintReadySore.
+  ///
+  /// In en, this message translates to:
+  /// **'A hard session is fine. {areas} need one more day.'**
+  String checkinHintReadySore(String areas);
+
+  /// No description provided for @checkinHintLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it lighter today.'**
+  String get checkinHintLight;
+
+  /// No description provided for @checkinHintRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Take it easy. Recovery is training too.'**
+  String get checkinHintRest;
+
+  /// No description provided for @recoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get recoveryTitle;
+
+  /// No description provided for @recoverySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today · check-in at {time}'**
+  String recoverySubtitle(String time);
+
+  /// No description provided for @recoveryRecovered.
+  ///
+  /// In en, this message translates to:
+  /// **'recovered'**
+  String get recoveryRecovered;
+
+  /// No description provided for @recoveryHintReadySore.
+  ///
+  /// In en, this message translates to:
+  /// **'A hard session is fine. Keep {areas} light today.'**
+  String recoveryHintReadySore(String areas);
+
+  /// No description provided for @recoveryShaped.
+  ///
+  /// In en, this message translates to:
+  /// **'What shaped it'**
+  String get recoveryShaped;
+
+  /// No description provided for @factorSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep {duration}'**
+  String factorSleep(String duration);
+
+  /// No description provided for @factorSleepQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'{quality} quality'**
+  String factorSleepQuality(String quality);
+
+  /// No description provided for @factorSoreness.
+  ///
+  /// In en, this message translates to:
+  /// **'Soreness: {level}'**
+  String factorSoreness(String level);
+
+  /// No description provided for @factorEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy: {level}'**
+  String factorEnergy(String level);
+
+  /// No description provided for @factorStress.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress: {level}'**
+  String factorStress(String level);
+
+  /// No description provided for @factorLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Training load'**
+  String get factorLoad;
+
+  /// No description provided for @factorLoadSub.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hard day} other{{count} hard days}} in the last 7'**
+  String factorLoadSub(int count);
+
+  /// No description provided for @recoveryPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today’s plan, adjusted'**
+  String get recoveryPlanTitle;
+
+  /// No description provided for @recoveryPlanApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'{plan} stays. Swapped: {swaps}. This spares your {areas}.'**
+  String recoveryPlanApplied(String plan, String swaps, String areas);
+
+  /// No description provided for @recoveryPlanSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'{plan} can stay. Suggested swaps: {swaps}, to spare your {areas}.'**
+  String recoveryPlanSuggested(String plan, String swaps, String areas);
+
+  /// No description provided for @recoveryStartWorkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Start workout'**
+  String get recoveryStartWorkout;
+
+  /// No description provided for @recoveryUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get recoveryUndo;
+
+  /// No description provided for @recoveryApplySwaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply swaps'**
+  String get recoveryApplySwaps;
+
+  /// No description provided for @recoveryLast7.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get recoveryLast7;
+
+  /// No description provided for @recoveryAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'avg {score}%'**
+  String recoveryAvg(int score);
+
+  /// No description provided for @recoveryNoCheckin.
+  ///
+  /// In en, this message translates to:
+  /// **'No check-in yet'**
+  String get recoveryNoCheckin;
+
+  /// No description provided for @recoveryNoCheckinBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in to see how recovered you are and what shaped it.'**
+  String get recoveryNoCheckinBody;
 }
 
 class _AppLocalizationsDelegate

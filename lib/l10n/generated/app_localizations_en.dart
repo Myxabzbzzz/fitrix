@@ -1393,4 +1393,244 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workoutAddExercise => 'Exercise';
+
+  @override
+  String homeGreetingMorning(String name) {
+    return 'Good morning, $name';
+  }
+
+  @override
+  String get homeGreetingMorningNoName => 'Good morning';
+
+  @override
+  String homeGreetingAfternoon(String name) {
+    return 'Good afternoon, $name';
+  }
+
+  @override
+  String get homeGreetingAfternoonNoName => 'Good afternoon';
+
+  @override
+  String homeGreetingEvening(String name) {
+    return 'Good evening, $name';
+  }
+
+  @override
+  String get homeGreetingEveningNoName => 'Good evening';
+
+  @override
+  String get checkinCardPrompt =>
+      'How do you feel today? 20 seconds, and Felix tunes your plan.';
+
+  @override
+  String get checkinCardAction => 'Check in';
+
+  @override
+  String checkinCardRecovered(int score) {
+    return '$score% recovered';
+  }
+
+  @override
+  String get checkinCardSeeMore => 'See what shaped it';
+
+  @override
+  String get checkinTitle => 'Morning check-in';
+
+  @override
+  String get checkinSleep => 'Sleep';
+
+  @override
+  String checkinSleepDuration(int hours, int minutes) {
+    return '$hours h $minutes m';
+  }
+
+  @override
+  String get checkinSleepLess => 'Sleep 15 minutes less';
+
+  @override
+  String get checkinSleepMore => 'Sleep 15 minutes more';
+
+  @override
+  String get sleepQualityPoor => 'Poor';
+
+  @override
+  String get sleepQualityOk => 'OK';
+
+  @override
+  String get sleepQualityGood => 'Good';
+
+  @override
+  String get checkinSoreness => 'Muscle soreness';
+
+  @override
+  String get sorenessNone => 'None';
+
+  @override
+  String get sorenessLight => 'Light';
+
+  @override
+  String get sorenessMedium => 'Medium';
+
+  @override
+  String get sorenessStrong => 'Strong';
+
+  @override
+  String get bodyLegs => 'Legs';
+
+  @override
+  String get bodyBack => 'Back';
+
+  @override
+  String get bodyChest => 'Chest';
+
+  @override
+  String get bodyArms => 'Arms';
+
+  @override
+  String get bodyShoulders => 'Shoulders';
+
+  @override
+  String get checkinEnergy => 'Energy';
+
+  @override
+  String get checkinStress => 'Stress';
+
+  @override
+  String get levelLow => 'Low';
+
+  @override
+  String get levelOk => 'OK';
+
+  @override
+  String get levelHigh => 'High';
+
+  @override
+  String get stressLow => 'Low';
+
+  @override
+  String get stressMedium => 'Medium';
+
+  @override
+  String get stressHigh => 'High';
+
+  @override
+  String get checkinSave => 'Save check-in';
+
+  @override
+  String get readinessReady => 'Ready to train';
+
+  @override
+  String get readinessTrainLight => 'Train light';
+
+  @override
+  String get readinessRest => 'Rest today';
+
+  @override
+  String get checkinHintReady => 'A hard session is fine.';
+
+  @override
+  String checkinHintReadySore(String areas) {
+    return 'A hard session is fine. $areas need one more day.';
+  }
+
+  @override
+  String get checkinHintLight => 'Keep it lighter today.';
+
+  @override
+  String get checkinHintRest => 'Take it easy. Recovery is training too.';
+
+  @override
+  String get recoveryTitle => 'Recovery';
+
+  @override
+  String recoverySubtitle(String time) {
+    return 'Today · check-in at $time';
+  }
+
+  @override
+  String get recoveryRecovered => 'recovered';
+
+  @override
+  String recoveryHintReadySore(String areas) {
+    return 'A hard session is fine. Keep $areas light today.';
+  }
+
+  @override
+  String get recoveryShaped => 'What shaped it';
+
+  @override
+  String factorSleep(String duration) {
+    return 'Sleep $duration';
+  }
+
+  @override
+  String factorSleepQuality(String quality) {
+    return '$quality quality';
+  }
+
+  @override
+  String factorSoreness(String level) {
+    return 'Soreness: $level';
+  }
+
+  @override
+  String factorEnergy(String level) {
+    return 'Energy: $level';
+  }
+
+  @override
+  String factorStress(String level) {
+    return 'Stress: $level';
+  }
+
+  @override
+  String get factorLoad => 'Training load';
+
+  @override
+  String factorLoadSub(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hard days',
+      one: '1 hard day',
+    );
+    return '$_temp0 in the last 7';
+  }
+
+  @override
+  String get recoveryPlanTitle => 'Today’s plan, adjusted';
+
+  @override
+  String recoveryPlanApplied(String plan, String swaps, String areas) {
+    return '$plan stays. Swapped: $swaps. This spares your $areas.';
+  }
+
+  @override
+  String recoveryPlanSuggested(String plan, String swaps, String areas) {
+    return '$plan can stay. Suggested swaps: $swaps, to spare your $areas.';
+  }
+
+  @override
+  String get recoveryStartWorkout => 'Start workout';
+
+  @override
+  String get recoveryUndo => 'Undo';
+
+  @override
+  String get recoveryApplySwaps => 'Apply swaps';
+
+  @override
+  String get recoveryLast7 => 'Last 7 days';
+
+  @override
+  String recoveryAvg(int score) {
+    return 'avg $score%';
+  }
+
+  @override
+  String get recoveryNoCheckin => 'No check-in yet';
+
+  @override
+  String get recoveryNoCheckinBody =>
+      'Check in to see how recovered you are and what shaped it.';
 }

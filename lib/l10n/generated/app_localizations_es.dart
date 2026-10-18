@@ -1397,4 +1397,245 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get workoutAddExercise => 'Ejercicio';
+
+  @override
+  String homeGreetingMorning(String name) {
+    return 'Buenos días, $name';
+  }
+
+  @override
+  String get homeGreetingMorningNoName => 'Buenos días';
+
+  @override
+  String homeGreetingAfternoon(String name) {
+    return 'Buenas tardes, $name';
+  }
+
+  @override
+  String get homeGreetingAfternoonNoName => 'Buenas tardes';
+
+  @override
+  String homeGreetingEvening(String name) {
+    return 'Buenas noches, $name';
+  }
+
+  @override
+  String get homeGreetingEveningNoName => 'Buenas noches';
+
+  @override
+  String get checkinCardPrompt =>
+      '¿Cómo te sientes hoy? 20 segundos y Felix ajusta tu plan.';
+
+  @override
+  String get checkinCardAction => 'Registrar';
+
+  @override
+  String checkinCardRecovered(int score) {
+    return '$score% recuperado';
+  }
+
+  @override
+  String get checkinCardSeeMore => 'Ver qué influyó';
+
+  @override
+  String get checkinTitle => 'Chequeo matutino';
+
+  @override
+  String get checkinSleep => 'Sueño';
+
+  @override
+  String checkinSleepDuration(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String get checkinSleepLess => 'Dormir 15 minutos menos';
+
+  @override
+  String get checkinSleepMore => 'Dormir 15 minutos más';
+
+  @override
+  String get sleepQualityPoor => 'Mala';
+
+  @override
+  String get sleepQualityOk => 'Normal';
+
+  @override
+  String get sleepQualityGood => 'Buena';
+
+  @override
+  String get checkinSoreness => 'Dolor muscular';
+
+  @override
+  String get sorenessNone => 'Ninguno';
+
+  @override
+  String get sorenessLight => 'Leve';
+
+  @override
+  String get sorenessMedium => 'Media';
+
+  @override
+  String get sorenessStrong => 'Fuerte';
+
+  @override
+  String get bodyLegs => 'Piernas';
+
+  @override
+  String get bodyBack => 'Espalda';
+
+  @override
+  String get bodyChest => 'Pecho';
+
+  @override
+  String get bodyArms => 'Brazos';
+
+  @override
+  String get bodyShoulders => 'Hombros';
+
+  @override
+  String get checkinEnergy => 'Energía';
+
+  @override
+  String get checkinStress => 'Estrés';
+
+  @override
+  String get levelLow => 'Baja';
+
+  @override
+  String get levelOk => 'Normal';
+
+  @override
+  String get levelHigh => 'Alta';
+
+  @override
+  String get stressLow => 'Bajo';
+
+  @override
+  String get stressMedium => 'Medio';
+
+  @override
+  String get stressHigh => 'Alto';
+
+  @override
+  String get checkinSave => 'Guardar chequeo';
+
+  @override
+  String get readinessReady => 'Listo para entrenar';
+
+  @override
+  String get readinessTrainLight => 'Entrena suave';
+
+  @override
+  String get readinessRest => 'Descansa hoy';
+
+  @override
+  String get checkinHintReady => 'Una sesión dura está bien.';
+
+  @override
+  String checkinHintReadySore(String areas) {
+    return 'Una sesión dura está bien. $areas necesitan un día más.';
+  }
+
+  @override
+  String get checkinHintLight => 'Hoy ve más suave.';
+
+  @override
+  String get checkinHintRest =>
+      'Tómatelo con calma. Recuperarse también es entrenar.';
+
+  @override
+  String get recoveryTitle => 'Recuperación';
+
+  @override
+  String recoverySubtitle(String time) {
+    return 'Hoy · chequeo a las $time';
+  }
+
+  @override
+  String get recoveryRecovered => 'recuperado';
+
+  @override
+  String recoveryHintReadySore(String areas) {
+    return 'Una sesión dura está bien. Hoy $areas suave.';
+  }
+
+  @override
+  String get recoveryShaped => 'Qué influyó';
+
+  @override
+  String factorSleep(String duration) {
+    return 'Sueño $duration';
+  }
+
+  @override
+  String factorSleepQuality(String quality) {
+    return 'Calidad: $quality';
+  }
+
+  @override
+  String factorSoreness(String level) {
+    return 'Dolor: $level';
+  }
+
+  @override
+  String factorEnergy(String level) {
+    return 'Energía: $level';
+  }
+
+  @override
+  String factorStress(String level) {
+    return 'Estrés: $level';
+  }
+
+  @override
+  String get factorLoad => 'Carga de entrenamiento';
+
+  @override
+  String factorLoadSub(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count días duros',
+      one: '1 día duro',
+    );
+    return '$_temp0 en los últimos 7';
+  }
+
+  @override
+  String get recoveryPlanTitle => 'Plan de hoy, ajustado';
+
+  @override
+  String recoveryPlanApplied(String plan, String swaps, String areas) {
+    return '$plan se queda. Cambios: $swaps. Así cuidas: $areas.';
+  }
+
+  @override
+  String recoveryPlanSuggested(String plan, String swaps, String areas) {
+    return '$plan puede quedarse. Cambios sugeridos: $swaps, para cuidar: $areas.';
+  }
+
+  @override
+  String get recoveryStartWorkout => 'Empezar entrenamiento';
+
+  @override
+  String get recoveryUndo => 'Deshacer';
+
+  @override
+  String get recoveryApplySwaps => 'Aplicar cambios';
+
+  @override
+  String get recoveryLast7 => 'Últimos 7 días';
+
+  @override
+  String recoveryAvg(int score) {
+    return 'media $score%';
+  }
+
+  @override
+  String get recoveryNoCheckin => 'Aún no hay chequeo';
+
+  @override
+  String get recoveryNoCheckinBody =>
+      'Registra cómo estás para ver tu recuperación y qué influyó.';
 }
