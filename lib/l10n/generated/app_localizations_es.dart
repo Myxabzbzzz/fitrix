@@ -47,6 +47,22 @@ class AppLocalizationsEs extends AppLocalizations {
       'Todo lo que registraste está guardado en tu cuenta y se eliminará de este dispositivo. Inicia sesión con el mismo correo para recuperar tus datos.';
 
   @override
+  String signOutPendingBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count cambios aún no han llegado a tu cuenta (¿sin conexión?). Si cierras sesión ahora, se eliminarán.',
+      one:
+          '$count cambio aún no ha llegado a tu cuenta (¿sin conexión?). Si cierras sesión ahora, se eliminará.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get signOutAnyway => 'Cerrar sesión de todos modos';
+
+  @override
   String get deleteAccount => 'Eliminar cuenta';
 
   @override
@@ -54,7 +70,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deleteAccountBody =>
-      'Se eliminará para siempre tu cuenta de FITRIX y todo su contenido: tu perfil, planes de entrenamiento, historial de entrenamientos y chats con Felix, en todos tus dispositivos.';
+      'Se eliminará para siempre tu cuenta de FITRIX y todo su contenido: tu perfil, planes de entrenamiento, historial de entrenamientos, chats con Felix, check-ins, comidas y peso corporal, en todos tus dispositivos.';
 
   @override
   String get deleteAccountAppleNote => 'Apple te pedirá que lo confirmes.';

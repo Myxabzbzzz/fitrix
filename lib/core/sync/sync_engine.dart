@@ -142,14 +142,37 @@ class SyncEngine {
     var ok = false;
     try {
       _claimLocalData();
-      await _pullPlans();
-      await _pullHistory();
-      await _pullChat();
-      await _pullDocs();
-      await _pushPlans();
-      await _pushHistory();
-      await _pushChat();
-      await _pushDocs();
+      // Channels are independent: one failing must not starve the others.
+      // _Disposed aborts everything; any other error is kept, the rest run.
+      Object? failure;
+      for (final step in <Future<void> Function()>[
+        () async {
+          await _pullPlans();
+          await _pushPlans();
+        },
+        () async {
+          await _pullHistory();
+          await _pushHistory();
+        },
+        () async {
+          await _pullChat();
+          await _pushChat();
+        },
+        () async {
+          await _pullDocs();
+          await _pushDocs();
+        },
+      ]) {
+        try {
+          await step();
+        } on _Disposed {
+          rethrow;
+        } catch (e) {
+          if (_disposed) return false;
+          failure ??= e;
+        }
+      }
+      if (failure != null) throw failure;
       _failures = 0;
       _lastError = null;
       _lastSyncedAt = DateTime.now();
@@ -208,6 +231,9 @@ class SyncEngine {
       local.clear();
       state = SyncState();
     }
+    // Local-only data is claimed by this account: deletions made before
+    // signing in must not delete the account's cloud data.
+    if (state.owner == null) state.docTombstones.clear();
     state.owner = userId;
     _save(state);
   }

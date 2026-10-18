@@ -12,9 +12,19 @@
   "signOutTitle": "Sign out?",
   "signOutLocalBody": "Everything you logged is stored only on this device and will be deleted: profile, workouts, chats, check-ins, plans, food and body weight.",
   "signOutAccountBody": "Everything you logged is saved to your account and will be removed from this device. Sign in with the same email to get it back.",
+  "signOutPendingBody": "{count, plural, one{{count} change hasn't reached your account yet (no connection?). Signing out now deletes it.} other{{count} changes haven't reached your account yet (no connection?). Signing out now deletes them.}}",
+  "@signOutPendingBody": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "signOutAnyway": "Sign out anyway",
   "deleteAccount": "Delete account",
   "deleteAccountTitle": "Delete account?",
-  "deleteAccountBody": "This permanently deletes your FITRIX account and everything in it: your profile, workout plans, workout history and chats with Felix, on all your devices.",
+  "deleteAccountBody": "This permanently deletes your FITRIX account and everything in it: your profile, workout plans, workout history, chats with Felix, check-ins, food and body weight, on all your devices.",
   "deleteAccountAppleNote": "Apple will ask you to confirm.",
   "deleteForGoodTitle": "Delete for good?",
   "deleteForGoodBody": "Your account can't be recovered once it's deleted.",

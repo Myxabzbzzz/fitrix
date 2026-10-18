@@ -47,6 +47,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'Everything you logged is saved to your account and will be removed from this device. Sign in with the same email to get it back.';
 
   @override
+  String signOutPendingBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count changes haven\'t reached your account yet (no connection?). Signing out now deletes them.',
+      one:
+          '$count change hasn\'t reached your account yet (no connection?). Signing out now deletes it.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get signOutAnyway => 'Sign out anyway';
+
+  @override
   String get deleteAccount => 'Delete account';
 
   @override
@@ -54,7 +70,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountBody =>
-      'This permanently deletes your FITRIX account and everything in it: your profile, workout plans, workout history and chats with Felix, on all your devices.';
+      'This permanently deletes your FITRIX account and everything in it: your profile, workout plans, workout history, chats with Felix, check-ins, food and body weight, on all your devices.';
 
   @override
   String get deleteAccountAppleNote => 'Apple will ask you to confirm.';

@@ -12,9 +12,19 @@
   "signOutTitle": "Hisobdan chiqasizmi?",
   "signOutLocalBody": "Siz yozgan hamma narsa faqat shu qurilmada saqlanadi va o‘chiriladi: profil, mashg‘ulotlar, chatlar, tekshiruvlar, rejalar, ovqatlanish va vazn.",
   "signOutAccountBody": "Siz yozgan hamma narsa hisobingizda saqlangan va shu qurilmadan o‘chiriladi. Ma’lumotlarni qaytarish uchun o‘sha email bilan kiring.",
+  "signOutPendingBody": "{count, plural, one{{count} ta o‘zgarish hali hisobingizga yetib bormadi (aloqa yo‘qmi?). Hozir chiqsangiz, u o‘chib ketadi.} other{{count} ta o‘zgarish hali hisobingizga yetib bormadi (aloqa yo‘qmi?). Hozir chiqsangiz, ular o‘chib ketadi.}}",
+  "@signOutPendingBody": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "signOutAnyway": "Baribir chiqish",
   "deleteAccount": "Hisobni o‘chirish",
   "deleteAccountTitle": "Hisob o‘chirilsinmi?",
-  "deleteAccountBody": "FITRIX hisobingiz va undagi hamma narsa butunlay o‘chiriladi: profil, mashg‘ulot rejalari, mashg‘ulotlar tarixi va Felix bilan chatlar — barcha qurilmalaringizda.",
+  "deleteAccountBody": "FITRIX hisobingiz va undagi hamma narsa butunlay o‘chiriladi: profil, mashg‘ulot rejalari, mashg‘ulotlar tarixi, Felix bilan chatlar, tekshiruvlar, ovqatlanish va tana vazni — barcha qurilmalaringizda.",
   "deleteAccountAppleNote": "Apple tasdiqlashni so‘raydi.",
   "deleteForGoodTitle": "Butunlay o‘chirilsinmi?",
   "deleteForGoodBody": "O‘chirilgan hisobni tiklab bo‘lmaydi.",

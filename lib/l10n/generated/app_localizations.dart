@@ -174,6 +174,18 @@ abstract class AppLocalizations {
   /// **'Everything you logged is saved to your account and will be removed from this device. Sign in with the same email to get it back.'**
   String get signOutAccountBody;
 
+  /// No description provided for @signOutPendingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} change hasn\'t reached your account yet (no connection?). Signing out now deletes it.} other{{count} changes haven\'t reached your account yet (no connection?). Signing out now deletes them.}}'**
+  String signOutPendingBody(int count);
+
+  /// No description provided for @signOutAnyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out anyway'**
+  String get signOutAnyway;
+
   /// No description provided for @deleteAccount.
   ///
   /// In en, this message translates to:
@@ -189,7 +201,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountBody.
   ///
   /// In en, this message translates to:
-  /// **'This permanently deletes your FITRIX account and everything in it: your profile, workout plans, workout history and chats with Felix, on all your devices.'**
+  /// **'This permanently deletes your FITRIX account and everything in it: your profile, workout plans, workout history, chats with Felix, check-ins, food and body weight, on all your devices.'**
   String get deleteAccountBody;
 
   /// No description provided for @deleteAccountAppleNote.

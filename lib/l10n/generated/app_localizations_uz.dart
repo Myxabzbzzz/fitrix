@@ -47,6 +47,22 @@ class AppLocalizationsUz extends AppLocalizations {
       'Siz yozgan hamma narsa hisobingizda saqlangan va shu qurilmadan o‘chiriladi. Ma’lumotlarni qaytarish uchun o‘sha email bilan kiring.';
 
   @override
+  String signOutPendingBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count ta o‘zgarish hali hisobingizga yetib bormadi (aloqa yo‘qmi?). Hozir chiqsangiz, ular o‘chib ketadi.',
+      one:
+          '$count ta o‘zgarish hali hisobingizga yetib bormadi (aloqa yo‘qmi?). Hozir chiqsangiz, u o‘chib ketadi.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get signOutAnyway => 'Baribir chiqish';
+
+  @override
   String get deleteAccount => 'Hisobni o‘chirish';
 
   @override
@@ -54,7 +70,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get deleteAccountBody =>
-      'FITRIX hisobingiz va undagi hamma narsa butunlay o‘chiriladi: profil, mashg‘ulot rejalari, mashg‘ulotlar tarixi va Felix bilan chatlar — barcha qurilmalaringizda.';
+      'FITRIX hisobingiz va undagi hamma narsa butunlay o‘chiriladi: profil, mashg‘ulot rejalari, mashg‘ulotlar tarixi, Felix bilan chatlar, tekshiruvlar, ovqatlanish va tana vazni — barcha qurilmalaringizda.';
 
   @override
   String get deleteAccountAppleNote => 'Apple tasdiqlashni so‘raydi.';

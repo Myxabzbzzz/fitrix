@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,6 +13,7 @@ import 'package:fitrix/core/sync/sync_engine.dart';
 import 'package:fitrix/core/sync/sync_local.dart';
 import 'package:fitrix/core/sync/sync_state.dart';
 import 'package:fitrix/core/sync/synced_collection.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 
 import 'support/in_memory_remote_store.dart';
 
@@ -95,9 +97,10 @@ class Rig {
 
 Future<Rig> rig(
   InMemoryRemoteStore remote,
-  List<SyncedCollection> collections,
-) async {
-  SharedPreferences.setMockInitialValues({});
+  List<SyncedCollection> collections, {
+  Map<String, Object> stored = const {},
+}) async {
+  SharedPreferences.setMockInitialValues(stored);
   final prefs = await SharedPreferences.getInstance();
   final container = ProviderContainer(overrides: [
     sharedPreferencesProvider.overrideWithValue(prefs),
@@ -117,6 +120,24 @@ Future<Rig> rig(
   await engine.sync();
   remote.requests = 0;
   return r;
+}
+
+/// [InMemoryRemoteStore] whose plan or document requests can be made to fail.
+class FlakyRemote extends InMemoryRemoteStore {
+  bool failPlans = false;
+  bool failDocs = false;
+
+  @override
+  Future<List<RemotePlan>> fetchPlans(String userId, {DateTime? since}) {
+    if (failPlans) throw const SocketException('plans down');
+    return super.fetchPlans(userId, since: since);
+  }
+
+  @override
+  Future<List<RemoteDoc>> fetchDocs(String userId, {DateTime? since}) {
+    if (failDocs) throw const SocketException('docs down');
+    return super.fetchDocs(userId, since: since);
+  }
 }
 
 Map<String, Object?> doc(String v) => {'v': v};
@@ -443,6 +464,63 @@ void main() {
       food.docs['a'] = doc('stale');
       await rig(remote, [food]);
       expect(food.docs, isEmpty);
+    });
+  });
+
+  test('deletions made before the first sign-in never reach the account',
+      () async {
+    remote.putDoc('u1', 'food', 'a', doc('cloud'));
+    final local = SyncState(docTombstones: {'food/a': 1});
+    SharedPreferences.setMockInitialValues({});
+    final seed = await SharedPreferences.getInstance();
+    local.save(seed);
+    final r = await rig(remote, [food],
+        stored: {SyncState.storageKey: seed.getString(SyncState.storageKey)!});
+    expect(r.state.docTombstones, isEmpty);
+    expect(remote.docsOf('u1').single.isDeleted, isFalse);
+    expect(food.docs['a'], doc('cloud'));
+  });
+
+  group('independent channels', () {
+    test('docs still sync when plans fail', () async {
+      final flaky = FlakyRemote();
+      final r = await rig(flaky, [food]);
+      food.docs['a'] = doc('1');
+      flaky.failPlans = true;
+      await r.engine.sync();
+      expect(flaky.docsOf('u1').single.data, doc('1'));
+      expect(r.engine.status.value.error, isNotNull);
+      r.engine.dispose();
+    });
+
+    test('plans still sync when docs fail', () async {
+      final flaky = FlakyRemote()
+        ..putPlan(
+            'u1',
+            const WorkoutTemplate(
+              id: 'p',
+              sport: Sport.gym,
+              name: 'P',
+              focus: 'f',
+              estimatedDuration: Duration(hours: 1),
+              exercises: [],
+            ));
+      final r = await rig(flaky, [food]);
+      flaky.failDocs = true;
+      flaky.putPlan(
+          'u1',
+          const WorkoutTemplate(
+            id: 'q',
+            sport: Sport.gym,
+            name: 'Q',
+            focus: 'f',
+            estimatedDuration: Duration(hours: 1),
+            exercises: [],
+          ));
+      await r.engine.sync();
+      expect(r.state.plans.keys, contains('q'));
+      expect(r.engine.status.value.error, isNotNull);
+      r.engine.dispose();
     });
   });
 }

@@ -28,30 +28,7 @@ class ProfileTabScreen extends ConsumerWidget {
   const ProfileTabScreen({super.key});
 
   Future<void> _signOut(BuildContext context, WidgetRef ref) async {
-    final account = ref.read(accountServiceProvider);
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.signOutTitle),
-        content: Text(
-          account == null ? l10n.signOutLocalBody : l10n.signOutAccountBody,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(
-                foregroundColor: AppPalette.of(context).danger),
-            child: Text(l10n.signOut),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !context.mounted) return;
+    if (!await confirmSignOut(context, ref) || !context.mounted) return;
 
     await signOutAndGo(ref, GoRouter.of(context), AppRouter.intro);
   }

@@ -47,6 +47,26 @@ class AppLocalizationsRu extends AppLocalizations {
       'Всё, что вы записали, сохранено в аккаунте и будет удалено с этого устройства. Войдите с той же почтой, чтобы вернуть данные.';
 
   @override
+  String signOutPendingBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count изменения ещё не попали в аккаунт (нет связи?). Если выйти сейчас, они удалятся.',
+      many:
+          '$count изменений ещё не попали в аккаунт (нет связи?). Если выйти сейчас, они удалятся.',
+      few:
+          '$count изменения ещё не попали в аккаунт (нет связи?). Если выйти сейчас, они удалятся.',
+      one:
+          '$count изменение ещё не попало в аккаунт (нет связи?). Если выйти сейчас, оно удалится.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get signOutAnyway => 'Всё равно выйти';
+
+  @override
   String get deleteAccount => 'Удалить аккаунт';
 
   @override
@@ -54,7 +74,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get deleteAccountBody =>
-      'Аккаунт FITRIX и всё, что в нём есть, будут удалены навсегда: профиль, планы тренировок, история тренировок и чаты с Felix — на всех ваших устройствах.';
+      'Аккаунт FITRIX и всё, что в нём есть, будут удалены навсегда: профиль, планы тренировок, история тренировок, чаты с Felix, чек-ины, питание и вес тела — на всех ваших устройствах.';
 
   @override
   String get deleteAccountAppleNote => 'Apple попросит подтвердить действие.';

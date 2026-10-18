@@ -12,9 +12,19 @@
   "signOutTitle": "¿Cerrar sesión?",
   "signOutLocalBody": "Todo lo que registraste está guardado solo en este dispositivo y se eliminará: perfil, entrenamientos, chats, chequeos, planes, comidas y peso.",
   "signOutAccountBody": "Todo lo que registraste está guardado en tu cuenta y se eliminará de este dispositivo. Inicia sesión con el mismo correo para recuperar tus datos.",
+  "signOutPendingBody": "{count, plural, one{{count} cambio aún no ha llegado a tu cuenta (¿sin conexión?). Si cierras sesión ahora, se eliminará.} other{{count} cambios aún no han llegado a tu cuenta (¿sin conexión?). Si cierras sesión ahora, se eliminarán.}}",
+  "@signOutPendingBody": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "signOutAnyway": "Cerrar sesión de todos modos",
   "deleteAccount": "Eliminar cuenta",
   "deleteAccountTitle": "¿Eliminar la cuenta?",
-  "deleteAccountBody": "Se eliminará para siempre tu cuenta de FITRIX y todo su contenido: tu perfil, planes de entrenamiento, historial de entrenamientos y chats con Felix, en todos tus dispositivos.",
+  "deleteAccountBody": "Se eliminará para siempre tu cuenta de FITRIX y todo su contenido: tu perfil, planes de entrenamiento, historial de entrenamientos, chats con Felix, check-ins, comidas y peso corporal, en todos tus dispositivos.",
   "deleteAccountAppleNote": "Apple te pedirá que lo confirmes.",
   "deleteForGoodTitle": "¿Eliminar para siempre?",
   "deleteForGoodBody": "Una cuenta eliminada no se puede recuperar.",
