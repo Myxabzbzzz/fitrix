@@ -244,6 +244,32 @@ void main() {
       await _leave(tester);
     });
 
+    testWidgets('Ask Felix again for the same chat from another tab',
+        (tester) async {
+      final (c, router) = await _app(tester, {});
+      Future<void> ask() async {
+        await _open(tester, router, AppRouter.sportWorkouts(Sport.gym));
+        await tester.tap(find.text('Ask').hitTestable());
+        await _settle(tester);
+      }
+
+      await ask();
+      expect(_location(router), '/felix/chat/gym');
+      final first = tester
+          .widget<TextField>(find.byType(TextField).hitTestable())
+          .controller!;
+      expect(first.text, isNotEmpty);
+      first.clear();
+      await ask();
+      expect(_location(router), '/felix/chat/gym');
+      expect(
+          find.byWidgetPredicate((w) =>
+              w is TextField && (w.controller?.text.isNotEmpty ?? false)),
+          findsOneWidget);
+      expect(c.read(felixDraftProvider), isNull);
+      await _leave(tester);
+    });
+
     testWidgets('the header back arrow returns to the hub', (tester) async {
       final (_, router) = await _app(tester, {});
       await _open(tester, router, AppRouter.felixChat(AssistantTopic.app));

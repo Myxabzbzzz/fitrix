@@ -85,6 +85,10 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
     super.didChangeDependencies();
     // Tabs keep their state: an offstage tab has its tickers off.
     if (!TickerMode.of(context)) _dictation.stop();
+    // Becoming visible or current again (tab switched back, page uncovered)
+    // is when a draft left for this chat can be taken.
+    ModalRoute.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _takeDraft());
   }
 
   @override
