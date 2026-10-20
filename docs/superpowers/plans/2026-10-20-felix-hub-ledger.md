@@ -61,3 +61,14 @@ Final fix: dispatched (sonnet), FIX_BASE 1e718cd
 Final fix: done 89f52fb (916 Flutter tests, 95 backend); scoped re-review: all 3 addressed, no new breakage; ru naming inconsistency "Феликса" vs "Felix" → native-speaker pass
 Controller verify: flutter analyze clean; flutter test 916 passed / 5 skipped; backend 95/95
 Wave 2B: COMPLETE (9508543..89f52fb). Pending owner «да»: backend restart via start.sh, cloud migration 20261020120000 (dry-run, check constraint name), iPhone install; live check incl. Nutrition "I had 2 eggs and toast" → food card, Gym "build me a 3-day split" → plan card, existing chats under Recent chats
+
+## Live fix after install (2026-10-20)
+# ledger — Felix live fix (brief.md), BASE 21b12a4
+fix: 4128035 (100 backend tests); review dispatched
+review (opus): spec ✅; 4 Important — I1 compact rule over-fires (sets/подход words, 2 lines); I2 fallback runs before drop (wasted 20s, blocks food/weight fallback); I3 asksForWorkoutPlan true for yes/no questions + meal plans + планк/планир/программист; I4 misses plurals/Uzbek suffixes/follow-up turns
+live measure on 4128035: recovery question 0/4 spurious (was 3/4), recovery plan request 2/2 card, food 2/2, gym split 1/4 then 2/3 (model variance)
+Ruling: keep keyword approach, refined: question-shaped messages need a request verb; meal/diet plan and планк/планир/программист excluded; plural/suffix forms; previous user message also counts; compact rule = numeric NxM only, >=2 lines with >=3 each; skip workout_plan fallback kind when it would be dropped — cost if wrong: an occasional missed or extra card in recovery/nutrition
+fix round 1 → resume implementer
+fix round 1: 8d5ca4c (104 tests, no RED recorded); re-review dispatched
+re-review: I1-I4 ADDRESSED, no new breakage; minors: "Can I get a workout plan?" false (get not a request verb); prose with 2 lines of >=3 NxM still a plan
+controller: npm test 104/104; live (temp server): recovery question 0/3 spurious, recovery plan 2/2, food 2/2, gym split 2/3; live server restarted (start.sh, cloud auth, 401 without token)
