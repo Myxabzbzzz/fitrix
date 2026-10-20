@@ -3634,7 +3634,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get felixHubIntro =>
-      'Mashq, tiklanish va ovqatlanish bitta chatda. English, Русский, O‘zbekcha yoki Español tilida yozing.';
+      'Mashq, tiklanish va ovqatlanish bir joyda. English, Русский, O‘zbekcha yoki Español tilida yozing.';
 
   @override
   String felixHubToday(String title) {

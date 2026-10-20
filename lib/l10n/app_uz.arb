@@ -989,7 +989,7 @@
   "felixTopicGreeting": "Salom! Men Felixman. Keling, gaplashamiz: {topic}.",
   "felixTopicGreetingHint": "Xohlagan narsani so‘rang yoki quyidagi savollardan birini tanlang.",
   "felixHubAiCoach": "AI murabbiy",
-  "felixHubIntro": "Mashq, tiklanish va ovqatlanish bitta chatda. English, Русский, O‘zbekcha yoki Español tilida yozing.",
+  "felixHubIntro": "Mashq, tiklanish va ovqatlanish bir joyda. English, Русский, O‘zbekcha yoki Español tilida yozing.",
   "felixHubToday": "Bugun: {title}",
   "felixHubRest": "Bugun dam olish kuni",
   "felixHubDone": "Bugungi mashg‘ulot bajarildi",

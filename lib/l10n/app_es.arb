@@ -989,7 +989,7 @@
   "felixTopicGreeting": "¡Hola! Soy Felix. Hablemos de {topic}.",
   "felixTopicGreetingHint": "Pregunta lo que quieras o elige una pregunta abajo.",
   "felixHubAiCoach": "Entrenador de IA",
-  "felixHubIntro": "Entrenamiento, recuperación y comida en un solo chat. Escribe en English, Русский, O‘zbekcha o Español.",
+  "felixHubIntro": "Entrenamiento, recuperación y comida en un solo lugar. Escribe en English, Русский, O‘zbekcha o Español.",
   "felixHubToday": "Hoy: {title}",
   "felixHubRest": "Hoy es día de descanso",
   "felixHubDone": "La sesión de hoy está hecha",

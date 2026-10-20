@@ -989,7 +989,7 @@
   "felixTopicGreeting": "Привет! Я Felix. Давай поговорим: {topic}.",
   "felixTopicGreetingHint": "Спрашивай что угодно или выбери вопрос ниже.",
   "felixHubAiCoach": "ИИ-тренер",
-  "felixHubIntro": "Тренировки, восстановление и питание в одном чате. Пиши на English, Русский, O‘zbekcha или Español.",
+  "felixHubIntro": "Тренировки, восстановление и питание в одном месте. Пиши на English, Русский, O‘zbekcha или Español.",
   "felixHubToday": "Сегодня: {title}",
   "felixHubRest": "Сегодня день отдыха",
   "felixHubDone": "Сегодняшняя тренировка выполнена",

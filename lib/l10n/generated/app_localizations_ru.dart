@@ -3742,7 +3742,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get felixHubIntro =>
-      'Тренировки, восстановление и питание в одном чате. Пиши на English, Русский, O‘zbekcha или Español.';
+      'Тренировки, восстановление и питание в одном месте. Пиши на English, Русский, O‘zbekcha или Español.';
 
   @override
   String felixHubToday(String title) {

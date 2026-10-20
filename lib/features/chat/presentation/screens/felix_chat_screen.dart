@@ -62,6 +62,12 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
   /// Moves a pending "Ask Felix" draft into the field once. Never sends.
   void _takeDraft() {
     if (!mounted) return;
+    // A chat on a hidden tab or under another page leaves the draft for the
+    // screen about to open; the router may replace this one a frame later.
+    if (!TickerMode.of(context) ||
+        !(ModalRoute.of(context)?.isCurrent ?? true)) {
+      return;
+    }
     final draft = ref.read(felixDraftProvider);
     if (draft == null) return;
     final target = ref.read(felixDraftTopicProvider);

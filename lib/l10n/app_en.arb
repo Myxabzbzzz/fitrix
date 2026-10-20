@@ -2926,7 +2926,7 @@
   },
   "felixTopicGreetingHint": "Ask anything or pick a question below.",
   "felixHubAiCoach": "AI coach",
-  "felixHubIntro": "Training, recovery and food in one chat. Ask in English, Русский, O‘zbekcha or Español.",
+  "felixHubIntro": "Training, recovery and food in one place. Ask in English, Русский, O‘zbekcha or Español.",
   "felixHubToday": "{title} today",
   "@felixHubToday": {"placeholders": {"title": {"type": "String"}}},
   "felixHubRest": "Rest day today",

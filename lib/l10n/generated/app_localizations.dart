@@ -5994,7 +5994,7 @@ abstract class AppLocalizations {
   /// No description provided for @felixHubIntro.
   ///
   /// In en, this message translates to:
-  /// **'Training, recovery and food in one chat. Ask in English, Русский, O‘zbekcha or Español.'**
+  /// **'Training, recovery and food in one place. Ask in English, Русский, O‘zbekcha or Español.'**
   String get felixHubIntro;
 
   /// No description provided for @felixHubToday.

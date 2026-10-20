@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/constants/app_constants.dart';
+import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/core/session/session_providers.dart';
@@ -221,6 +222,25 @@ void main() {
       await tester.tap(find.bySemanticsLabel('Felix').last);
       await _settle(tester);
       expect(_location(router), AppRouter.felix);
+      await _leave(tester);
+    });
+
+    testWidgets('Ask Felix for a chat opened from the hub keeps the draft',
+        (tester) async {
+      final (c, router) = await _app(tester, {});
+      await _open(tester, router, AppRouter.felix);
+      await tester.tap(find.text('Gym'));
+      await _settle(tester);
+      expect(_location(router), '/felix/chat/gym');
+      await _open(tester, router, AppRouter.sportWorkouts(Sport.gym));
+      await tester.tap(find.text('Ask').hitTestable());
+      await _settle(tester);
+      expect(_location(router), '/felix/chat/gym');
+      expect(
+          find.byWidgetPredicate((w) =>
+              w is TextField && (w.controller?.text.isNotEmpty ?? false)),
+          findsOneWidget);
+      expect(c.read(felixDraftProvider), isNull);
       await _leave(tester);
     });
 
