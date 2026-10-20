@@ -15,7 +15,7 @@ const {
   buildSystemPrompt,
 } = require('./prompt');
 const { refineAction, createActionFilter, parseAction, extractAction, SPORTS } = require('./actions');
-const { looksLikePlan, looksLikeFoodLog, looksLikeWeightChange, extractPlanAction } = require('./fallback');
+const { looksLikePlan, asksForWorkoutPlan, looksLikeFoodLog, looksLikeWeightChange, extractPlanAction } = require('./fallback');
 const { validateImages } = require('./images');
 const { createPlainTextFilter, toPlainText } = require('./plainText');
 const { authConfigFromEnv, requireUser, rateLimitPerUser } = require('./auth');
@@ -145,9 +145,11 @@ function createApp({
       );
       const assistantMessage = toPlainText(extracted.text);
       logAction(turn.tag, extracted.hadBlock, extracted.action);
-      const action =
+      const action = dropUnrequestedPlan(
+        turn,
         refineAction(extracted.action, turn.userText) ||
-        (await fallbackAction(turn, assistantMessage, controller.signal));
+          (await fallbackAction(turn, assistantMessage, controller.signal))
+      );
       turn.finish(assistantMessage);
 
       res.json(
@@ -247,6 +249,7 @@ function createApp({
       if (!action) {
         action = await fallbackAction(turn, reply, controller.signal);
       }
+      action = dropUnrequestedPlan(turn, action);
       turn.finish(reply);
       if (action) send({ action });
       send({ done: true });
@@ -386,6 +389,7 @@ function prepareTurn(body, userId, conversations) {
       messages: [system, ...withImages([...history, user])],
       model,
       tag,
+      topic,
       defaultSport: SPORTS.includes(topic) ? topic : undefined,
       userText: user.content,
       finish: (reply) => logChat(tag, 'Felix', reply),
@@ -400,6 +404,7 @@ function prepareTurn(body, userId, conversations) {
     messages: [system, ...withImages([...turns])],
     model,
     tag,
+    topic,
     defaultSport: SPORTS.includes(topic) ? topic : undefined,
     userText: user.content,
     finish: (reply) => finishTurn(conversations, key, reply, tag),
@@ -526,6 +531,19 @@ async function fallbackAction(turn, visibleText, signal) {
     `${turn.tag} action fallback: ${action ? `${action.type} (valid)` : 'none'}`
   );
   return refineAction(action, turn.userText);
+}
+
+// Nutrition and recovery chats only get a workout plan when the user asked.
+function dropUnrequestedPlan(turn, action) {
+  if (
+    action?.type === 'workout_plan' &&
+    (turn.topic === 'nutrition' || turn.topic === 'recovery') &&
+    !asksForWorkoutPlan(turn.userText)
+  ) {
+    console.log(`${turn.tag} action dropped: workout_plan not requested`);
+    return null;
+  }
+  return action;
 }
 
 // Logs only whether an action block appeared and its type, never content.

@@ -130,7 +130,7 @@ Case 1 - the user says their weight changed or gives their weight ("I gained 3 k
 <fitrix-action>{"type":"weight","mode":"delta","amount":3,"unit":"kg"}</fitrix-action>
 amount is negative when they lost weight. For a new total weight use mode "set" and the total as amount, for example {"type":"weight","mode":"set","amount":82,"unit":"kg"}. unit is "kg" or "lb", as the user said.
 
-Case 2 - you write out a concrete multi-day workout plan (several named sessions with exercises). Reply with the plan as plain lines, then:
+Case 2 - you write out a concrete multi-day workout plan (several named sessions with exercises). A request for a split, program or plan ("составь сплит", "make me a split", "программа на неделю") always gets the full plan right away: every session with its exercises as "Exercise - sets x reps" lines, never only a list of days or a question first. Reply with the plan as plain lines, then:
 <fitrix-action>{"type":"workout_plan","sport":"gym","templates":[
 {"name":"<session 1 name>","exercises":[{"name":"<exercise name>","sets":4,"reps":8,"kg":60},{"name":"<bodyweight exercise name>","sets":3,"reps":15}]},
 {"name":"<session 2 name>","exercises":[{"name":"<exercise name>","sets":4,"reps":10,"kg":80},{"name":"<exercise name>","sets":3,"reps":12}]}
@@ -540,7 +540,7 @@ function buildSystemPrompt(topic, profile, language, context) {
       'Today in the user\'s FITRIX app (current data the app sent with this message):\n' +
         `${today}\n` +
         'Use these facts when they matter instead of asking for them. Anything ' +
-        'not listed is unknown: don\'t invent it. You cannot change the plan or logs yourself.'
+        'not listed is unknown: don\'t invent it. Never say you already changed the plan or logs; to propose a change, use the app action block described below.'
     );
   }
   parts.push(BASE_RULES);
@@ -558,6 +558,10 @@ function buildSystemPrompt(topic, profile, language, context) {
   if (SPORTS.includes(sanitizeTopic(topic))) {
     parts.push(
       `This is a ${config.label} chat: in a workout_plan block use "sport":"${sanitizeTopic(topic)}".`
+    );
+  } else if (config.label) {
+    parts.push(
+      `This is a ${config.label} chat: add a workout_plan block only when the user explicitly asks for a workout plan or session; questions about whether or how hard to train get advice without a block.`
     );
   }
   return parts.join('\n\n');

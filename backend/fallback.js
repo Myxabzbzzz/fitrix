@@ -15,6 +15,9 @@ function looksLikePlan(text) {
   const lines = text.split('\n');
   const setLines = lines.filter((l) => SET_REP.test(l)).length;
   if (setLines >= 4) return 'workout_plan';
+  // Compact plans: one session per line, exercises comma-separated.
+  const setRepGlobal = new RegExp(SET_REP.source, 'gi');
+  if (setLines >= 2 && (text.match(setRepGlobal) || []).length >= 4) return 'workout_plan';
   if (setLines >= 3) {
     let headers = 0;
     lines.forEach((l, i) => {
@@ -92,6 +95,18 @@ function looksLikeWeightChange(text) {
   if (typeof text !== 'string' || !text.trim()) return false;
   if (QUESTION.test(text) || PLAN_OR_RECIPE.test(text)) return false;
   return WEIGHT_NUM.test(text) && WEIGHT_VERB.test(text);
+}
+
+// ---- workout-plan request (from the USER's message) ----
+const PLAN_REQUEST = new RegExp(
+  L + '(?:plan|split|program|programme|routine|workout|session|reja|dastur|mashg[\'‘’]ulot|rutina|programa|entrenamiento|распиши|составь)' + R +
+    '|план|сплит|программ|тренировк',
+  'iu'
+);
+
+/** True when the user's message asks for a workout plan or session. */
+function asksForWorkoutPlan(text) {
+  return typeof text === 'string' && PLAN_REQUEST.test(text);
 }
 
 const str = { type: 'string' };
@@ -225,4 +240,4 @@ async function extractPlanAction({ post, url, model, kind, text, defaultSport, t
   }
 }
 
-module.exports = { looksLikePlan, looksLikeFoodLog, looksLikeWeightChange, extractPlanAction };
+module.exports = { looksLikePlan, asksForWorkoutPlan, looksLikeFoodLog, looksLikeWeightChange, extractPlanAction };

@@ -218,6 +218,8 @@ const ollama = http.createServer((req, res) => {
         ? 'Sure.\n' + block({ type: 'weight', mode: 'set', amount: 5 })
         : last.startsWith('plan')
         ? PLAN_TEXT
+        : /train hard|workout plan/.test(last)
+        ? 'Here you go.\n' + block({ type: 'workout_plan', sport: 'gym', templates: [{ name: 'Day A', exercises: [{ name: 'Squat', sets: 3, reps: 8 }] }] })
         : 'plain reply';
     if (data.stream) {
       res.writeHead(200, { 'Content-Type': 'application/x-ndjson' });
@@ -669,4 +671,45 @@ test('refineAction: weight delta sign follows the user words', () => {
   // set mode untouched
   const set = { type: 'weight', mode: 'set', kg: 80 };
   assert.deepEqual(refineAction(set, 'похудел до 80 кг'), set);
+});
+
+// ---- live fix: compact plans, unrequested plans in nutrition/recovery ----
+
+test('looksLikePlan: compact one-session-per-line plan is a workout plan', () => {
+  const { looksLikePlan } = require('./fallback');
+  const t =
+    '1. Верх тела - Bench press 4x8, Barbell row 4x8, Dumbbell fly 3x12\n' +
+    '2. Низ тела - Squat 4x8, Lunge 3x12, Calf raise 3x15\n' +
+    '3. Всё тело - Deadlift 3x5, Pull-up 3x8, Plank 3x1';
+  assert.equal(looksLikePlan(t), 'workout_plan');
+  assert.equal(looksLikePlan('Bench press 4x8, Row 4x8, Fly 3x12, Curl 3x12'), null);
+});
+
+test('asksForWorkoutPlan: plan requests yes, advice questions no', () => {
+  const { asksForWorkoutPlan } = require('./fallback');
+  for (const s of [
+    'Составь мне сплит на 3 дня', 'Распиши программу на неделю', 'Make me a 4-day split',
+    'plan for today', 'Bugun uchun mashg‘ulot rejasi', 'Hazme una rutina',
+  ]) assert.equal(asksForWorkoutPlan(s), true, s);
+  for (const s of [
+    'Могу ли я сегодня тренироваться тяжело?', 'How hard should I train today?', 'Сколько белка мне нужно?',
+  ]) assert.equal(asksForWorkoutPlan(s), false, s);
+});
+
+async function actionEvents(topic, message, id) {
+  const events = await ndjson(await post('/chat/stream', { message, conversationId: id, history: [], topic }));
+  return events.filter((e) => e.action);
+}
+
+test('stream: recovery drops an unrequested workout_plan, keeps a requested one', async () => {
+  assert.equal((await actionEvents('recovery', 'Can I train hard today?', 'lf1')).length, 0);
+  assert.equal((await actionEvents('recovery', 'Make me a recovery workout plan', 'lf2')).length, 1);
+  assert.equal((await actionEvents('gym', 'Can I train hard today?', 'lf3')).length, 1);
+});
+
+test('non-stream: recovery drops an unrequested workout_plan', async () => {
+  const j = await (await post('/chat', { message: 'Can I train hard today?', conversationId: 'lf4', history: [], topic: 'nutrition' })).json();
+  assert.equal(j.action, undefined);
+  const k = await (await post('/chat', { message: 'Make me a recovery workout plan', conversationId: 'lf5', history: [], topic: 'recovery' })).json();
+  assert.equal(k.action.type, 'workout_plan');
 });

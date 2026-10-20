@@ -246,3 +246,17 @@ test('acwr up to 6 survives sanitizeContext and reaches the prompt with its band
   assert.ok(p.includes('Training load: 500 AU in 7 days, ACWR 6 (risky)'));
   assert.equal(sanitizeContext({ load: { last7: 5, acwr: 6.5 } }).load.acwr, undefined);
 });
+
+test('live fix wording: context sentence, non-sport topic line, Case 2 split rule', () => {
+  const ctx = { today: { status: 'session', sport: 'gym' } };
+  const rec = buildSystemPrompt('recovery', null, 'en', ctx);
+  const gym = buildSystemPrompt('gym', null, 'en', ctx);
+  const line = 'add a workout_plan block only when the user explicitly asks for a workout plan or session';
+  assert.ok(rec.includes('This is a recovery chat: ' + line));
+  assert.ok(!gym.includes(line));
+  for (const p of [rec, gym]) {
+    assert.ok(p.includes('A request for a split, program or plan ("составь сплит", "make me a split", "программа на неделю") always gets the full plan right away'));
+    assert.ok(!p.includes('You cannot change the plan or logs yourself.'));
+  }
+  assert.ok(rec.includes('Never say you already changed the plan or logs; to propose a change, use the app action block described below.'));
+});
