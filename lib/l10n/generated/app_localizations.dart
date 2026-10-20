@@ -6050,6 +6050,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All topics'**
   String get felixAllTopics;
+
+  /// No description provided for @felixSeesPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Sees your plan, check-in and workouts'**
+  String get felixSeesPlan;
+
+  /// No description provided for @felixSeesNutrition.
+  ///
+  /// In en, this message translates to:
+  /// **'Sees today’s food, targets and weight'**
+  String get felixSeesNutrition;
+
+  /// No description provided for @felixSeesRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Sees your check-in, sleep and training load'**
+  String get felixSeesRecovery;
+
+  /// No description provided for @felixChipReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery {score}%'**
+  String felixChipReadiness(int score);
+
+  /// No description provided for @felixChipToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today: {title}'**
+  String felixChipToday(String title);
+
+  /// No description provided for @felixChipRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest day'**
+  String get felixChipRest;
+
+  /// No description provided for @felixChipLast.
+  ///
+  /// In en, this message translates to:
+  /// **'Last: {name}'**
+  String felixChipLast(String name);
+
+  /// No description provided for @felixChipKcal.
+  ///
+  /// In en, this message translates to:
+  /// **'{eaten} of {target} kcal'**
+  String felixChipKcal(String eaten, String target);
+
+  /// No description provided for @felixChipProtein.
+  ///
+  /// In en, this message translates to:
+  /// **'Protein {eaten} g'**
+  String felixChipProtein(String eaten);
+
+  /// No description provided for @felixAskAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Felix about {topic}'**
+  String felixAskAbout(String topic);
+
+  /// No description provided for @felixPromptGym1.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I break my bench plateau?'**
+  String get felixPromptGym1;
+
+  /// No description provided for @felixPromptGym2.
+  ///
+  /// In en, this message translates to:
+  /// **'Build me a 3-day split'**
+  String get felixPromptGym2;
+
+  /// No description provided for @felixPromptGym3.
+  ///
+  /// In en, this message translates to:
+  /// **'Check my squat technique cues'**
+  String get felixPromptGym3;
+
+  /// No description provided for @felixPromptFitness1.
+  ///
+  /// In en, this message translates to:
+  /// **'A 20-minute HIIT for today'**
+  String get felixPromptFitness1;
+
+  /// No description provided for @felixPromptFitness2.
+  ///
+  /// In en, this message translates to:
+  /// **'Bodyweight workout at home'**
+  String get felixPromptFitness2;
+
+  /// No description provided for @felixPromptFitness3.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobility routine for tight hips'**
+  String get felixPromptFitness3;
+
+  /// No description provided for @felixPromptRunning1.
+  ///
+  /// In en, this message translates to:
+  /// **'What should my easy pace be?'**
+  String get felixPromptRunning1;
+
+  /// No description provided for @felixPromptRunning2.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan for my first 10K'**
+  String get felixPromptRunning2;
+
+  /// No description provided for @felixPromptRunning3.
+  ///
+  /// In en, this message translates to:
+  /// **'How to avoid shin splints'**
+  String get felixPromptRunning3;
+
+  /// No description provided for @felixPromptCycling1.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I test my FTP?'**
+  String get felixPromptCycling1;
+
+  /// No description provided for @felixPromptCycling2.
+  ///
+  /// In en, this message translates to:
+  /// **'Intervals for climbing'**
+  String get felixPromptCycling2;
+
+  /// No description provided for @felixPromptCycling3.
+  ///
+  /// In en, this message translates to:
+  /// **'What to eat on a 3-hour ride'**
+  String get felixPromptCycling3;
+
+  /// No description provided for @felixPromptFootball1.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm-up before a match'**
+  String get felixPromptFootball1;
+
+  /// No description provided for @felixPromptFootball2.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed drills for this week'**
+  String get felixPromptFootball2;
+
+  /// No description provided for @felixPromptFootball3.
+  ///
+  /// In en, this message translates to:
+  /// **'Legs the day after a match?'**
+  String get felixPromptFootball3;
+
+  /// No description provided for @felixPromptWinter1.
+  ///
+  /// In en, this message translates to:
+  /// **'Leg prep for the ski season'**
+  String get felixPromptWinter1;
+
+  /// No description provided for @felixPromptWinter2.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercises for knee safety'**
+  String get felixPromptWinter2;
+
+  /// No description provided for @felixPromptWinter3.
+  ///
+  /// In en, this message translates to:
+  /// **'Staying warm on the slopes'**
+  String get felixPromptWinter3;
+
+  /// No description provided for @felixPromptNutrition1.
+  ///
+  /// In en, this message translates to:
+  /// **'What should I eat today?'**
+  String get felixPromptNutrition1;
+
+  /// No description provided for @felixPromptNutrition2.
+  ///
+  /// In en, this message translates to:
+  /// **'How much protein do I need?'**
+  String get felixPromptNutrition2;
+
+  /// No description provided for @felixPromptNutrition3.
+  ///
+  /// In en, this message translates to:
+  /// **'Is plov OK after training?'**
+  String get felixPromptNutrition3;
+
+  /// No description provided for @felixPromptRecovery1.
+  ///
+  /// In en, this message translates to:
+  /// **'Should I train hard today?'**
+  String get felixPromptRecovery1;
+
+  /// No description provided for @felixPromptRecovery2.
+  ///
+  /// In en, this message translates to:
+  /// **'How to sleep better'**
+  String get felixPromptRecovery2;
+
+  /// No description provided for @felixPromptRecovery3.
+  ///
+  /// In en, this message translates to:
+  /// **'Where do legs fit this week?'**
+  String get felixPromptRecovery3;
+
+  /// No description provided for @felixPromptApp1.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I use the weekly plan?'**
+  String get felixPromptApp1;
+
+  /// No description provided for @felixPromptApp2.
+  ///
+  /// In en, this message translates to:
+  /// **'How does the check-in work?'**
+  String get felixPromptApp2;
 }
 
 class _AppLocalizationsDelegate

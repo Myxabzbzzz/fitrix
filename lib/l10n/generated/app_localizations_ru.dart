@@ -3784,4 +3784,126 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get felixAllTopics => 'Все темы';
+
+  @override
+  String get felixSeesPlan => 'Видит ваш план, чек-ин и тренировки';
+
+  @override
+  String get felixSeesNutrition => 'Видит еду за сегодня, цели и вес';
+
+  @override
+  String get felixSeesRecovery =>
+      'Видит ваш чек-ин, сон и тренировочную нагрузку';
+
+  @override
+  String felixChipReadiness(int score) {
+    return 'Восстановление $score%';
+  }
+
+  @override
+  String felixChipToday(String title) {
+    return 'Сегодня: $title';
+  }
+
+  @override
+  String get felixChipRest => 'День отдыха';
+
+  @override
+  String felixChipLast(String name) {
+    return 'Последняя: $name';
+  }
+
+  @override
+  String felixChipKcal(String eaten, String target) {
+    return '$eaten из $target ккал';
+  }
+
+  @override
+  String felixChipProtein(String eaten) {
+    return 'Белок $eaten г';
+  }
+
+  @override
+  String felixAskAbout(String topic) {
+    return 'Спросите Феликса: $topic';
+  }
+
+  @override
+  String get felixPromptGym1 => 'Как пробить плато в жиме лёжа?';
+
+  @override
+  String get felixPromptGym2 => 'Составь мне сплит на 3 дня';
+
+  @override
+  String get felixPromptGym3 => 'Подскажи, на что смотреть в технике приседа';
+
+  @override
+  String get felixPromptFitness1 => '20-минутный HIIT на сегодня';
+
+  @override
+  String get felixPromptFitness2 => 'Тренировка с собственным весом дома';
+
+  @override
+  String get felixPromptFitness3 => 'Мобильность для зажатых бёдер';
+
+  @override
+  String get felixPromptRunning1 => 'Какой у меня должен быть лёгкий темп?';
+
+  @override
+  String get felixPromptRunning2 => 'План к моим первым 10 км';
+
+  @override
+  String get felixPromptRunning3 => 'Как избежать болей в голенях';
+
+  @override
+  String get felixPromptCycling1 => 'Как проверить мой FTP?';
+
+  @override
+  String get felixPromptCycling2 => 'Интервалы для подъёмов';
+
+  @override
+  String get felixPromptCycling3 => 'Что есть в 3-часовой поездке';
+
+  @override
+  String get felixPromptFootball1 => 'Разминка перед матчем';
+
+  @override
+  String get felixPromptFootball2 => 'Упражнения на скорость на эту неделю';
+
+  @override
+  String get felixPromptFootball3 => 'Ноги на следующий день после матча?';
+
+  @override
+  String get felixPromptWinter1 => 'Подготовка ног к лыжному сезону';
+
+  @override
+  String get felixPromptWinter2 => 'Упражнения для защиты коленей';
+
+  @override
+  String get felixPromptWinter3 => 'Как не мёрзнуть на склоне';
+
+  @override
+  String get felixPromptNutrition1 => 'Что мне съесть сегодня?';
+
+  @override
+  String get felixPromptNutrition2 => 'Сколько белка мне нужно?';
+
+  @override
+  String get felixPromptNutrition3 => 'Можно ли плов после тренировки?';
+
+  @override
+  String get felixPromptRecovery1 =>
+      'Стоит ли мне сегодня тренироваться в полную силу?';
+
+  @override
+  String get felixPromptRecovery2 => 'Как лучше спать';
+
+  @override
+  String get felixPromptRecovery3 => 'Куда вписать ноги на этой неделе?';
+
+  @override
+  String get felixPromptApp1 => 'Как пользоваться планом на неделю?';
+
+  @override
+  String get felixPromptApp2 => 'Как работает чек-ин?';
 }

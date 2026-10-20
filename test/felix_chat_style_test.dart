@@ -12,6 +12,8 @@ import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
 import 'package:fitrix/features/chat/data/services/chat_api_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
+import 'package:fitrix/features/chat/data/felix_snapshot.dart';
+import 'package:fitrix/features/chat/presentation/providers/felix_snapshot_provider.dart';
 import 'package:fitrix/features/chat/presentation/screens/chat_screen.dart';
 import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -165,6 +167,8 @@ void main() {
                     api,
                     greeting: () => const ['Hi, I am Felix'],
                   ))),
+          felixSnapshotProvider.overrideWith(
+              (ref, topic) => FelixSnapshot(today: DateTime(2026))),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -191,10 +195,10 @@ void main() {
           lessThanOrEqualTo(tester.getTopLeft(find.byType(TextField)).dy));
       expect(tester.getSize(chips.first).height, 32);
 
-      await tester.tap(find.text('Plan my week'));
+      await tester.tap(find.text('How do I use the weekly plan?'));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
-      expect(api.sent.single, 'Plan my week');
+      expect(api.sent.single, 'How do I use the weekly plan?');
       expect(chips, findsNothing);
 
       api.release.complete();

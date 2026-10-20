@@ -2938,5 +2938,72 @@
   "@felixHubTopicsCount": {"placeholders": {"count": {"type": "int"}}},
   "felixHubRecent": "Recent chats",
   "felixHubSeeAll": "See all",
-  "felixAllTopics": "All topics"
+  "felixAllTopics": "All topics",
+  "felixSeesPlan": "Sees your plan, check-in and workouts",
+  "felixSeesNutrition": "Sees today’s food, targets and weight",
+  "felixSeesRecovery": "Sees your check-in, sleep and training load",
+  "felixChipReadiness": "Recovery {score}%",
+  "@felixChipReadiness": {
+    "placeholders": {
+      "score": {"type": "int"}
+    }
+  },
+  "felixChipToday": "Today: {title}",
+  "@felixChipToday": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "felixChipRest": "Rest day",
+  "felixChipLast": "Last: {name}",
+  "@felixChipLast": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "felixChipKcal": "{eaten} of {target} kcal",
+  "@felixChipKcal": {
+    "placeholders": {
+      "eaten": {"type": "String"},
+      "target": {"type": "String"}
+    }
+  },
+  "felixChipProtein": "Protein {eaten} g",
+  "@felixChipProtein": {
+    "placeholders": {
+      "eaten": {"type": "String"}
+    }
+  },
+  "felixAskAbout": "Ask Felix about {topic}",
+  "@felixAskAbout": {
+    "placeholders": {
+      "topic": {"type": "String"}
+    }
+  },
+  "felixPromptGym1": "How do I break my bench plateau?",
+  "felixPromptGym2": "Build me a 3-day split",
+  "felixPromptGym3": "Check my squat technique cues",
+  "felixPromptFitness1": "A 20-minute HIIT for today",
+  "felixPromptFitness2": "Bodyweight workout at home",
+  "felixPromptFitness3": "Mobility routine for tight hips",
+  "felixPromptRunning1": "What should my easy pace be?",
+  "felixPromptRunning2": "Plan for my first 10K",
+  "felixPromptRunning3": "How to avoid shin splints",
+  "felixPromptCycling1": "How do I test my FTP?",
+  "felixPromptCycling2": "Intervals for climbing",
+  "felixPromptCycling3": "What to eat on a 3-hour ride",
+  "felixPromptFootball1": "Warm-up before a match",
+  "felixPromptFootball2": "Speed drills for this week",
+  "felixPromptFootball3": "Legs the day after a match?",
+  "felixPromptWinter1": "Leg prep for the ski season",
+  "felixPromptWinter2": "Exercises for knee safety",
+  "felixPromptWinter3": "Staying warm on the slopes",
+  "felixPromptNutrition1": "What should I eat today?",
+  "felixPromptNutrition2": "How much protein do I need?",
+  "felixPromptNutrition3": "Is plov OK after training?",
+  "felixPromptRecovery1": "Should I train hard today?",
+  "felixPromptRecovery2": "How to sleep better",
+  "felixPromptRecovery3": "Where do legs fit this week?",
+  "felixPromptApp1": "How do I use the weekly plan?",
+  "felixPromptApp2": "How does the check-in work?"
 }

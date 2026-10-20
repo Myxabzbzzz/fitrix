@@ -14,6 +14,9 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/presentation/topic_labels.dart';
+import 'package:fitrix/features/chat/presentation/topic_prompts.dart';
+import 'package:fitrix/features/chat/presentation/providers/felix_snapshot_provider.dart';
+import 'package:fitrix/features/chat/presentation/widgets/felix_context_chips.dart';
 import 'package:fitrix/features/chat/data/services/photo_service.dart';
 import 'package:fitrix/features/chat/data/services/speech_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
@@ -224,6 +227,9 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
         child: Column(
           children: [
             _Header(topic: topic),
+            FelixContextChips(
+                snapshot: ref.watch(felixSnapshotProvider(topic)),
+                topic: topic),
             Expanded(
               child: messages.when(
                 data: (list) {
@@ -283,11 +289,7 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 QuickReplyBar(
-                  replies: [
-                    l10n.chatQuickPlanWeek,
-                    l10n.chatQuickEatToday,
-                    l10n.chatQuickTired,
-                  ],
+                  replies: topicPrompts(l10n, topic),
                   hidden: isReplying,
                   onTap: (reply) => ref
                       .read(chatMessagesProviderFor(topic).notifier)
@@ -302,6 +304,8 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
                   onAdd: _addPhoto,
                   pendingPhoto: _pendingPhoto,
                   onRemovePhoto: _removePhoto,
+                  hintText:
+                      l10n.felixAskAbout(topicTitle(l10n, topic).toLowerCase()),
                 ),
               ],
             ),
@@ -351,7 +355,7 @@ class _Header extends StatelessWidget {
                   style: AppText.headingS.copyWith(color: palette.textPrimary),
                 ),
                 Text(
-                  topicSubtitle(l10n, topic),
+                  topicSees(l10n, topic),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppText.caption.copyWith(color: palette.textSecondary),

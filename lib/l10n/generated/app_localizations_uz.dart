@@ -3673,4 +3673,134 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get felixAllTopics => 'Barcha mavzular';
+
+  @override
+  String get felixSeesPlan =>
+      'Rejangiz, check-in va mashg‘ulotlaringizni ko‘radi';
+
+  @override
+  String get felixSeesNutrition =>
+      'Bugungi ovqat, maqsadlar va vazningizni ko‘radi';
+
+  @override
+  String get felixSeesRecovery =>
+      'Check-in, uyqu va mashq yuklamangizni ko‘radi';
+
+  @override
+  String felixChipReadiness(int score) {
+    return 'Tiklanish $score%';
+  }
+
+  @override
+  String felixChipToday(String title) {
+    return 'Bugun: $title';
+  }
+
+  @override
+  String get felixChipRest => 'Dam olish kuni';
+
+  @override
+  String felixChipLast(String name) {
+    return 'Oxirgisi: $name';
+  }
+
+  @override
+  String felixChipKcal(String eaten, String target) {
+    return '$eaten / $target kkal';
+  }
+
+  @override
+  String felixChipProtein(String eaten) {
+    return 'Oqsil $eaten g';
+  }
+
+  @override
+  String felixAskAbout(String topic) {
+    return 'Felixdan so‘rang: $topic';
+  }
+
+  @override
+  String get felixPromptGym1 => 'Yotib siqishdagi to‘xtashni qanday yengaman?';
+
+  @override
+  String get felixPromptGym2 => 'Menga 3 kunlik split tuzib ber';
+
+  @override
+  String get felixPromptGym3 =>
+      'Cho‘kkalash texnikasida nimalarga e’tibor berish kerak?';
+
+  @override
+  String get felixPromptFitness1 => 'Bugun uchun 20 daqiqalik HIIT';
+
+  @override
+  String get felixPromptFitness2 => 'Uyda o‘z vazn bilan mashq';
+
+  @override
+  String get felixPromptFitness3 =>
+      'Qisilgan son bo‘g‘imlari uchun harakatchanlik mashqlari';
+
+  @override
+  String get felixPromptRunning1 => 'Yengil sur’atim qanday bo‘lishi kerak?';
+
+  @override
+  String get felixPromptRunning2 => 'Birinchi 10 km uchun reja';
+
+  @override
+  String get felixPromptRunning3 =>
+      'Boldir og‘rig‘idan qanday saqlanish mumkin';
+
+  @override
+  String get felixPromptCycling1 => 'FTP’ni qanday sinab ko‘raman?';
+
+  @override
+  String get felixPromptCycling2 => 'Ko‘tarilish uchun intervallar';
+
+  @override
+  String get felixPromptCycling3 => '3 soatlik safarda nima yeyish kerak';
+
+  @override
+  String get felixPromptFootball1 => 'O‘yin oldidan razminka';
+
+  @override
+  String get felixPromptFootball2 => 'Shu hafta uchun tezlik mashqlari';
+
+  @override
+  String get felixPromptFootball3 =>
+      'O‘yindan keyingi kuni oyoqlar bilan nima qilish kerak?';
+
+  @override
+  String get felixPromptWinter1 => 'Chang‘i mavsumi uchun oyoqlarni tayyorlash';
+
+  @override
+  String get felixPromptWinter2 => 'Tizzalarni himoya qilish mashqlari';
+
+  @override
+  String get felixPromptWinter3 =>
+      'Yonbag‘irda sovqotmaslik uchun nima qilish kerak';
+
+  @override
+  String get felixPromptNutrition1 => 'Bugun nima yeyishim kerak?';
+
+  @override
+  String get felixPromptNutrition2 => 'Menga qancha oqsil kerak?';
+
+  @override
+  String get felixPromptNutrition3 => 'Mashqdan keyin palov yesa bo‘ladimi?';
+
+  @override
+  String get felixPromptRecovery1 =>
+      'Bugun to‘liq kuch bilan mashq qilsam bo‘ladimi?';
+
+  @override
+  String get felixPromptRecovery2 => 'Qanday qilib yaxshiroq uxlash mumkin';
+
+  @override
+  String get felixPromptRecovery3 =>
+      'Shu hafta oyoq mashqlarini qayerga qo‘yaman?';
+
+  @override
+  String get felixPromptApp1 => 'Haftalik rejadan qanday foydalanaman?';
+
+  @override
+  String get felixPromptApp2 => 'Check-in qanday ishlaydi?';
 }

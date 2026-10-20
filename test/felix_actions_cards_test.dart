@@ -16,6 +16,7 @@ import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.dart';
 import 'package:fitrix/features/profile/data/performance_store.dart';
+import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -59,7 +60,8 @@ void main() {
           locale: locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const Scaffold(body: FelixChatScreen(topic: AssistantTopic.app)),
+          home:
+              const Scaffold(body: FelixChatScreen(topic: AssistantTopic.app)),
         ),
       ));
       await tester.pump(const Duration(milliseconds: 100));
@@ -140,6 +142,11 @@ void main() {
       await prefs.setString(AppConstants.keyUserAge, '30');
       await prefs.setString(AppConstants.keyUserHeight, '175');
       await prefs.setString(performanceProfileKey, '{"sex":"male"}');
+      // The chat screen above kept the targets it read before the profile.
+      container
+        ..invalidate(profileProvider)
+        ..invalidate(performanceProfileProvider)
+        ..invalidate(targetsProvider);
 
       await tester.pumpWidget(UncontrolledProviderScope(
         container: container,

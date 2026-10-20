@@ -16,6 +16,9 @@ class ChatComposer extends StatelessWidget {
   final String? pendingPhoto;
   final VoidCallback onRemovePhoto;
 
+  /// Placeholder in the field; defaults to the generic message hint.
+  final String? hintText;
+
   const ChatComposer({
     super.key,
     required this.controller,
@@ -26,6 +29,7 @@ class ChatComposer extends StatelessWidget {
     required this.onAdd,
     required this.pendingPhoto,
     required this.onRemovePhoto,
+    this.hintText,
   });
 
   @override
@@ -81,8 +85,7 @@ class ChatComposer extends StatelessWidget {
                           style: AppText.bodyRegular
                               .copyWith(color: palette.textPrimary),
                           decoration: InputDecoration.collapsed(
-                            hintText:
-                                AppLocalizations.of(context).chatMessageHint,
+                            hintText: hintText ?? l10n.chatMessageHint,
                             filled: false,
                             hintStyle: AppText.bodyRegular
                                 .copyWith(color: palette.chartLabel),

@@ -3726,4 +3726,128 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get felixAllTopics => 'Todos los temas';
+
+  @override
+  String get felixSeesPlan => 'Ve tu plan, tu check-in y tus entrenamientos';
+
+  @override
+  String get felixSeesNutrition =>
+      'Ve la comida de hoy, tus objetivos y tu peso';
+
+  @override
+  String get felixSeesRecovery =>
+      'Ve tu check-in, tu sueño y tu carga de entrenamiento';
+
+  @override
+  String felixChipReadiness(int score) {
+    return 'Recuperación $score%';
+  }
+
+  @override
+  String felixChipToday(String title) {
+    return 'Hoy: $title';
+  }
+
+  @override
+  String get felixChipRest => 'Día de descanso';
+
+  @override
+  String felixChipLast(String name) {
+    return 'Última: $name';
+  }
+
+  @override
+  String felixChipKcal(String eaten, String target) {
+    return '$eaten de $target kcal';
+  }
+
+  @override
+  String felixChipProtein(String eaten) {
+    return 'Proteína $eaten g';
+  }
+
+  @override
+  String felixAskAbout(String topic) {
+    return 'Pregunta a Felix sobre $topic';
+  }
+
+  @override
+  String get felixPromptGym1 =>
+      '¿Cómo rompo mi estancamiento en press de banca?';
+
+  @override
+  String get felixPromptGym2 => 'Hazme una rutina dividida de 3 días';
+
+  @override
+  String get felixPromptGym3 => 'Revisa las claves de mi técnica de sentadilla';
+
+  @override
+  String get felixPromptFitness1 => 'Un HIIT de 20 minutos para hoy';
+
+  @override
+  String get felixPromptFitness2 => 'Entrenamiento con peso corporal en casa';
+
+  @override
+  String get felixPromptFitness3 => 'Rutina de movilidad para caderas tensas';
+
+  @override
+  String get felixPromptRunning1 => '¿Cuál debería ser mi ritmo suave?';
+
+  @override
+  String get felixPromptRunning2 => 'Plan para mis primeros 10K';
+
+  @override
+  String get felixPromptRunning3 => 'Cómo evitar la periostitis tibial';
+
+  @override
+  String get felixPromptCycling1 => '¿Cómo mido mi FTP?';
+
+  @override
+  String get felixPromptCycling2 => 'Intervalos para subidas';
+
+  @override
+  String get felixPromptCycling3 => 'Qué comer en una salida de 3 horas';
+
+  @override
+  String get felixPromptFootball1 => 'Calentamiento antes de un partido';
+
+  @override
+  String get felixPromptFootball2 => 'Ejercicios de velocidad para esta semana';
+
+  @override
+  String get felixPromptFootball3 => '¿Piernas el día después de un partido?';
+
+  @override
+  String get felixPromptWinter1 =>
+      'Preparar las piernas para la temporada de esquí';
+
+  @override
+  String get felixPromptWinter2 => 'Ejercicios para proteger las rodillas';
+
+  @override
+  String get felixPromptWinter3 => 'Cómo mantenerse caliente en la pista';
+
+  @override
+  String get felixPromptNutrition1 => '¿Qué debería comer hoy?';
+
+  @override
+  String get felixPromptNutrition2 => '¿Cuánta proteína necesito?';
+
+  @override
+  String get felixPromptNutrition3 => '¿Está bien el plov después de entrenar?';
+
+  @override
+  String get felixPromptRecovery1 => '¿Debería entrenar fuerte hoy?';
+
+  @override
+  String get felixPromptRecovery2 => 'Cómo dormir mejor';
+
+  @override
+  String get felixPromptRecovery3 => '¿Dónde encajan las piernas esta semana?';
+
+  @override
+  String get felixPromptApp1 => '¿Cómo uso el plan semanal?';
+
+  @override
+  String get felixPromptApp2 => '¿Cómo funciona el check-in?';
 }
