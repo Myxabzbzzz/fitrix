@@ -279,6 +279,20 @@ void main() {
       expect(backend.bodies[1], {'message': 'hi', 'conversationId': 'c1'});
     });
 
+    test('the repository sends the context only when it has something',
+        () async {
+      backend.handler = FakeBackend.streaming(['ok']);
+      final api = ChatApiService(baseUrl: backend.baseUrl);
+
+      await ChatRepository(api, context: () => {'date': '2026-10-20'})
+          .streamMessage('hi')
+          .toList();
+      await ChatRepository(api, context: () => {}).streamMessage('hi').toList();
+
+      expect(backend.bodies[0]['context'], {'date': '2026-10-20'});
+      expect(backend.bodies[1].containsKey('context'), isFalse);
+    });
+
     test('history skips failed, streaming and empty messages', () {
       final history = ChatMessage.toApiHistory([
         message('Hi, I am Felix', MessageSender.assistant),

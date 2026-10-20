@@ -30,6 +30,9 @@ class ChatRepository {
   /// The app's current language code, sent so Felix answers in it.
   final String Function()? _language;
 
+  /// What Felix knows about the user's day, read when a message is sent.
+  final Map<String, Object> Function()? _context;
+
   /// Localized "photo is missing or too large" text for the failed bubble.
   final String Function()? _photoUnavailable;
 
@@ -50,9 +53,11 @@ class ChatRepository {
     void Function()? onSaved,
     String Function()? language,
     String Function()? photoUnavailable,
+    Map<String, Object> Function()? context,
   })  : _profileRepository = profileRepository,
         _language = language,
         _photoUnavailable = photoUnavailable,
+        _context = context,
         _preloadedPrefs = prefs,
         _onSaved = onSaved;
 
@@ -128,6 +133,7 @@ class ChatRepository {
       profile: await _loadProfile(),
       history: ChatMessage.toApiHistory(context),
       language: _language?.call(),
+      context: _loadContext(),
       images: images,
       onAction: onAction,
     );
@@ -135,6 +141,16 @@ class ChatRepository {
 
   static const photoUnavailableMessage =
       'The photo is missing or too large to send.';
+
+  Map<String, Object>? _loadContext() {
+    try {
+      return _context?.call();
+    } catch (e) {
+      // Felix can still answer without knowing the day.
+      debugPrint('Could not build the context for Felix: $e');
+      return null;
+    }
+  }
 
   Future<Map<String, Object>> _loadProfile() async {
     final repository = _profileRepository;

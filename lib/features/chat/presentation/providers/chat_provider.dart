@@ -7,6 +7,7 @@ import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/chat/presentation/providers/felix_snapshot_provider.dart';
 import 'package:fitrix/features/chat/presentation/topic_labels.dart';
 import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
@@ -63,6 +64,7 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
     onSaved: ref.read(localChangesProvider).notify,
     language: () => ref.read(selectedLanguageProvider),
     photoUnavailable: () => _photoUnavailableText(ref),
+    context: () => ref.read(felixSnapshotProvider(AssistantTopic.app)).toJson(),
   );
 });
 
@@ -87,6 +89,7 @@ final topicChatMessagesProvider = StateNotifierProvider.family<ChatNotifier,
       onSaved: ref.read(localChangesProvider).notify,
       language: () => ref.read(selectedLanguageProvider),
       photoUnavailable: () => _photoUnavailableText(ref),
+      context: () => ref.read(felixSnapshotProvider(topic)).toJson(),
     ),
   );
 });

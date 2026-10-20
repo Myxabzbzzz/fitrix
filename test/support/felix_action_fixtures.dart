@@ -49,6 +49,7 @@ class FakeFelixApi extends ChatApiService {
     Map<String, Object>? profile,
     List<Map<String, String>>? history,
     String? language,
+    Map<String, Object>? context,
     List<String>? images,
     void Function(ChatAction action)? onAction,
   }) async* {

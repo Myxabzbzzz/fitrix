@@ -57,6 +57,8 @@ class ChatApiService {
   ///   so the chat stored on the device is the source of truth.
   /// - [language]: the app's language code; Felix uses it when the user's
   ///   own language isn't clear from the message.
+  /// - [context]: what the app knows about the user's day (plan, check-in,
+  ///   food, ...); omitted when empty.
   /// - [images]: at most one base64 JPEG (<= 1.5 MB decoded) for this turn
   ///   only; the backend then answers with its vision model.
   /// - [onAction]: called with the change Felix proposes (at most one per
@@ -68,6 +70,7 @@ class ChatApiService {
     Map<String, Object>? profile,
     List<Map<String, String>>? history,
     String? language,
+    Map<String, Object>? context,
     List<String>? images,
     void Function(ChatAction action)? onAction,
   }) async* {
@@ -83,6 +86,7 @@ class ChatApiService {
           if (profile != null && profile.isNotEmpty) 'profile': profile,
           if (history != null) 'history': history,
           if (language != null) 'language': language,
+          if (context != null && context.isNotEmpty) 'context': context,
           if (images != null && images.isNotEmpty) 'images': images,
         },
         options: Options(
