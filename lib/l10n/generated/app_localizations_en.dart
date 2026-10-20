@@ -3668,4 +3668,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get felixTopicGreetingHint => 'Ask anything or pick a question below.';
+
+  @override
+  String get felixHubAiCoach => 'AI coach';
+
+  @override
+  String get felixHubIntro =>
+      'Training, recovery and food in one chat. Ask in English, Русский, O‘zbekcha or Español.';
+
+  @override
+  String felixHubToday(String title) {
+    return '$title today';
+  }
+
+  @override
+  String get felixHubRest => 'Rest day today';
+
+  @override
+  String get felixHubDone => 'Today’s session is done';
+
+  @override
+  String felixHubNext(String sport, String weekday) {
+    return '$sport on $weekday';
+  }
+
+  @override
+  String get felixHubTopicsHeader => 'Chat with Felix about';
+
+  @override
+  String felixHubTopicsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count topics',
+      one: '$count topic',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get felixHubRecent => 'Recent chats';
+
+  @override
+  String get felixHubSeeAll => 'See all';
+
+  @override
+  String get felixAllTopics => 'All topics';
 }

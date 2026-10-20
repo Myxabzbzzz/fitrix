@@ -5,7 +5,6 @@ import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
-import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
@@ -19,17 +18,6 @@ import 'package:fitrix/features/programs/presentation/screens/start_program_shee
 import 'package:fitrix/features/programs/presentation/widgets/program_widgets.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
-
-/// Non-gym sessions from today on, the ones a program week can clash with.
-final upcomingNonGymProvider = Provider<List<PlannedSession>>((ref) {
-  final today = ref.watch(todayProvider);
-  final end = addDays(today, 13);
-  return [
-    for (final s in ref.watch(weekPlanProvider))
-      if (s.sport != Sport.gym && !s.day.isBefore(today) && !s.day.isAfter(end))
-        s,
-  ];
-});
 
 /// One program: facts, your week with clashes, the sessions, how you
 /// progress and the Start button.

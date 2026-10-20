@@ -7,6 +7,8 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -22,14 +24,12 @@ import 'package:fitrix/features/chat/presentation/widgets/chat_bubble.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_entrance.dart';
 import 'package:fitrix/features/chat/presentation/widgets/quick_reply_chip.dart';
 
-/// Chat currently open on the Felix tab.
-final selectedAssistantTopicProvider =
-    StateProvider<AssistantTopic>((ref) => AssistantTopic.app);
-
-/// Felix tab: chat with the app assistant or a sport trainer, with the
-/// "All chats" side menu from the design.
+/// One Felix chat: the app assistant, a sport trainer, nutrition or
+/// recovery. Opened from the Felix hub, which it returns to.
 class FelixChatScreen extends ConsumerStatefulWidget {
-  const FelixChatScreen({super.key});
+  final AssistantTopic topic;
+
+  const FelixChatScreen({super.key, required this.topic});
 
   @override
   ConsumerState<FelixChatScreen> createState() => _FelixChatScreenState();
@@ -64,6 +64,9 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
     if (!mounted) return;
     final draft = ref.read(felixDraftProvider);
     if (draft == null) return;
+    final target = ref.read(felixDraftTopicProvider);
+    if (target != null && target != widget.topic) return;
+    ref.read(felixDraftTopicProvider.notifier).state = null;
     ref.read(felixDraftProvider.notifier).state = null;
     _controller.value = TextEditingValue(
       text: draft,
@@ -188,7 +191,7 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
-    final topic = ref.watch(selectedAssistantTopicProvider);
+    final topic = widget.topic;
     final messages = ref.watch(chatMessagesProviderFor(topic));
 
     final isReplying = messages.valueOrNull?.any((m) => m.isStreaming) ?? false;
@@ -206,13 +209,6 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
 
     return Scaffold(
       backgroundColor: palette.background,
-      drawer: _AllChatsDrawer(
-        selected: topic,
-        onSelected: (t) {
-          ref.read(selectedAssistantTopicProvider.notifier).state = t;
-          Navigator.of(context).pop();
-        },
-      ),
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -324,13 +320,12 @@ class _Header extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.sort),
-              color: palette.textPrimary,
-              tooltip: AppLocalizations.of(context).chatAllChats,
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            color: palette.textPrimary,
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: () =>
+                context.canPop() ? context.pop() : context.go(AppRouter.felix),
           ),
           const FelixAvatar(size: 32),
           const SizedBox(width: AppSpacing.sm),
@@ -355,84 +350,6 @@ class _Header extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _AllChatsDrawer extends StatelessWidget {
-  final AssistantTopic selected;
-  final ValueChanged<AssistantTopic> onSelected;
-
-  const _AllChatsDrawer({required this.selected, required this.onSelected});
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-
-    return Drawer(
-      width: 280,
-      backgroundColor: palette.background,
-      shape: const RoundedRectangleBorder(),
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(18, 8, 8, 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      AppLocalizations.of(context).chatAllChats,
-                      style:
-                          AppText.headingS.copyWith(color: palette.textPrimary),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.sort),
-                    color: palette.textPrimary,
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 17),
-                itemCount: AssistantTopic.all.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(height: AppSpacing.md),
-                itemBuilder: (context, index) {
-                  final topic = AssistantTopic.all[index];
-                  final isSelected = topic == selected;
-                  return Material(
-                    color: isSelected ? palette.pillSelected : palette.bubble,
-                    borderRadius: AppRadius.mdAll,
-                    child: InkWell(
-                      borderRadius: AppRadius.mdAll,
-                      onTap: () => onSelected(topic),
-                      child: Container(
-                        height: 36,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md),
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          topicTitle(AppLocalizations.of(context), topic),
-                          style: AppText.body14.copyWith(
-                            color: isSelected
-                                ? palette.onPillSelected
-                                : palette.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

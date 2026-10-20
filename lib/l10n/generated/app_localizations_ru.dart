@@ -3736,4 +3736,52 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get felixTopicGreetingHint =>
       'Спрашивай что угодно или выбери вопрос ниже.';
+
+  @override
+  String get felixHubAiCoach => 'ИИ-тренер';
+
+  @override
+  String get felixHubIntro =>
+      'Тренировки, восстановление и питание в одном чате. Пиши на English, Русский, O‘zbekcha или Español.';
+
+  @override
+  String felixHubToday(String title) {
+    return 'Сегодня: $title';
+  }
+
+  @override
+  String get felixHubRest => 'Сегодня день отдыха';
+
+  @override
+  String get felixHubDone => 'Сегодняшняя тренировка выполнена';
+
+  @override
+  String felixHubNext(String sport, String weekday) {
+    return '$sport: $weekday';
+  }
+
+  @override
+  String get felixHubTopicsHeader => 'О чём поговорить с Felix';
+
+  @override
+  String felixHubTopicsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count темы',
+      many: '$count тем',
+      few: '$count темы',
+      one: '$count тема',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get felixHubRecent => 'Недавние чаты';
+
+  @override
+  String get felixHubSeeAll => 'Все';
+
+  @override
+  String get felixAllTopics => 'Все темы';
 }

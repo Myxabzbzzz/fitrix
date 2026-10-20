@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
@@ -165,7 +166,7 @@ void main() {
           data: MediaQuery.of(context).copyWith(disableAnimations: reduced),
           child: child!,
         ),
-        home: const FelixChatScreen(),
+        home: const FelixChatScreen(topic: AssistantTopic.app),
       ),
     ));
     await tester.pump(const Duration(milliseconds: 100));

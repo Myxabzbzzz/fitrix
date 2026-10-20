@@ -5984,6 +5984,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ask anything or pick a question below.'**
   String get felixTopicGreetingHint;
+
+  /// No description provided for @felixHubAiCoach.
+  ///
+  /// In en, this message translates to:
+  /// **'AI coach'**
+  String get felixHubAiCoach;
+
+  /// No description provided for @felixHubIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Training, recovery and food in one chat. Ask in English, Русский, O‘zbekcha or Español.'**
+  String get felixHubIntro;
+
+  /// No description provided for @felixHubToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} today'**
+  String felixHubToday(String title);
+
+  /// No description provided for @felixHubRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest day today'**
+  String get felixHubRest;
+
+  /// No description provided for @felixHubDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Today’s session is done'**
+  String get felixHubDone;
+
+  /// No description provided for @felixHubNext.
+  ///
+  /// In en, this message translates to:
+  /// **'{sport} on {weekday}'**
+  String felixHubNext(String sport, String weekday);
+
+  /// No description provided for @felixHubTopicsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with Felix about'**
+  String get felixHubTopicsHeader;
+
+  /// No description provided for @felixHubTopicsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} topic} other{{count} topics}}'**
+  String felixHubTopicsCount(int count);
+
+  /// No description provided for @felixHubRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent chats'**
+  String get felixHubRecent;
+
+  /// No description provided for @felixHubSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get felixHubSeeAll;
+
+  /// No description provided for @felixAllTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'All topics'**
+  String get felixAllTopics;
 }
 
 class _AppLocalizationsDelegate

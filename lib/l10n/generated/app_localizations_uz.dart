@@ -3628,4 +3628,49 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get felixTopicGreetingHint =>
       'Xohlagan narsani so‘rang yoki quyidagi savollardan birini tanlang.';
+
+  @override
+  String get felixHubAiCoach => 'AI murabbiy';
+
+  @override
+  String get felixHubIntro =>
+      'Mashq, tiklanish va ovqatlanish bitta chatda. English, Русский, O‘zbekcha yoki Español tilida yozing.';
+
+  @override
+  String felixHubToday(String title) {
+    return 'Bugun: $title';
+  }
+
+  @override
+  String get felixHubRest => 'Bugun dam olish kuni';
+
+  @override
+  String get felixHubDone => 'Bugungi mashg‘ulot bajarildi';
+
+  @override
+  String felixHubNext(String sport, String weekday) {
+    return '$sport: $weekday';
+  }
+
+  @override
+  String get felixHubTopicsHeader => 'Felix bilan nima haqida gaplashamiz';
+
+  @override
+  String felixHubTopicsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ta mavzu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get felixHubRecent => 'So‘nggi chatlar';
+
+  @override
+  String get felixHubSeeAll => 'Hammasi';
+
+  @override
+  String get felixAllTopics => 'Barcha mavzular';
 }

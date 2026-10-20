@@ -232,7 +232,8 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
           key: const ValueKey('cant-find'),
           borderRadius: AppRadius.smAll,
           onTap: () => askFelix(context, ref,
-              topic: AssistantTopic.app, draft: l10n.nutritionCantFindDraft),
+              topic: AssistantTopic.nutrition,
+              draft: l10n.nutritionCantFindDraft),
           child: NutritionTile(
             child: Row(
               children: [

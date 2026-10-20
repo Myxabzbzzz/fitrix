@@ -236,7 +236,7 @@ class _BodyWeightScreenState extends ConsumerState<BodyWeightScreen> {
                       onAsk: () => askFelix(
                         context,
                         ref,
-                        topic: AssistantTopic.app,
+                        topic: AssistantTopic.nutrition,
                         draft: l10n.bodyAskDraft(
                           kgText(context, latest!.kg),
                           '${signed(trend!)} $unit',

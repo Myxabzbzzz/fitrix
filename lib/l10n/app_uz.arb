@@ -987,5 +987,16 @@
   "felixTopicSubRecovery": "Uyqu, mushak og‘rig‘i, tayyorlik, yengil haftalar",
   "felixTopicSubApp": "FITRIX qanday ishlaydi, rejalar, odatlar",
   "felixTopicGreeting": "Salom! Men Felixman. Keling, gaplashamiz: {topic}.",
-  "felixTopicGreetingHint": "Xohlagan narsani so‘rang yoki quyidagi savollardan birini tanlang."
+  "felixTopicGreetingHint": "Xohlagan narsani so‘rang yoki quyidagi savollardan birini tanlang.",
+  "felixHubAiCoach": "AI murabbiy",
+  "felixHubIntro": "Mashq, tiklanish va ovqatlanish bitta chatda. English, Русский, O‘zbekcha yoki Español tilida yozing.",
+  "felixHubToday": "Bugun: {title}",
+  "felixHubRest": "Bugun dam olish kuni",
+  "felixHubDone": "Bugungi mashg‘ulot bajarildi",
+  "felixHubNext": "{sport}: {weekday}",
+  "felixHubTopicsHeader": "Felix bilan nima haqida gaplashamiz",
+  "felixHubTopicsCount": "{count, plural, other{{count} ta mavzu}}",
+  "felixHubRecent": "So‘nggi chatlar",
+  "felixHubSeeAll": "Hammasi",
+  "felixAllTopics": "Barcha mavzular"
 }

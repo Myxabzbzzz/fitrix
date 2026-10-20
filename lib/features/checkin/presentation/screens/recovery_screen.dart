@@ -18,7 +18,6 @@ import 'package:fitrix/features/checkin/presentation/widgets/checkin_text.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/readiness_ring.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
-import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/start_workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -155,7 +154,7 @@ class _Content extends ConsumerWidget {
               onTap: () => askFelix(
                 context,
                 ref,
-                topic: AssistantTopic.forSport(Sport.gym),
+                topic: AssistantTopic.recovery,
                 draft: l10n.recoveryAskDraft(
                   readiness.score,
                   l10n.readinessLabel(readiness.label),

@@ -987,5 +987,16 @@
   "felixTopicSubRecovery": "Сон, крепатура, готовность, разгрузочные недели",
   "felixTopicSubApp": "Как работает FITRIX, планы, привычки",
   "felixTopicGreeting": "Привет! Я Felix. Давай поговорим: {topic}.",
-  "felixTopicGreetingHint": "Спрашивай что угодно или выбери вопрос ниже."
+  "felixTopicGreetingHint": "Спрашивай что угодно или выбери вопрос ниже.",
+  "felixHubAiCoach": "ИИ-тренер",
+  "felixHubIntro": "Тренировки, восстановление и питание в одном чате. Пиши на English, Русский, O‘zbekcha или Español.",
+  "felixHubToday": "Сегодня: {title}",
+  "felixHubRest": "Сегодня день отдыха",
+  "felixHubDone": "Сегодняшняя тренировка выполнена",
+  "felixHubNext": "{sport}: {weekday}",
+  "felixHubTopicsHeader": "О чём поговорить с Felix",
+  "felixHubTopicsCount": "{count, plural, one{{count} тема} few{{count} темы} many{{count} тем} other{{count} темы}}",
+  "felixHubRecent": "Недавние чаты",
+  "felixHubSeeAll": "Все",
+  "felixAllTopics": "Все темы"
 }

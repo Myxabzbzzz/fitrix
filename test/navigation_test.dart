@@ -12,7 +12,6 @@ import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
-import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/data/checkin_store.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
@@ -136,8 +135,7 @@ Future<void> _askFelix(
   expect(button, findsOneWidget);
   await tester.tap(button);
   await _settle(tester);
-  expect(_location(router), AppRouter.felix);
-  expect(container.read(selectedAssistantTopicProvider), topic);
+  expect(_location(router), AppRouter.felixChat(topic));
   final field = find.byWidgetPredicate((w) =>
       w is TextField && w.controller != null && draft(w.controller!.text));
   expect(field, findsOneWidget);
@@ -252,7 +250,7 @@ void main() {
       });
       await _open(tester, router, AppRouter.recovery);
       await _askFelix(tester, c, router,
-          topic: _gym,
+          topic: AssistantTopic.recovery,
           draft: (t) =>
               t ==
               'My readiness today is 76% (Ready to train). Sleep 7 h 30 m, '
@@ -326,7 +324,7 @@ void main() {
       });
       await _open(tester, router, AppRouter.progressWeight);
       await _askFelix(tester, c, router,
-          topic: AssistantTopic.app,
+          topic: AssistantTopic.nutrition,
           draft: (t) =>
               t.startsWith('My weight is 76') &&
               t.contains('a week. My goal: lean bulk') &&
@@ -340,7 +338,7 @@ void main() {
       await _open(tester, router, AppRouter.nutrition);
       expect(find.byKey(const ValueKey('dinner-idea')), findsOneWidget);
       await _askFelix(tester, c, router,
-          topic: AssistantTopic.app,
+          topic: AssistantTopic.nutrition,
           draft: (t) =>
               t.startsWith('I have ') &&
               t.contains(' kcal and ') &&
@@ -360,8 +358,7 @@ void main() {
       await tester.ensureVisible(tile);
       await tester.tap(tile);
       await _settle(tester);
-      expect(_location(router), AppRouter.felix);
-      expect(c.read(selectedAssistantTopicProvider), AssistantTopic.app);
+      expect(_location(router), AppRouter.felixChat(AssistantTopic.nutrition));
       expect(
           find.byWidgetPredicate((w) =>
               w is TextField &&

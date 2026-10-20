@@ -121,3 +121,14 @@ final todayPlanProvider = Provider<TodayPlan>((ref) => todayPlanOf(
     ref.watch(weekPlanProvider),
     ref.watch(workoutHistoryProvider),
     ref.watch(todayProvider)));
+
+/// Non-gym sessions from today on, the ones a program week can clash with.
+final upcomingNonGymProvider = Provider<List<PlannedSession>>((ref) {
+  final today = ref.watch(todayProvider);
+  final end = addDays(today, 13);
+  return [
+    for (final s in ref.watch(weekPlanProvider))
+      if (s.sport != Sport.gym && !s.day.isBefore(today) && !s.day.isAfter(end))
+        s,
+  ];
+});

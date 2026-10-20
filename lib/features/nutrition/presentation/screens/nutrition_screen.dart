@@ -380,7 +380,7 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
           onAsk: () => askFelix(
             context,
             ref,
-            topic: AssistantTopic.app,
+            topic: AssistantTopic.nutrition,
             draft: l10n.nutritionAskDraft(
               NumberFormat.decimalPattern(
                       Localizations.localeOf(context).toString())

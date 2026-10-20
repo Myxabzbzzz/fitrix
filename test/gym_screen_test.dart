@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
-import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/workout_card.dart';
@@ -162,15 +162,15 @@ void main() {
             path: '/',
             builder: (_, __) => const SportWorkoutsScreen(sport: Sport.gym)),
         GoRoute(
-            path: AppRouter.felix,
+            path: '/felix/chat/:topic',
             builder: (_, __) => const Text('felix-chat')),
       ]);
-      final container = await _pump(tester, router: router);
+      await _pump(tester, router: router);
       await tester.ensureVisible(find.byType(CoachCard));
       await tester.tap(find.descendant(
           of: find.byType(CoachCard), matching: find.text('Ask')));
       await tester.pumpAndSettle();
-      expect(container.read(selectedAssistantTopicProvider).sport, Sport.gym);
+      expect(router.state.uri.path, AppRouter.felixChat(AssistantTopic.gym));
       expect(find.text('felix-chat'), findsOneWidget);
     });
   });

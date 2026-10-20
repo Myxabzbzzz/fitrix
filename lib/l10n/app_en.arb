@@ -2924,5 +2924,19 @@
       "topic": {"type": "String"}
     }
   },
-  "felixTopicGreetingHint": "Ask anything or pick a question below."
+  "felixTopicGreetingHint": "Ask anything or pick a question below.",
+  "felixHubAiCoach": "AI coach",
+  "felixHubIntro": "Training, recovery and food in one chat. Ask in English, Русский, O‘zbekcha or Español.",
+  "felixHubToday": "{title} today",
+  "@felixHubToday": {"placeholders": {"title": {"type": "String"}}},
+  "felixHubRest": "Rest day today",
+  "felixHubDone": "Today’s session is done",
+  "felixHubNext": "{sport} on {weekday}",
+  "@felixHubNext": {"placeholders": {"sport": {"type": "String"}, "weekday": {"type": "String"}}},
+  "felixHubTopicsHeader": "Chat with Felix about",
+  "felixHubTopicsCount": "{count, plural, one{{count} topic} other{{count} topics}}",
+  "@felixHubTopicsCount": {"placeholders": {"count": {"type": "int"}}},
+  "felixHubRecent": "Recent chats",
+  "felixHubSeeAll": "See all",
+  "felixAllTopics": "All topics"
 }

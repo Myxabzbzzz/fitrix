@@ -10,7 +10,10 @@ import 'package:fitrix/features/profile/presentation/screens/profile_screen.dart
 import 'package:fitrix/features/profile/presentation/screens/about_me_screen.dart';
 import 'package:fitrix/features/profile/presentation/screens/profile_tab_screen.dart';
 import 'package:fitrix/features/chat/presentation/screens/chat_screen.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/chat/presentation/screens/felix_all_chats_screen.dart';
 import 'package:fitrix/features/chat/presentation/screens/felix_chat_screen.dart';
+import 'package:fitrix/features/chat/presentation/screens/felix_hub_screen.dart';
 import 'package:fitrix/features/transition/presentation/screens/chat_transition_screen.dart';
 import 'package:fitrix/features/checkin/presentation/screens/recovery_screen.dart';
 import 'package:fitrix/features/plan/presentation/screens/week_plan_screen.dart';
@@ -61,6 +64,8 @@ class AppRouter {
   static const String shop = '/shop';
   static const String home = '/home';
   static const String felix = '/felix';
+  static const String felixAll = '/felix/all';
+  static String felixChat(AssistantTopic t) => '/felix/chat/${t.id}';
   static const String me = '/me';
   static const String aboutMe = '/me/about';
   static const String hrZones = '/me/zones';
@@ -487,7 +492,30 @@ class AppRouter {
                   GoRoute(
                     path: felix,
                     name: 'felix',
-                    builder: (context, state) => const FelixChatScreen(),
+                    builder: (context, state) => const FelixHubScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'all',
+                        name: 'felixAll',
+                        builder: (context, state) =>
+                            const FelixAllChatsScreen(),
+                      ),
+                      GoRoute(
+                        path: 'chat/:topic',
+                        name: 'felixChat',
+                        redirect: (context, state) => AssistantTopic.fromId(
+                                    state.pathParameters['topic'] ?? '') ==
+                                null
+                            ? felix
+                            : null,
+                        builder: (context, state) => FelixChatScreen(
+                          // Key by topic: another topic gets a fresh screen.
+                          key: ValueKey(state.pathParameters['topic']),
+                          topic: AssistantTopic.fromId(
+                              state.pathParameters['topic']!)!,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

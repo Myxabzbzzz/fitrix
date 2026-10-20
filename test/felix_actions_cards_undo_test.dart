@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
@@ -73,7 +74,7 @@ void main() {
       final router = GoRouter(routes: [
         GoRoute(
             path: '/',
-            builder: (_, __) => const Scaffold(body: FelixChatScreen())),
+            builder: (_, __) => const Scaffold(body: FelixChatScreen(topic: AssistantTopic.app))),
         GoRoute(
             path: AppRouter.nutrition,
             builder: (_, __) {

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
@@ -58,7 +59,7 @@ void main() {
           locale: locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const Scaffold(body: FelixChatScreen()),
+          home: const Scaffold(body: FelixChatScreen(topic: AssistantTopic.app)),
         ),
       ));
       await tester.pump(const Duration(milliseconds: 100));

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/time/greeting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
@@ -17,23 +18,6 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 /// ring that opens Recovery after it.
 class CheckInCard extends ConsumerWidget {
   const CheckInCard({super.key});
-
-  String _greeting(AppLocalizations l10n, DateTime now, String name) {
-    final hasName = name.isNotEmpty;
-    if (now.hour < 12) {
-      return hasName
-          ? l10n.homeGreetingMorning(name)
-          : l10n.homeGreetingMorningNoName;
-    }
-    if (now.hour < 18) {
-      return hasName
-          ? l10n.homeGreetingAfternoon(name)
-          : l10n.homeGreetingAfternoonNoName;
-    }
-    return hasName
-        ? l10n.homeGreetingEvening(name)
-        : l10n.homeGreetingEveningNoName;
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -109,7 +93,7 @@ class CheckInCard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(_greeting(l10n, now, name),
+                Text(timeOfDayGreeting(l10n, now, name),
                     style:
                         AppText.headingS.copyWith(color: palette.textPrimary)),
                 Text(l10n.checkinCardPrompt,
