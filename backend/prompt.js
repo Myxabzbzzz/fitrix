@@ -6,6 +6,10 @@ const MAX_MESSAGE_LENGTH = 4000;
 const MAX_HISTORY_TURNS = 20;
 const MAX_HISTORY_CONTENT_LENGTH = 4000;
 const MAX_CONVERSATION_ID_LENGTH = 200;
+const MAX_CONTEXT_BYTES = 8 * 1024;
+const MAX_CONTEXT_TEXT_LENGTH = 60;
+
+const { SPORTS } = require('./actions');
 
 // Values match the app's `Sport.name`, plus "app" for the general assistant.
 const TOPICS = {
@@ -63,6 +67,23 @@ const TOPICS = {
       'skiing, snowboarding and other winter sports: pre-season leg and core ' +
       'strength, balance, endurance at altitude, technique tips, staying warm, ' +
       'and preventing knee and wrist injuries.',
+  },
+  nutrition: {
+    label: 'nutrition',
+    persona:
+      'You are the user\'s personal sports nutrition coach. You specialise in ' +
+      'everyday eating around training: calories and macros from body weight ' +
+      'and goal, protein timing, hydration, meals before and after training, ' +
+      'and Uzbek dishes such as plov, lagman, samsa, non and shurpa with ' +
+      'realistic portions. You can explain how to log food in FITRIX.',
+  },
+  recovery: {
+    label: 'recovery',
+    persona:
+      'You are the user\'s personal recovery coach. You specialise in sleep, ' +
+      'muscle soreness, readiness from the daily check-in, HRV basics, ' +
+      'deloads, rest days, where to place hard sessions in the week, and ' +
+      'light active recovery.',
   },
 };
 
@@ -242,8 +263,253 @@ function describeProfile(profile) {
   return lines.join('\n');
 }
 
+const DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+const WEEKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+const TODAY_STATUSES = ['session', 'rest', 'done', 'unplanned'];
+const READINESS_LABELS = ['ready', 'trainLight', 'rest'];
+const READINESS_FACTORS = ['sleep', 'soreness', 'energy', 'stress', 'load'];
+const LOAD_BANDS = ['low', 'sweetSpot', 'risky'];
+
+function pick(value, allowed) {
+  return typeof value === 'string' && allowed.includes(value) ? value : undefined;
+}
+
+function cleanDate(value) {
+  if (typeof value !== 'string') return undefined;
+  const match = DATE_PATTERN.exec(value);
+  if (!match) return undefined;
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  return month >= 1 && month <= 12 && day >= 1 && day <= 31 ? value : undefined;
+}
+
+// Strict number: finite, in range, or undefined (strings are not numbers here).
+function num(value, min, max, decimals = 1) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return undefined;
+  if (value < min || value > max) return undefined;
+  const factor = 10 ** decimals;
+  return Math.round(value * factor) / factor;
+}
+
+function text(value) {
+  return cleanText(value, MAX_CONTEXT_TEXT_LENGTH) ?? undefined;
+}
+
+// Drops undefined entries; returns null when nothing is left.
+function compact(object) {
+  const out = {};
+  for (const [key, value] of Object.entries(object)) {
+    if (value !== undefined) out[key] = value;
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+function cleanFactors(value) {
+  if (!Array.isArray(value)) return undefined;
+  const factors = [];
+  for (const item of value) {
+    if (!item || typeof item !== 'object') continue;
+    const factor = pick(item.factor, READINESS_FACTORS);
+    const delta = num(item.delta, -50, 50);
+    if (factor && delta !== undefined) factors.push({ factor, delta });
+    if (factors.length === 5) break;
+  }
+  return factors.length ? factors : undefined;
+}
+
+function cleanMacros(raw, withWater) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+  const kcal = num(raw.kcal, 0, 20000);
+  const protein = num(raw.protein, 0, 2000);
+  const carbs = num(raw.carbs, 0, 3000);
+  const fat = num(raw.fat, 0, 2000);
+  if ([kcal, protein, carbs, fat].includes(undefined)) return undefined;
+  return compact({ kcal, protein, carbs, fat, waterMl: withWater ? num(raw.waterMl, 0, 20000) : undefined }) ?? undefined;
+}
+
+function isObject(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * Validates the optional `context` the app sends with a message (today's
+ * plan, check-in, load, food, weight). Unknown keys are dropped, text is
+ * cleaned and short, numbers must be in range or the field is dropped.
+ * Returns null when nothing usable is left or the payload is over 8 KB.
+ */
+function sanitizeContext(raw) {
+  if (!isObject(raw)) return null;
+  try {
+    if (JSON.stringify(raw).length > MAX_CONTEXT_BYTES) return null;
+  } catch {
+    return null;
+  }
+
+  let today;
+  if (isObject(raw.today)) {
+    const status = pick(raw.today.status, TODAY_STATUSES);
+    if (status) {
+      today = compact({
+        status,
+        sport: pick(raw.today.sport, SPORTS),
+        title: text(raw.today.title),
+        minutes: num(raw.today.minutes, 0, 600),
+      });
+    }
+  }
+
+  let next;
+  if (isObject(raw.next)) {
+    const date = cleanDate(raw.next.date);
+    const sport = pick(raw.next.sport, SPORTS);
+    if (date && sport) next = compact({ date, sport, title: text(raw.next.title) });
+  }
+
+  let readiness;
+  if (isObject(raw.readiness)) {
+    const score = num(raw.readiness.score, 0, 100);
+    if (score !== undefined) {
+      readiness = compact({
+        score,
+        label: pick(raw.readiness.label, READINESS_LABELS),
+        sleepHours: num(raw.readiness.sleepHours, 0, 24),
+        factors: cleanFactors(raw.readiness.factors),
+      });
+    }
+  }
+
+  let lastWorkout;
+  if (isObject(raw.lastWorkout)) {
+    const date = cleanDate(raw.lastWorkout.date);
+    const sport = pick(raw.lastWorkout.sport, SPORTS);
+    const name = text(raw.lastWorkout.name);
+    if (date && sport && name) {
+      lastWorkout = compact({ date, sport, name, minutes: num(raw.lastWorkout.minutes, 0, 600) });
+    }
+  }
+
+  let load;
+  if (isObject(raw.load)) {
+    const last7 = num(raw.load.last7, 0, 100000);
+    if (last7 !== undefined) {
+      load = compact({
+        last7,
+        acwr: num(raw.load.acwr, 0, 5, 2),
+        band: pick(raw.load.band, LOAD_BANDS),
+        hardDays7: num(raw.load.hardDays7, 0, 7, 0),
+      });
+    }
+  }
+
+  let weight;
+  if (isObject(raw.weight)) {
+    const kg = num(raw.weight.kg, 20, 400);
+    if (kg !== undefined) {
+      weight = compact({ kg, change8wKg: num(raw.weight.change8wKg, -100, 100) });
+    }
+  }
+
+  const context = compact({
+    date: cleanDate(raw.date),
+    weekday: pick(raw.weekday, WEEKDAYS),
+    today: today ?? undefined,
+    next: next ?? undefined,
+    readiness: readiness ?? undefined,
+    lastWorkout: lastWorkout ?? undefined,
+    load: load ?? undefined,
+    food: cleanMacros(raw.food, true),
+    targets: cleanMacros(raw.targets, true),
+    weight: weight ?? undefined,
+  });
+  return context;
+}
+
+const READINESS_TEXT = {
+  ready: 'ready to train',
+  trainLight: 'train light',
+  rest: 'rest recommended',
+};
+const BAND_TEXT = { low: 'low', sweetSpot: 'sweet spot', risky: 'risky' };
+
+function signed(n) {
+  return n > 0 ? `+${n}` : `${n}`;
+}
+
+function macroLine(label, m) {
+  let line = `${label}: ${m.kcal} kcal, protein ${m.protein} g, carbs ${m.carbs} g, fat ${m.fat} g`;
+  if (m.waterMl !== undefined) line += `, water ${m.waterMl} ml`;
+  return line;
+}
+
+/** Plain English lines (one per present field) for a sanitized context. */
+function describeContext(ctx) {
+  if (!ctx) return null;
+  const lines = [];
+  if (ctx.date) {
+    const day = ctx.weekday ? `${ctx.weekday[0].toUpperCase()}${ctx.weekday.slice(1)} ` : '';
+    lines.push(`Date: ${day}${ctx.date}`);
+  } else if (ctx.weekday) {
+    lines.push(`Weekday: ${ctx.weekday}`);
+  }
+  if (ctx.today) {
+    const t = ctx.today;
+    if (t.status === 'session') {
+      let line = `Today's plan: ${t.sport ? `${t.sport} ` : ''}session`;
+      if (t.title) line += ` "${t.title}"`;
+      if (t.minutes !== undefined) line += `, ${t.minutes} min`;
+      lines.push(line);
+    } else if (t.status === 'rest') {
+      lines.push('Today: rest day');
+    } else if (t.status === 'done') {
+      lines.push('Today: planned session already done');
+    } else {
+      lines.push('Plan: no sessions planned');
+    }
+  }
+  if (ctx.next) {
+    const n = ctx.next;
+    lines.push(`Next session: ${n.sport}${n.title ? ` "${n.title}"` : ''} on ${n.date}`);
+  }
+  if (ctx.readiness) {
+    const r = ctx.readiness;
+    let line = `Check-in today: readiness ${r.score}/100`;
+    if (r.label) line += ` (${READINESS_TEXT[r.label]})`;
+    if (r.sleepHours !== undefined) line += `, slept ${r.sleepHours} h`;
+    if (r.factors) {
+      line += `; factors: ${r.factors.map((f) => `${f.factor} ${signed(f.delta)}`).join(', ')}`;
+    }
+    lines.push(line);
+  }
+  if (ctx.lastWorkout) {
+    const w = ctx.lastWorkout;
+    let line = `Last workout: ${w.sport} "${w.name}" on ${w.date}`;
+    if (w.minutes !== undefined) line += `, ${w.minutes} min`;
+    lines.push(line);
+  }
+  if (ctx.load) {
+    const l = ctx.load;
+    let line = `Training load: ${l.last7} AU in 7 days`;
+    if (l.acwr !== undefined) {
+      line += `, ACWR ${l.acwr}`;
+      if (l.band) line += ` (${BAND_TEXT[l.band]})`;
+    }
+    if (l.hardDays7 !== undefined) line += `, hard days ${l.hardDays7}/7`;
+    lines.push(line);
+  }
+  if (ctx.food) lines.push(macroLine('Eaten today', ctx.food));
+  if (ctx.targets) lines.push(macroLine('Daily targets', ctx.targets));
+  if (ctx.weight) {
+    let line = `Body weight: ${ctx.weight.kg} kg`;
+    if (ctx.weight.change8wKg !== undefined) {
+      line += `, change over 8 weeks ${ctx.weight.change8wKg} kg`;
+    }
+    lines.push(line);
+  }
+  return lines.length ? lines.join('\n') : null;
+}
+
 /** Felix's system prompt for one request. */
-function buildSystemPrompt(topic, profile, language) {
+function buildSystemPrompt(topic, profile, language, context) {
   const config = TOPICS[sanitizeTopic(topic)];
   const parts = [
     `You are Felix, a personal AI fitness coach in the FITRIX app. ${config.persona}`,
@@ -266,6 +532,15 @@ function buildSystemPrompt(topic, profile, language) {
         'data you already have. Address the user by name occasionally.'
     );
   }
+  const today = describeContext(context);
+  if (today) {
+    parts.push(
+      'Today in the user\'s FITRIX app (current data the app sent with this message):\n' +
+        `${today}\n` +
+        'Use these facts when they matter instead of asking for them. Anything ' +
+        'not listed is unknown: don\'t invent it. You cannot change the plan or logs yourself.'
+    );
+  }
   parts.push(BASE_RULES);
   const appLanguage = LANGUAGES[sanitizeLanguage(language)];
   if (appLanguage) {
@@ -278,7 +553,7 @@ function buildSystemPrompt(topic, profile, language) {
   }
   // Last, so a small model still has the block format fresh when it answers.
   parts.push(ACTION_RULES);
-  if (config.label) {
+  if (SPORTS.includes(sanitizeTopic(topic))) {
     parts.push(
       `This is a ${config.label} chat: in a workout_plan block use "sport":"${sanitizeTopic(topic)}".`
     );
@@ -295,5 +570,7 @@ module.exports = {
   sanitizeProfile,
   sanitizeHistory,
   sanitizeLanguage,
+  sanitizeContext,
+  describeContext,
   buildSystemPrompt,
 };

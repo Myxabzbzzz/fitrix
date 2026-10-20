@@ -11,6 +11,7 @@ const {
   sanitizeProfile,
   sanitizeHistory,
   sanitizeLanguage,
+  sanitizeContext,
   buildSystemPrompt,
 } = require('./prompt');
 const { refineAction, createActionFilter, parseAction, extractAction, SPORTS } = require('./actions');
@@ -359,13 +360,15 @@ function prepareTurn(body, userId, conversations) {
   const profile = sanitizeProfile(body.profile);
   const history = sanitizeHistory(body.history);
   const language = sanitizeLanguage(body.language);
+  const context = sanitizeContext(body.context);
   const system = {
     role: 'system',
-    content: buildSystemPrompt(topic, profile, language),
+    content: buildSystemPrompt(topic, profile, language, context),
   };
   const user = { role: 'user', content: message.trim() };
   const tag = `[${userId.slice(0, 8)} ${conversationId} ${topic}` +
-    (history ? ` history:${history.length}` : '') + ']';
+    (history ? ` history:${history.length}` : '') +
+    (context ? ' ctx' : '') + ']';
 
   logChat(`\n${tag}`, 'User', user.content);
   if (images.length) console.log(`${tag} image attached (vision model)`);

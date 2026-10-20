@@ -177,6 +177,35 @@ test('the app language reaches the system prompt', async () => {
   assert.match(ollamaRequests[0].messages[0].content, /app is set to Spanish/);
 });
 
+test('app context reaches the system prompt; a malformed context is ignored', async () => {
+  const base = await authedApp();
+  ollamaRequests.length = 0;
+  const res = await post(
+    base,
+    '/chat',
+    {
+      message: 'how is my recovery?',
+      conversationId: 'ctx1',
+      topic: 'recovery',
+      context: { readiness: { score: 78, label: 'ready' } },
+    },
+    tokenFor(ALICE)
+  );
+  assert.equal(res.status, 200);
+  assert.match(ollamaRequests[0].messages[0].content, /readiness 78/);
+  assert.ok(!ollamaRequests[0].messages[0].content.includes('"sport":"recovery"'));
+
+  ollamaRequests.length = 0;
+  const bad = await post(
+    base,
+    '/chat',
+    { message: 'hi', conversationId: 'ctx2', context: 5 },
+    tokenFor(ALICE)
+  );
+  assert.equal(bad.status, 200);
+  assert.ok(!ollamaRequests[0].messages[0].content.includes("Today in the user's FITRIX app"));
+});
+
 test('server memory forgets idle conversations', async () => {
   let now = 0;
   const base = await authedApp({ memory: { idleMs: 1000, now: () => now } });
