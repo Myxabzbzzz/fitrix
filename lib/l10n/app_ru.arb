@@ -1009,6 +1009,7 @@
   "felixChipKcal": "{eaten} из {target} ккал",
   "felixChipProtein": "Белок {eaten} г",
   "felixAskAbout": "Спросите Феликса: {topic}",
+  "felixAskAboutApp": "Спросите Felix про FITRIX",
   "felixPromptGym1": "Как пробить плато в жиме лёжа?",
   "felixPromptGym2": "Составь мне сплит на 3 дня",
   "felixPromptGym3": "Подскажи, на что смотреть в технике приседа",

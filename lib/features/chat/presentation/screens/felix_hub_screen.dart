@@ -29,7 +29,7 @@ class FelixHubScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final plan = ref.watch(todayPlanProvider);
     final today = ref.watch(todayProvider);
-    final horizon = addDays(today, 7);
+    final horizon = addDays(today, 6);
     PlannedSession? next;
     for (final s in ref.watch(upcomingNonGymProvider)) {
       if (!s.day.isAfter(today) || s.day.isAfter(horizon)) continue;

@@ -2980,6 +2980,7 @@
       "topic": {"type": "String"}
     }
   },
+  "felixAskAboutApp": "Ask Felix about FITRIX",
   "felixPromptGym1": "How do I break my bench plateau?",
   "felixPromptGym2": "Build me a 3-day split",
   "felixPromptGym3": "Check my squat technique cues",

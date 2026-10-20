@@ -304,8 +304,10 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
                   onAdd: _addPhoto,
                   pendingPhoto: _pendingPhoto,
                   onRemovePhoto: _removePhoto,
-                  hintText:
-                      l10n.felixAskAbout(topicTitle(l10n, topic).toLowerCase()),
+                  hintText: topic.isApp
+                      ? l10n.felixAskAboutApp
+                      : l10n
+                          .felixAskAbout(topicTitle(l10n, topic).toLowerCase()),
                 ),
               ],
             ),

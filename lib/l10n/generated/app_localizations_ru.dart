@@ -3829,6 +3829,9 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get felixAskAboutApp => 'Спросите Felix про FITRIX';
+
+  @override
   String get felixPromptGym1 => 'Как пробить плато в жиме лёжа?';
 
   @override

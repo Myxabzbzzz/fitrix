@@ -226,6 +226,13 @@ test('describeContext renders readable lines', () => {
   assert.ok(rest.includes('Today: rest day'));
 });
 
+test('describeContext signs the weight change', () => {
+  const gain = buildSystemPrompt('app', {}, 'en', sanitizeContext({ weight: { kg: 78.4, change8wKg: 0.5 } }));
+  assert.ok(gain.includes('Body weight: 78.4 kg, change over 8 weeks +0.5 kg'));
+  const loss = buildSystemPrompt('app', {}, 'en', sanitizeContext({ weight: { kg: 78.4, change8wKg: -0.5 } }));
+  assert.ok(loss.includes('change over 8 weeks -0.5 kg'));
+});
+
 test('describeContext keeps the load band when acwr is missing', () => {
   const ctx = sanitizeContext({ load: { last7: 876, band: 'risky' } });
   const p = buildSystemPrompt('app', {}, 'en', ctx);

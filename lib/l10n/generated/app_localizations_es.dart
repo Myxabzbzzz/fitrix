@@ -3772,6 +3772,9 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get felixAskAboutApp => 'Pregunta a Felix sobre FITRIX';
+
+  @override
   String get felixPromptGym1 =>
       '¿Cómo rompo mi estancamiento en press de banca?';
 

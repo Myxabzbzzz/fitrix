@@ -1009,6 +1009,7 @@
   "felixChipKcal": "{eaten} de {target} kcal",
   "felixChipProtein": "Proteína {eaten} g",
   "felixAskAbout": "Pregunta a Felix sobre {topic}",
+  "felixAskAboutApp": "Pregunta a Felix sobre FITRIX",
   "felixPromptGym1": "¿Cómo rompo mi estancamiento en press de banca?",
   "felixPromptGym2": "Hazme una rutina dividida de 3 días",
   "felixPromptGym3": "Revisa las claves de mi técnica de sentadilla",

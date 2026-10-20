@@ -503,7 +503,7 @@ function describeContext(ctx) {
   if (ctx.weight) {
     let line = `Body weight: ${ctx.weight.kg} kg`;
     if (ctx.weight.change8wKg !== undefined) {
-      line += `, change over 8 weeks ${ctx.weight.change8wKg} kg`;
+      line += `, change over 8 weeks ${signed(ctx.weight.change8wKg)} kg`;
     }
     lines.push(line);
   }

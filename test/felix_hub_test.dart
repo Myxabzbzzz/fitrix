@@ -143,6 +143,31 @@ void main() {
       await _leave(tester);
     });
 
+    testWidgets('next session: 6 days out is shown, exactly 7 days out is not',
+        (tester) async {
+      final (_, router) = await _app(tester, {
+        WeekPlanStore.key: _plans([
+          _plan('a', 20, Sport.gym, 'Back and Triceps'),
+          _plan('b', 27, Sport.football, 'Match'),
+        ]),
+      });
+      await _open(tester, router, AppRouter.felix);
+      expect(find.text('Back and Triceps today'), findsOneWidget);
+      expect(find.textContaining('Football on'), findsNothing);
+      await _leave(tester);
+
+      final (_, router2) = await _app(tester, {
+        WeekPlanStore.key: _plans([
+          _plan('a', 20, Sport.gym, 'Back and Triceps'),
+          _plan('b', 26, Sport.football, 'Match'),
+        ]),
+      });
+      await _open(tester, router2, AppRouter.felix);
+      expect(find.text('Back and Triceps today · Football on Monday'),
+          findsOneWidget);
+      await _leave(tester);
+    });
+
     testWidgets('unplanned with nothing next: no today line', (tester) async {
       final (_, router) = await _app(tester, {});
       await _open(tester, router, AppRouter.felix);

@@ -3720,6 +3720,9 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
+  String get felixAskAboutApp => 'Felixdan FITRIX haqida so‘rang';
+
+  @override
   String get felixPromptGym1 => 'Yotib siqishdagi to‘xtashni qanday yengaman?';
 
   @override

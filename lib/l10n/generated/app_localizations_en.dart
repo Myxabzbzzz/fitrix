@@ -3758,6 +3758,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get felixAskAboutApp => 'Ask Felix about FITRIX';
+
+  @override
   String get felixPromptGym1 => 'How do I break my bench plateau?';
 
   @override

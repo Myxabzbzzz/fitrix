@@ -1009,6 +1009,7 @@
   "felixChipKcal": "{eaten} / {target} kkal",
   "felixChipProtein": "Oqsil {eaten} g",
   "felixAskAbout": "Felixdan so‘rang: {topic}",
+  "felixAskAboutApp": "Felixdan FITRIX haqida so‘rang",
   "felixPromptGym1": "Yotib siqishdagi to‘xtashni qanday yengaman?",
   "felixPromptGym2": "Menga 3 kunlik split tuzib ber",
   "felixPromptGym3": "Cho‘kkalash texnikasida nimalarga e’tibor berish kerak?",

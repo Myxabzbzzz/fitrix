@@ -6111,6 +6111,12 @@ abstract class AppLocalizations {
   /// **'Ask Felix about {topic}'**
   String felixAskAbout(String topic);
 
+  /// No description provided for @felixAskAboutApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Felix about FITRIX'**
+  String get felixAskAboutApp;
+
   /// No description provided for @felixPromptGym1.
   ///
   /// In en, this message translates to:

@@ -126,6 +126,17 @@ void main() {
     expectNoOverflow(tester);
   });
 
+  testWidgets('app chat: the hint names FITRIX', (tester) async {
+    await pump(
+      tester,
+      AssistantTopic.app,
+      FelixSnapshot(today: _day, todayKind: TodayKind.unplanned),
+    );
+    expect(
+        tester.widget<TextField>(find.byType(TextField)).decoration!.hintText,
+        'Ask Felix about FITRIX');
+  });
+
   testWidgets('nutrition chat: calories use the locale number format',
       (tester) async {
     await pump(
