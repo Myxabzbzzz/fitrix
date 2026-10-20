@@ -225,3 +225,17 @@ test('describeContext renders readable lines', () => {
   const rest = buildSystemPrompt('app', {}, 'en', sanitizeContext({ today: { status: 'rest' } }));
   assert.ok(rest.includes('Today: rest day'));
 });
+
+test('describeContext keeps the load band when acwr is missing', () => {
+  const ctx = sanitizeContext({ load: { last7: 876, band: 'risky' } });
+  const p = buildSystemPrompt('app', {}, 'en', ctx);
+  assert.ok(p.includes('Training load: 876 AU in 7 days (risky)'));
+});
+
+test('acwr up to 6 survives sanitizeContext and reaches the prompt with its band', () => {
+  const ctx = sanitizeContext({ load: { last7: 500, acwr: 6.0, band: 'risky' } });
+  assert.equal(ctx.load.acwr, 6);
+  const p = buildSystemPrompt('recovery', {}, 'en', ctx);
+  assert.ok(p.includes('Training load: 500 AU in 7 days, ACWR 6 (risky)'));
+  assert.equal(sanitizeContext({ load: { last7: 5, acwr: 6.5 } }).load.acwr, undefined);
+});

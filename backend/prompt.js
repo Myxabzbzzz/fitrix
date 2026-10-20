@@ -394,7 +394,7 @@ function sanitizeContext(raw) {
     if (last7 !== undefined) {
       load = compact({
         last7,
-        acwr: num(raw.load.acwr, 0, 5, 2),
+        acwr: num(raw.load.acwr, 0, 6, 2),
         band: pick(raw.load.band, LOAD_BANDS),
         hardDays7: num(raw.load.hardDays7, 0, 7, 0),
       });
@@ -492,6 +492,8 @@ function describeContext(ctx) {
     if (l.acwr !== undefined) {
       line += `, ACWR ${l.acwr}`;
       if (l.band) line += ` (${BAND_TEXT[l.band]})`;
+    } else if (l.band) {
+      line += ` (${BAND_TEXT[l.band]})`;
     }
     if (l.hardDays7 !== undefined) line += `, hard days ${l.hardDays7}/7`;
     lines.push(line);
