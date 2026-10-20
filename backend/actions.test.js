@@ -218,7 +218,9 @@ const ollama = http.createServer((req, res) => {
         ? 'Sure.\n' + block({ type: 'weight', mode: 'set', amount: 5 })
         : last.startsWith('plan')
         ? PLAN_TEXT
-        : /train hard|workout plan/.test(last)
+        : last.startsWith('recplan')
+        ? PLAN_TEXT
+        : /train hard|workout plan|recovery workout|20 минут/.test(last)
         ? 'Here you go.\n' + block({ type: 'workout_plan', sport: 'gym', templates: [{ name: 'Day A', exercises: [{ name: 'Squat', sets: 3, reps: 8 }] }] })
         : 'plain reply';
     if (data.stream) {
@@ -712,4 +714,42 @@ test('non-stream: recovery drops an unrequested workout_plan', async () => {
   assert.equal(j.action, undefined);
   const k = await (await post('/chat', { message: 'Make me a recovery workout plan', conversationId: 'lf5', history: [], topic: 'recovery' })).json();
   assert.equal(k.action.type, 'workout_plan');
+});
+
+test('looksLikePlan: compact rule needs numeric NxM, 3+ per line on 2+ lines', () => {
+  const { looksLikePlan } = require('./fallback');
+  assert.equal(looksLikePlan('Try 3x10 vs 5x5 today.\nOr 4x8 and 2x12.'), null);
+  assert.equal(looksLikePlan('3 sets of squats. 2 sets of rows.\n4 sets of curls. 5 sets of fly.'), null);
+  assert.equal(looksLikePlan('3 подхода жима, 2 подхода тяги.\n3 подхода приседа, 2 подхода выпадов.'), null);
+});
+
+test('asksForWorkoutPlan: false positives and misses', () => {
+  const { asksForWorkoutPlan } = require('./fallback');
+  for (const s of [
+    'Можно ли мне сегодня на тренировку?', 'Should I skip my workout today?', 'Is my session today too heavy?',
+    'Составь план питания', 'Make me a meal plan', 'Можно ли делать планку?', 'Я планирую отдых',
+    'Make a diet plan', 'Plan de comidas por favor', 'Ovqat rejasi tuzib ber',
+  ]) assert.equal(asksForWorkoutPlan(s), false, s);
+  for (const s of [
+    'Can you make me a recovery workout?', 'Составьте мне план тренировки', 'Распишите программу',
+    'Give me some recovery workouts', 'Hazme unas rutinas', 'Tiklanish dasturini tuzib ber',
+  ]) assert.equal(asksForWorkoutPlan(s), true, s);
+});
+
+test('recovery: unrequested plan-looking reply makes no extraction call', async () => {
+  fallbackRequests.length = 0;
+  const events = await ndjson(await post('/chat/stream', { message: 'recplan please', conversationId: 'lf6', history: [], topic: 'recovery' }));
+  assert.ok(!events.some((e) => e.action));
+  assert.equal(fallbackRequests.length, 0);
+});
+
+test('recovery: previous user request makes a follow-up count as requested', async () => {
+  const events = await ndjson(await post('/chat/stream', {
+    message: '20 минут', conversationId: 'lf7', topic: 'recovery',
+    history: [
+      { role: 'user', content: 'Составь восстановительную тренировку' },
+      { role: 'assistant', content: 'На сколько минут?' },
+    ],
+  }));
+  assert.equal(events.filter((e) => e.action).length, 1);
 });

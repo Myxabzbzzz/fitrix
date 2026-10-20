@@ -390,6 +390,7 @@ function prepareTurn(body, userId, conversations) {
       model,
       tag,
       topic,
+      prevUserText: [...history].reverse().find((m) => m.role === 'user')?.content,
       defaultSport: SPORTS.includes(topic) ? topic : undefined,
       userText: user.content,
       finish: (reply) => logChat(tag, 'Felix', reply),
@@ -405,6 +406,7 @@ function prepareTurn(body, userId, conversations) {
     model,
     tag,
     topic,
+    prevUserText: turns.slice(0, -1).reverse().find((m) => m.role === 'user')?.content,
     defaultSport: SPORTS.includes(topic) ? topic : undefined,
     userText: user.content,
     finish: (reply) => finishTurn(conversations, key, reply, tag),
@@ -507,6 +509,7 @@ function abortTurn(conversations, key) {
 // in structured form. Any failure just means no button.
 async function fallbackAction(turn, visibleText, signal) {
   let kind = looksLikePlan(visibleText);
+  if (kind === 'workout_plan' && planUnrequested(turn)) kind = null;
   let source = visibleText;
   if (!kind && looksLikeFoodLog(turn.userText)) {
     kind = 'food_log';
@@ -534,12 +537,16 @@ async function fallbackAction(turn, visibleText, signal) {
 }
 
 // Nutrition and recovery chats only get a workout plan when the user asked.
-function dropUnrequestedPlan(turn, action) {
-  if (
-    action?.type === 'workout_plan' &&
+function planUnrequested(turn) {
+  return (
     (turn.topic === 'nutrition' || turn.topic === 'recovery') &&
-    !asksForWorkoutPlan(turn.userText)
-  ) {
+    !asksForWorkoutPlan(turn.userText) &&
+    !asksForWorkoutPlan(turn.prevUserText)
+  );
+}
+
+function dropUnrequestedPlan(turn, action) {
+  if (action?.type === 'workout_plan' && planUnrequested(turn)) {
     console.log(`${turn.tag} action dropped: workout_plan not requested`);
     return null;
   }

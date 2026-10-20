@@ -16,8 +16,8 @@ function looksLikePlan(text) {
   const setLines = lines.filter((l) => SET_REP.test(l)).length;
   if (setLines >= 4) return 'workout_plan';
   // Compact plans: one session per line, exercises comma-separated.
-  const setRepGlobal = new RegExp(SET_REP.source, 'gi');
-  if (setLines >= 2 && (text.match(setRepGlobal) || []).length >= 4) return 'workout_plan';
+  const richLines = lines.filter((l) => (l.match(/\d+\s*[x×х]\s*\d+/gi) || []).length >= 3).length;
+  if (richLines >= 2) return 'workout_plan';
   if (setLines >= 3) {
     let headers = 0;
     lines.forEach((l, i) => {
@@ -99,14 +99,25 @@ function looksLikeWeightChange(text) {
 
 // ---- workout-plan request (from the USER's message) ----
 const PLAN_REQUEST = new RegExp(
-  L + '(?:plan|split|program|programme|routine|workout|session|reja|dastur|mashg[\'‘’]ulot|rutina|programa|entrenamiento|распиши|составь)' + R +
-    '|план|сплит|программ|тренировк',
+  L + '(?:plans?|split|splits|program(?:me)?s?|routines?|workouts?|sessions?|rutinas?|programas?|entrenamientos?|reja\\p{L}*|dastur\\p{L}*|mashg[\'‘’]ulot\\p{L}*|распиши\\p{L}*|составь\\p{L}*)' + R +
+    '|' + L + '(?:план(?!к|ир)|сплит|программ(?!ист)|тренировк|распиш|состав(?:ь|ьте))',
+  'iu'
+);
+const MEAL_PLAN = new RegExp(
+  '(?:meal|diet|food|nutrition)\\s+plans?|plan\\s+de\\s+(?:comidas?|dieta)|план\\p{L}*\\s+питани|ovqat\\s+reja',
+  'iu'
+);
+const REQUEST_VERB = new RegExp(
+  L + '(?:make|build|create|give|write|design|suggest|haz\\p{L}*|crea|dame|dise[ñn]a|tuz\\p{L}*|ber|yoz\\p{L}*|taklif\\p{L}*|составь\\p{L}*|распиши\\p{L}*|сдела\\p{L}*|подбер\\p{L}*|дай\\p{L}*|предложи\\p{L}*)' + R,
   'iu'
 );
 
 /** True when the user's message asks for a workout plan or session. */
 function asksForWorkoutPlan(text) {
-  return typeof text === 'string' && PLAN_REQUEST.test(text);
+  if (typeof text !== 'string' || !PLAN_REQUEST.test(text)) return false;
+  if (MEAL_PLAN.test(text)) return false;
+  if (QUESTION.test(text) && !REQUEST_VERB.test(text)) return false;
+  return true;
 }
 
 const str = { type: 'string' };
