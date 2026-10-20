@@ -362,7 +362,7 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
           onAsk: () => askFelix(
             context,
             ref,
-            topic: AssistantTopic.all.firstWhere((t) => t.sport == Sport.gym),
+            topic: AssistantTopic.forSport(Sport.gym),
             draft: l10n.liftAskDraft(current.name,
                 kgText(context, double.parse(best.e1rm.toStringAsFixed(1)))),
           ),

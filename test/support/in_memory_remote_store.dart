@@ -26,6 +26,9 @@ class InMemoryRemoteStore implements RemoteStore {
     return _last = now;
   }
 
+  /// Chat topics the server refuses to insert (an older topic check).
+  final rejectedChatTopics = <String>{};
+
   void _request() {
     requests++;
     if (!online) throw const SocketException('Network is unreachable');
@@ -133,6 +136,9 @@ class InMemoryRemoteStore implements RemoteStore {
     List<ChatRecord> messages,
   ) async {
     _request();
+    if (messages.any((r) => rejectedChatTopics.contains(r.topic))) {
+      throw StateError('chat topic rejected by the server');
+    }
     final table = _chat[userId] ??= {};
     for (final r in messages) {
       table.putIfAbsent(r.message.id, () => RemoteRow(r, _now()));

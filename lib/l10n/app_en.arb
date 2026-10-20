@@ -2899,5 +2899,30 @@
       }
     }
   },
-  "felixPlansSection": "From Felix"
+  "felixPlansSection": "From Felix",
+  "felixChatTitle": "Felix · {topic}",
+  "@felixChatTitle": {
+    "placeholders": {
+      "topic": {"type": "String"}
+    }
+  },
+  "felixTopicNutrition": "Nutrition",
+  "felixTopicRecovery": "Recovery",
+  "felixTopicApp": "App assistant",
+  "felixTopicSubGym": "Strength, muscle, programs, technique",
+  "felixTopicSubFitness": "HIIT, bodyweight, mobility, tests",
+  "felixTopicSubRunning": "Paces, plans, races",
+  "felixTopicSubCycling": "Power, FTP, climbs, routes",
+  "felixTopicSubFootball": "Match fitness, drills, injuries",
+  "felixTopicSubWinterSports": "Skiing at Amirsoy and Chimgan, safety",
+  "felixTopicSubNutrition": "Food log, macros, Uzbek dishes",
+  "felixTopicSubRecovery": "Sleep, soreness, readiness, deloads",
+  "felixTopicSubApp": "How FITRIX works, plans, habits",
+  "felixTopicGreeting": "Hi! I’m Felix. Let’s talk {topic}.",
+  "@felixTopicGreeting": {
+    "placeholders": {
+      "topic": {"type": "String"}
+    }
+  },
+  "felixTopicGreetingHint": "Ask anything or pick a question below."
 }

@@ -972,5 +972,20 @@
   "felixPlanTitleCount": "{count, plural, other{{count} ta mashg‘ulot}}",
   "felixPlanAddToWorkouts": "Mening mashg‘ulotlarimga qo‘shish",
   "felixPlanAddToToday": "Bugungi rejaga qo‘shish",
-  "felixPlansSection": "Felixdan"
+  "felixPlansSection": "Felixdan",
+  "felixChatTitle": "Felix · {topic}",
+  "felixTopicNutrition": "Ovqatlanish",
+  "felixTopicRecovery": "Tiklanish",
+  "felixTopicApp": "Ilova yordamchisi",
+  "felixTopicSubGym": "Kuch, mushaklar, dasturlar, texnika",
+  "felixTopicSubFitness": "HIIT, o‘z vazni bilan, harakatchanlik, testlar",
+  "felixTopicSubRunning": "Temp, rejalar, poygalar",
+  "felixTopicSubCycling": "Quvvat, FTP, ko‘tarilishlar, marshrutlar",
+  "felixTopicSubFootball": "O‘yinga tayyorgarlik, mashqlar, jarohatlar",
+  "felixTopicSubWinterSports": "Amirsoy va Chimyonda chang‘i, xavfsizlik",
+  "felixTopicSubNutrition": "Ovqat kundaligi, makroslar, o‘zbek taomlari",
+  "felixTopicSubRecovery": "Uyqu, mushak og‘rig‘i, tayyorlik, yengil haftalar",
+  "felixTopicSubApp": "FITRIX qanday ishlaydi, rejalar, odatlar",
+  "felixTopicGreeting": "Salom! Men Felixman. Keling, gaplashamiz: {topic}.",
+  "felixTopicGreetingHint": "Xohlagan narsani so‘rang yoki quyidagi savollardan birini tanlang."
 }

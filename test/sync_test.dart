@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/sync/remote_store.dart';
 import 'package:fitrix/core/sync/sync_engine.dart';
@@ -391,7 +392,7 @@ void main() {
         ..start(WorkoutCatalog.defaults.first)
         ..toggleSet(0, 0);
       a.read(activeWorkoutProvider.notifier).finish();
-      final gym = AssistantTopic.all.firstWhere((x) => x.sport == Sport.gym);
+      final gym = AssistantTopic.forSport(Sport.gym);
       await a.read(chatRepositoryProvider).saveMessages([
         message('m1', t(0), text: 'hi'),
       ]);
@@ -429,6 +430,43 @@ void main() {
       await a.sync();
       await b.sync();
       expect(remote.plansOf('u1').map((p) => p.updatedAt), before);
+    });
+
+    test('chat is pushed per topic: a rejected topic does not block others',
+        () async {
+      final remote = InMemoryRemoteStore()..rejectedChatTopics.add('nutrition');
+      final device = await newDevice(remote);
+      const gym = AssistantTopic.gym;
+      const nutrition = AssistantTopic.nutrition;
+      device.prefs
+        ..setString(gym.historyKey,
+            ChatMessage.encodeMessages([message('g1', t(0), text: 'split?')]))
+        ..setString(nutrition.historyKey,
+            ChatMessage.encodeMessages([message('n1', t(1), text: 'macros?')]));
+
+      await device.sync();
+      expect(remote.chatOf('u1').map((r) => r.message.id), ['g1']);
+      expect(device.status.error, isNotNull);
+      expect(device.status.pending, 1);
+
+      // The server learns the topic: the next sync retries only that one.
+      remote.rejectedChatTopics.clear();
+      await device.sync();
+      expect(remote.chatOf('u1').map((r) => r.message.id),
+          unorderedEquals(['g1', 'n1']));
+      expect(device.status.error, isNull);
+      expect(device.status.pending, 0);
+    });
+
+    test('a pulled recovery row lands in the recovery chat', () async {
+      final remote = InMemoryRemoteStore();
+      await remote.insertChat('u1', [
+        ChatRecord('recovery', message('r1', t(0), text: 'how is my sleep?')),
+      ]);
+      final device = await newDevice(remote);
+      await device.sync();
+      expect(device.storedChat(AssistantTopic.recovery).single.content,
+          'how is my sleep?');
     });
 
     test('offline changes are queued durably and pushed later', () async {
@@ -596,7 +634,7 @@ void main() {
         await Future<void>.delayed(Duration.zero);
       }
       expect(b.read(chatMessagesProvider).requireValue.first.content,
-          AssistantTopic.app.greeting.first);
+          AppConstants.assistantGreeting);
       await b.sync();
       List<String> shown() => [
             for (final m in b.read(chatMessagesProvider).requireValue)

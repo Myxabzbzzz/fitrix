@@ -5,7 +5,9 @@ import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/core/sync/local_changes.dart';
+import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/chat/presentation/topic_labels.dart';
 import 'package:fitrix/features/chat/data/models/chat_action.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/repositories/chat_repository.dart';
@@ -35,6 +37,23 @@ String _photoUnavailableText(Ref ref) => lookupAppLocalizations(
       Locale(ref.read(selectedLanguageProvider)),
     ).chatPhotoUnavailable;
 
+List<String> _topicGreeting(Ref ref, AssistantTopic topic) {
+  if (topic.isApp) {
+    return const [
+      AppConstants.assistantGreeting,
+      AppConstants.assistantIntro,
+      AppConstants.assistantQuestion,
+    ];
+  }
+  final l10n = lookupAppLocalizations(
+    Locale(ref.read(selectedLanguageProvider)),
+  );
+  return [
+    l10n.felixTopicGreeting(topicTitle(l10n, topic)),
+    l10n.felixTopicGreetingHint,
+  ];
+}
+
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
   return ChatRepository(
     ref.read(chatApiServiceProvider),
@@ -63,7 +82,7 @@ final topicChatMessagesProvider = StateNotifierProvider.family<ChatNotifier,
       topic: topic.apiTopic,
       historyKey: topic.historyKey,
       conversationKey: topic.conversationKey,
-      greeting: topic.greeting,
+      greeting: () => _topicGreeting(ref, topic),
       prefs: ref.read(sharedPreferencesProvider),
       onSaved: ref.read(localChangesProvider).notify,
       language: () => ref.read(selectedLanguageProvider),

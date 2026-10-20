@@ -95,7 +95,7 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
     askFelix(
       context,
       ref,
-      topic: AssistantTopic.all.firstWhere((t) => t.sport == _sport),
+      topic: AssistantTopic.forSport(_sport),
       draft: switch (coach.kind) {
         CoachMessageKind.firstWorkout =>
           l10n.gymAskFirstDraft(_sport.localizedLabel(l10n)),

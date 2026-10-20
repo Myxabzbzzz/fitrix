@@ -3573,4 +3573,59 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get felixPlansSection => 'Felixdan';
+
+  @override
+  String felixChatTitle(String topic) {
+    return 'Felix · $topic';
+  }
+
+  @override
+  String get felixTopicNutrition => 'Ovqatlanish';
+
+  @override
+  String get felixTopicRecovery => 'Tiklanish';
+
+  @override
+  String get felixTopicApp => 'Ilova yordamchisi';
+
+  @override
+  String get felixTopicSubGym => 'Kuch, mushaklar, dasturlar, texnika';
+
+  @override
+  String get felixTopicSubFitness =>
+      'HIIT, o‘z vazni bilan, harakatchanlik, testlar';
+
+  @override
+  String get felixTopicSubRunning => 'Temp, rejalar, poygalar';
+
+  @override
+  String get felixTopicSubCycling => 'Quvvat, FTP, ko‘tarilishlar, marshrutlar';
+
+  @override
+  String get felixTopicSubFootball =>
+      'O‘yinga tayyorgarlik, mashqlar, jarohatlar';
+
+  @override
+  String get felixTopicSubWinterSports =>
+      'Amirsoy va Chimyonda chang‘i, xavfsizlik';
+
+  @override
+  String get felixTopicSubNutrition =>
+      'Ovqat kundaligi, makroslar, o‘zbek taomlari';
+
+  @override
+  String get felixTopicSubRecovery =>
+      'Uyqu, mushak og‘rig‘i, tayyorlik, yengil haftalar';
+
+  @override
+  String get felixTopicSubApp => 'FITRIX qanday ishlaydi, rejalar, odatlar';
+
+  @override
+  String felixTopicGreeting(String topic) {
+    return 'Salom! Men Felixman. Keling, gaplashamiz: $topic.';
+  }
+
+  @override
+  String get felixTopicGreetingHint =>
+      'Xohlagan narsani so‘rang yoki quyidagi savollardan birini tanlang.';
 }

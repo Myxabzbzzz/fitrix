@@ -155,8 +155,7 @@ class _Content extends ConsumerWidget {
               onTap: () => askFelix(
                 context,
                 ref,
-                topic:
-                    AssistantTopic.all.firstWhere((t) => t.sport == Sport.gym),
+                topic: AssistantTopic.forSport(Sport.gym),
                 draft: l10n.recoveryAskDraft(
                   readiness.score,
                   l10n.readinessLabel(readiness.label),

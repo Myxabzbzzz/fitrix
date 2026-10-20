@@ -3618,4 +3618,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get felixPlansSection => 'From Felix';
+
+  @override
+  String felixChatTitle(String topic) {
+    return 'Felix · $topic';
+  }
+
+  @override
+  String get felixTopicNutrition => 'Nutrition';
+
+  @override
+  String get felixTopicRecovery => 'Recovery';
+
+  @override
+  String get felixTopicApp => 'App assistant';
+
+  @override
+  String get felixTopicSubGym => 'Strength, muscle, programs, technique';
+
+  @override
+  String get felixTopicSubFitness => 'HIIT, bodyweight, mobility, tests';
+
+  @override
+  String get felixTopicSubRunning => 'Paces, plans, races';
+
+  @override
+  String get felixTopicSubCycling => 'Power, FTP, climbs, routes';
+
+  @override
+  String get felixTopicSubFootball => 'Match fitness, drills, injuries';
+
+  @override
+  String get felixTopicSubWinterSports =>
+      'Skiing at Amirsoy and Chimgan, safety';
+
+  @override
+  String get felixTopicSubNutrition => 'Food log, macros, Uzbek dishes';
+
+  @override
+  String get felixTopicSubRecovery => 'Sleep, soreness, readiness, deloads';
+
+  @override
+  String get felixTopicSubApp => 'How FITRIX works, plans, habits';
+
+  @override
+  String felixTopicGreeting(String topic) {
+    return 'Hi! I’m Felix. Let’s talk $topic.';
+  }
+
+  @override
+  String get felixTopicGreetingHint => 'Ask anything or pick a question below.';
 }

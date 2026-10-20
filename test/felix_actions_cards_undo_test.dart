@@ -67,7 +67,7 @@ void main() {
         chatMessagesProvider.overrideWith((ref) => ChatNotifier(ChatRepository(
             FakeFelixApi(),
             prefs: prefs,
-            greeting: const ['Hi']))),
+            greeting: () => const ['Hi']))),
       ]);
       addTearDown(container.dispose);
       final router = GoRouter(routes: [

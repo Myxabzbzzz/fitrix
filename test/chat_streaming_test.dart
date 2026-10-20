@@ -131,7 +131,7 @@ void main() {
     ChatNotifier notifierFor(FakeBackend backend) => ChatNotifier(
           ChatRepository(
             ChatApiService(baseUrl: backend.baseUrl),
-            greeting: const ['Hi, I am Felix'],
+            greeting: () => const ['Hi, I am Felix'],
           ),
         );
 
@@ -363,7 +363,7 @@ void main() {
         'user_weight': '82',
         'user_height': '181',
       });
-      final topic = AssistantTopic.all.firstWhere((t) => t.sport == Sport.gym);
+      final topic = AssistantTopic.forSport(Sport.gym);
       final notifier = ChatNotifier(
         ChatRepository(
           ChatApiService(baseUrl: backend.baseUrl),
@@ -371,7 +371,7 @@ void main() {
           topic: topic.apiTopic,
           historyKey: topic.historyKey,
           conversationKey: topic.conversationKey,
-          greeting: const ['Hey, I am your gym trainer'],
+          greeting: () => const ['Hey, I am your gym trainer'],
         ),
       );
       await loaded(notifier);
@@ -418,7 +418,7 @@ void main() {
         ChatRepository(
           ChatApiService(baseUrl: backend.baseUrl),
           profileRepository: ProfileRepository(),
-          greeting: const ['Hi, I am Felix'],
+          greeting: () => const ['Hi, I am Felix'],
         ),
       );
       await loaded(notifier);
@@ -507,7 +507,7 @@ void main() {
         ChatRepository(
           ChatApiService(
               baseUrl: backend.baseUrl, accessToken: () async => 't'),
-          greeting: const ['Hi, I am Felix'],
+          greeting: () => const ['Hi, I am Felix'],
         ),
       );
       while (notifier.state.valueOrNull == null) {

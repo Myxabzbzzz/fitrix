@@ -972,5 +972,20 @@
   "felixPlanTitleCount": "{count, plural, one{{count} тренировка} few{{count} тренировки} many{{count} тренировок} other{{count} тренировки}}",
   "felixPlanAddToWorkouts": "Добавить в мои тренировки",
   "felixPlanAddToToday": "Добавить в план на сегодня",
-  "felixPlansSection": "От Феликса"
+  "felixPlansSection": "От Феликса",
+  "felixChatTitle": "Felix · {topic}",
+  "felixTopicNutrition": "Питание",
+  "felixTopicRecovery": "Восстановление",
+  "felixTopicApp": "Помощник по приложению",
+  "felixTopicSubGym": "Сила, мышцы, программы, техника",
+  "felixTopicSubFitness": "HIIT, свой вес, мобильность, тесты",
+  "felixTopicSubRunning": "Темп, планы, забеги",
+  "felixTopicSubCycling": "Мощность, FTP, подъёмы, маршруты",
+  "felixTopicSubFootball": "Форма к матчу, упражнения, травмы",
+  "felixTopicSubWinterSports": "Лыжи в Амирсое и Чимгане, безопасность",
+  "felixTopicSubNutrition": "Дневник питания, БЖУ, узбекские блюда",
+  "felixTopicSubRecovery": "Сон, крепатура, готовность, разгрузочные недели",
+  "felixTopicSubApp": "Как работает FITRIX, планы, привычки",
+  "felixTopicGreeting": "Привет! Я Felix. Давай поговорим: {topic}.",
+  "felixTopicGreetingHint": "Спрашивай что угодно или выбери вопрос ниже."
 }

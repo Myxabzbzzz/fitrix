@@ -5894,6 +5894,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'From Felix'**
   String get felixPlansSection;
+
+  /// No description provided for @felixChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix · {topic}'**
+  String felixChatTitle(String topic);
+
+  /// No description provided for @felixTopicNutrition.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition'**
+  String get felixTopicNutrition;
+
+  /// No description provided for @felixTopicRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get felixTopicRecovery;
+
+  /// No description provided for @felixTopicApp.
+  ///
+  /// In en, this message translates to:
+  /// **'App assistant'**
+  String get felixTopicApp;
+
+  /// No description provided for @felixTopicSubGym.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength, muscle, programs, technique'**
+  String get felixTopicSubGym;
+
+  /// No description provided for @felixTopicSubFitness.
+  ///
+  /// In en, this message translates to:
+  /// **'HIIT, bodyweight, mobility, tests'**
+  String get felixTopicSubFitness;
+
+  /// No description provided for @felixTopicSubRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Paces, plans, races'**
+  String get felixTopicSubRunning;
+
+  /// No description provided for @felixTopicSubCycling.
+  ///
+  /// In en, this message translates to:
+  /// **'Power, FTP, climbs, routes'**
+  String get felixTopicSubCycling;
+
+  /// No description provided for @felixTopicSubFootball.
+  ///
+  /// In en, this message translates to:
+  /// **'Match fitness, drills, injuries'**
+  String get felixTopicSubFootball;
+
+  /// No description provided for @felixTopicSubWinterSports.
+  ///
+  /// In en, this message translates to:
+  /// **'Skiing at Amirsoy and Chimgan, safety'**
+  String get felixTopicSubWinterSports;
+
+  /// No description provided for @felixTopicSubNutrition.
+  ///
+  /// In en, this message translates to:
+  /// **'Food log, macros, Uzbek dishes'**
+  String get felixTopicSubNutrition;
+
+  /// No description provided for @felixTopicSubRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep, soreness, readiness, deloads'**
+  String get felixTopicSubRecovery;
+
+  /// No description provided for @felixTopicSubApp.
+  ///
+  /// In en, this message translates to:
+  /// **'How FITRIX works, plans, habits'**
+  String get felixTopicSubApp;
+
+  /// No description provided for @felixTopicGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi! I’m Felix. Let’s talk {topic}.'**
+  String felixTopicGreeting(String topic);
+
+  /// No description provided for @felixTopicGreetingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask anything or pick a question below.'**
+  String get felixTopicGreetingHint;
 }
 
 class _AppLocalizationsDelegate

@@ -1,64 +1,70 @@
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
-/// One entry of Felix's "All chats" list: the general app assistant or a
+/// One Felix chat: the general app assistant, nutrition, recovery or a
 /// personal trainer for a specific sport.
 class AssistantTopic {
-  /// null for the general "Felix - App assistant" chat.
+  /// Api id sent to the backend as `topic` (see the Felix hub topic list).
+  final String id;
+
+  /// Non-null for the six sport topics.
   final Sport? sport;
 
-  const AssistantTopic._(this.sport);
-
-  static const app = AssistantTopic._(null);
-
-  static List<AssistantTopic> get all => [
-        app,
-        for (final sport in Sport.values) AssistantTopic._(sport),
-      ];
-
-  bool get isApp => sport == null;
-
-  /// Label in the "All chats" drawer.
-  String get menuLabel => isApp ? 'Felix - App assistant' : sport!.label;
-
-  /// Title in the chat header.
-  String get title => isApp
-      ? AppConstants.assistantName
-      : '${AppConstants.assistantName} - ${sport!.label}';
-
-  String get subtitle =>
-      isApp ? AppConstants.assistantSubtitle : 'Your personal trainer';
-
-  /// Sent to the backend as `topic` to pick Felix's persona: "app" for the
-  /// general assistant, otherwise the sport's name (e.g. "gym", "running").
-  String get apiTopic => isApp ? appApiTopic : sport!.name;
+  const AssistantTopic._(this.id, [this.sport]);
 
   static const appApiTopic = 'app';
 
+  static const app = AssistantTopic._(appApiTopic);
+  static const gym = AssistantTopic._('gym', Sport.gym);
+  static const fitness = AssistantTopic._('fitness', Sport.fitness);
+  static const running = AssistantTopic._('running', Sport.running);
+  static const cycling = AssistantTopic._('cycling', Sport.cycling);
+  static const football = AssistantTopic._('football', Sport.football);
+  static const winterSports =
+      AssistantTopic._('winterSports', Sport.winterSports);
+  static const nutrition = AssistantTopic._('nutrition');
+  static const recovery = AssistantTopic._('recovery');
+
+  /// Hub order.
+  static List<AssistantTopic> get all => const [
+        gym,
+        fitness,
+        running,
+        cycling,
+        football,
+        winterSports,
+        nutrition,
+        recovery,
+        app,
+      ];
+
+  static AssistantTopic forSport(Sport sport) =>
+      all.firstWhere((t) => t.sport == sport);
+
+  static AssistantTopic? fromId(String id) {
+    for (final topic in all) {
+      if (topic.id == id) return topic;
+    }
+    return null;
+  }
+
+  bool get isApp => id == appApiTopic;
+
+  /// Sent to the backend as `topic` to pick Felix's persona.
+  String get apiTopic => id;
+
+  /// The app chat keeps the original keys (shared with onboarding).
   String get historyKey => isApp
       ? AppConstants.keyChatHistory
-      : '${AppConstants.keyChatHistory}_${sport!.name}';
+      : '${AppConstants.keyChatHistory}_$id';
 
   String get conversationKey => isApp
       ? AppConstants.keyConversationId
-      : '${AppConstants.keyConversationId}_${sport!.name}';
-
-  List<String> get greeting => isApp
-      ? const [
-          AppConstants.assistantGreeting,
-          AppConstants.assistantIntro,
-          AppConstants.assistantQuestion,
-        ]
-      : [
-          'Hey! I\'m Felix, your ${sport!.label.toLowerCase()} trainer.',
-          'Ask me to build a plan, adjust today\'s workout or explain '
-              'an exercise.',
-        ];
+      : '${AppConstants.keyConversationId}_$id';
 
   @override
-  bool operator ==(Object other) =>
-      other is AssistantTopic && other.sport == sport;
+  bool operator ==(Object other) => other is AssistantTopic && other.id == id;
 
   @override
-  int get hashCode => sport.hashCode;
+  int get hashCode => id.hashCode;
 }

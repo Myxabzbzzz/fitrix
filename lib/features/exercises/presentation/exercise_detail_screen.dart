@@ -186,8 +186,7 @@ class ExerciseDetailScreen extends ConsumerWidget {
                         icon: Icons.chat_bubble_outline,
                         expand: true,
                         onPressed: () => askFelix(context, ref,
-                            topic: AssistantTopic.all
-                                .firstWhere((t) => t.sport == Sport.gym),
+                            topic: AssistantTopic.forSport(Sport.gym),
                             draft: l10n.exerciseAskFelixDraft(info.name)),
                       ),
                     ),

@@ -37,7 +37,7 @@ void main() {
       final api = FakeFelixApi()
         ..action = ChatAction.tryParse(workoutPlanAction);
       final notifier = ChatNotifier(
-          ChatRepository(api, prefs: prefs, greeting: const ['Hi']));
+          ChatRepository(api, prefs: prefs, greeting: () => const ['Hi']));
       await Future<void>.delayed(Duration.zero);
       await notifier.sendMessage('plan my week');
 
@@ -152,8 +152,8 @@ void main() {
           }
         ]),
       );
-      final notifier = ChatNotifier(
-          ChatRepository(FakeFelixApi(), prefs: prefs, greeting: const ['Hi']));
+      final notifier = ChatNotifier(ChatRepository(FakeFelixApi(),
+          prefs: prefs, greeting: () => const ['Hi']));
       await Future<void>.delayed(Duration.zero);
       final message = notifier.state.requireValue.single;
       expect(message.content, 'hello');

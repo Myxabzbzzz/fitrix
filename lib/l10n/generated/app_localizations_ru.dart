@@ -3684,4 +3684,56 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get felixPlansSection => 'От Феликса';
+
+  @override
+  String felixChatTitle(String topic) {
+    return 'Felix · $topic';
+  }
+
+  @override
+  String get felixTopicNutrition => 'Питание';
+
+  @override
+  String get felixTopicRecovery => 'Восстановление';
+
+  @override
+  String get felixTopicApp => 'Помощник по приложению';
+
+  @override
+  String get felixTopicSubGym => 'Сила, мышцы, программы, техника';
+
+  @override
+  String get felixTopicSubFitness => 'HIIT, свой вес, мобильность, тесты';
+
+  @override
+  String get felixTopicSubRunning => 'Темп, планы, забеги';
+
+  @override
+  String get felixTopicSubCycling => 'Мощность, FTP, подъёмы, маршруты';
+
+  @override
+  String get felixTopicSubFootball => 'Форма к матчу, упражнения, травмы';
+
+  @override
+  String get felixTopicSubWinterSports =>
+      'Лыжи в Амирсое и Чимгане, безопасность';
+
+  @override
+  String get felixTopicSubNutrition => 'Дневник питания, БЖУ, узбекские блюда';
+
+  @override
+  String get felixTopicSubRecovery =>
+      'Сон, крепатура, готовность, разгрузочные недели';
+
+  @override
+  String get felixTopicSubApp => 'Как работает FITRIX, планы, привычки';
+
+  @override
+  String felixTopicGreeting(String topic) {
+    return 'Привет! Я Felix. Давай поговорим: $topic.';
+  }
+
+  @override
+  String get felixTopicGreetingHint =>
+      'Спрашивай что угодно или выбери вопрос ниже.';
 }

@@ -144,8 +144,7 @@ Future<void> _askFelix(
   expect(tester.takeException(), isNull);
 }
 
-AssistantTopic get _gym =>
-    AssistantTopic.all.firstWhere((t) => t.sport == Sport.gym);
+AssistantTopic get _gym => AssistantTopic.forSport(Sport.gym);
 
 Future<void> _leave(WidgetTester tester) async {
   await tester.pumpWidget(const SizedBox());

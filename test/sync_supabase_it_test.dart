@@ -203,7 +203,7 @@ void main() {
       final stamp = DateTime.now().millisecondsSinceEpoch;
       final email = 'sync-$stamp@fitrix.test';
       final otherEmail = 'sync-$stamp-other@fitrix.test';
-      final gym = AssistantTopic.all.firstWhere((t) => t.sport == Sport.gym);
+      final gym = AssistantTopic.forSport(Sport.gym);
 
       // --- Device A: plans, a finished workout, chats -----------------------
       final a = await Device.signIn('A', email, felix);

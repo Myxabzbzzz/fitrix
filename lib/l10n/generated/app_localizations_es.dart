@@ -3627,4 +3627,57 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get felixPlansSection => 'De Felix';
+
+  @override
+  String felixChatTitle(String topic) {
+    return 'Felix · $topic';
+  }
+
+  @override
+  String get felixTopicNutrition => 'Nutrición';
+
+  @override
+  String get felixTopicRecovery => 'Recuperación';
+
+  @override
+  String get felixTopicApp => 'Asistente de la app';
+
+  @override
+  String get felixTopicSubGym => 'Fuerza, músculo, programas, técnica';
+
+  @override
+  String get felixTopicSubFitness => 'HIIT, peso corporal, movilidad, pruebas';
+
+  @override
+  String get felixTopicSubRunning => 'Ritmos, planes, carreras';
+
+  @override
+  String get felixTopicSubCycling => 'Potencia, FTP, subidas, rutas';
+
+  @override
+  String get felixTopicSubFootball =>
+      'Forma para el partido, ejercicios, lesiones';
+
+  @override
+  String get felixTopicSubWinterSports =>
+      'Esquí en Amirsoy y Chimgan, seguridad';
+
+  @override
+  String get felixTopicSubNutrition =>
+      'Registro de comidas, macros, platos uzbekos';
+
+  @override
+  String get felixTopicSubRecovery => 'Sueño, agujetas, preparación, descargas';
+
+  @override
+  String get felixTopicSubApp => 'Cómo funciona FITRIX, planes, hábitos';
+
+  @override
+  String felixTopicGreeting(String topic) {
+    return '¡Hola! Soy Felix. Hablemos de $topic.';
+  }
+
+  @override
+  String get felixTopicGreetingHint =>
+      'Pregunta lo que quieras o elige una pregunta abajo.';
 }

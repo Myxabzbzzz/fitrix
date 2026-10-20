@@ -436,7 +436,7 @@ class _FelixCard extends ConsumerWidget {
         onAsk: () => askFelix(
           context,
           ref,
-          topic: AssistantTopic.all.firstWhere((t) => t.sport == Sport.gym),
+          topic: AssistantTopic.forSport(Sport.gym),
           draft: l10n.planAskDraft(
             other.title,
             weekdayLong(context, other.day),

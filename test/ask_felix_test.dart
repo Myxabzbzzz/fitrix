@@ -24,7 +24,7 @@ void main() {
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
 
-    final gym = AssistantTopic.all.firstWhere((t) => t.sport == Sport.gym);
+    final gym = AssistantTopic.forSport(Sport.gym);
     final router = GoRouter(routes: [
       GoRoute(
         path: '/',

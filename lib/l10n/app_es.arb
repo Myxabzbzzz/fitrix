@@ -972,5 +972,20 @@
   "felixPlanTitleCount": "{count, plural, one{{count} entrenamiento} other{{count} entrenamientos}}",
   "felixPlanAddToWorkouts": "Añadir a Mis entrenamientos",
   "felixPlanAddToToday": "Añadir al plan de hoy",
-  "felixPlansSection": "De Felix"
+  "felixPlansSection": "De Felix",
+  "felixChatTitle": "Felix · {topic}",
+  "felixTopicNutrition": "Nutrición",
+  "felixTopicRecovery": "Recuperación",
+  "felixTopicApp": "Asistente de la app",
+  "felixTopicSubGym": "Fuerza, músculo, programas, técnica",
+  "felixTopicSubFitness": "HIIT, peso corporal, movilidad, pruebas",
+  "felixTopicSubRunning": "Ritmos, planes, carreras",
+  "felixTopicSubCycling": "Potencia, FTP, subidas, rutas",
+  "felixTopicSubFootball": "Forma para el partido, ejercicios, lesiones",
+  "felixTopicSubWinterSports": "Esquí en Amirsoy y Chimgan, seguridad",
+  "felixTopicSubNutrition": "Registro de comidas, macros, platos uzbekos",
+  "felixTopicSubRecovery": "Sueño, agujetas, preparación, descargas",
+  "felixTopicSubApp": "Cómo funciona FITRIX, planes, hábitos",
+  "felixTopicGreeting": "¡Hola! Soy Felix. Hablemos de {topic}.",
+  "felixTopicGreetingHint": "Pregunta lo que quieras o elige una pregunta abajo."
 }

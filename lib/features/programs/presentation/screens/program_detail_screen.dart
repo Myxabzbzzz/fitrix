@@ -267,8 +267,7 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                         icon: Icons.chat_bubble_outline,
                         expand: true,
                         onPressed: () => askFelix(context, ref,
-                            topic: AssistantTopic.all
-                                .firstWhere((t) => t.sport == Sport.gym),
+                            topic: AssistantTopic.forSport(Sport.gym),
                             draft: l10n.programAskFelixDraft(p.name)),
                       ),
                     ),

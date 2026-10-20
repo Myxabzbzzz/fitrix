@@ -303,8 +303,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                             ref,
                             topic: sport == null
                                 ? AssistantTopic.app
-                                : AssistantTopic.all
-                                    .firstWhere((t) => t.sport == sport),
+                                : AssistantTopic.forSport(sport),
                             draft: l10n.progressAskDraft(
                               '${fmt.format(weekTotal)} ${l10n.progressAu}',
                               NumberFormat('0.00', locale).format(acwr),

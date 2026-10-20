@@ -63,7 +63,7 @@ void main() {
         chatMessagesProvider.overrideWith((ref) => ChatNotifier(ChatRepository(
               api,
               profileRepository: ProfileRepository(),
-              greeting: const ['Hi, I am Felix'],
+              greeting: () => const ['Hi, I am Felix'],
             ))),
       ],
       child: MaterialApp.router(

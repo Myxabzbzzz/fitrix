@@ -11,6 +11,7 @@ import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/chat/presentation/topic_labels.dart';
 import 'package:fitrix/features/chat/data/services/photo_service.dart';
 import 'package:fitrix/features/chat/data/services/speech_service.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
@@ -314,6 +315,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       height: 56,
@@ -338,11 +340,15 @@ class _Header extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  topic.title,
+                  l10n.felixChatTitle(topicTitle(l10n, topic)),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: AppText.headingS.copyWith(color: palette.textPrimary),
                 ),
                 Text(
-                  topic.subtitle,
+                  topicSubtitle(l10n, topic),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: AppText.caption.copyWith(color: palette.textSecondary),
                 ),
               ],
@@ -412,7 +418,7 @@ class _AllChatsDrawer extends StatelessWidget {
                             horizontal: AppSpacing.md),
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          topic.menuLabel,
+                          topicTitle(AppLocalizations.of(context), topic),
                           style: AppText.body14.copyWith(
                             color: isSelected
                                 ? palette.onPillSelected

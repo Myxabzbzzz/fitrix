@@ -23,8 +23,9 @@ class ChatRepository {
   /// Backend persona for this chat, see [AssistantTopic.apiTopic].
   final String topic;
 
-  /// Messages shown when the chat has no history yet.
-  final List<String> greeting;
+  /// Messages shown when the chat has no history yet, resolved on use so
+  /// they follow the app language.
+  final List<String> Function() greeting;
 
   /// The app's current language code, sent so Felix answers in it.
   final String Function()? _language;
@@ -32,17 +33,19 @@ class ChatRepository {
   /// Localized "photo is missing or too large" text for the failed bubble.
   final String Function()? _photoUnavailable;
 
+  static List<String> _appGreeting() => const [
+        AppConstants.assistantGreeting,
+        AppConstants.assistantIntro,
+        AppConstants.assistantQuestion,
+      ];
+
   ChatRepository(
     this._apiService, {
     ProfileRepository? profileRepository,
     this.historyKey = AppConstants.keyChatHistory,
     this.conversationKey = AppConstants.keyConversationId,
     this.topic = AssistantTopic.appApiTopic,
-    this.greeting = const [
-      AppConstants.assistantGreeting,
-      AppConstants.assistantIntro,
-      AppConstants.assistantQuestion,
-    ],
+    this.greeting = _appGreeting,
     SharedPreferences? prefs,
     void Function()? onSaved,
     String Function()? language,
@@ -181,6 +184,7 @@ class ChatRepository {
 
   List<ChatMessage> _getInitialMessages() {
     final now = DateTime.now();
+    final greeting = this.greeting();
     return [
       // In order and all in the past, so a reply sent right away sorts
       // after them when chats from several devices are merged.

@@ -56,7 +56,7 @@ void main() {
       overrides: [
         chatMessagesProvider.overrideWith((ref) => ChatNotifier(ChatRepository(
               api,
-              greeting: const ['Hi, I am Felix', 'Pick a goal'],
+              greeting: () => const ['Hi, I am Felix', 'Pick a goal'],
             ))),
       ],
       child: const MaterialApp(
@@ -161,7 +161,7 @@ void main() {
           chatMessagesProvider
               .overrideWith((ref) => ChatNotifier(ChatRepository(
                     api,
-                    greeting: const ['Hi, I am Felix'],
+                    greeting: () => const ['Hi, I am Felix'],
                   ))),
         ],
         child: const MaterialApp(

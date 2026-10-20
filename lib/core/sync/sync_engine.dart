@@ -393,12 +393,29 @@ class SyncEngine {
   Future<void> _pushChat() async {
     final pending = _pendingChat(_load().chat);
     if (pending.isEmpty) return;
-    final stored = await remote.insertChat(userId, pending);
-    _checkDisposed();
-
-    final state = _load();
-    state.chat.addAll(stored);
-    _save(state);
+    // One insert per topic, so a topic the server rejects does not hold
+    // back the others; the first failure is rethrown after all were tried.
+    final byTopic = <String, List<ChatRecord>>{};
+    for (final record in pending) {
+      byTopic.putIfAbsent(record.topic, () => []).add(record);
+    }
+    Object? failure;
+    StackTrace? failureTrace;
+    for (final group in byTopic.values) {
+      try {
+        final stored = await remote.insertChat(userId, group);
+        _checkDisposed();
+        final state = _load();
+        state.chat.addAll(stored);
+        _save(state);
+      } catch (e, st) {
+        if (e is _Disposed) rethrow;
+        _checkDisposed();
+        failure ??= e;
+        failureTrace ??= st;
+      }
+    }
+    if (failure != null) Error.throwWithStackTrace(failure, failureTrace!);
   }
 
   // --- Documents -------------------------------------------------------------
