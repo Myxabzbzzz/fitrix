@@ -18,4 +18,9 @@ extension SportL10n on Sport {
         Sport.winterSports => l10n.sportWinterSportsTile,
         _ => localizedLabel(l10n).toUpperCase(),
       };
+
+  /// The label of the button that begins a workout of this sport: football
+  /// is logged after the game rather than started.
+  String actionLabel(AppLocalizations l10n) =>
+      this == Sport.football ? l10n.footballLog : l10n.gymStart;
 }

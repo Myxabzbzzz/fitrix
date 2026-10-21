@@ -8,6 +8,8 @@ import 'package:fitrix/core/sync/synced_collection.dart';
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
+import 'package:fitrix/features/football/data/match_log.dart';
+import 'package:fitrix/features/football/data/match_store.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
@@ -42,6 +44,7 @@ List<SyncedCollection> syncedCollections(Ref ref) => [
       FelixPlansCollection(ref),
       WorkoutDeletedCollection(ref),
       RunCollection(ref),
+      MatchCollection(ref),
     ];
 
 /// Parses [json] with [parse]; null when it fails.
@@ -560,4 +563,41 @@ class RunCollection extends SyncedCollection {
 
   @override
   void clear() => _ref.read(runsProvider.notifier).clear();
+}
+
+/// Football logs (doc id = workout id). A pulled log's RPE is copied onto
+/// its workout, like a run's.
+class MatchCollection extends SyncedCollection {
+  MatchCollection(this._ref);
+  final Ref _ref;
+
+  @override
+  String get kind => 'match';
+
+  @override
+  Map<String, Map<String, Object?>> read() => {
+        for (final e in _ref.read(matchStoreProvider).all().entries)
+          e.key: _plain(e.value.toJson()),
+      };
+
+  @override
+  void apply(Map<String, Map<String, Object?>?> docs) {
+    final updates = <String, MatchLog?>{};
+    for (final e in docs.entries) {
+      final data = e.value;
+      if (data == null) {
+        updates[e.key] = null;
+        continue;
+      }
+      try {
+        updates[e.key] = MatchLog.fromJson(data);
+      } catch (_) {}
+    }
+    if (updates.isEmpty) return;
+    _ref.read(matchesProvider.notifier).applySynced(updates);
+    applyDocRpe(_ref);
+  }
+
+  @override
+  void clear() => _ref.read(matchesProvider.notifier).clear();
 }

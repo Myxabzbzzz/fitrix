@@ -4079,4 +4079,95 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get runUnfinishedLaunchBody =>
       'Pick it up where you left off, save what was recorded, or discard it.';
+
+  @override
+  String get footballLog => 'Log';
+
+  @override
+  String get footballLogTitle => 'Log football';
+
+  @override
+  String get footballEditTitle => 'Edit football log';
+
+  @override
+  String get footballTypeMatch => 'Match';
+
+  @override
+  String get footballTypeTraining => 'Training';
+
+  @override
+  String get footballDate => 'Date';
+
+  @override
+  String get footballFormat => 'Format';
+
+  @override
+  String get footballMinutes => 'Minutes';
+
+  @override
+  String get footballMinShort => 'min';
+
+  @override
+  String get footballPosition => 'Position';
+
+  @override
+  String get footballPosGK => 'GK';
+
+  @override
+  String get footballPosCB => 'CB';
+
+  @override
+  String get footballPosFB => 'FB';
+
+  @override
+  String get footballPosCM => 'CM';
+
+  @override
+  String get footballPosWM => 'WM';
+
+  @override
+  String get footballPosST => 'ST';
+
+  @override
+  String get footballResult => 'Result';
+
+  @override
+  String get footballScoreFor => 'Us';
+
+  @override
+  String get footballScoreAgainst => 'Them';
+
+  @override
+  String get footballGoals => 'Your goals';
+
+  @override
+  String get footballAssists => 'Your assists';
+
+  @override
+  String get footballNote => 'Note';
+
+  @override
+  String get footballSave => 'Save';
+
+  @override
+  String get footballDelete => 'Delete entry';
+
+  @override
+  String get footballDeleteTitle => 'Delete this entry?';
+
+  @override
+  String get footballDeleteBody => 'It will be removed from your history.';
+
+  @override
+  String get footballDeleteAction => 'Delete';
+
+  @override
+  String get footballHistory => 'History';
+
+  @override
+  String get footballHistoryEmpty =>
+      'No games logged yet. Log one after you play.';
+
+  @override
+  String get footballWorkouts => 'Workouts';
 }

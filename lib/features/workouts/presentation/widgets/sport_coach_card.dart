@@ -70,7 +70,7 @@ class SportCoachCard extends ConsumerWidget {
           CoachMessageKind.welcomeBack => l10n.gymCoachBackMessage(coach.days),
         },
         imageAsset: 'assets/images/felix_avatar.png',
-        primaryLabel: suggested == null ? null : l10n.gymStart,
+        primaryLabel: suggested == null ? null : sport.actionLabel(l10n),
         onPrimary: suggested == null ? null : () => onStart(suggested),
         secondaryLabel: l10n.gymAskFelix,
         onSecondary: () => askFelix(

@@ -45,6 +45,7 @@ import 'package:fitrix/features/content/presentation/article_screen.dart';
 import 'package:fitrix/features/content/presentation/discover_screen.dart';
 import 'package:fitrix/features/shop/presentation/shop_screen.dart';
 import 'package:fitrix/features/map/presentation/map_screen.dart';
+import 'package:fitrix/features/football/presentation/football_screen.dart';
 import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
 import 'package:fitrix/features/running/presentation/screens/run_summary_screen.dart';
 import 'package:fitrix/features/running/presentation/screens/running_screen.dart';
@@ -297,7 +298,7 @@ class AppRouter {
                           const MyWorkoutsScreen(),
                         ),
                         routes: [
-                          // Before ':sport' so it isn't read as a sport.
+                          // Before ':sport' so they aren't read as a sport.
                           GoRoute(
                             path: 'complete',
                             name: 'workoutComplete',
@@ -335,7 +336,7 @@ class AppRouter {
                               ),
                             ],
                           ),
-                          // Before ':sport' so it isn't read as a sport.
+                          // Before ':sport' so they aren't read as a sport.
                           GoRoute(
                             path: 'running',
                             name: 'runningWorkouts',
@@ -343,6 +344,15 @@ class AppRouter {
                               context,
                               state,
                               const RunningScreen(),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'football',
+                            name: 'footballWorkouts',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              const FootballScreen(),
                             ),
                           ),
                           GoRoute(

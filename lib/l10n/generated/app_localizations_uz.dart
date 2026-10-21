@@ -4027,4 +4027,95 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get runUnfinishedLaunchBody =>
       'Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling.';
+
+  @override
+  String get footballLog => 'Qayd qilish';
+
+  @override
+  String get footballLogTitle => 'Futbolni qayd qilish';
+
+  @override
+  String get footballEditTitle => 'Yozuvni tahrirlash';
+
+  @override
+  String get footballTypeMatch => 'O‘yin';
+
+  @override
+  String get footballTypeTraining => 'Mashg‘ulot';
+
+  @override
+  String get footballDate => 'Sana';
+
+  @override
+  String get footballFormat => 'Format';
+
+  @override
+  String get footballMinutes => 'Daqiqa';
+
+  @override
+  String get footballMinShort => 'daq';
+
+  @override
+  String get footballPosition => 'Pozitsiya';
+
+  @override
+  String get footballPosGK => 'GK';
+
+  @override
+  String get footballPosCB => 'CB';
+
+  @override
+  String get footballPosFB => 'FB';
+
+  @override
+  String get footballPosCM => 'CM';
+
+  @override
+  String get footballPosWM => 'WM';
+
+  @override
+  String get footballPosST => 'ST';
+
+  @override
+  String get footballResult => 'Hisob';
+
+  @override
+  String get footballScoreFor => 'Biz';
+
+  @override
+  String get footballScoreAgainst => 'Raqib';
+
+  @override
+  String get footballGoals => 'Sizning gollaringiz';
+
+  @override
+  String get footballAssists => 'Sizning assistlaringiz';
+
+  @override
+  String get footballNote => 'Izoh';
+
+  @override
+  String get footballSave => 'Saqlash';
+
+  @override
+  String get footballDelete => 'Yozuvni o‘chirish';
+
+  @override
+  String get footballDeleteTitle => 'Bu yozuv o‘chirilsinmi?';
+
+  @override
+  String get footballDeleteBody => 'U tarixingizdan olib tashlanadi.';
+
+  @override
+  String get footballDeleteAction => 'O‘chirish';
+
+  @override
+  String get footballHistory => 'Tarix';
+
+  @override
+  String get footballHistoryEmpty =>
+      'Hozircha yozuv yo‘q. O‘yindan keyin qayd qiling.';
+
+  @override
+  String get footballWorkouts => 'Mashg‘ulotlar';
 }

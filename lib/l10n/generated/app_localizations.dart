@@ -6632,6 +6632,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pick it up where you left off, save what was recorded, or discard it.'**
   String get runUnfinishedLaunchBody;
+
+  /// No description provided for @footballLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Log'**
+  String get footballLog;
+
+  /// No description provided for @footballLogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log football'**
+  String get footballLogTitle;
+
+  /// No description provided for @footballEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit football log'**
+  String get footballEditTitle;
+
+  /// No description provided for @footballTypeMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Match'**
+  String get footballTypeMatch;
+
+  /// No description provided for @footballTypeTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Training'**
+  String get footballTypeTraining;
+
+  /// No description provided for @footballDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get footballDate;
+
+  /// No description provided for @footballFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get footballFormat;
+
+  /// No description provided for @footballMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes'**
+  String get footballMinutes;
+
+  /// No description provided for @footballMinShort.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get footballMinShort;
+
+  /// No description provided for @footballPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Position'**
+  String get footballPosition;
+
+  /// No description provided for @footballPosGK.
+  ///
+  /// In en, this message translates to:
+  /// **'GK'**
+  String get footballPosGK;
+
+  /// No description provided for @footballPosCB.
+  ///
+  /// In en, this message translates to:
+  /// **'CB'**
+  String get footballPosCB;
+
+  /// No description provided for @footballPosFB.
+  ///
+  /// In en, this message translates to:
+  /// **'FB'**
+  String get footballPosFB;
+
+  /// No description provided for @footballPosCM.
+  ///
+  /// In en, this message translates to:
+  /// **'CM'**
+  String get footballPosCM;
+
+  /// No description provided for @footballPosWM.
+  ///
+  /// In en, this message translates to:
+  /// **'WM'**
+  String get footballPosWM;
+
+  /// No description provided for @footballPosST.
+  ///
+  /// In en, this message translates to:
+  /// **'ST'**
+  String get footballPosST;
+
+  /// No description provided for @footballResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Result'**
+  String get footballResult;
+
+  /// No description provided for @footballScoreFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Us'**
+  String get footballScoreFor;
+
+  /// No description provided for @footballScoreAgainst.
+  ///
+  /// In en, this message translates to:
+  /// **'Them'**
+  String get footballScoreAgainst;
+
+  /// No description provided for @footballGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Your goals'**
+  String get footballGoals;
+
+  /// No description provided for @footballAssists.
+  ///
+  /// In en, this message translates to:
+  /// **'Your assists'**
+  String get footballAssists;
+
+  /// No description provided for @footballNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get footballNote;
+
+  /// No description provided for @footballSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get footballSave;
+
+  /// No description provided for @footballDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete entry'**
+  String get footballDelete;
+
+  /// No description provided for @footballDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this entry?'**
+  String get footballDeleteTitle;
+
+  /// No description provided for @footballDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It will be removed from your history.'**
+  String get footballDeleteBody;
+
+  /// No description provided for @footballDeleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get footballDeleteAction;
+
+  /// No description provided for @footballHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get footballHistory;
+
+  /// No description provided for @footballHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No games logged yet. Log one after you play.'**
+  String get footballHistoryEmpty;
+
+  /// No description provided for @footballWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts'**
+  String get footballWorkouts;
 }
 
 class _AppLocalizationsDelegate

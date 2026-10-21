@@ -6,6 +6,7 @@ import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
+import 'package:fitrix/features/football/presentation/match_log_sheet.dart';
 import 'package:fitrix/features/running/data/location_source.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_dialogs.dart';
@@ -15,7 +16,8 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Starts [template] and opens the live log. Every Start button uses this.
 ///
-/// A running workout opens the GPS run recorder instead (see [_startRun]).
+/// A running workout opens the GPS run recorder instead (see [_startRun]),
+/// a football one the log sheet: the game is logged after it is played.
 ///
 /// Today's planned gym session starts with the check-in's exercise swaps.
 /// When another workout is running it asks first; the same plan running
@@ -23,6 +25,9 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 Future<void> startWorkout(
     BuildContext context, WidgetRef ref, WorkoutTemplate template) async {
   if (template.sport == Sport.running) return _startRun(context, ref, template);
+  if (template.sport == Sport.football) {
+    return showMatchLogSheet(context, ref, template: template);
+  }
   final active = ref.read(activeWorkoutProvider);
   final running = active != null && active.template.id == template.id;
   if (active != null && !running) {

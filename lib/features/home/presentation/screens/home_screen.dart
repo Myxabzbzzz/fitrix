@@ -249,7 +249,9 @@ class _TodayCard extends ConsumerWidget {
                 AppButton(
                   label: active?.template.id == start.id
                       ? l10n.homeContinue
-                      : l10n.homeStart,
+                      : start.sport == Sport.football
+                          ? l10n.footballLog
+                          : l10n.homeStart,
                   size: AppButtonSize.small,
                   onPressed: () => startWorkout(context, ref, start),
                 ),

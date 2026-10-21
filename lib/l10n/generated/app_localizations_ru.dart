@@ -4161,4 +4161,95 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get runUnfinishedLaunchBody =>
       'Продолжите с того места, где остановились, сохраните записанное или сбросьте.';
+
+  @override
+  String get footballLog => 'Записать';
+
+  @override
+  String get footballLogTitle => 'Записать футбол';
+
+  @override
+  String get footballEditTitle => 'Изменить запись';
+
+  @override
+  String get footballTypeMatch => 'Матч';
+
+  @override
+  String get footballTypeTraining => 'Тренировка';
+
+  @override
+  String get footballDate => 'Дата';
+
+  @override
+  String get footballFormat => 'Формат';
+
+  @override
+  String get footballMinutes => 'Минуты';
+
+  @override
+  String get footballMinShort => 'мин';
+
+  @override
+  String get footballPosition => 'Позиция';
+
+  @override
+  String get footballPosGK => 'ВР';
+
+  @override
+  String get footballPosCB => 'ЦЗ';
+
+  @override
+  String get footballPosFB => 'КЗ';
+
+  @override
+  String get footballPosCM => 'ЦП';
+
+  @override
+  String get footballPosWM => 'КП';
+
+  @override
+  String get footballPosST => 'НП';
+
+  @override
+  String get footballResult => 'Счёт';
+
+  @override
+  String get footballScoreFor => 'Мы';
+
+  @override
+  String get footballScoreAgainst => 'Соперник';
+
+  @override
+  String get footballGoals => 'Ваши голы';
+
+  @override
+  String get footballAssists => 'Ваши передачи';
+
+  @override
+  String get footballNote => 'Заметка';
+
+  @override
+  String get footballSave => 'Сохранить';
+
+  @override
+  String get footballDelete => 'Удалить запись';
+
+  @override
+  String get footballDeleteTitle => 'Удалить эту запись?';
+
+  @override
+  String get footballDeleteBody => 'Она исчезнет из вашей истории.';
+
+  @override
+  String get footballDeleteAction => 'Удалить';
+
+  @override
+  String get footballHistory => 'История';
+
+  @override
+  String get footballHistoryEmpty =>
+      'Пока нет записей. Запишите игру после матча или тренировки.';
+
+  @override
+  String get footballWorkouts => 'Тренировки';
 }

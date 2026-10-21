@@ -48,7 +48,7 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
               items: Sport.values,
               selected: _sport,
               labelOf: (s) => s.localizedLabel(l10n),
-              onSelected: (s) => s == Sport.running
+              onSelected: (s) => s == Sport.running || s == Sport.football
                   ? context.pushReplacement(AppRouter.sportWorkouts(s))
                   : setState(() => _sport = s),
             ),
@@ -60,7 +60,7 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                   children: [
                     WorkoutsGrid(
                       sport: _sport,
-                      actionLabel: l10n.gymStart,
+                      actionLabel: _sport.actionLabel(l10n),
                       onAction: _start,
                     ),
                     SportCoachCard(sport: _sport, onStart: _start),

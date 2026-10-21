@@ -4095,4 +4095,95 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get runUnfinishedLaunchBody =>
       'Continúa donde lo dejaste, guarda lo registrado o descártala.';
+
+  @override
+  String get footballLog => 'Registrar';
+
+  @override
+  String get footballLogTitle => 'Registrar fútbol';
+
+  @override
+  String get footballEditTitle => 'Editar registro';
+
+  @override
+  String get footballTypeMatch => 'Partido';
+
+  @override
+  String get footballTypeTraining => 'Entrenamiento';
+
+  @override
+  String get footballDate => 'Fecha';
+
+  @override
+  String get footballFormat => 'Formato';
+
+  @override
+  String get footballMinutes => 'Minutos';
+
+  @override
+  String get footballMinShort => 'min';
+
+  @override
+  String get footballPosition => 'Posición';
+
+  @override
+  String get footballPosGK => 'POR';
+
+  @override
+  String get footballPosCB => 'DFC';
+
+  @override
+  String get footballPosFB => 'LAT';
+
+  @override
+  String get footballPosCM => 'MC';
+
+  @override
+  String get footballPosWM => 'EXT';
+
+  @override
+  String get footballPosST => 'DEL';
+
+  @override
+  String get footballResult => 'Resultado';
+
+  @override
+  String get footballScoreFor => 'Nosotros';
+
+  @override
+  String get footballScoreAgainst => 'Rival';
+
+  @override
+  String get footballGoals => 'Tus goles';
+
+  @override
+  String get footballAssists => 'Tus asistencias';
+
+  @override
+  String get footballNote => 'Nota';
+
+  @override
+  String get footballSave => 'Guardar';
+
+  @override
+  String get footballDelete => 'Eliminar registro';
+
+  @override
+  String get footballDeleteTitle => '¿Eliminar este registro?';
+
+  @override
+  String get footballDeleteBody => 'Se quitará de tu historial.';
+
+  @override
+  String get footballDeleteAction => 'Eliminar';
+
+  @override
+  String get footballHistory => 'Historial';
+
+  @override
+  String get footballHistoryEmpty =>
+      'Aún no hay registros. Registra uno después de jugar.';
+
+  @override
+  String get footballWorkouts => 'Entrenamientos';
 }

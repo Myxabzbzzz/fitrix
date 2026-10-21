@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
@@ -155,7 +156,7 @@ class _SessionRow extends ConsumerWidget {
       case SessionStatus.today when template != null:
         trailing = AppButton(
           key: Key('plan-start-${s.id}'),
-          label: l10n.gymStart,
+          label: template.sport.actionLabel(l10n),
           size: AppButtonSize.small,
           onPressed: () => startWorkout(context, ref, template),
         );
