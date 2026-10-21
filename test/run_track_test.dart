@@ -119,6 +119,30 @@ void main() {
       expect(climb.elevationGain, closeTo(38, 4));
     });
 
+    test('finish counts the last stretch the step gate held back', () {
+      // Fixes every 5 s, 14 m apart, then a last fix 6 m further (inside the
+      // 2x accuracy gate of 10 m) and one more 15 m total past the last kept.
+      var track = RunTrack(startedAt: t0);
+      for (var i = 0; i <= 10; i++) {
+        track = track.add(eastFix(i * 14.0, i * 5));
+      }
+      track = track.add(eastFix(140 + 5, 55)).add(eastFix(140 + 9, 56));
+      expect(track.meters, closeTo(140, 1));
+      final end = t0.add(const Duration(seconds: 57));
+      final done = track.finish(end);
+      expect(done.meters, closeTo(149, 1));
+      final total = done.splits.fold(Duration.zero, (a, s) => a + s.time);
+      expect(total, done.movingTime(end));
+      expect(total, const Duration(seconds: 57));
+    });
+
+    test('finish ignores an implausible held-back fix', () {
+      var track = run(100);
+      final m = track.meters;
+      final done = track.finish(t0.add(const Duration(minutes: 5)));
+      expect(done.meters, m);
+    });
+
     test('add does not change the track it was called on', () {
       final a = run(100);
       final n = a.kept.length;
@@ -193,6 +217,34 @@ void main() {
       expect(back.route.last, [51.12347, -0.12347]);
     });
 
+    test('polyline round-trips within 1e-5', () {
+      final rnd = Random(5);
+      final pts = [
+        for (var i = 0; i < 500; i++)
+          [51 + rnd.nextDouble() - 0.5, -0.1 + rnd.nextDouble() - 0.5],
+        [-33.86785, 151.20732],
+      ];
+      final back = decodePolyline(encodePolyline(pts));
+      expect(back, hasLength(pts.length));
+      for (var i = 0; i < pts.length; i++) {
+        expect(back[i][0], closeTo(pts[i][0], 1e-5));
+        expect(back[i][1], closeTo(pts[i][1], 1e-5));
+      }
+    });
+
+    test('a doc with the old route array still reads', () {
+      final j = sample(2).toJson()
+        ..remove('polyline')
+        ..['route'] = [
+          [51.1, -0.1],
+          [51.2, -0.2]
+        ];
+      expect(RunDetails.fromJson(j).route, [
+        [51.1, -0.1],
+        [51.2, -0.2]
+      ]);
+    });
+
     test('optional fields may be absent', () {
       final j = sample(2).toJson()
         ..remove('rpe')
@@ -205,7 +257,8 @@ void main() {
     });
 
     test('a 2000-point route stays under 64 KB', () {
-      expect(jsonEncode(sample(2000).toJson()).length, lessThan(64000));
+      expect(
+          jsonEncode(sample(2000).toJson()).length, lessThanOrEqualTo(24000));
     });
   });
 }
