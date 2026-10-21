@@ -15,8 +15,14 @@ abstract class Speaker {
   /// Base codes of the languages the device can speak.
   Future<Set<String>> languages();
 
-  /// Speaks [text] and completes when it has been said.
-  Future<void> speak(String text, {required String language});
+  /// Gets the audio session ready for a run (so speech lowers other audio
+  /// instead of stopping it). Called when a run starts.
+  Future<void> prepare();
+
+  /// Speaks [text] and completes when it has been said, was cancelled or
+  /// failed. Returns false, without speaking, when the device cannot
+  /// switch to a voice for [language].
+  Future<bool> speak(String text, {required String language});
 }
 
 const _ttsLocales = {
@@ -35,22 +41,39 @@ class FlutterTtsSpeaker implements Speaker {
 
   final FlutterTts _tts;
   Future<void>? _configured;
+  Completer<void>? _current;
+
+  /// The device's own locale string for each base code, from [languages].
+  final _deviceLocales = <String, String>{};
 
   Future<void> _configure() async {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      await _tts.setSharedInstance(true);
-      await _tts.setIosAudioCategory(
-        IosTextToSpeechAudioCategory.playback,
-        [
-          IosTextToSpeechAudioCategoryOptions.duckOthers,
-          IosTextToSpeechAudioCategoryOptions.mixWithOthers,
-          IosTextToSpeechAudioCategoryOptions
-              .interruptSpokenAudioAndMixWithOthers,
-        ],
-        IosTextToSpeechAudioMode.voicePrompt,
-      );
-    }
+    await _applyAudioSession();
     await _tts.awaitSpeakCompletion(true);
+    // A cancelled or failed phrase never completes the speak future.
+    _tts.setCancelHandler(_finishCurrent);
+    _tts.setErrorHandler((dynamic _) => _finishCurrent());
+  }
+
+  /// The category goes first: switching the shared instance on activates
+  /// the session, and in the default category that would pause music.
+  Future<void> _applyAudioSession() async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) return;
+    await _tts.setIosAudioCategory(
+      IosTextToSpeechAudioCategory.playback,
+      [
+        IosTextToSpeechAudioCategoryOptions.duckOthers,
+        IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+        IosTextToSpeechAudioCategoryOptions
+            .interruptSpokenAudioAndMixWithOthers,
+      ],
+      IosTextToSpeechAudioMode.voicePrompt,
+    );
+    await _tts.setSharedInstance(true);
+  }
+
+  void _finishCurrent() {
+    final c = _current;
+    if (c != null && !c.isCompleted) c.complete();
   }
 
   Future<void> _ready() => _configured ??= _configure().catchError((Object e) {
@@ -60,34 +83,60 @@ class FlutterTtsSpeaker implements Speaker {
       });
 
   @override
-  Future<Set<String>> languages() async {
+  Future<void> prepare() async {
     await _ready();
-    final raw = await _tts.getLanguages;
-    return {
-      if (raw is List)
-        for (final code in raw)
-          code.toString().split(RegExp('[-_]')).first.toLowerCase(),
-    };
+    await _applyAudioSession();
   }
 
   @override
-  Future<void> speak(String text, {required String language}) async {
+  Future<Set<String>> languages() async {
     await _ready();
-    await _tts.setLanguage(_ttsLocales[language] ?? language);
-    await _tts.speak(text, focus: true);
+    final raw = await _tts.getLanguages;
+    final bases = <String>{};
+    if (raw is List) {
+      for (final item in raw) {
+        final locale = item.toString().replaceAll('_', '-');
+        final base = locale.split('-').first.toLowerCase();
+        bases.add(base);
+        // Prefer the locale we name; otherwise any the device has.
+        if (locale == _ttsLocales[base] || !_deviceLocales.containsKey(base)) {
+          _deviceLocales[base] = item.toString();
+        }
+      }
+    }
+    return bases;
+  }
+
+  @override
+  Future<bool> speak(String text, {required String language}) async {
+    await _ready();
+    final set = await _tts.setLanguage(
+        _deviceLocales[language] ?? _ttsLocales[language] ?? language);
+    if (set == 0 || set == false) return false;
+    final done = _current = Completer<void>();
+    unawaited(_tts.speak(text, focus: true).then(
+          (_) => _finishCurrent(),
+          onError: (Object _) => _finishCurrent(),
+        ));
+    await done.future;
+    return true;
   }
 }
 
 final speakerProvider = Provider<Speaker>((ref) => FlutterTtsSpeaker());
 
-/// The language to speak in: the app's, or when the device has no voice for
-/// it Russian if it has that, else English. Uzbek text is never read by a
-/// Russian voice: the Russian fallback speaks the Russian text.
-String pickVoiceLanguage(String appLanguage, Set<String> available) {
-  if (available.contains(appLanguage)) return appLanguage;
-  if (available.contains('ru')) return 'ru';
-  return 'en';
-}
+/// Languages to try, best first: the app's if the device has a voice for
+/// it; Russian for Uzbek (never the other way round, and never Uzbek text in
+/// a Russian voice); English last.
+List<String> voiceLanguageChain(String appLanguage, Set<String> available) => [
+      if (available.contains(appLanguage)) appLanguage,
+      if (appLanguage == 'uz' && available.contains('ru')) 'ru',
+      if (appLanguage != 'en' || !available.contains('en')) 'en',
+    ];
+
+/// First of [voiceLanguageChain].
+String pickVoiceLanguage(String appLanguage, Set<String> available) =>
+    voiceLanguageChain(appLanguage, available).first;
 
 /// "16 minutes 35 seconds", "1 hour 2 minutes"; zero parts are left out.
 String spokenDuration(AppLocalizations l10n, Duration d) {
@@ -107,45 +156,63 @@ String spokenDuration(AppLocalizations l10n, Duration d) {
 String spokenPace(AppLocalizations l10n, int secPerKm) =>
     l10n.runVoicePace(spokenDuration(l10n, Duration(seconds: secPerKm)));
 
+Duration _defaultTimeout(String text) =>
+    Duration(milliseconds: 5000 + text.length * 150);
+
 /// Says what happens in a run: start, pause, resume, every kilometre, finish.
 class RunVoice {
   RunVoice(
     this._speaker,
     Stream<RunEvent> events, {
     required String Function() appLanguage,
-  }) : _appLanguage = appLanguage {
+    Duration Function(String text) timeoutFor = _defaultTimeout,
+  })  : _appLanguage = appLanguage,
+        _timeoutFor = timeoutFor {
     _sub = events.listen(_onEvent);
   }
 
   final Speaker _speaker;
   final String Function() _appLanguage;
+  final Duration Function(String text) _timeoutFor;
   late final StreamSubscription<RunEvent> _sub;
 
   /// Phrases are said one after another, never over each other.
   Future<void> _queue = Future.value();
 
   void _onEvent(RunEvent e) {
-    _queue = _queue.then((_) => _say(e)).catchError((Object _) {});
+    _queue = _queue.then((_) => _say(e)).catchError((Object error) {
+      debugPrint('Run voice: $error');
+    });
   }
 
   Future<void> _say(RunEvent e) async {
+    if (e is RunStarted) await _speaker.prepare();
     final available = await _speaker.languages();
-    final language = pickVoiceLanguage(_appLanguage(), available);
-    final l10n = lookupAppLocalizations(Locale(language));
-    final text = switch (e) {
-      RunStarted() => l10n.runVoiceStart,
-      RunPaused() => l10n.runVoicePause,
-      RunResumed() => l10n.runVoiceResume,
-      KmReached() => l10n.runVoiceKm(
-          e.km,
-          spokenDuration(l10n, e.total),
-          spokenPace(l10n, e.lastKmSecPerKm),
-          spokenPace(l10n, e.avgSecPerKm),
-        ),
-      RunFinished() => _finish(l10n, language, e),
-    };
-    await _speaker.speak(text, language: language);
+    for (final language in voiceLanguageChain(_appLanguage(), available)) {
+      final l10n = lookupAppLocalizations(Locale(language));
+      final text = _phrase(l10n, language, e);
+      // A phrase the engine never reports as finished must not block the
+      // ones after it.
+      final spoken = await _speaker
+          .speak(text, language: language)
+          .timeout(_timeoutFor(text), onTimeout: () => true);
+      if (spoken) return;
+    }
   }
+
+  String _phrase(AppLocalizations l10n, String language, RunEvent e) =>
+      switch (e) {
+        RunStarted() => l10n.runVoiceStart,
+        RunPaused() => l10n.runVoicePause,
+        RunResumed() => l10n.runVoiceResume,
+        KmReached() => l10n.runVoiceKm(
+            e.km,
+            spokenDuration(l10n, e.total),
+            spokenPace(l10n, e.lastKmSecPerKm),
+            spokenPace(l10n, e.avgSecPerKm),
+          ),
+        RunFinished() => _finish(l10n, language, e),
+      };
 
   String _finish(AppLocalizations l10n, String language, RunFinished e) {
     final distance = NumberFormat('0.0', language).format(e.meters / 1000);

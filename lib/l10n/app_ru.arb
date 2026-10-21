@@ -1051,6 +1051,6 @@
   "runVoicePause": "Пауза.",
   "runVoiceResume": "Продолжаем.",
   "runVoiceKm": "Километр {km}. Время {time}. Последний километр {lastPace}. Средний темп {avgPace}.",
-  "runVoiceFinish": "Пробежка завершена. {distance} километра за {time}. Средний темп {avgPace}.",
-  "runVoiceFinishShort": "Пробежка завершена. {distance} километра за {time}."
+  "runVoiceFinish": "Пробежка завершена. {distance} километра. Время {time}. Средний темп {avgPace}.",
+  "runVoiceFinishShort": "Пробежка завершена. {distance} километра. Время {time}."
 }

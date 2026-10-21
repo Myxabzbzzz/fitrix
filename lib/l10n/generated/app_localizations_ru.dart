@@ -3992,11 +3992,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String runVoiceFinish(String distance, String time, String avgPace) {
-    return 'Пробежка завершена. $distance километра за $time. Средний темп $avgPace.';
+    return 'Пробежка завершена. $distance километра. Время $time. Средний темп $avgPace.';
   }
 
   @override
   String runVoiceFinishShort(String distance, String time) {
-    return 'Пробежка завершена. $distance километра за $time.';
+    return 'Пробежка завершена. $distance километра. Время $time.';
   }
 }
