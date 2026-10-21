@@ -304,6 +304,30 @@ function compact(object) {
   return Object.keys(out).length ? out : null;
 }
 
+const MATCH_TYPES = ['match', 'training'];
+const MATCH_FORMATS = ['5x5', '6x6', '7x7', '8x8', '11x11'];
+
+function cleanMatch(value) {
+  if (!isObject(value)) return undefined;
+  const type = pick(value.type, MATCH_TYPES);
+  const minutes = num(value.minutes, 1, 200, 0);
+  if (!type || minutes === undefined) return undefined;
+  return compact({
+    type,
+    format: pick(value.format, MATCH_FORMATS),
+    minutes,
+    rpe: num(value.rpe, 1, 10, 0),
+    goalsFor: num(value.goalsFor, 0, 50, 0),
+    goalsAgainst: num(value.goalsAgainst, 0, 50, 0),
+  });
+}
+
+function formatPace(secPerKm) {
+  const m = Math.floor(secPerKm / 60);
+  const s = String(secPerKm % 60).padStart(2, '0');
+  return `${m}:${s}/km`;
+}
+
 function cleanFactors(value) {
   if (!Array.isArray(value)) return undefined;
   const factors = [];
@@ -384,7 +408,15 @@ function sanitizeContext(raw) {
     const sport = pick(raw.lastWorkout.sport, SPORTS);
     const name = text(raw.lastWorkout.name);
     if (date && sport && name) {
-      lastWorkout = compact({ date, sport, name, minutes: num(raw.lastWorkout.minutes, 0, 600) });
+      lastWorkout = compact({
+        date,
+        sport,
+        name,
+        minutes: num(raw.lastWorkout.minutes, 0, 600),
+        distanceKm: num(raw.lastWorkout.distanceKm, 0, 500, 2),
+        paceSecPerKm: num(raw.lastWorkout.paceSecPerKm, 120, 1800, 0),
+        match: cleanMatch(raw.lastWorkout.match),
+      });
     }
   }
 
@@ -484,6 +516,18 @@ function describeContext(ctx) {
     const w = ctx.lastWorkout;
     let line = `Last workout: ${w.sport} "${w.name}" on ${w.date}`;
     if (w.minutes !== undefined) line += `, ${w.minutes} min`;
+    if (w.distanceKm !== undefined) {
+      line += `, ${w.distanceKm} km`;
+      if (w.paceSecPerKm !== undefined) line += ` at ${formatPace(w.paceSecPerKm)}`;
+    }
+    if (w.match) {
+      const m = w.match;
+      line += `, football ${m.type}${m.format ? ` ${m.format}` : ''}, ${m.minutes} min`;
+      if (m.rpe !== undefined) line += `, RPE ${m.rpe}`;
+      if (m.goalsFor !== undefined && m.goalsAgainst !== undefined) {
+        line += `, result ${m.goalsFor}-${m.goalsAgainst}`;
+      }
+    }
     lines.push(line);
   }
   if (ctx.load) {

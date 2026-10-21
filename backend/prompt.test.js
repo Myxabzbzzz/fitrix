@@ -260,3 +260,42 @@ test('live fix wording: context sentence, non-sport topic line, Case 2 split rul
   }
   assert.ok(rec.includes('Never say you already changed the plan or logs; to propose a change, use the app action block described below.'));
 });
+
+test('lastWorkout keeps run distance and pace within range', () => {
+  const run = { date: '2026-10-20', sport: 'running', name: 'Morning run', minutes: 30 };
+  const ok = sanitizeContext({ lastWorkout: { ...run, distanceKm: 6.214, paceSecPerKm: 291.4 } });
+  assert.equal(ok.lastWorkout.distanceKm, 6.21);
+  assert.equal(ok.lastWorkout.paceSecPerKm, 291);
+  const bad = sanitizeContext({ lastWorkout: { ...run, distanceKm: 900, paceSecPerKm: 60 } });
+  assert.equal(bad.lastWorkout.distanceKm, undefined);
+  assert.equal(bad.lastWorkout.paceSecPerKm, undefined);
+});
+
+test('lastWorkout match is validated', () => {
+  const base = { date: '2026-10-20', sport: 'football', name: 'Sunday game' };
+  const match = { type: 'match', format: '7x7', minutes: 50, rpe: 8, goalsFor: 3, goalsAgainst: 4 };
+  assert.deepEqual(sanitizeContext({ lastWorkout: { ...base, match } }).lastWorkout.match, match);
+  assert.deepEqual(
+    sanitizeContext({ lastWorkout: { ...base, match: { ...match, format: '9x9' } } }).lastWorkout.match,
+    { type: 'match', minutes: 50, rpe: 8, goalsFor: 3, goalsAgainst: 4 });
+  assert.equal(
+    sanitizeContext({ lastWorkout: { ...base, match: { ...match, type: 'friendly' } } }).lastWorkout.match,
+    undefined);
+  assert.equal(
+    sanitizeContext({ lastWorkout: { ...base, match: { type: 'match', minutes: 0 } } }).lastWorkout.match,
+    undefined);
+});
+
+test('describeContext prints run pace and match result', () => {
+  const run = buildSystemPrompt('app', {}, 'en', sanitizeContext({
+    lastWorkout: { date: '2026-10-20', sport: 'running', name: 'Morning run', minutes: 30, distanceKm: 6.214, paceSecPerKm: 291 },
+  }));
+  assert.ok(run.includes('Last workout: running "Morning run" on 2026-10-20, 30 min, 6.21 km at 4:51/km'));
+  const game = buildSystemPrompt('app', {}, 'en', sanitizeContext({
+    lastWorkout: {
+      date: '2026-10-20', sport: 'football', name: 'Game',
+      match: { type: 'match', format: '7x7', minutes: 50, rpe: 8, goalsFor: 3, goalsAgainst: 4 },
+    },
+  }));
+  assert.ok(game.includes('football match 7x7, 50 min, RPE 8, result 3-4'));
+});
