@@ -204,6 +204,14 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
     ];
   }
 
+  /// Sets the session RPE of the finished workout [id].
+  void setRpe(String id, int rpe) {
+    if (!state.any((w) => w.id == id)) return;
+    state = [
+      for (final w in state) w.id == id ? w.copyWith(sessionRpe: rpe) : w,
+    ];
+  }
+
   /// Replaces history with the result of a sync (newest first; not
   /// reported back as a local change).
   void applySynced(List<CompletedWorkout> history) {

@@ -6374,6 +6374,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Run finished. {distance} kilometres in {time}.'**
   String runVoiceFinishShort(String distance, String time);
+
+  /// No description provided for @runUnfinishedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You have an unfinished run'**
+  String get runUnfinishedTitle;
+
+  /// No description provided for @runUnfinishedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume it, or discard it and start {next}.'**
+  String runUnfinishedBody(String next);
+
+  /// No description provided for @runResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get runResume;
+
+  /// No description provided for @runPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get runPause;
+
+  /// No description provided for @runDiscardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this run?'**
+  String get runDiscardTitle;
+
+  /// No description provided for @runDiscardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Its distance and route will be lost.'**
+  String get runDiscardBody;
+
+  /// No description provided for @runDiscardAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get runDiscardAction;
+
+  /// No description provided for @runDiscardRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard run'**
+  String get runDiscardRun;
+
+  /// No description provided for @runHoldToFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold to finish'**
+  String get runHoldToFinish;
+
+  /// No description provided for @runLocationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off for FITRIX. Allow it in Settings to record a run.'**
+  String get runLocationOff;
+
+  /// No description provided for @runLocationServiceOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are off. Turn them on in Settings to record a run.'**
+  String get runLocationServiceOff;
+
+  /// No description provided for @runOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get runOpenSettings;
+
+  /// No description provided for @runTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get runTime;
+
+  /// No description provided for @runDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get runDistance;
+
+  /// No description provided for @runPace.
+  ///
+  /// In en, this message translates to:
+  /// **'Pace'**
+  String get runPace;
+
+  /// No description provided for @runAvgPace.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg pace'**
+  String get runAvgPace;
+
+  /// No description provided for @runUnitKm.
+  ///
+  /// In en, this message translates to:
+  /// **'km'**
+  String get runUnitKm;
+
+  /// No description provided for @runUnitPerKm.
+  ///
+  /// In en, this message translates to:
+  /// **'/km'**
+  String get runUnitPerKm;
+
+  /// No description provided for @runPausedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get runPausedLabel;
+
+  /// No description provided for @runMovingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Moving time'**
+  String get runMovingTime;
+
+  /// No description provided for @runElevation.
+  ///
+  /// In en, this message translates to:
+  /// **'Elevation gain'**
+  String get runElevation;
+
+  /// No description provided for @runElevationValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String runElevationValue(String meters);
+
+  /// No description provided for @runElapsedLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{elapsed} total, {pauses}'**
+  String runElapsedLine(String elapsed, String pauses);
+
+  /// No description provided for @runPausesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{no pauses} =1{1 pause} other{{count} pauses}}'**
+  String runPausesCount(int count);
+
+  /// No description provided for @runSplits.
+  ///
+  /// In en, this message translates to:
+  /// **'Splits'**
+  String get runSplits;
+
+  /// No description provided for @runRpeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How hard did it feel?'**
+  String get runRpeTitle;
+
+  /// No description provided for @runSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get runSave;
+
+  /// No description provided for @runDeleteRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete run'**
+  String get runDeleteRun;
+
+  /// No description provided for @runDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this run?'**
+  String get runDeleteTitle;
+
+  /// No description provided for @runDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It will be removed from your history.'**
+  String get runDeleteBody;
+
+  /// No description provided for @runDeleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get runDeleteAction;
+
+  /// No description provided for @runNoRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'No route recorded'**
+  String get runNoRoute;
+
+  /// No description provided for @runNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This run is no longer here.'**
+  String get runNotFound;
 }
 
 class _AppLocalizationsDelegate

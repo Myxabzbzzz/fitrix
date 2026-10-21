@@ -3921,4 +3921,120 @@ class AppLocalizationsEn extends AppLocalizations {
   String runVoiceFinishShort(String distance, String time) {
     return 'Run finished. $distance kilometres in $time.';
   }
+
+  @override
+  String get runUnfinishedTitle => 'You have an unfinished run';
+
+  @override
+  String runUnfinishedBody(String next) {
+    return 'Resume it, or discard it and start $next.';
+  }
+
+  @override
+  String get runResume => 'Resume';
+
+  @override
+  String get runPause => 'Pause';
+
+  @override
+  String get runDiscardTitle => 'Discard this run?';
+
+  @override
+  String get runDiscardBody => 'Its distance and route will be lost.';
+
+  @override
+  String get runDiscardAction => 'Discard';
+
+  @override
+  String get runDiscardRun => 'Discard run';
+
+  @override
+  String get runHoldToFinish => 'Hold to finish';
+
+  @override
+  String get runLocationOff =>
+      'Location is off for FITRIX. Allow it in Settings to record a run.';
+
+  @override
+  String get runLocationServiceOff =>
+      'Location services are off. Turn them on in Settings to record a run.';
+
+  @override
+  String get runOpenSettings => 'Settings';
+
+  @override
+  String get runTime => 'Time';
+
+  @override
+  String get runDistance => 'Distance';
+
+  @override
+  String get runPace => 'Pace';
+
+  @override
+  String get runAvgPace => 'Avg pace';
+
+  @override
+  String get runUnitKm => 'km';
+
+  @override
+  String get runUnitPerKm => '/km';
+
+  @override
+  String get runPausedLabel => 'Paused';
+
+  @override
+  String get runMovingTime => 'Moving time';
+
+  @override
+  String get runElevation => 'Elevation gain';
+
+  @override
+  String runElevationValue(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String runElapsedLine(String elapsed, String pauses) {
+    return '$elapsed total, $pauses';
+  }
+
+  @override
+  String runPausesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pauses',
+      one: '1 pause',
+      zero: 'no pauses',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get runSplits => 'Splits';
+
+  @override
+  String get runRpeTitle => 'How hard did it feel?';
+
+  @override
+  String get runSave => 'Save';
+
+  @override
+  String get runDeleteRun => 'Delete run';
+
+  @override
+  String get runDeleteTitle => 'Delete this run?';
+
+  @override
+  String get runDeleteBody => 'It will be removed from your history.';
+
+  @override
+  String get runDeleteAction => 'Delete';
+
+  @override
+  String get runNoRoute => 'No route recorded';
+
+  @override
+  String get runNotFound => 'This run is no longer here.';
 }

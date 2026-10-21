@@ -3999,4 +3999,122 @@ class AppLocalizationsRu extends AppLocalizations {
   String runVoiceFinishShort(String distance, String time) {
     return 'Пробежка завершена. $distance километра. Время $time.';
   }
+
+  @override
+  String get runUnfinishedTitle => 'У вас есть незавершённая пробежка';
+
+  @override
+  String runUnfinishedBody(String next) {
+    return 'Продолжите её или сбросьте и начните «$next».';
+  }
+
+  @override
+  String get runResume => 'Продолжить';
+
+  @override
+  String get runPause => 'Пауза';
+
+  @override
+  String get runDiscardTitle => 'Сбросить эту пробежку?';
+
+  @override
+  String get runDiscardBody => 'Дистанция и маршрут будут потеряны.';
+
+  @override
+  String get runDiscardAction => 'Сбросить';
+
+  @override
+  String get runDiscardRun => 'Сбросить пробежку';
+
+  @override
+  String get runHoldToFinish => 'Удерживайте, чтобы завершить';
+
+  @override
+  String get runLocationOff =>
+      'Геолокация для FITRIX выключена. Разрешите её в настройках, чтобы записать пробежку.';
+
+  @override
+  String get runLocationServiceOff =>
+      'Службы геолокации выключены. Включите их в настройках, чтобы записать пробежку.';
+
+  @override
+  String get runOpenSettings => 'Настройки';
+
+  @override
+  String get runTime => 'Время';
+
+  @override
+  String get runDistance => 'Дистанция';
+
+  @override
+  String get runPace => 'Темп';
+
+  @override
+  String get runAvgPace => 'Средний темп';
+
+  @override
+  String get runUnitKm => 'км';
+
+  @override
+  String get runUnitPerKm => '/км';
+
+  @override
+  String get runPausedLabel => 'Пауза';
+
+  @override
+  String get runMovingTime => 'Время в движении';
+
+  @override
+  String get runElevation => 'Набор высоты';
+
+  @override
+  String runElevationValue(String meters) {
+    return '$meters м';
+  }
+
+  @override
+  String runElapsedLine(String elapsed, String pauses) {
+    return '$elapsed всего, $pauses';
+  }
+
+  @override
+  String runPausesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count паузы',
+      many: '$count пауз',
+      few: '$count паузы',
+      one: '1 пауза',
+      zero: 'без пауз',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get runSplits => 'Отрезки';
+
+  @override
+  String get runRpeTitle => 'Насколько тяжело было?';
+
+  @override
+  String get runSave => 'Сохранить';
+
+  @override
+  String get runDeleteRun => 'Удалить пробежку';
+
+  @override
+  String get runDeleteTitle => 'Удалить эту пробежку?';
+
+  @override
+  String get runDeleteBody => 'Она будет удалена из истории.';
+
+  @override
+  String get runDeleteAction => 'Удалить';
+
+  @override
+  String get runNoRoute => 'Маршрут не записан';
+
+  @override
+  String get runNotFound => 'Этой пробежки больше нет.';
 }

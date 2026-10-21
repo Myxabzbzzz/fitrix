@@ -3872,4 +3872,118 @@ class AppLocalizationsUz extends AppLocalizations {
   String runVoiceFinishShort(String distance, String time) {
     return 'Yugurish tugadi. $distance kilometr, $time.';
   }
+
+  @override
+  String get runUnfinishedTitle => 'Tugallanmagan yugurishingiz bor';
+
+  @override
+  String runUnfinishedBody(String next) {
+    return 'Uni davom ettiring yoki bekor qilib, «$next» ni boshlang.';
+  }
+
+  @override
+  String get runResume => 'Davom etish';
+
+  @override
+  String get runPause => 'Pauza';
+
+  @override
+  String get runDiscardTitle => 'Bu yugurish bekor qilinsinmi?';
+
+  @override
+  String get runDiscardBody => 'Masofa va marshrut yo‘qoladi.';
+
+  @override
+  String get runDiscardAction => 'Bekor qilish';
+
+  @override
+  String get runDiscardRun => 'Yugurishni bekor qilish';
+
+  @override
+  String get runHoldToFinish => 'Tugatish uchun bosib turing';
+
+  @override
+  String get runLocationOff =>
+      'FITRIX uchun joylashuv o‘chiq. Yugurishni yozish uchun sozlamalarda ruxsat bering.';
+
+  @override
+  String get runLocationServiceOff =>
+      'Joylashuv xizmatlari o‘chiq. Yugurishni yozish uchun ularni sozlamalarda yoqing.';
+
+  @override
+  String get runOpenSettings => 'Sozlamalar';
+
+  @override
+  String get runTime => 'Vaqt';
+
+  @override
+  String get runDistance => 'Masofa';
+
+  @override
+  String get runPace => 'Temp';
+
+  @override
+  String get runAvgPace => 'O‘rtacha temp';
+
+  @override
+  String get runUnitKm => 'km';
+
+  @override
+  String get runUnitPerKm => '/km';
+
+  @override
+  String get runPausedLabel => 'Pauza';
+
+  @override
+  String get runMovingTime => 'Harakat vaqti';
+
+  @override
+  String get runElevation => 'Balandlikka ko‘tarilish';
+
+  @override
+  String runElevationValue(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String runElapsedLine(String elapsed, String pauses) {
+    return 'Jami $elapsed, $pauses';
+  }
+
+  @override
+  String runPausesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ta pauza',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get runSplits => 'Kilometrlar';
+
+  @override
+  String get runRpeTitle => 'Qanchalik qiyin bo‘ldi?';
+
+  @override
+  String get runSave => 'Saqlash';
+
+  @override
+  String get runDeleteRun => 'Yugurishni o‘chirish';
+
+  @override
+  String get runDeleteTitle => 'Bu yugurish o‘chirilsinmi?';
+
+  @override
+  String get runDeleteBody => 'U tarixdan o‘chiriladi.';
+
+  @override
+  String get runDeleteAction => 'O‘chirish';
+
+  @override
+  String get runNoRoute => 'Marshrut yozilmagan';
+
+  @override
+  String get runNotFound => 'Bu yugurish endi yo‘q.';
 }

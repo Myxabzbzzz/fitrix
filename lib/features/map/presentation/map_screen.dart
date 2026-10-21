@@ -360,7 +360,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
         // Always wrapped, so the TileLayer is never remounted (and its
         // provider never disposed) when the theme changes.
         ColorFiltered(
-            colorFilter: dark ? _darkTiles : _identityTiles, child: tiles),
+            colorFilter: dark ? osmDarkTiles : osmIdentityTiles, child: tiles),
         if (routeShown && plan != null) ..._routeLayers(palette, plan, dark),
         MarkerLayer(
           markers: [
@@ -386,7 +386,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
               ),
           ],
         ),
-        _Attribution(dark: dark),
+        OsmAttribution(dark: dark),
       ],
     );
   }
@@ -432,7 +432,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
   }
 }
 
-const ColorFilter _identityTiles = ColorFilter.matrix(<double>[
+/// No filter (light theme).
+const ColorFilter osmIdentityTiles = ColorFilter.matrix(<double>[
   1, 0, 0, 0, 0, //
   0, 1, 0, 0, 0,
   0, 0, 1, 0, 0,
@@ -441,7 +442,7 @@ const ColorFilter _identityTiles = ColorFilter.matrix(<double>[
 
 /// "Soft" dark map: keeps hues recognisable (parks stay
 /// green, water blue) instead of a plain invert.
-const ColorFilter _darkTiles = ColorFilter.matrix(<double>[
+const ColorFilter osmDarkTiles = ColorFilter.matrix(<double>[
   0.1713, -0.8644, -0.087, 0, 210.9, //
   -0.2577, -0.4354, -0.087, 0, 210.9,
   -0.2577, -0.8644, 0.342, 0, 210.9,
@@ -545,8 +546,8 @@ class _MeDot extends StatelessWidget {
 }
 
 /// "© OpenStreetMap contributors", always visible in the map's corner.
-class _Attribution extends StatelessWidget {
-  const _Attribution({required this.dark});
+class OsmAttribution extends StatelessWidget {
+  const OsmAttribution({super.key, required this.dark});
 
   final bool dark;
 

@@ -3937,4 +3937,120 @@ class AppLocalizationsEs extends AppLocalizations {
   String runVoiceFinishShort(String distance, String time) {
     return 'Carrera terminada. $distance kilómetros en $time.';
   }
+
+  @override
+  String get runUnfinishedTitle => 'Tienes una carrera sin terminar';
+
+  @override
+  String runUnfinishedBody(String next) {
+    return 'Reanúdala o descártala y empieza «$next».';
+  }
+
+  @override
+  String get runResume => 'Reanudar';
+
+  @override
+  String get runPause => 'Pausa';
+
+  @override
+  String get runDiscardTitle => '¿Descartar esta carrera?';
+
+  @override
+  String get runDiscardBody => 'Se perderán la distancia y la ruta.';
+
+  @override
+  String get runDiscardAction => 'Descartar';
+
+  @override
+  String get runDiscardRun => 'Descartar carrera';
+
+  @override
+  String get runHoldToFinish => 'Mantén para terminar';
+
+  @override
+  String get runLocationOff =>
+      'La ubicación está desactivada para FITRIX. Permítela en Ajustes para registrar una carrera.';
+
+  @override
+  String get runLocationServiceOff =>
+      'Los servicios de ubicación están desactivados. Actívalos en Ajustes para registrar una carrera.';
+
+  @override
+  String get runOpenSettings => 'Ajustes';
+
+  @override
+  String get runTime => 'Tiempo';
+
+  @override
+  String get runDistance => 'Distancia';
+
+  @override
+  String get runPace => 'Ritmo';
+
+  @override
+  String get runAvgPace => 'Ritmo medio';
+
+  @override
+  String get runUnitKm => 'km';
+
+  @override
+  String get runUnitPerKm => '/km';
+
+  @override
+  String get runPausedLabel => 'En pausa';
+
+  @override
+  String get runMovingTime => 'Tiempo en movimiento';
+
+  @override
+  String get runElevation => 'Desnivel positivo';
+
+  @override
+  String runElevationValue(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String runElapsedLine(String elapsed, String pauses) {
+    return '$elapsed en total, $pauses';
+  }
+
+  @override
+  String runPausesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pausas',
+      one: '1 pausa',
+      zero: 'sin pausas',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get runSplits => 'Parciales';
+
+  @override
+  String get runRpeTitle => '¿Qué tan duro se sintió?';
+
+  @override
+  String get runSave => 'Guardar';
+
+  @override
+  String get runDeleteRun => 'Eliminar carrera';
+
+  @override
+  String get runDeleteTitle => '¿Eliminar esta carrera?';
+
+  @override
+  String get runDeleteBody => 'Se quitará de tu historial.';
+
+  @override
+  String get runDeleteAction => 'Eliminar';
+
+  @override
+  String get runNoRoute => 'No se registró la ruta';
+
+  @override
+  String get runNotFound => 'Esta carrera ya no está aquí.';
 }

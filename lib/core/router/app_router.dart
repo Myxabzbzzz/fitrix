@@ -45,6 +45,8 @@ import 'package:fitrix/features/content/presentation/article_screen.dart';
 import 'package:fitrix/features/content/presentation/discover_screen.dart';
 import 'package:fitrix/features/shop/presentation/shop_screen.dart';
 import 'package:fitrix/features/map/presentation/map_screen.dart';
+import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
+import 'package:fitrix/features/running/presentation/screens/run_summary_screen.dart';
 import 'package:fitrix/features/programs/presentation/screens/program_detail_screen.dart';
 import 'package:fitrix/features/programs/presentation/screens/program_progress_screen.dart';
 import 'package:fitrix/features/programs/presentation/screens/programs_screen.dart';
@@ -58,6 +60,13 @@ class AppRouter {
   static const String profile = '/profile';
   static const String chat = '/chat';
   static const String transition = '/transition';
+
+  // Runs (full screen, above the tab bar)
+  static const String liveRun = '/run/live';
+
+  /// A saved run; [justFinished] opens it with the rating and Save.
+  static String runSummary(String id, {bool justFinished = false}) =>
+      '/run/$id${justFinished ? '?new=1' : ''}';
 
   // Main app (tab bar)
   static const String discover = '/discover';
@@ -215,6 +224,21 @@ class AppRouter {
             name: 'transition',
             pageBuilder: (context, state) => const NoTransitionPage(
               child: ChatTransitionScreen(),
+            ),
+          ),
+          // Above the shell: no tab bar. 'live' before ':id'.
+          GoRoute(
+            path: liveRun,
+            name: 'liveRun',
+            builder: (context, state) => const LiveRunScreen(),
+          ),
+          GoRoute(
+            path: '/run/:id',
+            name: 'runSummary',
+            builder: (context, state) => RunSummaryScreen(
+              key: ValueKey(state.pathParameters['id']),
+              id: state.pathParameters['id']!,
+              justFinished: state.uri.queryParameters['new'] == '1',
             ),
           ),
           StatefulShellRoute(
