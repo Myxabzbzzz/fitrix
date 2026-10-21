@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,6 +16,7 @@ class FakeSpeaker implements Speaker {
   final Set<String> available;
   final Set<String> failLanguages;
   int prepares = 0;
+  int stops = 0;
   final spoken = <({String text, String language})>[];
 
   @override
@@ -22,6 +24,9 @@ class FakeSpeaker implements Speaker {
 
   @override
   Future<void> prepare() async => prepares++;
+
+  @override
+  Future<void> stop() async => stops++;
 
   @override
   Future<bool> speak(String text, {required String language}) async {
@@ -134,6 +139,36 @@ void main() {
       tts.cancel!();
       await f;
       expect(done, isTrue);
+    });
+
+    test('a stale cancel or error never finishes the next phrase', () async {
+      for (final viaError in [false, true]) {
+        final tts = _FakeTts();
+        final speaker = FlutterTtsSpeaker(tts);
+        void fire() => viaError ? tts.error!('boom') : tts.cancel!();
+
+        final a = speaker.speak('a', language: 'en');
+        await pumpEventQueue();
+        await speaker.stop(); // RunVoice timed A out
+        expect(tts.stops, 1);
+        await a;
+
+        var bDone = false;
+        final b = speaker.speak('b', language: 'en').then((_) => bDone = true);
+        await pumpEventQueue();
+        fire(); // A's late cancel/error
+        await pumpEventQueue();
+        expect(bDone, isFalse, reason: 'stale event, viaError=$viaError');
+        fire(); // B's own
+        await b;
+        expect(bDone, isTrue);
+      }
+    });
+
+    test('a setLanguage that throws counts as unavailable', () async {
+      final tts = _FakeTts()..languageThrows = true;
+      final speaker = FlutterTtsSpeaker(tts);
+      expect(await speaker.speak('hola', language: 'es'), isFalse);
     });
 
     test('a failed setLanguage returns false and does not speak', () async {
@@ -258,6 +293,8 @@ void main() {
       events.add(const RunResumed());
       await Future<void>.delayed(const Duration(milliseconds: 200));
       expect(speaker.spoken, ['Run started.', 'Paused.', 'Resumed.']);
+      // Only the hanging phrase was cut off.
+      expect(speaker.stops, 1);
     });
 
     test('russian finish keeps the time in the nominative', () async {
@@ -281,12 +318,16 @@ void main() {
 
 class _FlakySpeaker implements Speaker {
   final spoken = <String>[];
+  int stops = 0;
 
   @override
   Future<Set<String>> languages() async => {'en'};
 
   @override
   Future<void> prepare() async {}
+
+  @override
+  Future<void> stop() async => stops++;
 
   @override
   Future<bool> speak(String text, {required String language}) async {
@@ -299,12 +340,16 @@ class _FlakySpeaker implements Speaker {
 /// The first phrase never completes, like a cancelled utterance.
 class _HangingSpeaker implements Speaker {
   final spoken = <String>[];
+  int stops = 0;
 
   @override
   Future<Set<String>> languages() async => {'en'};
 
   @override
   Future<void> prepare() async {}
+
+  @override
+  Future<void> stop() async => stops++;
 
   @override
   Future<bool> speak(String text, {required String language}) {
@@ -317,6 +362,8 @@ class _HangingSpeaker implements Speaker {
 class _FakeTts extends Fake implements FlutterTts {
   final calls = <String>[];
   Object? languageResult = 1;
+  bool languageThrows = false;
+  int stops = 0;
   VoidCallback? cancel;
   ErrorHandler? error;
 
@@ -350,8 +397,12 @@ class _FakeTts extends Fake implements FlutterTts {
   @override
   Future<dynamic> setLanguage(String language) async {
     calls.add('lang $language');
+    if (languageThrows) throw PlatformException(code: 'x');
     return languageResult;
   }
+
+  @override
+  Future<dynamic> stop() async => stops++;
 
   @override
   Future<dynamic> speak(String text, {bool focus = false}) {

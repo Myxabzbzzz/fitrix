@@ -23,6 +23,9 @@ abstract class Speaker {
   /// failed. Returns false, without speaking, when the device cannot
   /// switch to a voice for [language].
   Future<bool> speak(String text, {required String language});
+
+  /// Cuts off the phrase being spoken, if any.
+  Future<void> stop();
 }
 
 const _ttsLocales = {
@@ -43,6 +46,10 @@ class FlutterTtsSpeaker implements Speaker {
   Future<void>? _configured;
   Completer<void>? _current;
 
+  /// Cancel/error events still to come for phrases [stop] cut off; they must
+  /// not complete the phrase that follows.
+  int _staleEvents = 0;
+
   /// The device's own locale string for each base code, from [languages].
   final _deviceLocales = <String, String>{};
 
@@ -50,8 +57,8 @@ class FlutterTtsSpeaker implements Speaker {
     await _applyAudioSession();
     await _tts.awaitSpeakCompletion(true);
     // A cancelled or failed phrase never completes the speak future.
-    _tts.setCancelHandler(_finishCurrent);
-    _tts.setErrorHandler((dynamic _) => _finishCurrent());
+    _tts.setCancelHandler(_onCancelOrError);
+    _tts.setErrorHandler((dynamic _) => _onCancelOrError());
   }
 
   /// The category goes first: switching the shared instance on activates
@@ -71,8 +78,15 @@ class FlutterTtsSpeaker implements Speaker {
     await _tts.setSharedInstance(true);
   }
 
-  void _finishCurrent() {
-    final c = _current;
+  void _onCancelOrError() {
+    if (_staleEvents > 0) {
+      _staleEvents--;
+      return;
+    }
+    _finish(_current);
+  }
+
+  static void _finish(Completer<void>? c) {
     if (c != null && !c.isCompleted) c.complete();
   }
 
@@ -110,16 +124,34 @@ class FlutterTtsSpeaker implements Speaker {
   @override
   Future<bool> speak(String text, {required String language}) async {
     await _ready();
-    final set = await _tts.setLanguage(
-        _deviceLocales[language] ?? _ttsLocales[language] ?? language);
+    Object? set;
+    try {
+      set = await _tts.setLanguage(
+          _deviceLocales[language] ?? _ttsLocales[language] ?? language);
+    } catch (_) {
+      return false;
+    }
     if (set == 0 || set == false) return false;
+    // Each phrase has its own completer: a late completion of an earlier
+    // phrase can only finish that phrase.
     final done = _current = Completer<void>();
     unawaited(_tts.speak(text, focus: true).then(
-          (_) => _finishCurrent(),
-          onError: (Object _) => _finishCurrent(),
+          (_) => _finish(done),
+          onError: (Object _) => _finish(done),
         ));
     await done.future;
     return true;
+  }
+
+  @override
+  Future<void> stop() async {
+    final c = _current;
+    _current = null;
+    if (c != null && !c.isCompleted) {
+      _staleEvents++;
+      c.complete();
+    }
+    await _tts.stop();
   }
 }
 
@@ -193,9 +225,17 @@ class RunVoice {
       final text = _phrase(l10n, language, e);
       // A phrase the engine never reports as finished must not block the
       // ones after it.
+      var timedOut = false;
       final spoken = await _speaker
           .speak(text, language: language)
-          .timeout(_timeoutFor(text), onTimeout: () => true);
+          .timeout(_timeoutFor(text), onTimeout: () {
+        timedOut = true;
+        return true;
+      });
+      if (timedOut) {
+        // Cut it off so it cannot talk over the next phrase.
+        await _speaker.stop().catchError((Object _) {});
+      }
       if (spoken) return;
     }
   }
