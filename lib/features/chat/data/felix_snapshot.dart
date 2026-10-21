@@ -1,11 +1,13 @@
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/football/data/match_log.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/progress/data/body_weight_store.dart';
 import 'package:fitrix/features/progress/domain/progress_math.dart';
+import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
 
@@ -20,6 +22,10 @@ class FelixSnapshot {
   final Readiness? readiness;
   final double? sleepHours;
   final CompletedWorkout? lastWorkout;
+
+  /// Run or football details of [lastWorkout], when it has them.
+  final RunDetails? lastRun;
+  final MatchLog? lastMatch;
   final int? load7;
   final double? acwr;
   final AcwrBand? band;
@@ -38,6 +44,8 @@ class FelixSnapshot {
     this.readiness,
     this.sleepHours,
     this.lastWorkout,
+    this.lastRun,
+    this.lastMatch,
     this.load7,
     this.acwr,
     this.band,
@@ -53,9 +61,45 @@ class FelixSnapshot {
 
   static double _round1(double v) => (v * 10).round() / 10;
 
+  /// `distanceKm` and `paceSecPerKm` of a run, within what the backend takes.
+  static Map<String, Object> _runJson(RunDetails run) {
+    final km = run.meters / 1000;
+    final pace = km <= 0 ? 0 : (run.moving.inMilliseconds / 1000 / km).round();
+    return {
+      if (run.meters > 0 && km <= 500) 'distanceKm': (km * 100).round() / 100,
+      if (run.meters >= 50 && pace >= 120 && pace <= 1800) 'paceSecPerKm': pace,
+    };
+  }
+
+  static Map<String, Object>? _matchJson(MatchLog m) {
+    if (m.minutes < 1) return null;
+    final isMatch = m.type == FootballType.match;
+    final rpe = m.rpe;
+    final format = m.format;
+    final goalsFor = m.goalsFor;
+    final goalsAgainst = m.goalsAgainst;
+    return {
+      'type': m.type.name,
+      if (isMatch && format != null && footballFormats.contains(format))
+        'format': format,
+      'minutes': m.minutes.clamp(1, 200),
+      if (rpe != null && rpe >= 1 && rpe <= 10) 'rpe': rpe,
+      if (isMatch && goalsFor != null && goalsFor >= 0 && goalsFor <= 50)
+        'goalsFor': goalsFor,
+      if (isMatch &&
+          goalsAgainst != null &&
+          goalsAgainst >= 0 &&
+          goalsAgainst <= 50)
+        'goalsAgainst': goalsAgainst,
+    };
+  }
+
   Map<String, Object> toJson() {
     final session = todaySession;
     final lastWorkout = this.lastWorkout;
+    final lastRun = this.lastRun;
+    final lastMatch = this.lastMatch;
+    final match = lastMatch == null ? null : _matchJson(lastMatch);
     final next = this.next;
     final readiness = this.readiness;
     final eaten = this.eaten;
@@ -105,6 +149,8 @@ class FelixSnapshot {
           'name': lastWorkout.name,
           if (lastWorkout.duration.inMinutes > 0)
             'minutes': lastWorkout.duration.inMinutes,
+          if (lastRun != null) ..._runJson(lastRun),
+          if (match != null) 'match': match,
         },
       if (load7 != null)
         'load': {
@@ -152,6 +198,8 @@ FelixSnapshot buildFelixSnapshot({
   int waterMl = 0,
   Targets? targets,
   List<WeighIn> weighIns = const [],
+  Map<String, RunDetails> runs = const {},
+  Map<String, MatchLog> matches = const {},
 }) {
   final day = dayOf(today);
   final sport = topic.sport;
@@ -227,6 +275,8 @@ FelixSnapshot buildFelixSnapshot({
             : Readiness(readiness.score, const [], readiness.label),
     sleepHours: isRecovery ? sleepHours : null,
     lastWorkout: lastWorkout,
+    lastRun: lastWorkout == null ? null : runs[lastWorkout.id],
+    lastMatch: lastWorkout == null ? null : matches[lastWorkout.id],
     load7: load7,
     acwr: isRecovery ? summary?.acwr : null,
     band: summary?.band,

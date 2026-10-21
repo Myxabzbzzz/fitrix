@@ -3,9 +3,11 @@ import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/chat/data/felix_snapshot.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
+import 'package:fitrix/features/football/data/match_store.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
 import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
+import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 
 /// What Felix knows for a topic right now, sent as the chat `context`.
@@ -24,5 +26,7 @@ final felixSnapshotProvider =
     waterMl: ref.watch(todayWaterProvider),
     targets: ref.watch(targetsProvider),
     weighIns: ref.watch(bodyWeightProvider),
+    runs: ref.watch(runsProvider),
+    matches: ref.watch(matchesProvider),
   );
 });

@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/chat/data/felix_snapshot.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/football/data/match_log.dart';
+import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
@@ -34,6 +36,8 @@ void main() {
     List<FoodEntry> entries = const [],
     Targets? targets,
     List<WeighIn> weighIns = const [],
+    Map<String, RunDetails> runs = const {},
+    Map<String, MatchLog> matches = const {},
   }) =>
       buildFelixSnapshot(
         topic: topic,
@@ -45,6 +49,8 @@ void main() {
         entries: entries,
         targets: targets,
         weighIns: weighIns,
+        runs: runs,
+        matches: matches,
       ).toJson();
 
   test('empty inputs give only the date, weekday and an unplanned today', () {
@@ -193,5 +199,98 @@ void main() {
     expect(j.containsKey('readiness'), isFalse);
     expect(j.containsKey('lastWorkout'), isFalse);
     expect(j.containsKey('load'), isFalse);
+  });
+
+  group('run and match details', () {
+    RunDetails run(double meters, Duration moving) => RunDetails(
+        startedAt: DateTime(2026, 10, 19, 7),
+        moving: moving,
+        elapsed: moving,
+        pauses: 0,
+        meters: meters,
+        splits: const [],
+        route: const []);
+
+    CompletedWorkout runWorkout() =>
+        workout(Sport.running, DateTime(2026, 10, 19, 7), 'Run', minutes: 30);
+
+    test('a run adds distance and pace', () {
+      final w = runWorkout();
+      final j = json(AssistantTopic.running,
+          history: [w],
+          runs: {w.id: run(6214, const Duration(minutes: 30, seconds: 12))});
+      final last = j['lastWorkout'] as Map;
+      expect(last['distanceKm'], 6.21);
+      expect(last['paceSecPerKm'], 292);
+    });
+
+    test('a run without details has no distance keys', () {
+      final j = json(AssistantTopic.running, history: [runWorkout()]);
+      final last = j['lastWorkout'] as Map;
+      expect(last.containsKey('distanceKm'), isFalse);
+      expect(last.containsKey('paceSecPerKm'), isFalse);
+    });
+
+    test('pace is omitted for a tiny or absurd run, distance for zero', () {
+      final w = runWorkout();
+      var last = json(AssistantTopic.running,
+              history: [w],
+              runs: {w.id: run(40, const Duration(minutes: 5))})['lastWorkout']
+          as Map;
+      expect(last['distanceKm'], 0.04);
+      expect(last.containsKey('paceSecPerKm'), isFalse);
+      last = json(AssistantTopic.running, history: [
+        w
+      ], runs: {
+        w.id: run(5000, const Duration(minutes: 5))
+      })['lastWorkout'] as Map;
+      expect(last.containsKey('paceSecPerKm'), isFalse);
+      last = json(AssistantTopic.running,
+              history: [w],
+              runs: {w.id: run(0, const Duration(minutes: 5))})['lastWorkout']
+          as Map;
+      expect(last.containsKey('distanceKm'), isFalse);
+      expect(last.containsKey('paceSecPerKm'), isFalse);
+    });
+
+    test('a match adds its details; a training only minutes and rpe', () {
+      final m = workout(Sport.football, DateTime(2026, 10, 19, 18), 'Match',
+          minutes: 50);
+      var j = json(AssistantTopic.football, history: [
+        m
+      ], matches: {
+        m.id: MatchLog(
+            type: FootballType.match,
+            date: m.finishedAt,
+            format: '7x7',
+            minutes: 50,
+            position: 'CM',
+            rpe: 8,
+            goalsFor: 3,
+            goalsAgainst: 4,
+            goals: 1)
+      });
+      expect((j['lastWorkout'] as Map)['match'], {
+        'type': 'match',
+        'format': '7x7',
+        'minutes': 50,
+        'rpe': 8,
+        'goalsFor': 3,
+        'goalsAgainst': 4,
+      });
+      j = json(AssistantTopic.app, history: [
+        m
+      ], matches: {
+        m.id: MatchLog(
+            type: FootballType.training,
+            date: m.finishedAt,
+            format: '7x7',
+            minutes: 60,
+            rpe: 5,
+            goalsFor: 1)
+      });
+      expect((j['lastWorkout'] as Map)['match'],
+          {'type': 'training', 'minutes': 60, 'rpe': 5});
+    });
   });
 }
