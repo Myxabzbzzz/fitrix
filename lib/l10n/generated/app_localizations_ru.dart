@@ -4148,9 +4148,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get runWorkouts => 'Тренировки';
 
   @override
-  String runBarTitle(String distance) {
-    return 'Пробежка идёт · $distance км';
-  }
+  String get runBarTitle => 'Пробежка';
 
   @override
   String get runBarReturn => 'Вернуться';

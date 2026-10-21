@@ -36,18 +36,32 @@ class RunInProgressBar extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: Row(
               children: [
-                Expanded(
+                // Only the label gives way: the distance is the live figure.
+                Flexible(
                   child: Text(
-                    l10n.runBarTitle(formatKm(meters, l10n.localeName)),
+                    l10n.runBarTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppText.bodyStrong.copyWith(color: palette.onAccent),
                   ),
                 ),
+                Text(
+                  ' · ${formatKm(meters, l10n.localeName)} ${l10n.runUnitKm}',
+                  key: const ValueKey('run-bar-distance'),
+                  maxLines: 1,
+                  softWrap: false,
+                  style: AppText.bodyStrong.copyWith(color: palette.onAccent),
+                ),
+                const Spacer(),
                 const SizedBox(width: AppSpacing.xs),
-                Text(l10n.runBarReturn,
-                    style:
-                        AppText.bodyStrong.copyWith(color: palette.onAccent)),
+                Flexible(
+                  child: Text(
+                    l10n.runBarReturn,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppText.bodyStrong.copyWith(color: palette.onAccent),
+                  ),
+                ),
                 Icon(Icons.chevron_right, size: 20, color: palette.onAccent),
               ],
             ),

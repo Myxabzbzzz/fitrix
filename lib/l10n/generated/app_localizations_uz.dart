@@ -4014,9 +4014,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get runWorkouts => 'Mashg‘ulotlar';
 
   @override
-  String runBarTitle(String distance) {
-    return 'Yugurish davom etmoqda · $distance km';
-  }
+  String get runBarTitle => 'Yugurish';
 
   @override
   String get runBarReturn => 'Qaytish';

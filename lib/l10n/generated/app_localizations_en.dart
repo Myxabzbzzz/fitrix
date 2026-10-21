@@ -4066,9 +4066,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get runWorkouts => 'Workouts';
 
   @override
-  String runBarTitle(String distance) {
-    return 'Run in progress · $distance km';
-  }
+  String get runBarTitle => 'Run in progress';
 
   @override
   String get runBarReturn => 'Return';

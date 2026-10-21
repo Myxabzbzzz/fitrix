@@ -1092,7 +1092,7 @@
   "runHistory": "Historial",
   "runHistoryEmpty": "Aún no hay carreras. Las que registres aparecerán aquí.",
   "runWorkouts": "Entrenamientos",
-  "runBarTitle": "Carrera en curso · {distance} km",
+  "runBarTitle": "Carrera en curso",
   "runBarReturn": "Volver",
   "runUnfinishedLaunchTitle": "Carrera sin terminar · {distance} km",
   "runUnfinishedLaunchBody": "Continúa donde lo dejaste, guarda lo registrado o descártala."

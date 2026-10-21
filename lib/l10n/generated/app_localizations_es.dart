@@ -4082,9 +4082,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get runWorkouts => 'Entrenamientos';
 
   @override
-  String runBarTitle(String distance) {
-    return 'Carrera en curso · $distance km';
-  }
+  String get runBarTitle => 'Carrera en curso';
 
   @override
   String get runBarReturn => 'Volver';

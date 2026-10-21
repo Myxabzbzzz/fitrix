@@ -19,6 +19,7 @@ import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 import 'package:fitrix/features/workouts/presentation/start_workout.dart';
+import 'package:fitrix/features/workouts/presentation/widgets/sport_coach_card.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/workouts_grid.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/data/location_source.dart';
@@ -136,6 +137,10 @@ class RunningScreen extends ConsumerWidget {
                           ),
                         ),
                       ],
+                    ),
+                    SportCoachCard(
+                      sport: Sport.running,
+                      onStart: (t) => startWorkout(context, ref, t),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     SectionHeader(l10n.runHistory),

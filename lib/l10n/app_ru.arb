@@ -1092,7 +1092,7 @@
   "runHistory": "История",
   "runHistoryEmpty": "Пробежек пока нет. Записанные пробежки появятся здесь.",
   "runWorkouts": "Тренировки",
-  "runBarTitle": "Пробежка идёт · {distance} км",
+  "runBarTitle": "Пробежка",
   "runBarReturn": "Вернуться",
   "runUnfinishedLaunchTitle": "Незавершённая пробежка · {distance} км",
   "runUnfinishedLaunchBody": "Продолжите с того места, где остановились, сохраните записанное или сбросьте."

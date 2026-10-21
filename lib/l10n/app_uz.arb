@@ -1092,7 +1092,7 @@
   "runHistory": "Tarix",
   "runHistoryEmpty": "Hozircha yugurishlar yo‘q. Yozib olingan yugurishlar shu yerda ko‘rinadi.",
   "runWorkouts": "Mashg‘ulotlar",
-  "runBarTitle": "Yugurish davom etmoqda · {distance} km",
+  "runBarTitle": "Yugurish",
   "runBarReturn": "Qaytish",
   "runUnfinishedLaunchTitle": "Tugallanmagan yugurish · {distance} km",
   "runUnfinishedLaunchBody": "Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling."

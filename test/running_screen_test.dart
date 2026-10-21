@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +21,7 @@ import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/presentation/run_voice.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/main.dart';
 
 import 'support/overflow.dart';
@@ -293,7 +296,8 @@ void main() {
       r.router.pop();
       await t.pumpAndSettle();
 
-      expect(find.text('Run in progress · 0.00 km'), findsOneWidget);
+      expect(find.text('Run in progress'), findsOneWidget);
+      expect(find.text(' · 0.00 km'), findsOneWidget);
       expect(find.text('Return'), findsOneWidget);
       await t.tap(find.byKey(const ValueKey('run-bar')));
       await t.pumpAndSettle();
@@ -404,6 +408,51 @@ void main() {
       await _rig(t);
       expect(find.textContaining('Unfinished run'), findsNothing);
     });
+  });
+
+  testWidgets('the Felix coach card is on the Running screen', (t) async {
+    final r = await _rig(t);
+    await _openRunning(r);
+    await t.scrollUntilVisible(find.byType(CoachCard), 300,
+        scrollable: find.byType(Scrollable).last);
+    expect(find.byType(CoachCard), findsOneWidget);
+    expect(find.text('Ask'), findsOneWidget);
+    expect(find.textContaining('RUNNING'), findsWidgets);
+  });
+
+  group('run bar distance with the real Inter font, SE, text 1.3', () {
+    Future<void> loadInter(WidgetTester t) => t.runAsync(() async {
+          final loader = FontLoader('Inter');
+          for (final w in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
+            loader.addFont(rootBundle.load('assets/fonts/Inter-$w.ttf'));
+          }
+          await loader.load();
+        });
+
+    for (final lang in ['ru', 'uz', 'en', 'es']) {
+      testWidgets('$lang: the km value is never cut', (t) async {
+        await loadInter(t);
+        await _rig(t,
+            size: iPhoneSeSize,
+            textScale: 1.3,
+            language: lang,
+            prefsValues: _killedRun());
+        // Dismiss the launch prompt by resuming, then leave the live run.
+        await t.tap(find.byType(TextButton).last);
+        await t.pumpAndSettle();
+        Navigator.of(t.element(find.byType(Scaffold).first)).maybePop();
+        await t.pumpAndSettle();
+        final distance = find.byKey(const ValueKey('run-bar-distance'));
+        expect(distance, findsOneWidget);
+        final text = t.widget<Text>(distance);
+        final render = t.renderObject<RenderParagraph>(distance);
+        expect(render.didExceedMaxLines, isFalse);
+        expect(text.data, contains('1'));
+        // The whole text is laid out on one line inside the screen.
+        expect(t.getRect(distance).right, lessThanOrEqualTo(375));
+        expectNoOverflow(t);
+      });
+    }
   });
 
   group('SE 375x667, text 1.3, ru', () {

@@ -6612,8 +6612,8 @@ abstract class AppLocalizations {
   /// No description provided for @runBarTitle.
   ///
   /// In en, this message translates to:
-  /// **'Run in progress · {distance} km'**
-  String runBarTitle(String distance);
+  /// **'Run in progress'**
+  String get runBarTitle;
 
   /// No description provided for @runBarReturn.
   ///
