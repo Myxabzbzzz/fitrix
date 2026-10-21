@@ -132,6 +132,13 @@ class FlutterTtsSpeaker implements Speaker {
       return false;
     }
     if (set == 0 || set == false) return false;
+    // flutter_tts deactivates the session after every phrase (so music comes
+    // back up): set it up and activate it again, so this phrase ducks too.
+    try {
+      await _applyAudioSession();
+    } catch (_) {
+      // Speak anyway; the system may still activate the session.
+    }
     // Each phrase has its own completer: a late completion of an earlier
     // phrase can only finish that phrase.
     final done = _current = Completer<void>();

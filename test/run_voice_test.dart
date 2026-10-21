@@ -127,6 +127,36 @@ void main() {
       ]);
     });
 
+    test('applies and activates the audio session before every phrase',
+        () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final tts = _FakeTts();
+      final speaker = FlutterTtsSpeaker(tts);
+      await speaker.prepare();
+      tts.calls.clear();
+      const category =
+          'category playback duckOthers+mixWithOthers+interruptSpokenAudioAndMixWithOthers voicePrompt';
+      for (final phrase in ['one', 'two']) {
+        final f = speaker.speak(phrase, language: 'en');
+        await pumpEventQueue();
+        tts.cancel!();
+        await f;
+      }
+      // After the voice is set: a phrase that can't be said never activates
+      // (and so never ducks music) without a deactivation to follow.
+      expect(tts.calls, [
+        'lang en-US',
+        category,
+        'shared true',
+        'speak one',
+        'lang en-US',
+        category,
+        'shared true',
+        'speak two',
+      ]);
+    });
+
     test('speaks in the device locale and finishes on cancel', () async {
       final tts = _FakeTts();
       final speaker = FlutterTtsSpeaker(tts);
