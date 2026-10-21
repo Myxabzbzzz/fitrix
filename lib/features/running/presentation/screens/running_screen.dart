@@ -26,6 +26,7 @@ import 'package:fitrix/features/running/data/location_source.dart';
 import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
 
 /// Runs saved on the device, newest first.
 final runHistoryProvider = Provider<List<RunEntry>>((ref) {
@@ -50,14 +51,14 @@ class RunningScreen extends ConsumerWidget {
     final router = GoRouter.of(context);
     // A run that exists is reopened, never replaced by a second one.
     if (ref.read(runRecorderProvider) != null) {
-      router.push(AppRouter.liveRun);
+      openLiveRun(router);
       return;
     }
     final l10n = AppLocalizations.of(context);
     final access = await ref.read(runRecorderProvider.notifier).start();
     if (!context.mounted) return;
     if (access == LocationAccess.granted) {
-      router.push(AppRouter.liveRun);
+      openLiveRun(router);
       return;
     }
     final serviceOff = access == LocationAccess.serviceOff;

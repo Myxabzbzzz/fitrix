@@ -20,6 +20,24 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 /// How long Finish has to be held.
 const holdToFinish = Duration(seconds: 1);
 
+/// Set from a push of the live run until the next frame, when the router's
+/// configuration shows it.
+bool _liveRunOpening = false;
+
+/// Opens the live run, unless it is already on the stack or being opened:
+/// a double tap (on the run bar, on Start run) never stacks a second one.
+void openLiveRun(GoRouter router) {
+  if (_liveRunOpening) return;
+  final open = router.routerDelegate.currentConfiguration.matches
+      .any((m) => m.matchedLocation == AppRouter.liveRun);
+  if (open) return;
+  _liveRunOpening = true;
+  final binding = WidgetsBinding.instance;
+  binding.addPostFrameCallback((_) => _liveRunOpening = false);
+  binding.ensureVisualUpdate();
+  router.push(AppRouter.liveRun);
+}
+
 /// The run being recorded: time, distance, pace, Pause/Resume and a
 /// press-and-hold Finish. Leaving the screen does not stop the run.
 class LiveRunScreen extends ConsumerStatefulWidget {

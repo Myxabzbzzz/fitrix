@@ -144,7 +144,7 @@ class RunRecorder extends StateNotifier<RunSession?> {
   final _events = StreamController<RunEvent>.broadcast();
   StreamSubscription<RunPoint>? _sub;
   DateTime? _lastSaved;
-  bool _starting = false;
+  Future<LocationAccess>? _startInFlight;
   bool _pendingFromLaunch = false;
 
   Stream<RunEvent> get events => _events.stream;
@@ -154,27 +154,29 @@ class RunRecorder extends StateNotifier<RunSession?> {
   bool get hasPendingRun => _pendingFromLaunch && state != null;
 
   /// Starts a run (asking for location if needed). Does nothing and returns
-  /// [LocationAccess.granted] while a run is already being recorded.
-  Future<LocationAccess> start({WorkoutTemplate? template}) async {
-    if (state != null || _starting) return LocationAccess.granted;
-    _starting = true;
-    try {
-      final access = await _source.ensureAccess();
-      if (access != LocationAccess.granted || !mounted) return access;
-      final at = _now();
-      state = RunSession(
-        phase: RunPhase.running,
-        track: RunTrack(startedAt: at),
-        startedAt: at,
-        template: template,
-      );
-      _listen();
-      _persist();
-      _emit(const RunStarted());
-      return LocationAccess.granted;
-    } finally {
-      _starting = false;
-    }
+  /// [LocationAccess.granted] while a run is already being recorded. While a
+  /// start is still asking for access, another call gets that same start's
+  /// answer (and its run), never a second run.
+  Future<LocationAccess> start({WorkoutTemplate? template}) {
+    if (state != null) return Future.value(LocationAccess.granted);
+    return _startInFlight ??=
+        _start(template).whenComplete(() => _startInFlight = null);
+  }
+
+  Future<LocationAccess> _start(WorkoutTemplate? template) async {
+    final access = await _source.ensureAccess();
+    if (access != LocationAccess.granted || !mounted) return access;
+    final at = _now();
+    state = RunSession(
+      phase: RunPhase.running,
+      track: RunTrack(startedAt: at),
+      startedAt: at,
+      template: template,
+    );
+    _listen();
+    _persist();
+    _emit(const RunStarted());
+    return LocationAccess.granted;
   }
 
   void pause() {

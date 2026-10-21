@@ -50,6 +50,15 @@ class FakeLocationSource implements LocationSource {
   void emit(RunPoint p) => _controller!.add(p);
 }
 
+/// Answers [ensureAccess] with [next] (a future the test completes).
+class _GatedSource extends FakeLocationSource {
+  _GatedSource(this.next);
+  Future<LocationAccess> next;
+
+  @override
+  Future<LocationAccess> ensureAccess() => next;
+}
+
 class Rig {
   Rig(this.container, this.source, this.clock);
 
@@ -190,6 +199,35 @@ void main() {
     final saved = await r.recorder.finish();
     expect(saved.name, lookupAppLocalizations(const Locale('ru')).runNameEvening);
     expect(saved.name, isNot(lookupAppLocalizations(const Locale('en')).runNameEvening));
+  });
+
+  group('two quick starts', () {
+    for (final access in [LocationAccess.granted, LocationAccess.denied]) {
+      test('$access: both get the first start\'s answer, one session',
+          () async {
+        final gate = Completer<LocationAccess>();
+        final r = await rig(source: _GatedSource(gate.future));
+        final first = r.recorder.start(template: runTemplate);
+        final second = r.recorder.start();
+        gate.complete(access);
+        expect(await second, access);
+        expect(await first, access);
+        expect(r.source.starts, access == LocationAccess.granted ? 1 : 0);
+        expect(r.session?.template?.id,
+            access == LocationAccess.granted ? runTemplate.id : null);
+      });
+    }
+
+    test('a start after a denied one asks again', () async {
+      final gate = Completer<LocationAccess>();
+      final source = _GatedSource(gate.future);
+      final r = await rig(source: source);
+      gate.complete(LocationAccess.denied);
+      expect(await r.recorder.start(), LocationAccess.denied);
+      source.next = Future.value(LocationAccess.granted);
+      expect(await r.recorder.start(), LocationAccess.granted);
+      expect(r.source.starts, 1);
+    });
   });
 
   for (final access in [

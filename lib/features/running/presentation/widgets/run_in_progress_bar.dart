@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
 
 /// "Run in progress · 2.30 km · Return": shown above the tab bar while a run
 /// exists (recording, paused, or restored after a crash). Tap opens the live
@@ -31,7 +31,7 @@ class RunInProgressBar extends ConsumerWidget {
         key: const ValueKey('run-bar'),
         color: palette.accent,
         child: InkWell(
-          onTap: () => context.push(AppRouter.liveRun),
+          onTap: () => openLiveRun(GoRouter.of(context)),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: Row(

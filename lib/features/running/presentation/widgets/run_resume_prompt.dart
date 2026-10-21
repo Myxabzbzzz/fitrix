@@ -7,6 +7,7 @@ import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_dialogs.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
 
 /// Whether the unfinished-run prompt has been shown since the app started.
 final runResumePromptShownProvider = StateProvider<bool>((ref) => false);
@@ -73,7 +74,7 @@ class _RunResumePromptState extends ConsumerState<RunResumePrompt> {
       if (!mounted) return;
       switch (choice) {
         case _Choice.resume || null:
-          router.push(AppRouter.liveRun);
+          openLiveRun(router);
           return;
         case _Choice.save:
           final workout = await recorder.finish();

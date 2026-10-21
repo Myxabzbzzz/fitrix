@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
@@ -13,6 +12,7 @@ import 'package:fitrix/features/running/presentation/widgets/run_dialogs.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
 
 /// Starts [template] and opens the live log. Every Start button uses this.
 ///
@@ -86,7 +86,7 @@ Future<void> _startRun(
         return _beginRun(context, router, recorder, template);
       }
     }
-    router.push(AppRouter.liveRun);
+    openLiveRun(router);
     return;
   }
   return _beginRun(context, router, recorder, template);
@@ -98,7 +98,7 @@ Future<void> _beginRun(BuildContext context, GoRouter router,
   final access = await recorder.start(template: template);
   if (!context.mounted) return;
   if (access == LocationAccess.granted) {
-    router.push(AppRouter.liveRun);
+    openLiveRun(router);
     return;
   }
   final serviceOff = access == LocationAccess.serviceOff;

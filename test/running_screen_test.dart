@@ -19,6 +19,7 @@ import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/presentation/run_voice.dart';
+import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
@@ -97,6 +98,11 @@ class _Rig {
   RunSession? get session => container.read(runRecorderProvider);
   String get location =>
       router.routerDelegate.currentConfiguration.last.matchedLocation;
+
+  /// How many live run screens are on the stack.
+  int get liveScreens => router.routerDelegate.currentConfiguration.matches
+      .where((m) => m.matchedLocation == AppRouter.liveRun)
+      .length;
 
   void saveRun(String id, DateTime at, double meters, Duration moving) {
     container.read(workoutHistoryProvider.notifier).add(CompletedWorkout(
@@ -266,6 +272,19 @@ void main() {
       expect(r.source.starts, 1);
     });
 
+    testWidgets('a double tap on Start run opens one live screen', (t) async {
+      final r = await _rig(t);
+      await _openRunning(r);
+      await t.tap(find.byKey(const ValueKey('run-start')));
+      await t.tap(find.byKey(const ValueKey('run-start')));
+      await t.pumpAndSettle();
+      expect(r.liveScreens, 1);
+      expect(r.source.starts, 1);
+      r.router.pop();
+      await t.pumpAndSettle();
+      expect(r.location, AppRouter.sportWorkouts(Sport.running));
+    });
+
     testWidgets('the workouts grid starts a running template', (t) async {
       final r = await _rig(t);
       r.container
@@ -303,6 +322,27 @@ void main() {
       await t.pumpAndSettle();
       expect(r.location, AppRouter.liveRun);
       expect(r.session, isNotNull);
+    });
+
+    testWidgets('a double tap on the bar opens one live screen', (t) async {
+      final r = await _rig(t);
+      await _openRunning(r);
+      await t.tap(find.byKey(const ValueKey('run-start')));
+      await t.pumpAndSettle();
+      r.router.pop();
+      await t.pumpAndSettle();
+
+      await t.tap(find.byKey(const ValueKey('run-bar')));
+      await t.tap(find.byKey(const ValueKey('run-bar')));
+      await t.pumpAndSettle();
+      expect(r.liveScreens, 1);
+      // Opening it again while it is on top changes nothing.
+      openLiveRun(r.router);
+      await t.pumpAndSettle();
+      expect(r.liveScreens, 1);
+      r.router.pop();
+      await t.pumpAndSettle();
+      expect(r.location, AppRouter.sportWorkouts(Sport.running));
     });
 
     testWidgets('shows for a restored run too, and coexists with the gym bar',
