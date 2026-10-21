@@ -31,7 +31,9 @@ class PlanDaySection extends ConsumerWidget {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final isToday = day == today;
-    final statuses = [for (final s in sessions) statusOf(s, history, today)];
+    final statuses = [
+      for (final s in sessions) statusOf(s, history, today, plan: sessions)
+    ];
     final label = weekdayAndDate(context, day);
     final String? trailing;
     if (sessions.isEmpty) {
@@ -91,6 +93,7 @@ class PlanDaySection extends ConsumerWidget {
                   if (i > 0) Divider(height: 1, color: palette.border),
                   _SessionRow(
                     session: sessions[i],
+                    daySessions: sessions,
                     status: statuses[i],
                     history: history,
                     templates: templates,
@@ -106,12 +109,16 @@ class PlanDaySection extends ConsumerWidget {
 
 class _SessionRow extends ConsumerWidget {
   final PlannedSession session;
+
+  /// All of the day's sessions, for [completedFor].
+  final List<PlannedSession> daySessions;
   final SessionStatus status;
   final List<CompletedWorkout> history;
   final List<WorkoutTemplate> templates;
 
   const _SessionRow({
     required this.session,
+    required this.daySessions,
     required this.status,
     required this.history,
     required this.templates,
@@ -126,7 +133,7 @@ class _SessionRow extends ConsumerWidget {
 
     final String meta;
     if (status == SessionStatus.done) {
-      final w = completedFor(s, history)!;
+      final w = completedFor(s, history, plan: daySessions)!;
       final d =
           planDuration(l10n, w.finishedAt.difference(w.startedAt).inMinutes);
       meta = w.sessionRpe == null ? d : l10n.planDoneMeta(d, w.sessionRpe!);

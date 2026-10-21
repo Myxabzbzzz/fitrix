@@ -78,8 +78,8 @@ class ProgramStarter {
   }
 
   bool _isDone(PlannedSession s) =>
-      statusOf(
-          s, _ref.read(workoutHistoryProvider), _ref.read(clockProvider)()) ==
+      statusOf(s, _ref.read(workoutHistoryProvider), _ref.read(clockProvider)(),
+          plan: _ref.read(weekPlanProvider)) ==
       SessionStatus.done;
 
   /// One template per program session (sets prefilled with the start weight

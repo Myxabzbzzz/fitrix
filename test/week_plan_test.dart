@@ -95,6 +95,70 @@ void main() {
       final h = [_done(DateTime(2026, 10, 14, 8), 'gym-legs', Sport.gym)];
       expect(statusOf(_s('a', 14), h, _now), SessionStatus.done);
     });
+
+    test('a free run completes the day\'s templated running session', () {
+      final felix = _s('r', 12,
+          sport: Sport.running, title: 'Easy run', templateId: 'felix-run');
+      final h = [_done(DateTime(2026, 10, 12, 18), 'free_run', Sport.running)];
+      expect(statusOf(felix, h, _now, plan: [felix]), SessionStatus.done);
+      expect(completedFor(felix, h, plan: [felix]), same(h.single));
+    });
+
+    test('a football log completes the day\'s templated football session', () {
+      final s = _s('f', 12,
+          sport: Sport.football, title: '7×7', templateId: 'felix-ball');
+      final h = [
+        _done(DateTime(2026, 10, 12, 20), 'football_log', Sport.football)
+      ];
+      expect(statusOf(s, h, _now, plan: [s]), SessionStatus.done);
+    });
+
+    test('one free run claims only the first of two running sessions', () {
+      final a = _s('a', 12,
+          sport: Sport.running, title: 'Easy', templateId: 'felix-easy');
+      final b = _s('b', 12,
+          sport: Sport.running, title: 'Strides', templateId: 'felix-strides');
+      final plan = [a, b];
+      final h = [_done(DateTime(2026, 10, 12, 18), 'free_run', Sport.running)];
+      expect(statusOf(a, h, _now, plan: plan), SessionStatus.done);
+      expect(statusOf(b, h, _now, plan: plan), SessionStatus.missed);
+    });
+
+    test('a session done by its own template leaves the free run to the next',
+        () {
+      final a = _s('a', 12,
+          sport: Sport.running, title: 'Easy', templateId: 'felix-easy');
+      final b = _s('b', 12,
+          sport: Sport.running, title: 'Strides', templateId: 'felix-strides');
+      final plan = [a, b];
+      final h = [
+        _done(DateTime(2026, 10, 12, 8), 'felix-easy', Sport.running),
+        _done(DateTime(2026, 10, 12, 18), 'free_run', Sport.running),
+      ];
+      expect(completedFor(a, h, plan: plan), same(h.first));
+      expect(completedFor(b, h, plan: plan), same(h.last));
+    });
+
+    test('a free run is not claimed again past an untemplated session', () {
+      final open =
+          _s('o', 12, sport: Sport.running, title: 'Run', templateId: null);
+      final felix = _s('r', 12,
+          sport: Sport.running, title: 'Easy run', templateId: 'felix-run');
+      final plan = [open, felix];
+      final h = [_done(DateTime(2026, 10, 12, 18), 'free_run', Sport.running)];
+      expect(statusOf(open, h, _now, plan: plan), SessionStatus.done);
+      expect(statusOf(felix, h, _now, plan: plan), SessionStatus.missed);
+    });
+
+    test('a free run leaves a gym session and other days alone', () {
+      final gym = _s('g', 12);
+      final run = _s('r', 13,
+          sport: Sport.running, title: 'Easy run', templateId: 'felix-run');
+      final plan = [gym, run];
+      final h = [_done(DateTime(2026, 10, 12, 18), 'free_run', Sport.running)];
+      expect(statusOf(gym, h, _now, plan: plan), SessionStatus.missed);
+      expect(statusOf(run, h, _now, plan: plan), SessionStatus.missed);
+    });
   });
 
   group('intensity and legs', () {

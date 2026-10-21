@@ -35,7 +35,7 @@ class SportCoachCard extends ConsumerWidget {
     bool openToday(WorkoutTemplate t) => plan.any((s) =>
         s.templateId == t.id &&
         s.day == today &&
-        statusOf(s, allHistory, today) != SessionStatus.done);
+        statusOf(s, allHistory, today, plan: plan) != SessionStatus.done);
     // Today's session, else the next planned one; the first plan only while
     // this sport isn't planned.
     final sportPlanned = planInUse([

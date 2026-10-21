@@ -100,7 +100,7 @@ class WorkoutsGrid extends ConsumerWidget {
     bool openToday(WorkoutTemplate t) => plan.any((s) =>
         s.templateId == t.id &&
         s.day == today &&
-        statusOf(s, allHistory, today) != SessionStatus.done);
+        statusOf(s, allHistory, today, plan: plan) != SessionStatus.done);
     String? dayLabel(WorkoutTemplate t) {
       if (openToday(t)) return l10n.gymToday;
       final next =

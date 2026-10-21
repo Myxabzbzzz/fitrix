@@ -77,10 +77,11 @@ class PlannedSession {
   }
 }
 
-/// The finished workout that fulfils [s]: same day and same template (or
-/// the same sport when the session has no template).
-CompletedWorkout? completedFor(
-    PlannedSession s, List<CompletedWorkout> history) {
+/// Template ids of workouts logged without a plan: a free run
+/// (`freeRunTemplateId`) and a football log (`footballLogTemplateId`).
+const _unplannedTemplateIds = {'free_run', 'football_log'};
+
+CompletedWorkout? _ownMatch(PlannedSession s, List<CompletedWorkout> history) {
   for (final w in history) {
     if (!sameDay(w.finishedAt, s.day)) continue;
     final match = s.templateId != null
@@ -91,11 +92,55 @@ CompletedWorkout? completedFor(
   return null;
 }
 
+/// The finished workout that fulfils [s]: same day and same template (or
+/// the same sport when the session has no template).
+///
+/// A templated session without its own workout also takes a same-day,
+/// same-sport workout logged without a plan (a free run, a football log)
+/// that no other session of [plan] has claimed: the first such open session
+/// in plan order takes the first such workout. Without [plan], [s] is taken
+/// as the only session of its day.
+CompletedWorkout? completedFor(PlannedSession s, List<CompletedWorkout> history,
+    {List<PlannedSession>? plan}) {
+  final own = _ownMatch(s, history);
+  if (own != null || s.templateId == null) return own;
+
+  final unplanned = [
+    for (final w in history)
+      if (sameDay(w.finishedAt, s.day) &&
+          w.sport == s.sport &&
+          _unplannedTemplateIds.contains(w.templateId))
+        w,
+  ];
+  if (unplanned.isEmpty) return null;
+  unplanned.sort((a, b) => a.finishedAt.compareTo(b.finishedAt));
+
+  final day = [
+    for (final p in plan ?? [s])
+      if (p.day == s.day && p.sport == s.sport) p,
+  ];
+  if (!day.any((p) => p.id == s.id)) day.add(s);
+  // A session without a template already takes its sport's workout.
+  for (final p in day) {
+    if (p.templateId == null) unplanned.remove(_ownMatch(p, history));
+  }
+  var next = 0;
+  for (final p in day) {
+    if (p.templateId == null || _ownMatch(p, history) != null) continue;
+    if (next >= unplanned.length) return null;
+    if (p.id == s.id) return unplanned[next];
+    next++;
+  }
+  return null;
+}
+
 /// done when [completedFor] finds a workout. Otherwise missed before today,
-/// today on today, planned after.
+/// today on today, planned after. Pass the whole [plan] (or at least the
+/// day's sessions) so a free run is claimed by one session only.
 SessionStatus statusOf(
-    PlannedSession s, List<CompletedWorkout> history, DateTime now) {
-  if (completedFor(s, history) != null) return SessionStatus.done;
+    PlannedSession s, List<CompletedWorkout> history, DateTime now,
+    {List<PlannedSession>? plan}) {
+  if (completedFor(s, history, plan: plan) != null) return SessionStatus.done;
   final today = dayOf(now);
   if (s.day.isBefore(today)) return SessionStatus.missed;
   if (s.day == today) return SessionStatus.today;
@@ -297,7 +342,7 @@ TodayPlan todayPlanOf(
       if (s.day == day) s
   ];
   for (final s in todays) {
-    if (statusOf(s, history, day) != SessionStatus.done) {
+    if (statusOf(s, history, day, plan: todays) != SessionStatus.done) {
       return TodayPlan(TodayKind.session, session: s);
     }
   }

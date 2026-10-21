@@ -172,7 +172,8 @@ class _WeekPlanCard extends ConsumerWidget {
         if (!s.day.isBefore(start) && !s.day.isAfter(end)) s,
     ];
     final done = week
-        .where((s) => statusOf(s, history, today) == SessionStatus.done)
+        .where((s) =>
+            statusOf(s, history, today, plan: week) == SessionStatus.done)
         .length;
 
     return Semantics(

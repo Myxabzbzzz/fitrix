@@ -109,9 +109,11 @@ final dismissedSuggestionsProvider =
 final todaysOpenSessionsProvider = Provider<List<PlannedSession>>((ref) {
   final today = ref.watch(todayProvider);
   final history = ref.watch(workoutHistoryProvider);
+  final plan = ref.watch(weekPlanProvider);
   return [
-    for (final s in ref.watch(weekPlanProvider))
-      if (s.day == today && statusOf(s, history, today) != SessionStatus.done)
+    for (final s in plan)
+      if (s.day == today &&
+          statusOf(s, history, today, plan: plan) != SessionStatus.done)
         s,
   ];
 });

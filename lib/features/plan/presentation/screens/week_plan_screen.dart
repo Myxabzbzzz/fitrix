@@ -44,7 +44,8 @@ class WeekPlanScreen extends ConsumerWidget {
       for (final s in plan)
         if (!s.day.isBefore(start) && !s.day.isAfter(days.last)) s,
     ];
-    SessionStatus status(PlannedSession s) => statusOf(s, history, today);
+    SessionStatus status(PlannedSession s) =>
+        statusOf(s, history, today, plan: plan);
     final doneCount = week.where((s) => status(s) == SessionStatus.done).length;
 
     var suggestion = catalog == null
