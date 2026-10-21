@@ -1042,5 +1042,15 @@
   "runNameNight": "Carrera nocturna",
   "runNotificationTitle": "Grabando tu carrera",
   "runNotificationText": "FITRIX registra la distancia y el tiempo aunque la pantalla esté bloqueada.",
-  "runNotificationChannel": "Grabación de carreras"
+  "runNotificationChannel": "Grabación de carreras",
+  "runVoiceHours": "{count, plural, =1{1 hora} other{{count} horas}}",
+  "runVoiceMinutes": "{count, plural, =1{1 minuto} other{{count} minutos}}",
+  "runVoiceSeconds": "{count, plural, =1{1 segundo} other{{count} segundos}}",
+  "runVoicePace": "{time} por kilómetro",
+  "runVoiceStart": "Carrera iniciada.",
+  "runVoicePause": "En pausa.",
+  "runVoiceResume": "Seguimos.",
+  "runVoiceKm": "Kilómetro {km}. Tiempo {time}. Último kilómetro {lastPace}. Ritmo medio {avgPace}.",
+  "runVoiceFinish": "Carrera terminada. {distance} kilómetros en {time}. Ritmo medio {avgPace}.",
+  "runVoiceFinishShort": "Carrera terminada. {distance} kilómetros en {time}."
 }

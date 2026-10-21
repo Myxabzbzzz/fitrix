@@ -3013,5 +3013,22 @@
   "runNameNight": "Night run",
   "runNotificationTitle": "Recording your run",
   "runNotificationText": "FITRIX records distance and time while the screen is locked.",
-  "runNotificationChannel": "Run recording"
+  "runNotificationChannel": "Run recording",
+  "runVoiceHours": "{count, plural, =1{1 hour} other{{count} hours}}",
+  "@runVoiceHours": {"placeholders": {"count": {"type": "int"}}},
+  "runVoiceMinutes": "{count, plural, =1{1 minute} other{{count} minutes}}",
+  "@runVoiceMinutes": {"placeholders": {"count": {"type": "int"}}},
+  "runVoiceSeconds": "{count, plural, =1{1 second} other{{count} seconds}}",
+  "@runVoiceSeconds": {"placeholders": {"count": {"type": "int"}}},
+  "runVoicePace": "{time} per kilometre",
+  "@runVoicePace": {"placeholders": {"time": {"type": "String"}}},
+  "runVoiceStart": "Run started.",
+  "runVoicePause": "Paused.",
+  "runVoiceResume": "Resumed.",
+  "runVoiceKm": "Kilometre {km}. Time {time}. Last kilometre {lastPace}. Average {avgPace}.",
+  "@runVoiceKm": {"placeholders": {"km": {"type": "int"}, "time": {"type": "String"}, "lastPace": {"type": "String"}, "avgPace": {"type": "String"}}},
+  "runVoiceFinish": "Run finished. {distance} kilometres in {time}. Average {avgPace}.",
+  "@runVoiceFinish": {"placeholders": {"distance": {"type": "String"}, "time": {"type": "String"}, "avgPace": {"type": "String"}}},
+  "runVoiceFinishShort": "Run finished. {distance} kilometres in {time}.",
+  "@runVoiceFinishShort": {"placeholders": {"distance": {"type": "String"}, "time": {"type": "String"}}}
 }

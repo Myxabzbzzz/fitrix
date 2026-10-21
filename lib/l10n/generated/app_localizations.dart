@@ -6314,6 +6314,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Run recording'**
   String get runNotificationChannel;
+
+  /// No description provided for @runVoiceHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hour} other{{count} hours}}'**
+  String runVoiceHours(int count);
+
+  /// No description provided for @runVoiceMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 minute} other{{count} minutes}}'**
+  String runVoiceMinutes(int count);
+
+  /// No description provided for @runVoiceSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 second} other{{count} seconds}}'**
+  String runVoiceSeconds(int count);
+
+  /// No description provided for @runVoicePace.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} per kilometre'**
+  String runVoicePace(String time);
+
+  /// No description provided for @runVoiceStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Run started.'**
+  String get runVoiceStart;
+
+  /// No description provided for @runVoicePause.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused.'**
+  String get runVoicePause;
+
+  /// No description provided for @runVoiceResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resumed.'**
+  String get runVoiceResume;
+
+  /// No description provided for @runVoiceKm.
+  ///
+  /// In en, this message translates to:
+  /// **'Kilometre {km}. Time {time}. Last kilometre {lastPace}. Average {avgPace}.'**
+  String runVoiceKm(int km, String time, String lastPace, String avgPace);
+
+  /// No description provided for @runVoiceFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Run finished. {distance} kilometres in {time}. Average {avgPace}.'**
+  String runVoiceFinish(String distance, String time, String avgPace);
+
+  /// No description provided for @runVoiceFinishShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Run finished. {distance} kilometres in {time}.'**
+  String runVoiceFinishShort(String distance, String time);
 }
 
 class _AppLocalizationsDelegate

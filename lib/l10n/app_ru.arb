@@ -1042,5 +1042,15 @@
   "runNameNight": "Ночная пробежка",
   "runNotificationTitle": "Идёт запись пробежки",
   "runNotificationText": "FITRIX записывает дистанцию и время, даже когда экран заблокирован.",
-  "runNotificationChannel": "Запись пробежки"
+  "runNotificationChannel": "Запись пробежки",
+  "runVoiceHours": "{count, plural, one{{count} час} few{{count} часа} many{{count} часов} other{{count} часа}}",
+  "runVoiceMinutes": "{count, plural, one{{count} минута} few{{count} минуты} many{{count} минут} other{{count} минуты}}",
+  "runVoiceSeconds": "{count, plural, one{{count} секунда} few{{count} секунды} many{{count} секунд} other{{count} секунды}}",
+  "runVoicePace": "{time} на километр",
+  "runVoiceStart": "Пробежка началась.",
+  "runVoicePause": "Пауза.",
+  "runVoiceResume": "Продолжаем.",
+  "runVoiceKm": "Километр {km}. Время {time}. Последний километр {lastPace}. Средний темп {avgPace}.",
+  "runVoiceFinish": "Пробежка завершена. {distance} километра за {time}. Средний темп {avgPace}.",
+  "runVoiceFinishShort": "Пробежка завершена. {distance} километра за {time}."
 }

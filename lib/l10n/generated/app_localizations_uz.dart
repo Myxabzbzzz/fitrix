@@ -3828,4 +3828,48 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get runNotificationChannel => 'Yugurishni yozish';
+
+  @override
+  String runVoiceHours(int count) {
+    return '$count soat';
+  }
+
+  @override
+  String runVoiceMinutes(int count) {
+    return '$count daqiqa';
+  }
+
+  @override
+  String runVoiceSeconds(int count) {
+    return '$count soniya';
+  }
+
+  @override
+  String runVoicePace(String time) {
+    return 'har kilometrga $time';
+  }
+
+  @override
+  String get runVoiceStart => 'Yugurish boshlandi.';
+
+  @override
+  String get runVoicePause => 'To‘xtatildi.';
+
+  @override
+  String get runVoiceResume => 'Davom etamiz.';
+
+  @override
+  String runVoiceKm(int km, String time, String lastPace, String avgPace) {
+    return '$km-kilometr. Vaqt $time. Oxirgi kilometr $lastPace. O‘rtacha $avgPace.';
+  }
+
+  @override
+  String runVoiceFinish(String distance, String time, String avgPace) {
+    return 'Yugurish tugadi. $distance kilometr, $time. O‘rtacha $avgPace.';
+  }
+
+  @override
+  String runVoiceFinishShort(String distance, String time) {
+    return 'Yugurish tugadi. $distance kilometr, $time.';
+  }
 }

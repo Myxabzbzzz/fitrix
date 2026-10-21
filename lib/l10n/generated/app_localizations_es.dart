@@ -3875,4 +3875,66 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get runNotificationChannel => 'Grabación de carreras';
+
+  @override
+  String runVoiceHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count horas',
+      one: '1 hora',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String runVoiceMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutos',
+      one: '1 minuto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String runVoiceSeconds(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count segundos',
+      one: '1 segundo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String runVoicePace(String time) {
+    return '$time por kilómetro';
+  }
+
+  @override
+  String get runVoiceStart => 'Carrera iniciada.';
+
+  @override
+  String get runVoicePause => 'En pausa.';
+
+  @override
+  String get runVoiceResume => 'Seguimos.';
+
+  @override
+  String runVoiceKm(int km, String time, String lastPace, String avgPace) {
+    return 'Kilómetro $km. Tiempo $time. Último kilómetro $lastPace. Ritmo medio $avgPace.';
+  }
+
+  @override
+  String runVoiceFinish(String distance, String time, String avgPace) {
+    return 'Carrera terminada. $distance kilómetros en $time. Ritmo medio $avgPace.';
+  }
+
+  @override
+  String runVoiceFinishShort(String distance, String time) {
+    return 'Carrera terminada. $distance kilómetros en $time.';
+  }
 }

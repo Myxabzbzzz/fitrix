@@ -3931,4 +3931,72 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get runNotificationChannel => 'Запись пробежки';
+
+  @override
+  String runVoiceHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count часа',
+      many: '$count часов',
+      few: '$count часа',
+      one: '$count час',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String runVoiceMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count минуты',
+      many: '$count минут',
+      few: '$count минуты',
+      one: '$count минута',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String runVoiceSeconds(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count секунды',
+      many: '$count секунд',
+      few: '$count секунды',
+      one: '$count секунда',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String runVoicePace(String time) {
+    return '$time на километр';
+  }
+
+  @override
+  String get runVoiceStart => 'Пробежка началась.';
+
+  @override
+  String get runVoicePause => 'Пауза.';
+
+  @override
+  String get runVoiceResume => 'Продолжаем.';
+
+  @override
+  String runVoiceKm(int km, String time, String lastPace, String avgPace) {
+    return 'Километр $km. Время $time. Последний километр $lastPace. Средний темп $avgPace.';
+  }
+
+  @override
+  String runVoiceFinish(String distance, String time, String avgPace) {
+    return 'Пробежка завершена. $distance километра за $time. Средний темп $avgPace.';
+  }
+
+  @override
+  String runVoiceFinishShort(String distance, String time) {
+    return 'Пробежка завершена. $distance километра за $time.';
+  }
 }

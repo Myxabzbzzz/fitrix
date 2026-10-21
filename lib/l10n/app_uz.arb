@@ -1042,5 +1042,15 @@
   "runNameNight": "Tungi yugurish",
   "runNotificationTitle": "Yugurish yozib olinmoqda",
   "runNotificationText": "FITRIX ekran qulflangan bo‘lsa ham masofa va vaqtni yozib boradi.",
-  "runNotificationChannel": "Yugurishni yozish"
+  "runNotificationChannel": "Yugurishni yozish",
+  "runVoiceHours": "{count} soat",
+  "runVoiceMinutes": "{count} daqiqa",
+  "runVoiceSeconds": "{count} soniya",
+  "runVoicePace": "har kilometrga {time}",
+  "runVoiceStart": "Yugurish boshlandi.",
+  "runVoicePause": "To‘xtatildi.",
+  "runVoiceResume": "Davom etamiz.",
+  "runVoiceKm": "{km}-kilometr. Vaqt {time}. Oxirgi kilometr {lastPace}. O‘rtacha {avgPace}.",
+  "runVoiceFinish": "Yugurish tugadi. {distance} kilometr, {time}. O‘rtacha {avgPace}.",
+  "runVoiceFinishShort": "Yugurish tugadi. {distance} kilometr, {time}."
 }

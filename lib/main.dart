@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:fitrix/features/running/presentation/run_voice.dart';
 import 'package:fitrix/core/settings/theme_mode_provider.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
 import 'package:fitrix/core/router/app_router.dart';
@@ -161,6 +162,8 @@ class FitrixApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
+    // Keeps the run voice listening for the whole app lifetime.
+    ref.watch(runVoiceProvider);
     // DateFormat and other intl helpers follow the app's language.
     Intl.defaultLocale = locale.languageCode;
 
