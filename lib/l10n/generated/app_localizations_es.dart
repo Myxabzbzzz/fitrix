@@ -4097,6 +4097,20 @@ class AppLocalizationsEs extends AppLocalizations {
       'Continúa donde lo dejaste, guarda lo registrado o descártala.';
 
   @override
+  String get runFinishFailed =>
+      'No se pudo terminar la carrera. Inténtalo de nuevo.';
+
+  @override
+  String get runGpsWaiting => 'Esperando GPS…';
+
+  @override
+  String get runGpsWeak => 'Señal GPS débil';
+
+  @override
+  String get runGpsReduced =>
+      'Activa la Ubicación exacta para medir bien la distancia';
+
+  @override
   String get footballLog => 'Registrar';
 
   @override

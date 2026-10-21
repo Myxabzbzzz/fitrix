@@ -6633,6 +6633,30 @@ abstract class AppLocalizations {
   /// **'Pick it up where you left off, save what was recorded, or discard it.'**
   String get runUnfinishedLaunchBody;
 
+  /// No description provided for @runFinishFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t finish the run. Try again.'**
+  String get runFinishFailed;
+
+  /// No description provided for @runGpsWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for GPS…'**
+  String get runGpsWaiting;
+
+  /// No description provided for @runGpsWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak GPS signal'**
+  String get runGpsWeak;
+
+  /// No description provided for @runGpsReduced.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Precise Location for accurate distance'**
+  String get runGpsReduced;
+
   /// No description provided for @footballLog.
   ///
   /// In en, this message translates to:

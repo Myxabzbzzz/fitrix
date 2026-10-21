@@ -4029,6 +4029,20 @@ class AppLocalizationsUz extends AppLocalizations {
       'Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling.';
 
   @override
+  String get runFinishFailed =>
+      'Yugurishni tugatib bo‘lmadi. Qayta urinib ko‘ring.';
+
+  @override
+  String get runGpsWaiting => 'GPS kutilmoqda…';
+
+  @override
+  String get runGpsWeak => 'GPS signali zaif';
+
+  @override
+  String get runGpsReduced =>
+      'Masofa aniq bo‘lishi uchun «Aniq joylashuv»ni yoqing';
+
+  @override
   String get footballLog => 'Qayd qilish';
 
   @override

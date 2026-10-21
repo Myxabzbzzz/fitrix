@@ -4081,6 +4081,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Pick it up where you left off, save what was recorded, or discard it.';
 
   @override
+  String get runFinishFailed => 'Couldn’t finish the run. Try again.';
+
+  @override
+  String get runGpsWaiting => 'Waiting for GPS…';
+
+  @override
+  String get runGpsWeak => 'Weak GPS signal';
+
+  @override
+  String get runGpsReduced => 'Turn on Precise Location for accurate distance';
+
+  @override
   String get footballLog => 'Log';
 
   @override

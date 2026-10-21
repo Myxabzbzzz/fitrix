@@ -25,6 +25,7 @@ import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/presentation/run_voice.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/main.dart';
 
 import 'support/overflow.dart';
@@ -113,6 +114,8 @@ Future<_Rig> _rig(
   double textScale = 1,
   String language = 'en',
   Map<String, Object> prefsValues = const {},
+  List<Override> Function(SharedPreferences prefs, LocationSource source)?
+      overrides,
 }) async {
   tester.view.physicalSize = size * 3;
   tester.view.devicePixelRatio = 3;
@@ -135,6 +138,7 @@ Future<_Rig> _rig(
     locationSourceProvider.overrideWithValue(source),
     speakerProvider.overrideWithValue(_SilentSpeaker()),
     mapTileProviderProvider.overrideWithValue(_BlankTiles()),
+    ...?overrides?.call(prefs, source),
   ]);
   addTearDown(container.dispose);
   final router = AppRouter.create(session);
@@ -219,6 +223,71 @@ void main() {
     final id = r.container.read(workoutHistoryProvider).single.id;
     expect(r.location, AppRouter.runSummary(id));
     expect(find.byKey(const ValueKey('run-save')), findsOneWidget);
+  });
+
+  testWidgets('a 1 s drag that starts on Finish does not finish', (t) async {
+    final r = await _rig(t);
+    _addTemplate(r, 'Easy 5K');
+    await _openRunningList(r);
+    await _tapStart(r, 'Easy 5K');
+
+    final g = await t.startGesture(
+        t.getCenter(find.byKey(const ValueKey('run-finish'))));
+    await t.pump();
+    // Sliding up, as in a pocket or a scroll: 4 px every 100 ms.
+    for (var i = 0; i < 12; i++) {
+      await g.moveBy(const Offset(0, -4));
+      await t.pump(const Duration(milliseconds: 100));
+    }
+    await g.up();
+    await settle(t);
+
+    expect(r.session, isNotNull);
+    expect(r.location, AppRouter.liveRun);
+    expect(r.container.read(workoutHistoryProvider), isEmpty);
+  });
+
+  testWidgets('a still hold finishes exactly once', (t) async {
+    final r = await _rig(t);
+    _addTemplate(r, 'Easy 5K');
+    await _openRunningList(r);
+    await _tapStart(r, 'Easy 5K');
+
+    await r.hold(const Duration(seconds: 3));
+    expect(r.session, isNull);
+    expect(r.container.read(workoutHistoryProvider), hasLength(1));
+    expect(r.container.read(runsProvider), hasLength(1));
+  });
+
+  testWidgets('a failing finish shows a snack and the screen stays usable',
+      (t) async {
+    final r = await _rig(t,
+        overrides: (prefs, source) => [
+              runRecorderProvider.overrideWith((ref) => RunRecorder(
+                    source: source,
+                    prefs: prefs,
+                    saveWorkout: (_) => throw Exception('disk full'),
+                    saveDetails: (_, __) {},
+                    templateById: (_) => null,
+                    l10n: () => lookupAppLocalizations(const Locale('en')),
+                    now: () => _now,
+                  )),
+            ]);
+    _addTemplate(r, 'Easy 5K');
+    await _openRunningList(r);
+    await _tapStart(r, 'Easy 5K');
+
+    await r.hold(const Duration(milliseconds: 1100));
+    expect(find.text('Couldn’t finish the run. Try again.'), findsOneWidget);
+    expect(r.session, isNotNull);
+    expect(r.location, AppRouter.liveRun);
+    // Not stuck: Pause works and Finish can be held again.
+    await t.tap(find.byKey(const ValueKey('run-pause')));
+    await t.pump();
+    expect(r.session!.phase, RunPhase.paused);
+    await r.hold(const Duration(milliseconds: 1100));
+    expect(find.text('Couldn’t finish the run. Try again.'), findsOneWidget);
+    expect(r.location, AppRouter.liveRun);
   });
 
   testWidgets('Discard asks first; cancelling keeps the run', (t) async {

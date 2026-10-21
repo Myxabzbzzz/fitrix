@@ -4163,6 +4163,20 @@ class AppLocalizationsRu extends AppLocalizations {
       'Продолжите с того места, где остановились, сохраните записанное или сбросьте.';
 
   @override
+  String get runFinishFailed =>
+      'Не удалось завершить пробежку. Попробуйте ещё раз.';
+
+  @override
+  String get runGpsWaiting => 'Ждём GPS…';
+
+  @override
+  String get runGpsWeak => 'Слабый сигнал GPS';
+
+  @override
+  String get runGpsReduced =>
+      'Включите «Точную геопозицию» для точной дистанции';
+
+  @override
   String get footballLog => 'Записать';
 
   @override

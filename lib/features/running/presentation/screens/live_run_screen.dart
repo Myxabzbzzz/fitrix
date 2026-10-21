@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
@@ -61,14 +63,23 @@ class _LiveRunScreenState extends ConsumerState<LiveRunScreen> {
     if (_finishing) return;
     _finishing = true;
     final router = GoRouter.of(context);
+    final l10n = AppLocalizations.of(context);
     try {
       final workout = await ref.read(runRecorderProvider.notifier).finish();
       if (!mounted) return;
       _leaving = true;
       router.pushReplacement(
           AppRouter.runSummary(workout.id, justFinished: true));
-    } on StateError {
-      // The run is gone already (discarded elsewhere); build leaves.
+    } catch (_) {
+      if (!mounted) return;
+      // The run is gone already (discarded elsewhere): nothing to finish.
+      if (ref.read(runRecorderProvider) == null) {
+        _close();
+        return;
+      }
+      // Saving failed: the run keeps recording and Finish can be tried again.
+      setState(() => _finishing = false);
+      showAppSnack(context, l10n.runFinishFailed);
     }
   }
 
@@ -268,8 +279,10 @@ class _Stat extends StatelessWidget {
   }
 }
 
-/// A button that fills while it is held and calls [onDone] once when the
-/// fill is complete (1 s). Letting go earlier resets it and does nothing.
+/// A button that fills while it is held and calls [onDone] once when it
+/// has been held still for [holdToFinish]. Letting go earlier, moving more
+/// than the touch slop or a scroll taking the drag resets it and does
+/// nothing.
 class HoldToFinish extends StatefulWidget {
   const HoldToFinish({super.key, required this.label, required this.onDone});
 
@@ -284,18 +297,6 @@ class _HoldToFinishState extends State<HoldToFinish>
     with SingleTickerProviderStateMixin {
   late final AnimationController _fill =
       AnimationController(vsync: this, duration: holdToFinish);
-  bool _fired = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _fill.addStatusListener((status) {
-      if (status == AnimationStatus.completed && !_fired) {
-        _fired = true;
-        widget.onDone();
-      }
-    });
-  }
 
   @override
   void dispose() {
@@ -303,16 +304,13 @@ class _HoldToFinishState extends State<HoldToFinish>
     super.dispose();
   }
 
-  void _down() {
-    if (_fired) return;
-    _fill.forward(from: 0);
-  }
+  void _down(LongPressDownDetails _) => _fill.forward(from: 0);
 
-  void _up() {
-    if (!_fired) _fill.reset();
-    // A new press after a completed one starts over.
-    _fired = false;
-  }
+  void _reset() => _fill.reset();
+
+  void _done(LongPressStartDetails _) => widget.onDone();
+
+  void _end(LongPressEndDetails _) => _reset();
 
   @override
   Widget build(BuildContext context) {
@@ -320,16 +318,25 @@ class _HoldToFinishState extends State<HoldToFinish>
     return Semantics(
       button: true,
       label: widget.label,
-      onLongPress: () {
-        if (_fired) return;
-        _fired = true;
-        widget.onDone();
-      },
+      onLongPress: widget.onDone,
       child: ExcludeSemantics(
-        child: Listener(
-          onPointerDown: (_) => _down(),
-          onPointerUp: (_) => _up(),
-          onPointerCancel: (_) => _up(),
+        // A long press joins the gesture arena: a drag past the touch slop
+        // (a scroll, cloth in a pocket) cancels it before it fires.
+        child: RawGestureDetector(
+          gestures: {
+            LongPressGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+                LongPressGestureRecognizer>(
+              () => LongPressGestureRecognizer(
+                  duration: holdToFinish, debugOwner: this),
+              (r) {
+                r
+                  ..onLongPressDown = _down
+                  ..onLongPressCancel = _reset
+                  ..onLongPressStart = _done
+                  ..onLongPressEnd = _end;
+              },
+            ),
+          },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Container(
