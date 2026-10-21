@@ -1085,5 +1085,15 @@
   "runDeleteBody": "Она будет удалена из истории.",
   "runDeleteAction": "Удалить",
   "runNoRoute": "Маршрут не записан",
-  "runNotFound": "Этой пробежки больше нет."
+  "runNotFound": "Этой пробежки больше нет.",
+  "runStartRun": "Начать пробежку",
+  "runThisWeek": "На этой неделе",
+  "runWeekRuns": "{count, plural, one{{count} пробежка} few{{count} пробежки} many{{count} пробежек} other{{count} пробежки}}",
+  "runHistory": "История",
+  "runHistoryEmpty": "Пробежек пока нет. Записанные пробежки появятся здесь.",
+  "runWorkouts": "Тренировки",
+  "runBarTitle": "Пробежка идёт · {distance} км",
+  "runBarReturn": "Вернуться",
+  "runUnfinishedLaunchTitle": "Незавершённая пробежка · {distance} км",
+  "runUnfinishedLaunchBody": "Продолжите с того места, где остановились, сохраните записанное или сбросьте."
 }

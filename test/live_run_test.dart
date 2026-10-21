@@ -439,6 +439,8 @@ void main() {
           await _rig(t, size: iPhoneSeSize, textScale: 1.3, language: 'ru');
       _addTemplate(r, 'Лёгкая пробежка');
       await _openRunningList(r);
+      await t.ensureVisible(find.text('Начать').first);
+      await t.pumpAndSettle();
       await r.tester.tap(find.text('Начать').first);
       await t.pumpAndSettle();
       expect(r.location, AppRouter.liveRun);
@@ -453,6 +455,8 @@ void main() {
           await _rig(t, size: iPhoneSeSize, textScale: 1.3, language: 'ru');
       _addTemplate(r, 'Лёгкая пробежка');
       await _openRunningList(r);
+      await t.ensureVisible(find.text('Начать').first);
+      await t.pumpAndSettle();
       await r.tester.tap(find.text('Начать').first);
       await t.pumpAndSettle();
       await r.hold(const Duration(milliseconds: 1100));

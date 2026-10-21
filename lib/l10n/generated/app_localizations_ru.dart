@@ -4117,4 +4117,50 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get runNotFound => 'Этой пробежки больше нет.';
+
+  @override
+  String get runStartRun => 'Начать пробежку';
+
+  @override
+  String get runThisWeek => 'На этой неделе';
+
+  @override
+  String runWeekRuns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count пробежки',
+      many: '$count пробежек',
+      few: '$count пробежки',
+      one: '$count пробежка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get runHistory => 'История';
+
+  @override
+  String get runHistoryEmpty =>
+      'Пробежек пока нет. Записанные пробежки появятся здесь.';
+
+  @override
+  String get runWorkouts => 'Тренировки';
+
+  @override
+  String runBarTitle(String distance) {
+    return 'Пробежка идёт · $distance км';
+  }
+
+  @override
+  String get runBarReturn => 'Вернуться';
+
+  @override
+  String runUnfinishedLaunchTitle(String distance) {
+    return 'Незавершённая пробежка · $distance км';
+  }
+
+  @override
+  String get runUnfinishedLaunchBody =>
+      'Продолжите с того места, где остановились, сохраните записанное или сбросьте.';
 }

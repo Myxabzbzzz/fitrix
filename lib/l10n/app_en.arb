@@ -3067,5 +3067,18 @@
   "runDeleteBody": "It will be removed from your history.",
   "runDeleteAction": "Delete",
   "runNoRoute": "No route recorded",
-  "runNotFound": "This run is no longer here."
+  "runNotFound": "This run is no longer here.",
+  "runStartRun": "Start run",
+  "runThisWeek": "This week",
+  "runWeekRuns": "{count, plural, =1{1 run} other{{count} runs}}",
+  "@runWeekRuns": {"placeholders": {"count": {"type": "int"}}},
+  "runHistory": "History",
+  "runHistoryEmpty": "No runs yet. The runs you record will show up here.",
+  "runWorkouts": "Workouts",
+  "runBarTitle": "Run in progress · {distance} km",
+  "@runBarTitle": {"placeholders": {"distance": {"type": "String"}}},
+  "runBarReturn": "Return",
+  "runUnfinishedLaunchTitle": "Unfinished run · {distance} km",
+  "@runUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
+  "runUnfinishedLaunchBody": "Pick it up where you left off, save what was recorded, or discard it."
 }

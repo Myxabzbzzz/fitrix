@@ -4037,4 +4037,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get runNotFound => 'This run is no longer here.';
+
+  @override
+  String get runStartRun => 'Start run';
+
+  @override
+  String get runThisWeek => 'This week';
+
+  @override
+  String runWeekRuns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count runs',
+      one: '1 run',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get runHistory => 'History';
+
+  @override
+  String get runHistoryEmpty =>
+      'No runs yet. The runs you record will show up here.';
+
+  @override
+  String get runWorkouts => 'Workouts';
+
+  @override
+  String runBarTitle(String distance) {
+    return 'Run in progress · $distance km';
+  }
+
+  @override
+  String get runBarReturn => 'Return';
+
+  @override
+  String runUnfinishedLaunchTitle(String distance) {
+    return 'Unfinished run · $distance km';
+  }
+
+  @override
+  String get runUnfinishedLaunchBody =>
+      'Pick it up where you left off, save what was recorded, or discard it.';
 }

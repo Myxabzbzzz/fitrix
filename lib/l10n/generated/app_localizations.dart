@@ -6572,6 +6572,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This run is no longer here.'**
   String get runNotFound;
+
+  /// No description provided for @runStartRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Start run'**
+  String get runStartRun;
+
+  /// No description provided for @runThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get runThisWeek;
+
+  /// No description provided for @runWeekRuns.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 run} other{{count} runs}}'**
+  String runWeekRuns(int count);
+
+  /// No description provided for @runHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get runHistory;
+
+  /// No description provided for @runHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No runs yet. The runs you record will show up here.'**
+  String get runHistoryEmpty;
+
+  /// No description provided for @runWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts'**
+  String get runWorkouts;
+
+  /// No description provided for @runBarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Run in progress · {distance} km'**
+  String runBarTitle(String distance);
+
+  /// No description provided for @runBarReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get runBarReturn;
+
+  /// No description provided for @runUnfinishedLaunchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfinished run · {distance} km'**
+  String runUnfinishedLaunchTitle(String distance);
+
+  /// No description provided for @runUnfinishedLaunchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick it up where you left off, save what was recorded, or discard it.'**
+  String get runUnfinishedLaunchBody;
 }
 
 class _AppLocalizationsDelegate

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/features/running/presentation/run_recorder.dart';
+import 'package:fitrix/features/running/presentation/widgets/run_in_progress_bar.dart';
+import 'package:fitrix/features/running/presentation/widgets/run_resume_prompt.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -30,15 +33,29 @@ class MainShell extends ConsumerWidget {
         ) &&
         !ref.watch(pendingCompletedWorkoutProvider.select((w) => w != null));
 
+    final hasRun = ref.watch(runRecorderProvider.select((s) => s != null));
+    final gymHeight =
+        hasActiveWorkout ? ActiveWorkoutSheet.collapsedHeight : 0.0;
+
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            bottom: hasActiveWorkout ? ActiveWorkoutSheet.collapsedHeight : 0,
-            child: navigationShell,
-          ),
-          const Positioned.fill(child: ActiveWorkoutSheet()),
-        ],
+      body: RunResumePrompt(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              bottom: gymHeight + (hasRun ? RunInProgressBar.height : 0),
+              child: navigationShell,
+            ),
+            // Above the gym mini bar; the expanded gym sheet covers it.
+            if (hasRun)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: gymHeight,
+                child: const RunInProgressBar(),
+              ),
+            const Positioned.fill(child: ActiveWorkoutSheet()),
+          ],
+        ),
       ),
       bottomNavigationBar: _TabBar(
         currentIndex: navigationShell.currentIndex,

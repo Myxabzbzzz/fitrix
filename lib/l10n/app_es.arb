@@ -1085,5 +1085,15 @@
   "runDeleteBody": "Se quitará de tu historial.",
   "runDeleteAction": "Eliminar",
   "runNoRoute": "No se registró la ruta",
-  "runNotFound": "Esta carrera ya no está aquí."
+  "runNotFound": "Esta carrera ya no está aquí.",
+  "runStartRun": "Empezar a correr",
+  "runThisWeek": "Esta semana",
+  "runWeekRuns": "{count, plural, =1{1 carrera} other{{count} carreras}}",
+  "runHistory": "Historial",
+  "runHistoryEmpty": "Aún no hay carreras. Las que registres aparecerán aquí.",
+  "runWorkouts": "Entrenamientos",
+  "runBarTitle": "Carrera en curso · {distance} km",
+  "runBarReturn": "Volver",
+  "runUnfinishedLaunchTitle": "Carrera sin terminar · {distance} km",
+  "runUnfinishedLaunchBody": "Continúa donde lo dejaste, guarda lo registrado o descártala."
 }

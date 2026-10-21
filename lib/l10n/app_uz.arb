@@ -1085,5 +1085,15 @@
   "runDeleteBody": "U tarixdan o‘chiriladi.",
   "runDeleteAction": "O‘chirish",
   "runNoRoute": "Marshrut yozilmagan",
-  "runNotFound": "Bu yugurish endi yo‘q."
+  "runNotFound": "Bu yugurish endi yo‘q.",
+  "runStartRun": "Yugurishni boshlash",
+  "runThisWeek": "Shu hafta",
+  "runWeekRuns": "{count, plural, other{{count} ta yugurish}}",
+  "runHistory": "Tarix",
+  "runHistoryEmpty": "Hozircha yugurishlar yo‘q. Yozib olingan yugurishlar shu yerda ko‘rinadi.",
+  "runWorkouts": "Mashg‘ulotlar",
+  "runBarTitle": "Yugurish davom etmoqda · {distance} km",
+  "runBarReturn": "Qaytish",
+  "runUnfinishedLaunchTitle": "Tugallanmagan yugurish · {distance} km",
+  "runUnfinishedLaunchBody": "Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling."
 }

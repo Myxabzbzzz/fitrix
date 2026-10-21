@@ -4053,4 +4053,48 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get runNotFound => 'Esta carrera ya no está aquí.';
+
+  @override
+  String get runStartRun => 'Empezar a correr';
+
+  @override
+  String get runThisWeek => 'Esta semana';
+
+  @override
+  String runWeekRuns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count carreras',
+      one: '1 carrera',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get runHistory => 'Historial';
+
+  @override
+  String get runHistoryEmpty =>
+      'Aún no hay carreras. Las que registres aparecerán aquí.';
+
+  @override
+  String get runWorkouts => 'Entrenamientos';
+
+  @override
+  String runBarTitle(String distance) {
+    return 'Carrera en curso · $distance km';
+  }
+
+  @override
+  String get runBarReturn => 'Volver';
+
+  @override
+  String runUnfinishedLaunchTitle(String distance) {
+    return 'Carrera sin terminar · $distance km';
+  }
+
+  @override
+  String get runUnfinishedLaunchBody =>
+      'Continúa donde lo dejaste, guarda lo registrado o descártala.';
 }

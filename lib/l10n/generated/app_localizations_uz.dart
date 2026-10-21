@@ -3986,4 +3986,47 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get runNotFound => 'Bu yugurish endi yo‘q.';
+
+  @override
+  String get runStartRun => 'Yugurishni boshlash';
+
+  @override
+  String get runThisWeek => 'Shu hafta';
+
+  @override
+  String runWeekRuns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ta yugurish',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get runHistory => 'Tarix';
+
+  @override
+  String get runHistoryEmpty =>
+      'Hozircha yugurishlar yo‘q. Yozib olingan yugurishlar shu yerda ko‘rinadi.';
+
+  @override
+  String get runWorkouts => 'Mashg‘ulotlar';
+
+  @override
+  String runBarTitle(String distance) {
+    return 'Yugurish davom etmoqda · $distance km';
+  }
+
+  @override
+  String get runBarReturn => 'Qaytish';
+
+  @override
+  String runUnfinishedLaunchTitle(String distance) {
+    return 'Tugallanmagan yugurish · $distance km';
+  }
+
+  @override
+  String get runUnfinishedLaunchBody =>
+      'Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling.';
 }
