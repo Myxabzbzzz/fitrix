@@ -10,6 +10,8 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/sync/collections.dart';
 import 'package:fitrix/core/sync/sync_state.dart';
 import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/chat/data/felix_snapshot.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/football/data/match_log.dart';
 import 'package:fitrix/features/football/data/match_store.dart';
 import 'package:fitrix/features/football/presentation/football_screen.dart';
@@ -143,6 +145,64 @@ void main() {
       expect(m.templateId, 'football_log');
       final plan = r.container.read(weekPlanProvider).single;
       expect(statusOf(plan, r.history, _now), SessionStatus.done);
+    });
+
+    testWidgets('a match saved without touching the score has no result',
+        (t) async {
+      final r = await _rig(t);
+      await r.openSheet();
+      expect(
+          t.widget<Text>(find.byKey(const ValueKey('fb-for-value'))).data, '–');
+      expect(
+          t.widget<Text>(find.byKey(const ValueKey('fb-against-value'))).data,
+          '–');
+      await r.tap('fb-save');
+      final w = r.history.single;
+      final m = r.matches[w.id]!;
+      expect(m.type, FootballType.match);
+      expect(m.goalsFor, isNull);
+      expect(m.goalsAgainst, isNull);
+      expect(m.goals, 0);
+      expect(m.assists, 0);
+
+      final felix = buildFelixSnapshot(
+        topic: AssistantTopic.football,
+        today: _now,
+        history: r.history,
+        matches: r.matches,
+      ).toJson();
+      final match = (felix['lastWorkout']! as Map)['match'] as Map;
+      expect(match['type'], 'match');
+      expect(match.containsKey('goalsFor'), isFalse);
+      expect(match.containsKey('goalsAgainst'), isFalse);
+    });
+
+    testWidgets('touching one score stepper sets the whole result', (t) async {
+      final r = await _rig(t);
+      await r.openSheet();
+      await r.tap('fb-for-plus');
+      expect(
+          t.widget<Text>(find.byKey(const ValueKey('fb-against-value'))).data,
+          '0');
+      await r.tap('fb-save');
+      final m = r.matches[r.history.single.id]!;
+      expect(m.goalsFor, 1);
+      expect(m.goalsAgainst, 0);
+    });
+
+    testWidgets('editing a match without a result keeps it without one',
+        (t) async {
+      final r = await _rig(t);
+      await r.openSheet();
+      await r.tap('fb-save');
+      final id = r.history.single.id;
+      await r.openSheet(editId: id);
+      expect(
+          t.widget<Text>(find.byKey(const ValueKey('fb-for-value'))).data, '–');
+      await r.tap('fb-rpe-6');
+      await r.tap('fb-save');
+      expect(r.matches[id]!.goalsFor, isNull);
+      expect(r.matches[id]!.goalsAgainst, isNull);
     });
 
     testWidgets('a past date finishes at 20:00 of that day', (t) async {
@@ -384,6 +444,22 @@ void main() {
       expect(find.textContaining('3–4'), findsOneWidget);
       await r.tap('fb-row-g1');
       expect(find.byKey(const ValueKey('fb-delete')), findsOneWidget);
+    });
+
+    testWidgets('a match logged without a score shows no result', (t) async {
+      final r = await _rig(t, home: const FootballScreen());
+      await r.tap('fb-log');
+      await r.tap('fb-save');
+      final id = r.history.single.id;
+      final row = find.byKey(ValueKey('fb-row-$id'));
+      expect(row, findsOneWidget);
+      final texts = t
+          .widgetList<Text>(
+              find.descendant(of: row, matching: find.byType(Text)))
+          .map((w) => w.data ?? '')
+          .join(' | ');
+      expect(texts, contains('50'));
+      expect(texts, isNot(contains('0–0')));
     });
 
     testWidgets('fits iPhone SE at 1.3 in ru', (t) async {

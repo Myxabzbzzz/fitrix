@@ -66,6 +66,10 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
   String? _position;
   int? _rpe;
   int _for = 0, _against = 0, _goals = 0, _assists = 0;
+
+  /// The result is optional: it stays unset (saved as none) until either
+  /// score stepper is touched.
+  bool _scored = false;
   final _note = TextEditingController();
 
   bool get _editing => _original != null && _originalLog != null;
@@ -90,6 +94,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
       _minutes = log.minutes;
       _position = log.position;
       _rpe = _original!.sessionRpe ?? log.rpe;
+      _scored = log.goalsFor != null || log.goalsAgainst != null;
       _for = log.goalsFor ?? 0;
       _against = log.goalsAgainst ?? 0;
       _goals = log.goals ?? 0;
@@ -156,8 +161,8 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
       minutes: _minutes,
       position: _position,
       rpe: _rpe,
-      goalsFor: match ? _for : null,
-      goalsAgainst: match ? _against : null,
+      goalsFor: match && _scored ? _for : null,
+      goalsAgainst: match && _scored ? _against : null,
       goals: match ? _goals : null,
       assists: match ? _assists : null,
       note: match && note.isNotEmpty ? note : null,
@@ -352,7 +357,11 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                         keyPrefix: 'fb-for',
                         caption: l10n.footballScoreFor,
                         value: _for,
-                        onChanged: (v) => setState(() => _for = v),
+                        unset: !_scored,
+                        onChanged: (v) => setState(() {
+                          _scored = true;
+                          _for = v;
+                        }),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
@@ -361,7 +370,11 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                         keyPrefix: 'fb-against',
                         caption: l10n.footballScoreAgainst,
                         value: _against,
-                        onChanged: (v) => setState(() => _against = v),
+                        unset: !_scored,
+                        onChanged: (v) => setState(() {
+                          _scored = true;
+                          _against = v;
+                        }),
                       ),
                     ),
                   ],
@@ -494,7 +507,8 @@ class _Pill extends StatelessWidget {
 }
 
 /// A whole number with minus and plus buttons; keys `<prefix>-minus`,
-/// `<prefix>-plus` and `<prefix>-value`.
+/// `<prefix>-plus` and `<prefix>-value`. While [unset] it shows a dash and
+/// either button sets it (minus to [value]).
 class _Stepper extends StatelessWidget {
   const _Stepper({
     required this.keyPrefix,
@@ -504,11 +518,13 @@ class _Stepper extends StatelessWidget {
     this.step = 1,
     this.min = 0,
     this.max = 99,
+    this.unset = false,
   });
 
   final String keyPrefix;
   final String? caption;
   final int value, step, min, max;
+  final bool unset;
   final ValueChanged<int> onChanged;
 
   @override
@@ -546,10 +562,13 @@ class _Stepper extends StatelessWidget {
           ),
         Row(
           children: [
-            button('minus', Icons.remove, value - step, value - step >= min),
+            unset
+                ? button('minus', Icons.remove, value, true)
+                : button(
+                    'minus', Icons.remove, value - step, value - step >= min),
             Expanded(
               child: Text(
-                '$value',
+                unset ? '–' : '$value',
                 key: ValueKey('$keyPrefix-value'),
                 textAlign: TextAlign.center,
                 style: AppText.headingM.copyWith(
