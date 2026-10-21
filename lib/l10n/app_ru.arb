@@ -1035,5 +1035,12 @@
   "felixPromptRecovery2": "Как лучше спать",
   "felixPromptRecovery3": "Куда вписать ноги на этой неделе?",
   "felixPromptApp1": "Как пользоваться планом на неделю?",
-  "felixPromptApp2": "Как работает чек-ин?"
+  "felixPromptApp2": "Как работает чек-ин?",
+  "runNameMorning": "Утренняя пробежка",
+  "runNameAfternoon": "Дневная пробежка",
+  "runNameEvening": "Вечерняя пробежка",
+  "runNameNight": "Ночная пробежка",
+  "runNotificationTitle": "Идёт запись пробежки",
+  "runNotificationText": "FITRIX записывает дистанцию и время, даже когда экран заблокирован.",
+  "runNotificationChannel": "Запись пробежки"
 }

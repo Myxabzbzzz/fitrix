@@ -3853,4 +3853,26 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get felixPromptApp2 => '¿Cómo funciona el check-in?';
+
+  @override
+  String get runNameMorning => 'Carrera matutina';
+
+  @override
+  String get runNameAfternoon => 'Carrera de la tarde';
+
+  @override
+  String get runNameEvening => 'Carrera al anochecer';
+
+  @override
+  String get runNameNight => 'Carrera nocturna';
+
+  @override
+  String get runNotificationTitle => 'Grabando tu carrera';
+
+  @override
+  String get runNotificationText =>
+      'FITRIX registra la distancia y el tiempo aunque la pantalla esté bloqueada.';
+
+  @override
+  String get runNotificationChannel => 'Grabación de carreras';
 }

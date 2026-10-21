@@ -3909,4 +3909,26 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get felixPromptApp2 => 'Как работает чек-ин?';
+
+  @override
+  String get runNameMorning => 'Утренняя пробежка';
+
+  @override
+  String get runNameAfternoon => 'Дневная пробежка';
+
+  @override
+  String get runNameEvening => 'Вечерняя пробежка';
+
+  @override
+  String get runNameNight => 'Ночная пробежка';
+
+  @override
+  String get runNotificationTitle => 'Идёт запись пробежки';
+
+  @override
+  String get runNotificationText =>
+      'FITRIX записывает дистанцию и время, даже когда экран заблокирован.';
+
+  @override
+  String get runNotificationChannel => 'Запись пробежки';
 }

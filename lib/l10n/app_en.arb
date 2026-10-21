@@ -3006,5 +3006,12 @@
   "felixPromptRecovery2": "How to sleep better",
   "felixPromptRecovery3": "Where do legs fit this week?",
   "felixPromptApp1": "How do I use the weekly plan?",
-  "felixPromptApp2": "How does the check-in work?"
+  "felixPromptApp2": "How does the check-in work?",
+  "runNameMorning": "Morning run",
+  "runNameAfternoon": "Afternoon run",
+  "runNameEvening": "Evening run",
+  "runNameNight": "Night run",
+  "runNotificationTitle": "Recording your run",
+  "runNotificationText": "FITRIX records distance and time while the screen is locked.",
+  "runNotificationChannel": "Run recording"
 }

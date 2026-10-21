@@ -3806,4 +3806,26 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get felixPromptApp2 => 'Check-in qanday ishlaydi?';
+
+  @override
+  String get runNameMorning => 'Ertalabki yugurish';
+
+  @override
+  String get runNameAfternoon => 'Kunduzgi yugurish';
+
+  @override
+  String get runNameEvening => 'Kechki yugurish';
+
+  @override
+  String get runNameNight => 'Tungi yugurish';
+
+  @override
+  String get runNotificationTitle => 'Yugurish yozib olinmoqda';
+
+  @override
+  String get runNotificationText =>
+      'FITRIX ekran qulflangan bo‘lsa ham masofa va vaqtni yozib boradi.';
+
+  @override
+  String get runNotificationChannel => 'Yugurishni yozish';
 }

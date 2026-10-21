@@ -6272,6 +6272,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'How does the check-in work?'**
   String get felixPromptApp2;
+
+  /// No description provided for @runNameMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning run'**
+  String get runNameMorning;
+
+  /// No description provided for @runNameAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon run'**
+  String get runNameAfternoon;
+
+  /// No description provided for @runNameEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening run'**
+  String get runNameEvening;
+
+  /// No description provided for @runNameNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Night run'**
+  String get runNameNight;
+
+  /// No description provided for @runNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording your run'**
+  String get runNotificationTitle;
+
+  /// No description provided for @runNotificationText.
+  ///
+  /// In en, this message translates to:
+  /// **'FITRIX records distance and time while the screen is locked.'**
+  String get runNotificationText;
+
+  /// No description provided for @runNotificationChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Run recording'**
+  String get runNotificationChannel;
 }
 
 class _AppLocalizationsDelegate

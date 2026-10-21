@@ -1035,5 +1035,12 @@
   "felixPromptRecovery2": "Qanday qilib yaxshiroq uxlash mumkin",
   "felixPromptRecovery3": "Shu hafta oyoq mashqlarini qayerga qo‘yaman?",
   "felixPromptApp1": "Haftalik rejadan qanday foydalanaman?",
-  "felixPromptApp2": "Check-in qanday ishlaydi?"
+  "felixPromptApp2": "Check-in qanday ishlaydi?",
+  "runNameMorning": "Ertalabki yugurish",
+  "runNameAfternoon": "Kunduzgi yugurish",
+  "runNameEvening": "Kechki yugurish",
+  "runNameNight": "Tungi yugurish",
+  "runNotificationTitle": "Yugurish yozib olinmoqda",
+  "runNotificationText": "FITRIX ekran qulflangan bo‘lsa ham masofa va vaqtni yozib boradi.",
+  "runNotificationChannel": "Yugurishni yozish"
 }

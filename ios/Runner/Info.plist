@@ -47,7 +47,12 @@
 	<key>GIDClientID</key>
 	<string>$(GOOGLE_IOS_CLIENT_ID)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>FITRIX shows gyms and parks near you and the way there.</string>
+	<string>FITRIX uses your location to record runs and to show gyms and parks near you.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>audio</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
