@@ -37,26 +37,35 @@ class RunInProgressBar extends ConsumerWidget {
             child: Row(
               children: [
                 // Only the label gives way: the distance is the live figure.
-                Flexible(
-                  child: Text(
-                    l10n.runBarTitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppText.bodyStrong.copyWith(color: palette.onAccent),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          l10n.runBarTitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppText.bodyStrong
+                              .copyWith(color: palette.onAccent),
+                        ),
+                      ),
+                      Text(
+                        ' · ${formatKm(meters, l10n.localeName)} ${l10n.runUnitKm}',
+                        key: const ValueKey('run-bar-distance'),
+                        maxLines: 1,
+                        softWrap: false,
+                        style: AppText.bodyStrong
+                            .copyWith(color: palette.onAccent),
+                      ),
+                    ],
                   ),
                 ),
-                Text(
-                  ' · ${formatKm(meters, l10n.localeName)} ${l10n.runUnitKm}',
-                  key: const ValueKey('run-bar-distance'),
-                  maxLines: 1,
-                  softWrap: false,
-                  style: AppText.bodyStrong.copyWith(color: palette.onAccent),
-                ),
-                const Spacer(),
                 const SizedBox(width: AppSpacing.xs),
-                Flexible(
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 96),
                   child: Text(
                     l10n.runBarReturn,
+                    key: const ValueKey('run-bar-return'),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppText.bodyStrong.copyWith(color: palette.onAccent),

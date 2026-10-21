@@ -455,6 +455,47 @@ void main() {
     }
   });
 
+  group('run bar label with the real Inter font, 375 wide, text 1.0', () {
+    for (final lang in ['en', 'es', 'ru', 'uz']) {
+      testWidgets('$lang: the label and Return are not cut', (t) async {
+        await t.runAsync(() async {
+          final loader = FontLoader('Inter');
+          for (final w in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
+            loader.addFont(rootBundle.load('assets/fonts/Inter-$w.ttf'));
+          }
+          await loader.load();
+        });
+        await _rig(t,
+            size: const Size(375, 812),
+            language: lang,
+            prefsValues: _killedRun());
+        await t.tap(find.byType(TextButton).last);
+        await t.pumpAndSettle();
+        Navigator.of(t.element(find.byType(Scaffold).first)).maybePop();
+        await t.pumpAndSettle();
+        final bar = find.byKey(const ValueKey('run-bar'));
+        for (final f in [
+          find.descendant(
+              of: bar, matching: find.byKey(const ValueKey('run-bar-return'))),
+          find.descendant(
+              of: bar,
+              matching: find.byKey(const ValueKey('run-bar-distance'))),
+          find.descendant(
+              of: bar,
+              matching: find.byWidgetPredicate((w) =>
+                  w is Text &&
+                  w.maxLines == 1 &&
+                  w.key == null &&
+                  w.overflow == TextOverflow.ellipsis)),
+        ]) {
+          expect(t.renderObject<RenderParagraph>(f.first).didExceedMaxLines,
+              isFalse);
+        }
+        expectNoOverflow(t);
+      });
+    }
+  });
+
   group('SE 375x667, text 1.3, ru', () {
     testWidgets('running screen with history and a run in progress', (t) async {
       final r =
