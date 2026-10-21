@@ -19,7 +19,9 @@ import 'package:fitrix/features/programs/data/program_store.dart';
 import 'package:fitrix/features/programs/presentation/providers/programs_provider.dart';
 import 'package:fitrix/features/progress/data/body_weight_store.dart';
 import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
+import 'package:fitrix/features/workouts/data/deleted_workouts_store.dart';
 import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
+import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 
 /// One adapter per synced store. Each reads only what the user saved (never
 /// defaults), applies pulled docs through the store without reporting them
@@ -35,6 +37,7 @@ List<SyncedCollection> syncedCollections(Ref ref) => [
       PerformanceCollection(ref),
       NutritionSettingsCollection(ref),
       FelixPlansCollection(ref),
+      WorkoutDeletedCollection(ref),
     ];
 
 /// Parses [json] with [parse]; null when it fails.
@@ -472,4 +475,48 @@ class FelixPlansCollection extends SyncedCollection {
     _prefs.remove(FelixTemplateIdsNotifier.key);
     _prefs.remove(FelixTemplateIdsNotifier.batchesKey);
   }
+}
+
+/// Finished workouts the user deleted (doc id = workout id). A deletion is
+/// never undone, so the docs are only ever added.
+class WorkoutDeletedCollection extends SyncedCollection {
+  WorkoutDeletedCollection(this._ref);
+  final Ref _ref;
+
+  DeletedWorkoutsStore get _store => _ref.read(deletedWorkoutsStoreProvider);
+
+  @override
+  String get kind => 'workout_deleted';
+
+  @override
+  Map<String, Map<String, Object?>> read() => {
+        for (final id in _store.ids())
+          id: {
+            'deletedAt': (_store.deletedAt(id) ?? DateTime.now())
+                .toUtc()
+                .toIso8601String(),
+          },
+      };
+
+  @override
+  void apply(Map<String, Map<String, Object?>?> docs) {
+    final gone = <String>{};
+    for (final e in docs.entries) {
+      if (e.value == null) continue;
+      final at = DateTime.tryParse('${e.value!['deletedAt']}');
+      _store.add(e.key, at ?? DateTime.now());
+      gone.add(e.key);
+    }
+    final notifier = _ref.read(workoutHistoryProvider.notifier);
+    final history = _ref.read(workoutHistoryProvider);
+    if (history.any((w) => gone.contains(w.id))) {
+      notifier.applySynced([
+        for (final w in history)
+          if (!gone.contains(w.id)) w,
+      ]);
+    }
+  }
+
+  @override
+  void clear() => _store.clear();
 }

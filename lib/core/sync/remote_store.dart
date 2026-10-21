@@ -82,6 +82,9 @@ abstract class RemoteStore {
     List<CompletedWorkout> workouts,
   );
 
+  /// Deletes the finished workout [id]; a missing row is not an error.
+  Future<void> deleteHistory(String userId, String id);
+
   Future<List<RemoteRow<ChatRecord>>> fetchChat(
     String userId, {
     DateTime? since,

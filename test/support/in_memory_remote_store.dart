@@ -121,6 +121,18 @@ class InMemoryRemoteStore implements RemoteStore {
     return {for (final w in workouts) w.id};
   }
 
+  /// Makes [deleteHistory] fail (the row stays on the server).
+  bool failDeleteHistory = false;
+  int deleteHistoryCalls = 0;
+
+  @override
+  Future<void> deleteHistory(String userId, String id) async {
+    deleteHistoryCalls++;
+    _request();
+    if (failDeleteHistory) throw StateError('delete rejected');
+    (_history[userId] ??= {}).remove(id);
+  }
+
   @override
   Future<List<RemoteRow<ChatRecord>>> fetchChat(
     String userId, {

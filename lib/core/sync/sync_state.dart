@@ -38,6 +38,9 @@ class SyncState {
   Set<String> history;
   Set<String> chat;
 
+  /// Ids of deleted workouts whose row is known to be gone from the server.
+  Set<String> historyDeleted;
+
   /// Latest server time seen per table; the next pull starts from there.
   /// Null until the first (full) pull.
   DateTime? plansCursor;
@@ -61,6 +64,7 @@ class SyncState {
     Map<String, PlanVersion>? plans,
     Set<String>? history,
     Set<String>? chat,
+    Set<String>? historyDeleted,
     this.plansCursor,
     this.historyCursor,
     this.chatCursor,
@@ -72,7 +76,8 @@ class SyncState {
         docTombstones = docTombstones ?? {},
         plans = plans ?? {},
         history = history ?? {},
-        chat = chat ?? {};
+        chat = chat ?? {},
+        historyDeleted = historyDeleted ?? {};
 
   static const storageKey = 'sync_state';
 
@@ -89,6 +94,9 @@ class SyncState {
         },
         history: {...(json['history'] as List).cast<String>()},
         chat: {...(json['chat'] as List).cast<String>()},
+        historyDeleted: {
+          ...((json['historyDeleted'] as List?) ?? const []).cast<String>(),
+        },
         plansCursor: _date(json['plansCursor']),
         historyCursor: _date(json['historyCursor']),
         chatCursor: _date(json['chatCursor']),
@@ -120,6 +128,7 @@ class SyncState {
         'plans': {for (final e in plans.entries) e.key: e.value.toJson()},
         'history': history.toList(),
         'chat': chat.toList(),
+        'historyDeleted': historyDeleted.toList(),
         'plansCursor': plansCursor?.toUtc().toIso8601String(),
         'historyCursor': historyCursor?.toUtc().toIso8601String(),
         'chatCursor': chatCursor?.toUtc().toIso8601String(),

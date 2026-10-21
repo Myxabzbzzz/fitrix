@@ -153,6 +153,7 @@ class SyncEngine {
         () async {
           await _pullHistory();
           await _pushHistory();
+          await _deleteHistory();
         },
         () async {
           await _pullChat();
@@ -273,9 +274,11 @@ class SyncEngine {
     final rows = await remote.fetchHistory(userId, since: _since(cursor));
     _checkDisposed();
 
+    // A workout deleted on this device never comes back from the server.
+    final deleted = local.deletedWorkoutIds;
     final merge = unionById(
       local: local.history,
-      remote: rows.map((r) => r.value),
+      remote: rows.map((r) => r.value).where((w) => !deleted.contains(w.id)),
       idOf: (w) => w.id,
       compare: newestFirst,
     );
@@ -379,6 +382,27 @@ class SyncEngine {
     final state = _load();
     state.history.addAll(stored);
     _save(state);
+  }
+
+  /// Deletes the rows of workouts deleted on this device, once each. A
+  /// failure is rethrown after the others were tried and retried next sync.
+  Future<void> _deleteHistory() async {
+    Object? failure;
+    for (final id in local.deletedWorkoutIds) {
+      if (_load().historyDeleted.contains(id)) continue;
+      try {
+        await remote.deleteHistory(userId, id);
+      } catch (e) {
+        _checkDisposed();
+        failure ??= e;
+        continue;
+      }
+      _checkDisposed();
+      final state = _load();
+      state.historyDeleted.add(id);
+      _save(state);
+    }
+    if (failure != null) throw failure;
   }
 
   List<ChatRecord> _pendingChat(Set<String> synced) => [
@@ -606,6 +630,7 @@ class SyncEngine {
     return _pendingDocs(state).docs.length +
         _pendingPlans(state).length +
         local.history.where((w) => !state.history.contains(w.id)).length +
+        local.deletedWorkoutIds.difference(state.historyDeleted).length +
         _pendingChat(state.chat).length;
   }
 

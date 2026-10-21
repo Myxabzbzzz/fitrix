@@ -95,6 +95,13 @@ class SupabaseRemoteStore implements RemoteStore {
       ]);
 
   @override
+  Future<void> deleteHistory(String userId, String id) => _client
+      .from('completed_workouts')
+      .delete()
+      .eq('user_id', userId)
+      .eq('id', id);
+
+  @override
   Future<List<RemoteRow<ChatRecord>>> fetchChat(
     String userId, {
     DateTime? since,

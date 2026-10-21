@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/workouts/data/deleted_workouts_store.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/data/workout_storage.dart';
@@ -35,6 +36,7 @@ final workoutHistoryProvider =
     StateNotifierProvider<WorkoutHistoryNotifier, List<CompletedWorkout>>(
   (ref) => WorkoutHistoryNotifier(
     ref.watch(workoutStorageProvider),
+    ref.watch(deletedWorkoutsStoreProvider),
     onChanged: ref.read(localChangesProvider).notify,
   ),
 );
@@ -174,9 +176,11 @@ class WorkoutTemplatesNotifier extends StateNotifier<List<WorkoutTemplate>> {
 
 class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
   final WorkoutStorage _storage;
+  final DeletedWorkoutsStore _deleted;
   final void Function()? _onChanged;
 
-  WorkoutHistoryNotifier(this._storage, {void Function()? onChanged})
+  WorkoutHistoryNotifier(this._storage, this._deleted,
+      {void Function()? onChanged})
       : _onChanged = onChanged,
         super(_storage.loadHistory());
 
@@ -188,6 +192,17 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
   }
 
   void add(CompletedWorkout workout) => state = [workout, ...state];
+
+  /// Deletes a finished workout. The deletion is remembered so it syncs to
+  /// the cloud and other devices, and a sync never brings the workout back.
+  void remove(String id) {
+    if (!state.any((w) => w.id == id)) return;
+    _deleted.add(id, DateTime.now());
+    state = [
+      for (final w in state)
+        if (w.id != id) w
+    ];
+  }
 
   /// Replaces history with the result of a sync (newest first; not
   /// reported back as a local change).

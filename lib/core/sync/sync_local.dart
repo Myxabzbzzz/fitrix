@@ -9,6 +9,7 @@ import 'package:fitrix/core/sync/synced_collection.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
+import 'package:fitrix/features/workouts/data/deleted_workouts_store.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -43,6 +44,10 @@ class SyncLocal {
 
   void applyHistory(List<CompletedWorkout> history) =>
       _ref.read(workoutHistoryProvider.notifier).applySynced(history);
+
+  /// Ids of finished workouts the user deleted on this device.
+  Set<String> get deletedWorkoutIds =>
+      _ref.read(deletedWorkoutsStoreProvider).ids();
 
   /// Stored (completed) messages of [topic]'s chat, oldest first.
   List<ChatMessage> chat(AssistantTopic topic) {
@@ -82,6 +87,7 @@ class SyncLocal {
   void clear() {
     applyPlans(WorkoutCatalog.defaults, const []);
     applyHistory(const []);
+    _ref.read(deletedWorkoutsStoreProvider).clear();
     for (final topic in AssistantTopic.all) {
       prefs.remove(topic.conversationKey);
       applyChat(topic, const []);
