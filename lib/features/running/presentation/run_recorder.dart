@@ -25,7 +25,14 @@ const freeRunTemplateId = 'free_run';
 /// How often (at most) the recording is written while fixes come in.
 const _saveEvery = Duration(seconds: 10);
 
+/// No fix for longer than this means a weak signal.
+const gpsStaleAfter = Duration(seconds: 15);
+
 enum RunPhase { idle, running, paused }
+
+/// What the GPS is giving the run: no fix kept yet, fixes too old or too
+/// coarse ([gpsStaleAfter], [maxFixAccuracy]), or good ones.
+enum GpsStatus { waiting, weak, good }
 
 typedef RunPauseMark = ({DateTime pausedAt, DateTime? resumedAt});
 
@@ -145,6 +152,12 @@ class RunRecorder extends StateNotifier<RunSession?> {
   StreamSubscription<RunPoint>? _sub;
   DateTime? _lastSaved;
   Future<LocationAccess>? _startInFlight;
+
+  /// When the fixes were last started, and the last fix that came in (kept
+  /// or not), for [gpsStatus].
+  DateTime? _listeningSince, _lastRawFixAt;
+  double? _lastRawAccuracy;
+  bool _preciseLocationOff = false;
   bool _pendingFromLaunch = false;
 
   Stream<RunEvent> get events => _events.stream;
@@ -257,16 +270,52 @@ class RunRecorder extends StateNotifier<RunSession?> {
   /// Throws the run away.
   Future<void> discard() => _end();
 
+  /// The time stamp of the last fix (kept or not) since the fixes started.
+  DateTime? get lastRawFixAt => _lastRawFixAt;
+
+  /// The accuracy of that fix, in metres.
+  double? get lastRawAccuracy => _lastRawAccuracy;
+
+  /// The device gives only approximate location, checked once each time the
+  /// fixes start.
+  bool get preciseLocationOff => _preciseLocationOff;
+
+  /// [GpsStatus.waiting] until the run has a kept fix; then
+  /// [GpsStatus.weak] when the last fix is older than [gpsStaleAfter] (or
+  /// none came since the fixes started that long ago) or coarser than
+  /// [maxFixAccuracy]. Null without a run, or while the fixes are not
+  /// started (a restored run before Resume).
+  GpsStatus? gpsStatus() {
+    final s = state;
+    final since = _lastRawFixAt ?? _listeningSince;
+    if (s == null || _sub == null || since == null) return null;
+    if (s.track.kept.isEmpty) return GpsStatus.waiting;
+    if (_now().difference(since) > gpsStaleAfter) return GpsStatus.weak;
+    final accuracy = _lastRawAccuracy;
+    if (accuracy != null && accuracy > maxFixAccuracy) return GpsStatus.weak;
+    return GpsStatus.good;
+  }
+
   Future<void> _end() async {
     _pendingFromLaunch = false;
     state = null;
     _lastSaved = null;
+    _listeningSince = _lastRawFixAt = _lastRawAccuracy = null;
+    _preciseLocationOff = false;
     await _prefs.remove(runInProgressKey);
     await _stopSource();
   }
 
   void _listen() {
+    _listeningSince = _now();
+    _lastRawFixAt = _lastRawAccuracy = null;
     _sub = _source.start().listen(_onPoint, onError: (Object _) {});
+    _source.reducedAccuracy().then(
+      (reduced) {
+        if (mounted && _sub != null) _preciseLocationOff = reduced;
+      },
+      onError: (Object _) {},
+    );
   }
 
   Future<void> _stopSource() async {
@@ -277,6 +326,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
   }
 
   void _onPoint(RunPoint p) {
+    _lastRawFixAt = p.at;
+    _lastRawAccuracy = p.accuracy;
     final s = state;
     if (s == null || s.phase != RunPhase.running) return;
     final track = s.track.add(p);

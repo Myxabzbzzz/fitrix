@@ -138,6 +138,10 @@ class _LiveRunScreenState extends ConsumerState<LiveRunScreen> {
     final title = template?.name ?? defaultRunName(l10n, session.startedAt);
     final hint = template?.exercises.map((e) => e.name).join(' · ');
     final locale = l10n.localeName;
+    // Read on every build: the screen rebuilds each second.
+    final recorder = ref.read(runRecorderProvider.notifier);
+    final gps = recorder.gpsStatus();
+    final preciseOff = recorder.preciseLocationOff;
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -185,6 +189,23 @@ class _LiveRunScreenState extends ConsumerState<LiveRunScreen> {
                         style: AppText.body14
                             .copyWith(color: palette.textSecondary),
                       ),
+                    ),
+                  if (gps == GpsStatus.waiting || gps == GpsStatus.weak)
+                    _GpsLine(
+                      key: const ValueKey('run-gps'),
+                      icon: gps == GpsStatus.waiting
+                          ? Icons.gps_not_fixed
+                          : Icons.gps_off,
+                      text: gps == GpsStatus.waiting
+                          ? l10n.runGpsWaiting
+                          : l10n.runGpsWeak,
+                    ),
+                  if (preciseOff)
+                    _GpsLine(
+                      key: const ValueKey('run-gps-precise'),
+                      icon: Icons.location_searching,
+                      text: l10n.runGpsReduced,
+                      warning: true,
                     ),
                   const SizedBox(height: AppSpacing.lg),
                   _Stat(
@@ -252,6 +273,45 @@ class _LiveRunScreenState extends ConsumerState<LiveRunScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// A small line about the GPS under the title.
+class _GpsLine extends StatelessWidget {
+  const _GpsLine({
+    super.key,
+    required this.icon,
+    required this.text,
+    this.warning = false,
+  });
+
+  final IconData icon;
+  final String text;
+  final bool warning;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final color = warning ? palette.warning : palette.textSecondary;
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.xs),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: AppSpacing.xxs),
+          Flexible(
+            child: Text(
+              text,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: AppText.caption.copyWith(color: color),
+            ),
+          ),
+        ],
       ),
     );
   }

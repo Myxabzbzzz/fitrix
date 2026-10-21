@@ -52,6 +52,9 @@ class _FakeSource implements LocationSource {
   Future<LocationAccess> ensureAccess() async => LocationAccess.granted;
 
   @override
+  Future<bool> reducedAccuracy() async => false;
+
+  @override
   Stream<RunPoint> start() {
     starts++;
     return (_c = StreamController<RunPoint>(sync: true)).stream;

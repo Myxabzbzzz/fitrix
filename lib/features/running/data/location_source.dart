@@ -21,6 +21,10 @@ abstract class LocationSource {
   Stream<RunPoint> start();
 
   Future<void> stop();
+
+  /// Whether the user gave only approximate location (iOS "Precise
+  /// Location" off): fixes then come about 1 km wide and none are kept.
+  Future<bool> reducedAccuracy();
 }
 
 class GeolocatorLocationSource implements LocationSource {
@@ -113,6 +117,16 @@ class GeolocatorLocationSource implements LocationSource {
       onError: out.addError,
     );
     return out.stream;
+  }
+
+  @override
+  Future<bool> reducedAccuracy() async {
+    try {
+      return await Geolocator.getLocationAccuracy() ==
+          LocationAccuracyStatus.reduced;
+    } catch (_) {
+      return false;
+    }
   }
 
   @override

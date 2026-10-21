@@ -34,6 +34,9 @@ class FakeLocationSource implements LocationSource {
   Future<LocationAccess> ensureAccess() async => access;
 
   @override
+  Future<bool> reducedAccuracy() async => false;
+
+  @override
   Stream<RunPoint> start() {
     starts++;
     _controller = StreamController<RunPoint>(sync: true);
@@ -336,6 +339,32 @@ void main() {
     // The two hours while the app was dead are not moving time.
     expect(pending.track.movingTime(clock.now).inSeconds,
         inInclusiveRange(200, 216));
+  });
+
+  test('GPS status: raw fixes, a restored run before Resume, finish',
+      () async {
+    final r = await rig();
+    await r.recorder.start();
+    expect(r.recorder.gpsStatus(), GpsStatus.waiting);
+    r.source.emit(RunPoint(lat: 0, lng: 0, accuracy: 80, at: t0));
+    expect(r.recorder.lastRawFixAt, t0);
+    expect(r.recorder.lastRawAccuracy, 80);
+    expect(r.recorder.gpsStatus(), GpsStatus.waiting);
+    r.runTo(100);
+    expect(r.recorder.gpsStatus(), GpsStatus.good);
+    r.container.dispose();
+
+    final clock = Clock(r.clock.now.add(const Duration(hours: 2)));
+    final r2 = await rig(clock: clock, fresh: false);
+    expect(r2.session, isNotNull);
+    expect(r2.recorder.gpsStatus(), isNull);
+    r2.recorder.resume();
+    expect(r2.recorder.gpsStatus(), GpsStatus.good);
+    clock.now = clock.now.add(const Duration(seconds: 16));
+    expect(r2.recorder.gpsStatus(), GpsStatus.weak);
+    await r2.recorder.finish();
+    expect(r2.recorder.gpsStatus(), isNull);
+    expect(r2.recorder.lastRawFixAt, isNull);
   });
 
   test('a corrupt recovery entry is ignored', () async {

@@ -57,13 +57,19 @@ class _SilentSpeaker implements Speaker {
 }
 
 class _FakeSource implements LocationSource {
-  _FakeSource(this.access);
+  _FakeSource(this.access, {this.reduced = false});
   final LocationAccess access;
+  final bool reduced;
   int starts = 0;
   StreamController<RunPoint>? _c;
 
+  void emit(RunPoint p) => _c!.add(p);
+
   @override
   Future<LocationAccess> ensureAccess() async => access;
+
+  @override
+  Future<bool> reducedAccuracy() async => reduced;
 
   @override
   Stream<RunPoint> start() {
@@ -78,12 +84,17 @@ class _FakeSource implements LocationSource {
   }
 }
 
+class _Clock {
+  DateTime now = _now;
+}
+
 class _Rig {
-  _Rig(this.tester, this.container, this.router, this.source);
+  _Rig(this.tester, this.container, this.router, this.source, this.clock);
   final WidgetTester tester;
   final ProviderContainer container;
   final GoRouter router;
   final _FakeSource source;
+  final _Clock clock;
 
   RunSession? get session => container.read(runRecorderProvider);
   String get location =>
@@ -114,6 +125,7 @@ Future<_Rig> _rig(
   double textScale = 1,
   String language = 'en',
   Map<String, Object> prefsValues = const {},
+  bool reducedAccuracy = false,
   List<Override> Function(SharedPreferences prefs, LocationSource source)?
       overrides,
 }) async {
@@ -130,11 +142,12 @@ Future<_Rig> _rig(
   });
   final prefs = await SharedPreferences.getInstance();
   final session = AppSession(prefs);
-  final source = _FakeSource(access);
+  final source = _FakeSource(access, reduced: reducedAccuracy);
+  final clock = _Clock();
   final container = ProviderContainer(overrides: [
     sharedPreferencesProvider.overrideWithValue(prefs),
     appSessionProvider.overrideWithValue(session),
-    clockProvider.overrideWithValue(() => _now),
+    clockProvider.overrideWithValue(() => clock.now),
     locationSourceProvider.overrideWithValue(source),
     speakerProvider.overrideWithValue(_SilentSpeaker()),
     mapTileProviderProvider.overrideWithValue(_BlankTiles()),
@@ -147,7 +160,7 @@ Future<_Rig> _rig(
     child: FitrixApp(router: router),
   ));
   await tester.pump();
-  return _Rig(tester, container, router, source);
+  return _Rig(tester, container, router, source, clock);
 }
 
 WorkoutTemplate _addTemplate(_Rig r, String name) {
@@ -447,7 +460,98 @@ void main() {
     expect(r.source.starts, 2);
   });
 
+  group('GPS status', () {
+    const waiting = 'Waiting for GPS…';
+    const weak = 'Weak GPS signal';
+    const precise = 'Turn on Precise Location for accurate distance';
+    RunPoint fix(DateTime at, {double accuracy = 5, double lng = 69}) =>
+        RunPoint(lat: 41, lng: lng, accuracy: accuracy, at: at);
+
+    Future<_Rig> started(WidgetTester t, {bool reduced = false}) async {
+      final r = await _rig(t, reducedAccuracy: reduced);
+      _addTemplate(r, 'Easy 5K');
+      await _openRunningList(r);
+      await _tapStart(r, 'Easy 5K');
+      await t.pump(const Duration(seconds: 1));
+      return r;
+    }
+
+    testWidgets('waiting until the first kept fix, then nothing', (t) async {
+      final r = await started(t);
+      expect(find.text(waiting), findsOneWidget);
+      expect(find.text(precise), findsNothing);
+      // Too coarse to keep: still waiting.
+      r.source.emit(fix(_now, accuracy: 60));
+      await t.pump(const Duration(seconds: 1));
+      expect(find.text(waiting), findsOneWidget);
+      r.source.emit(fix(_now));
+      await t.pump(const Duration(seconds: 1));
+      expect(find.text(waiting), findsNothing);
+      expect(find.text(weak), findsNothing);
+    });
+
+    testWidgets('weak when the last fix is older than 15 s', (t) async {
+      final r = await started(t);
+      r.source.emit(fix(_now));
+      await t.pump();
+      r.clock.now = _now.add(const Duration(seconds: 15));
+      await t.pump(const Duration(seconds: 1));
+      expect(find.text(weak), findsNothing);
+      r.clock.now = _now.add(const Duration(seconds: 16));
+      await t.pump(const Duration(seconds: 1));
+      expect(find.text(weak), findsOneWidget);
+      r.source.emit(fix(r.clock.now, lng: 69.0001));
+      await t.pump(const Duration(seconds: 1));
+      expect(find.text(weak), findsNothing);
+    });
+
+    testWidgets('weak when the last fix is worse than 25 m', (t) async {
+      final r = await started(t);
+      r.source.emit(fix(_now));
+      r.source.emit(fix(_now, accuracy: 40, lng: 69.0001));
+      await t.pump(const Duration(seconds: 1));
+      expect(find.text(weak), findsOneWidget);
+      r.source.emit(fix(_now, accuracy: 20, lng: 69.0002));
+      await t.pump(const Duration(seconds: 1));
+      expect(find.text(weak), findsNothing);
+    });
+
+    testWidgets('reduced accuracy warns to turn on Precise Location',
+        (t) async {
+      await started(t, reduced: true);
+      expect(find.text(precise), findsOneWidget);
+      expect(find.text(waiting), findsOneWidget);
+    });
+  });
+
   group('SE 375x667, text 1.3, ru', () {
+    testWidgets('live run GPS lines', (t) async {
+      final r = await _rig(t,
+          size: iPhoneSeSize,
+          textScale: 1.3,
+          language: 'ru',
+          reducedAccuracy: true);
+      _addTemplate(r, 'Лёгкая пробежка');
+      await _openRunningList(r);
+      await t.ensureVisible(find.text('Начать').first);
+      await t.pumpAndSettle();
+      await r.tester.tap(find.text('Начать').first);
+      await t.pumpAndSettle();
+      await t.pump(const Duration(seconds: 1));
+      expect(find.text('Ждём GPS…'), findsOneWidget);
+      expect(find.text('Включите «Точную геопозицию» для точной дистанции'),
+          findsOneWidget);
+      expectNoOverflow(t);
+      r.source.emit(RunPoint(lat: 41, lng: 69, accuracy: 5, at: _now));
+      r.clock.now = _now.add(const Duration(seconds: 20));
+      await t.pump(const Duration(seconds: 1));
+      expect(find.text('Слабый сигнал GPS'), findsOneWidget);
+      expectNoOverflow(t);
+      await t.drag(find.byType(SingleChildScrollView), const Offset(0, -600));
+      await t.pumpAndSettle();
+      expectNoOverflow(t);
+    });
+
     testWidgets('summary with a route, splits, elevation and rating',
         (t) async {
       final r =
