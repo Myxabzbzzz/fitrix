@@ -10,6 +10,7 @@ import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/presentation/providers/chat_provider.dart';
 import 'package:fitrix/features/workouts/data/deleted_workouts_store.dart';
+import 'package:fitrix/features/workouts/data/doc_rpe.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -42,8 +43,12 @@ class SyncLocal {
 
   List<CompletedWorkout> get history => _ref.read(workoutHistoryProvider);
 
-  void applyHistory(List<CompletedWorkout> history) =>
-      _ref.read(workoutHistoryProvider.notifier).applySynced(history);
+  /// Applies a synced history, then the RPE of run and match docs that
+  /// arrived before their workout.
+  void applyHistory(List<CompletedWorkout> history) {
+    _ref.read(workoutHistoryProvider.notifier).applySynced(history);
+    applyDocRpe(_ref);
+  }
 
   /// Ids of finished workouts the user deleted on this device.
   Set<String> get deletedWorkoutIds =>

@@ -19,7 +19,10 @@ import 'package:fitrix/features/programs/data/program_store.dart';
 import 'package:fitrix/features/programs/presentation/providers/programs_provider.dart';
 import 'package:fitrix/features/progress/data/body_weight_store.dart';
 import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
+import 'package:fitrix/features/running/data/run_store.dart';
+import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/workouts/data/deleted_workouts_store.dart';
+import 'package:fitrix/features/workouts/data/doc_rpe.dart';
 import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 
@@ -38,6 +41,7 @@ List<SyncedCollection> syncedCollections(Ref ref) => [
       NutritionSettingsCollection(ref),
       FelixPlansCollection(ref),
       WorkoutDeletedCollection(ref),
+      RunCollection(ref),
     ];
 
 /// Parses [json] with [parse]; null when it fails.
@@ -519,4 +523,41 @@ class WorkoutDeletedCollection extends SyncedCollection {
 
   @override
   void clear() => _store.clear();
+}
+
+/// Run details (doc id = workout id). A pulled run's RPE is copied onto its
+/// workout, since the RPE itself is not stored with the synced workout.
+class RunCollection extends SyncedCollection {
+  RunCollection(this._ref);
+  final Ref _ref;
+
+  @override
+  String get kind => 'run';
+
+  @override
+  Map<String, Map<String, Object?>> read() => {
+        for (final e in _ref.read(runStoreProvider).all().entries)
+          e.key: _plain(e.value.toJson()),
+      };
+
+  @override
+  void apply(Map<String, Map<String, Object?>?> docs) {
+    final updates = <String, RunDetails?>{};
+    for (final e in docs.entries) {
+      final data = e.value;
+      if (data == null) {
+        updates[e.key] = null;
+        continue;
+      }
+      try {
+        updates[e.key] = RunDetails.fromJson(data);
+      } catch (_) {}
+    }
+    if (updates.isEmpty) return;
+    _ref.read(runsProvider.notifier).applySynced(updates);
+    applyDocRpe(_ref);
+  }
+
+  @override
+  void clear() => _ref.read(runsProvider.notifier).clear();
 }
