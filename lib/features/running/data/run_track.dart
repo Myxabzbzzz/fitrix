@@ -53,6 +53,7 @@ class RunTrack {
   RunTrack({DateTime? startedAt})
       : this._(
           start: startedAt,
+          notBefore: startedAt,
           points: const [],
           meters: 0,
           splits: const [],
@@ -67,6 +68,7 @@ class RunTrack {
 
   const RunTrack._({
     required DateTime? start,
+    required DateTime? notBefore,
     required List<RunPoint> points,
     required this.meters,
     required List<RunSplit> splits,
@@ -78,6 +80,7 @@ class RunTrack {
     required RunPoint? pending,
     required DateTime? finishedAt,
   })  : _start = start,
+        _notBefore = notBefore,
         kept = points,
         _done = splits,
         _boundaryMeters = boundaryMeters,
@@ -89,6 +92,9 @@ class RunTrack {
         _finishedAt = finishedAt;
 
   final DateTime? _start;
+  // Fixes stamped before this (the start, then the last resume) are the
+  // phone's cached location, not where the runner is now.
+  final DateTime? _notBefore;
   final List<RunSplit> _done;
   // Distance and moving time at the last full-km boundary.
   final double _boundaryMeters;
@@ -114,6 +120,7 @@ class RunTrack {
 
   RunTrack _copy({
     DateTime? start,
+    DateTime? notBefore,
     List<RunPoint>? points,
     double? meters,
     List<RunSplit>? splits,
@@ -127,6 +134,7 @@ class RunTrack {
   }) =>
       RunTrack._(
         start: start ?? _start,
+        notBefore: notBefore ?? _notBefore,
         points: points ?? kept,
         meters: meters ?? this.meters,
         splits: splits ?? _done,
@@ -160,11 +168,14 @@ class RunTrack {
       pausedMs: _pausedMs + at.difference(since).inMilliseconds,
       pausedAt: null,
       breakNext: true,
+      notBefore: at,
     );
   }
 
   RunTrack add(RunPoint p) {
     if (paused || p.accuracy > maxFixAccuracy) return this;
+    final notBefore = _notBefore;
+    if (notBefore != null && p.at.isBefore(notBefore)) return this;
     final last = _last;
     if (last == null) {
       return _copy(start: _start ?? p.at, points: [p]);

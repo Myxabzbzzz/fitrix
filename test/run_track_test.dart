@@ -143,6 +143,38 @@ void main() {
       expect(done.meters, m);
     });
 
+    test('a cached fix stamped 10 min before the start is ignored', () {
+      // The phone's last known location, 300 m away, delivered first.
+      final stale = RunPoint(
+        lat: 0,
+        lng: -300 / 111319.49,
+        accuracy: 5,
+        at: t0.subtract(const Duration(minutes: 10)),
+      );
+      final track = RunTrack(startedAt: t0)
+          .add(stale)
+          .add(eastFix(0, 2))
+          .add(eastFix(14, 7));
+      expect(track.kept.map((p) => p.at),
+          isNot(contains(stale.at)));
+      expect(track.kept, hasLength(2));
+      expect(track.meters, closeTo(14, 1));
+    });
+
+    test('after a resume, a fix stamped before the resume is ignored', () {
+      var track = run(140); // last fix at 50 s, at 138.9 m
+      final before = track.meters;
+      track = track
+          .pause(t0.add(const Duration(seconds: 50)))
+          .resume(t0.add(const Duration(seconds: 170)));
+      // Cached fix from during the pause, 500 m on: not the new anchor.
+      track = track.add(eastFix(640, 160));
+      expect(track.kept.last.at, t0.add(const Duration(seconds: 50)));
+      // The real fixes after the resume: an anchor, then 14 m.
+      track = track.add(eastFix(140, 175)).add(eastFix(154, 180));
+      expect(track.meters, closeTo(before + 14, 1.5));
+    });
+
     test('add does not change the track it was called on', () {
       final a = run(100);
       final n = a.kept.length;
