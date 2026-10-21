@@ -129,7 +129,7 @@ class _Row extends ConsumerWidget {
         : null;
     final details = [
       match ? l10n.footballTypeMatch : l10n.footballTypeTraining,
-      if (log.format != null) formatLabel(log.format!),
+      if (match && log.format != null) formatLabel(log.format!),
       '${log.minutes} ${l10n.footballMinShort}',
       if (result != null) result,
     ].join(' · ');

@@ -170,12 +170,16 @@ void main() {
       expect(find.byKey(const ValueKey('fb-against-plus')), findsNothing);
       expect(find.byKey(const ValueKey('fb-goals-plus')), findsNothing);
       expect(find.byKey(const ValueKey('fb-assists-plus')), findsNothing);
+      expect(find.byKey(const ValueKey('fb-format-7x7')), findsNothing);
+      expect(find.byKey(const ValueKey('fb-note')), findsNothing);
       await r.tap('fb-save');
       final w = r.history.single;
       expect(w.name, 'Football training');
       final m = r.matches[w.id]!;
       expect(m.type, FootballType.training);
       expect(m.goals, isNull);
+      expect(m.format, isNull);
+      expect(m.note, isNull);
       expect(m.goalsFor, isNull);
       expect(m.assists, isNull);
     });
@@ -243,6 +247,56 @@ void main() {
       expect(r.container.read(deletedWorkoutsStoreProvider).ids(), {id});
       final state = SyncState.load(r.container.read(sharedPreferencesProvider));
       expect(state.docTombstones.keys, contains('match/$id'));
+    });
+
+    testWidgets('changing the format makes a new id and name', (t) async {
+      final (r, id) = await logged(t);
+      await r.openSheet(editId: id);
+      await r.tap('fb-format-5x5');
+      await r.tap('fb-save');
+      final w = r.history.single;
+      expect(w.id, isNot(id));
+      expect(w.name, 'Football 5×5');
+      expect(w.sessionRpe, 8);
+      expect(r.matches.keys, {w.id});
+      expect(r.container.read(deletedWorkoutsStoreProvider).ids(), {id});
+    });
+
+    testWidgets('changing the type to training renames with a new id',
+        (t) async {
+      final (r, id) = await logged(t);
+      await r.openSheet(editId: id);
+      await r.tap('fb-type-training');
+      await r.tap('fb-save');
+      final w = r.history.single;
+      expect(w.id, isNot(id));
+      expect(w.name, 'Football training');
+      expect(r.matches[w.id]!.type, FootballType.training);
+      expect(r.matches[w.id]!.format, isNull);
+      expect(r.container.read(deletedWorkoutsStoreProvider).ids(), {id});
+    });
+
+    testWidgets('a 400 day old log can be opened and its date picked',
+        (t) async {
+      final r = await _rig(t);
+      final at = _now.subtract(const Duration(days: 400));
+      r.container.read(workoutHistoryProvider.notifier).add(CompletedWorkout(
+            id: 'old',
+            templateId: 'football_log',
+            name: 'Football 7×7',
+            sport: Sport.football,
+            startedAt: at.subtract(const Duration(minutes: 50)),
+            finishedAt: at,
+            exercises: const [],
+          ));
+      r.container.read(matchesProvider.notifier).put(
+          'old',
+          MatchLog(
+              type: FootballType.match, date: at, format: '7x7', minutes: 50));
+      await r.openSheet(editId: 'old');
+      await r.tap('fb-date');
+      expect(t.takeException(), isNull);
+      expect(find.text('OK'), findsOneWidget);
     });
 
     testWidgets('Delete removes the workout and the doc', (t) async {

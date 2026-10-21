@@ -116,12 +116,15 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
     return null;
   }
 
+  static DateTime _minDate(DateTime a, DateTime b) => a.isBefore(b) ? a : b;
+
   Future<void> _pickDate() async {
     final today = dayOf(ref.read(clockProvider)());
     final picked = await showDatePicker(
       context: context,
       initialDate: _day,
-      firstDate: DateTime(today.year - 1, today.month, today.day),
+      firstDate:
+          _minDate(DateTime(today.year - 1, today.month, today.day), _day),
       lastDate: today,
     );
     if (picked != null) setState(() => _day = dayOf(picked));
@@ -149,7 +152,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
     final log = MatchLog(
       type: _type,
       date: finishedAt,
-      format: _format,
+      format: match ? _format : null,
       minutes: _minutes,
       position: _position,
       rpe: _rpe,
@@ -157,13 +160,14 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
       goalsAgainst: match ? _against : null,
       goals: match ? _goals : null,
       assists: match ? _assists : null,
-      note: note.isEmpty ? null : note,
+      note: match && note.isNotEmpty ? note : null,
       templateId: templateId,
     );
 
     if (original != null &&
         _originalLog != null &&
         original.finishedAt == finishedAt &&
+        original.name == _name(original) &&
         original.duration.inMinutes == _minutes) {
       // Same moment and length: the workout stays, only the log changes.
       matches.put(original.id, log);
@@ -196,7 +200,9 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
     if (_isMatch) return 'Football ${formatLabel(_format)}';
     final fromPlan = widget.template?.name;
     if (fromPlan != null) return fromPlan;
-    if (original != null && original.templateId != footballLogTemplateId) {
+    if (original != null &&
+        _originalLog?.type == FootballType.training &&
+        original.templateId != footballLogTemplateId) {
       return original.name;
     }
     return 'Football training';
@@ -299,20 +305,6 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                 icon: Icons.calendar_today_outlined,
                 onTap: _pickDate,
               ),
-              label(l10n.footballFormat),
-              Wrap(
-                spacing: AppSpacing.xs,
-                runSpacing: AppSpacing.xs,
-                children: [
-                  for (final f in footballFormats)
-                    _Pill(
-                      key: ValueKey('fb-format-$f'),
-                      label: formatLabel(f),
-                      selected: _format == f,
-                      onTap: () => setState(() => _format = f),
-                    ),
-                ],
-              ),
               label(l10n.footballMinutes),
               _Stepper(
                 keyPrefix: 'fb-minutes',
@@ -338,6 +330,20 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                 ],
               ),
               if (_isMatch) ...[
+                label(l10n.footballFormat),
+                Wrap(
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  children: [
+                    for (final f in footballFormats)
+                      _Pill(
+                        key: ValueKey('fb-format-$f'),
+                        label: formatLabel(f),
+                        selected: _format == f,
+                        onTap: () => setState(() => _format = f),
+                      ),
+                  ],
+                ),
                 label(l10n.footballResult),
                 Row(
                   children: [
@@ -389,24 +395,26 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                 selected: _rpe,
                 onPick: (n) => setState(() => _rpe = n),
               ),
-              label(l10n.footballNote),
-              TextField(
-                key: const ValueKey('fb-note'),
-                controller: _note,
-                maxLength: _noteLimit,
-                maxLines: 3,
-                minLines: 1,
-                style: AppText.body14.copyWith(color: palette.textPrimary),
-                decoration: InputDecoration(
-                  counterText: '',
-                  filled: true,
-                  fillColor: palette.tile,
-                  border: OutlineInputBorder(
-                    borderRadius: AppRadius.smAll,
-                    borderSide: BorderSide.none,
+              if (_isMatch) ...[
+                label(l10n.footballNote),
+                TextField(
+                  key: const ValueKey('fb-note'),
+                  controller: _note,
+                  maxLength: _noteLimit,
+                  maxLines: 3,
+                  minLines: 1,
+                  style: AppText.body14.copyWith(color: palette.textPrimary),
+                  decoration: InputDecoration(
+                    counterText: '',
+                    filled: true,
+                    fillColor: palette.tile,
+                    border: OutlineInputBorder(
+                      borderRadius: AppRadius.smAll,
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
-              ),
+              ],
               const SizedBox(height: AppSpacing.md),
               AppButton(
                 key: const ValueKey('fb-save'),
