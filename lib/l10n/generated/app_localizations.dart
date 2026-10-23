@@ -7110,14 +7110,14 @@ abstract class AppLocalizations {
   /// No description provided for @connectedAppsSummaryWeight.
   ///
   /// In en, this message translates to:
-  /// **'Weigh-ins imported'**
-  String get connectedAppsSummaryWeight;
+  /// **'Weigh-ins from {health}'**
+  String connectedAppsSummaryWeight(String health);
 
   /// No description provided for @connectedAppsSummaryImported.
   ///
   /// In en, this message translates to:
-  /// **'Workouts imported'**
-  String get connectedAppsSummaryImported;
+  /// **'Workouts from {health}'**
+  String connectedAppsSummaryImported(String health);
 
   /// No description provided for @connectedAppsSummaryWritten.
   ///

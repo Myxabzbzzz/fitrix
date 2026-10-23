@@ -429,8 +429,8 @@ class _HealthSummaryBlock extends ConsumerWidget {
       (l10n.connectedAppsSummarySleep, sum.sleepNights),
       (l10n.connectedAppsSummaryRhr, sum.restingHrDays),
       (l10n.connectedAppsSummaryHrv, sum.hrvDays),
-      (l10n.connectedAppsSummaryWeight, sum.weighIns),
-      (l10n.connectedAppsSummaryImported, sum.workoutsImported),
+      (l10n.connectedAppsSummaryWeight(app.title), sum.weighIns),
+      (l10n.connectedAppsSummaryImported(app.title), sum.workoutsImported),
       (l10n.connectedAppsSummaryWritten(app.title), sum.workoutsWritten),
     ];
     return Column(

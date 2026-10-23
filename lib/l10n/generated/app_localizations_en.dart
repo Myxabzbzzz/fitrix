@@ -4376,10 +4376,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get connectedAppsSummaryHrv => 'Days with HRV';
 
   @override
-  String get connectedAppsSummaryWeight => 'Weigh-ins imported';
+  String connectedAppsSummaryWeight(String health) {
+    return 'Weigh-ins from $health';
+  }
 
   @override
-  String get connectedAppsSummaryImported => 'Workouts imported';
+  String connectedAppsSummaryImported(String health) {
+    return 'Workouts from $health';
+  }
 
   @override
   String connectedAppsSummaryWritten(String health) {

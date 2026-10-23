@@ -4460,10 +4460,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get connectedAppsSummaryHrv => 'Дни с ВСР';
 
   @override
-  String get connectedAppsSummaryWeight => 'Дни со взвешиванием из Health';
+  String connectedAppsSummaryWeight(String health) {
+    return 'Дни со взвешиванием из $health';
+  }
 
   @override
-  String get connectedAppsSummaryImported => 'Тренировки из Health';
+  String connectedAppsSummaryImported(String health) {
+    return 'Тренировки из $health';
+  }
 
   @override
   String connectedAppsSummaryWritten(String health) {

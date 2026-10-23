@@ -4326,10 +4326,14 @@ class AppLocalizationsUz extends AppLocalizations {
   String get connectedAppsSummaryHrv => 'HRV’li kunlar';
 
   @override
-  String get connectedAppsSummaryWeight => 'Olingan vazn o‘lchovlari';
+  String connectedAppsSummaryWeight(String health) {
+    return '$health dan olingan vazn o‘lchovlari';
+  }
 
   @override
-  String get connectedAppsSummaryImported => 'Olingan mashg‘ulotlar';
+  String connectedAppsSummaryImported(String health) {
+    return '$health dan olingan mashg‘ulotlar';
+  }
 
   @override
   String connectedAppsSummaryWritten(String health) {

@@ -4395,10 +4395,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get connectedAppsSummaryHrv => 'Días con VFC';
 
   @override
-  String get connectedAppsSummaryWeight => 'Pesajes importados';
+  String connectedAppsSummaryWeight(String health) {
+    return 'Pesajes de $health';
+  }
 
   @override
-  String get connectedAppsSummaryImported => 'Entrenamientos importados';
+  String connectedAppsSummaryImported(String health) {
+    return 'Entrenamientos de $health';
+  }
 
   @override
   String connectedAppsSummaryWritten(String health) {
