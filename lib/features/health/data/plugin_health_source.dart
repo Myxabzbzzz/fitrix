@@ -83,7 +83,9 @@ class PluginHealthSource implements HealthSource {
         HealthDataType.HEART_RATE,
         HealthDataType.WEIGHT,
         HealthDataType.STEPS,
-        HealthDataType.ACTIVE_ENERGY_BURNED,
+        // Health Connect reads a session's calories with the workout; without
+        // this grant every workout read fails.
+        if (_android) HealthDataType.TOTAL_CALORIES_BURNED,
       ];
       final types = <HealthDataType>[];
       final access = <HealthDataAccess>[];
@@ -133,6 +135,20 @@ class PluginHealthSource implements HealthSource {
     }
   }
 
+  /// Health Connect gives an empty source id and the package name as the
+  /// source name; use it so FITRIX's own records can be recognised.
+  @visibleForTesting
+  static String normalisedSourceId(HealthDataPoint p) =>
+      p.sourceId.isEmpty ? p.sourceName : p.sourceId;
+
+  @visibleForTesting
+  List<HealthSample> samplesFrom(List<HealthDataPoint> points) =>
+      _samples(points);
+
+  @visibleForTesting
+  List<HealthWorkoutRecord> workoutsFrom(List<HealthDataPoint> points) =>
+      _workouts(points);
+
   List<HealthSample> _samples(List<HealthDataPoint> points) => [
         for (final p in points)
           if (p.value is NumericHealthValue)
@@ -141,7 +157,7 @@ class PluginHealthSource implements HealthSource {
               from: p.dateFrom,
               to: p.dateTo,
               value: (p.value as NumericHealthValue).numericValue.toDouble(),
-              sourceId: p.sourceId,
+              sourceId: normalisedSourceId(p),
               sourceName: p.sourceName,
             ),
       ];
@@ -215,7 +231,10 @@ class PluginHealthSource implements HealthSource {
   @override
   Future<List<HealthWorkoutRecord>> workouts(
       DateTime from, DateTime to) async {
-    final points = await _read([HealthDataType.WORKOUT], from, to);
+    return _workouts(await _read([HealthDataType.WORKOUT], from, to));
+  }
+
+  List<HealthWorkoutRecord> _workouts(List<HealthDataPoint> points) {
     return [
       for (final p in points)
         if (p.value is WorkoutHealthValue)
@@ -226,7 +245,7 @@ class PluginHealthSource implements HealthSource {
             to: p.dateTo,
             meters: _meters(p.value as WorkoutHealthValue),
             kcal: _kcal(p.value as WorkoutHealthValue),
-            sourceId: p.sourceId,
+            sourceId: normalisedSourceId(p),
             sourceName: p.sourceName,
           ),
     ];
