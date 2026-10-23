@@ -4293,7 +4293,7 @@ class AppLocalizationsEn extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String stepsString = stepsNumberFormat.format(steps);
 
-    return '$stepsString steps today';
+    return 'Steps today: $stepsString';
   }
 
   @override
@@ -4305,7 +4305,7 @@ class AppLocalizationsEn extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return '$stepsString steps today · 7-day avg $avgString';
+    return 'Steps today: $stepsString · 7-day avg $avgString';
   }
 
   @override

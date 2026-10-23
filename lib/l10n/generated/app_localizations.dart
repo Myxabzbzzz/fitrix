@@ -6996,13 +6996,13 @@ abstract class AppLocalizations {
   /// No description provided for @healthStepsToday.
   ///
   /// In en, this message translates to:
-  /// **'{steps} steps today'**
+  /// **'Steps today: {steps}'**
   String healthStepsToday(int steps);
 
   /// No description provided for @healthStepsTodayAvg.
   ///
   /// In en, this message translates to:
-  /// **'{steps} steps today · 7-day avg {avg}'**
+  /// **'Steps today: {steps} · 7-day avg {avg}'**
   String healthStepsTodayAvg(int steps, int avg);
 
   /// No description provided for @factorRestingHrHigh.

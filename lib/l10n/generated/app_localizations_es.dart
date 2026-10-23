@@ -4292,7 +4292,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String healthRestingHrNormal(int bpm, int normal) {
-    return '$bpm lpm · tu normal $normal';
+    return '$bpm lpm · tu habitual $normal';
   }
 
   @override
@@ -4302,7 +4302,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String healthHrvNormal(int value, String kind, int normal) {
-    return '$value ms $kind · tu normal $normal';
+    return '$value ms $kind · tu habitual $normal';
   }
 
   @override
@@ -4311,7 +4311,7 @@ class AppLocalizationsEs extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String stepsString = stepsNumberFormat.format(steps);
 
-    return '$stepsString pasos hoy';
+    return 'Pasos hoy: $stepsString';
   }
 
   @override
@@ -4323,7 +4323,7 @@ class AppLocalizationsEs extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return '$stepsString pasos hoy · media de 7 días $avgString';
+    return 'Pasos hoy: $stepsString · media de 7 días $avgString';
   }
 
   @override

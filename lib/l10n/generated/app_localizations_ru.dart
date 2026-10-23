@@ -4377,7 +4377,7 @@ class AppLocalizationsRu extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String stepsString = stepsNumberFormat.format(steps);
 
-    return '$stepsString шагов сегодня';
+    return 'Шаги сегодня: $stepsString';
   }
 
   @override
@@ -4389,7 +4389,7 @@ class AppLocalizationsRu extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return '$stepsString шагов сегодня · в среднем за 7 дней $avgString';
+    return 'Шаги сегодня: $stepsString · в среднем за 7 дней $avgString';
   }
 
   @override

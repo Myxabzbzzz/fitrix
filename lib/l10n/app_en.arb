@@ -3232,7 +3232,7 @@
       }
     }
   },
-  "healthStepsToday": "{steps} steps today",
+  "healthStepsToday": "Steps today: {steps}",
   "@healthStepsToday": {
     "placeholders": {
       "steps": {
@@ -3241,7 +3241,7 @@
       }
     }
   },
-  "healthStepsTodayAvg": "{steps} steps today · 7-day avg {avg}",
+  "healthStepsTodayAvg": "Steps today: {steps} · 7-day avg {avg}",
   "@healthStepsTodayAvg": {
     "placeholders": {
       "steps": {

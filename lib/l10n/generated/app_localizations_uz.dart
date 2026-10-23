@@ -4224,7 +4224,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String healthRestingHrNormal(int bpm, int normal) {
-    return '$bpm urish/daq · sizning me‘yoringiz $normal';
+    return '$bpm urish/daq · sizning me’yoringiz $normal';
   }
 
   @override
@@ -4234,7 +4234,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String healthHrvNormal(int value, String kind, int normal) {
-    return '$value ms $kind · sizning me‘yoringiz $normal';
+    return '$value ms $kind · sizning me’yoringiz $normal';
   }
 
   @override
@@ -4243,7 +4243,7 @@ class AppLocalizationsUz extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String stepsString = stepsNumberFormat.format(steps);
 
-    return 'Bugun $stepsString qadam';
+    return 'Bugungi qadamlar: $stepsString';
   }
 
   @override
@@ -4255,23 +4255,23 @@ class AppLocalizationsUz extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return 'Bugun $stepsString qadam · 7 kunlik o‘rtacha $avgString';
+    return 'Bugungi qadamlar: $stepsString · 7 kunlik o‘rtacha $avgString';
   }
 
   @override
-  String get factorRestingHrHigh => 'Tinch holatdagi puls me‘yordan yuqori';
+  String get factorRestingHrHigh => 'Tinch holatdagi puls me’yordan yuqori';
 
   @override
-  String get factorRestingHrNormal => 'Tinch holatdagi puls me‘yorida';
+  String get factorRestingHrNormal => 'Tinch holatdagi puls me’yorida';
 
   @override
-  String get factorHrvLow => 'HRV me‘yordan past';
+  String get factorHrvLow => 'HRV me’yordan past';
 
   @override
-  String get factorHrvNormal => 'HRV me‘yorida';
+  String get factorHrvNormal => 'HRV me’yorida';
 
   @override
-  String get factorHrvHigh => 'HRV me‘yordan yuqori';
+  String get factorHrvHigh => 'HRV me’yordan yuqori';
 
   @override
   String importedFromHealth(String health) {

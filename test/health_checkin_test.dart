@@ -256,7 +256,7 @@ void main() {
           scrollable: find.byType(Scrollable).first);
       expect(find.text('60 bpm · your normal 54'), findsOneWidget);
       expect(find.text('41 ms SDNN · your normal 48'), findsOneWidget);
-      expect(find.text('8,123 steps today · 7-day avg 9,400'), findsOneWidget);
+      expect(find.text('Steps today: 8,123 · 7-day avg 9,400'), findsOneWidget);
       expect(find.text('Resting heart rate above normal'), findsOneWidget);
       expect(find.text('HRV below normal'), findsOneWidget);
     });
@@ -366,7 +366,7 @@ void main() {
       await pump(tester,
           home: const HomeScreen(),
           days: withToday(const HealthDay(steps: 8123)));
-      expect(find.text('8,123 steps today'), findsOneWidget);
+      expect(find.text('Steps today: 8,123'), findsOneWidget);
     });
 
     testWidgets('no steps line when steps unknown', (tester) async {
@@ -383,6 +383,32 @@ void main() {
           days: withToday(const HealthDay(steps: 8123)));
       expect(find.textContaining('steps'), findsNothing);
     });
+  });
+
+  test('step lines need no plural in any language', () {
+    String steps(String lang, int n) =>
+        lookupAppLocalizations(Locale(lang)).healthStepsToday(n);
+    String avg(String lang, int n, int a) =>
+        lookupAppLocalizations(Locale(lang)).healthStepsTodayAvg(n, a);
+    expect(steps('ru', 1), 'Шаги сегодня: 1');
+    expect(steps('ru', 3), 'Шаги сегодня: 3');
+    expect(avg('ru', 2, 5), 'Шаги сегодня: 2 · в среднем за 7 дней 5');
+    expect(steps('en', 1), 'Steps today: 1');
+    expect(avg('en', 1, 7), 'Steps today: 1 · 7-day avg 7');
+    expect(steps('es', 1), 'Pasos hoy: 1');
+    expect(avg('es', 1, 7), 'Pasos hoy: 1 · media de 7 días 7');
+    expect(steps('uz', 1), 'Bugungi qadamlar: 1');
+    expect(avg('uz', 1, 7), 'Bugungi qadamlar: 1 · 7 kunlik o‘rtacha 7');
+    expect(
+        lookupAppLocalizations(const Locale('uz'))
+            .healthRestingHrNormal(58, 54),
+        contains('me’yoringiz'));
+    expect(lookupAppLocalizations(const Locale('uz')).factorHrvLow,
+        'HRV me’yordan past');
+    expect(
+        lookupAppLocalizations(const Locale('es'))
+            .healthHrvNormal(41, 'SDNN', 48),
+        '41 ms SDNN · tu habitual 48');
   });
 
   group('no overflow on iPhone SE at 1.3', () {
