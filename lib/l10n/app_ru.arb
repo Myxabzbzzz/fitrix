@@ -1222,5 +1222,17 @@
   "importedFromHealth": "Из {health}",
   "importedAvgHr": "{bpm} уд/мин в среднем",
   "importedDeleteTitle": "Удалить эту тренировку?",
-  "importedDelete": "Удалить тренировку"
+  "importedDelete": "Удалить тренировку",
+  "connectedAppsSummaryTitle": "Из {health} · за 7 дней",
+  "@connectedAppsSummaryTitle": {"placeholders": {"health": {"type": "String"}}},
+  "connectedAppsSummarySteps": "Дни с шагами",
+  "connectedAppsSummarySleep": "Ночи со сном",
+  "connectedAppsSummaryRhr": "Дни с пульсом покоя",
+  "connectedAppsSummaryHrv": "Дни с HRV",
+  "connectedAppsSummaryWeight": "Взвешиваний получено",
+  "connectedAppsSummaryImported": "Тренировок получено",
+  "connectedAppsSummaryWritten": "Тренировок сохранено в {health}",
+  "@connectedAppsSummaryWritten": {"placeholders": {"health": {"type": "String"}}},
+  "connectedAppsSummaryHintIos": "Данных с часов пока нет — часы (Apple Watch, Garmin, WHOOP, Mi Band) добавят сон, пульс и тренировки.",
+  "connectedAppsSummaryHintAndroid": "Данных с часов пока нет — часы (Garmin, WHOOP, Mi Band) добавят сон, пульс и тренировки."
 }

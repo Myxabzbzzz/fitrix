@@ -4441,4 +4441,40 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get importedDelete => 'Удалить тренировку';
+
+  @override
+  String connectedAppsSummaryTitle(String health) {
+    return 'Из $health · за 7 дней';
+  }
+
+  @override
+  String get connectedAppsSummarySteps => 'Дни с шагами';
+
+  @override
+  String get connectedAppsSummarySleep => 'Ночи со сном';
+
+  @override
+  String get connectedAppsSummaryRhr => 'Дни с пульсом покоя';
+
+  @override
+  String get connectedAppsSummaryHrv => 'Дни с HRV';
+
+  @override
+  String get connectedAppsSummaryWeight => 'Взвешиваний получено';
+
+  @override
+  String get connectedAppsSummaryImported => 'Тренировок получено';
+
+  @override
+  String connectedAppsSummaryWritten(String health) {
+    return 'Тренировок сохранено в $health';
+  }
+
+  @override
+  String get connectedAppsSummaryHintIos =>
+      'Данных с часов пока нет — часы (Apple Watch, Garmin, WHOOP, Mi Band) добавят сон, пульс и тренировки.';
+
+  @override
+  String get connectedAppsSummaryHintAndroid =>
+      'Данных с часов пока нет — часы (Garmin, WHOOP, Mi Band) добавят сон, пульс и тренировки.';
 }

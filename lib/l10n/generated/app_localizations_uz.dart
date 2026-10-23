@@ -4307,4 +4307,40 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get importedDelete => 'Mashg‘ulotni o‘chirish';
+
+  @override
+  String connectedAppsSummaryTitle(String health) {
+    return '$health dan · 7 kun ichida';
+  }
+
+  @override
+  String get connectedAppsSummarySteps => 'Qadamli kunlar';
+
+  @override
+  String get connectedAppsSummarySleep => 'Uyquli tunlar';
+
+  @override
+  String get connectedAppsSummaryRhr => 'Tinch pulsli kunlar';
+
+  @override
+  String get connectedAppsSummaryHrv => 'HRV li kunlar';
+
+  @override
+  String get connectedAppsSummaryWeight => 'Olingan tortishlar';
+
+  @override
+  String get connectedAppsSummaryImported => 'Olingan mashg‘ulotlar';
+
+  @override
+  String connectedAppsSummaryWritten(String health) {
+    return '$health ga saqlangan mashg‘ulotlar';
+  }
+
+  @override
+  String get connectedAppsSummaryHintIos =>
+      'Soatdan ma’lumot hali yo‘q — soat (Apple Watch, Garmin, WHOOP, Mi Band) uyqu, puls va mashg‘ulotlarni qo‘shadi.';
+
+  @override
+  String get connectedAppsSummaryHintAndroid =>
+      'Soatdan ma’lumot hali yo‘q — soat (Garmin, WHOOP, Mi Band) uyqu, puls va mashg‘ulotlarni qo‘shadi.';
 }

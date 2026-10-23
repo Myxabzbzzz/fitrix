@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/health/data/health_import_store.dart';
@@ -134,5 +136,24 @@ class WeightImporter implements HealthImporter {
     await _ref.read(bodyWeightProvider.notifier).importWeighIns([
       for (final x in list) WeighIn(at: x.to, kg: x.value),
     ]);
+    await _remember(latest.keys);
+  }
+
+  /// Prefs: day keys that got an imported weigh-in, newest 60.
+  static const importedKey = 'health_weight_imported_v1';
+  static const keepDays = 60;
+
+  Future<void> _remember(Iterable<String> days) async {
+    final prefs = _ref.read(sharedPreferencesProvider);
+    var all = <String>{...days};
+    try {
+      final raw = prefs.getString(importedKey);
+      if (raw != null) all.addAll((jsonDecode(raw) as List).cast<String>());
+    } catch (_) {}
+    final sorted = all.toList()..sort();
+    final kept = sorted.length > keepDays
+        ? sorted.sublist(sorted.length - keepDays)
+        : sorted;
+    await prefs.setString(importedKey, jsonEncode(kept));
   }
 }

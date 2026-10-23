@@ -366,6 +366,8 @@ class _HealthTileState extends ConsumerState<_HealthTile> {
           ),
           if (conn.connected) ...[
             const SizedBox(height: AppSpacing.sm),
+            _HealthSummaryBlock(app: app, android: _android),
+            const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
                 Expanded(
@@ -403,6 +405,65 @@ class _HealthTileState extends ConsumerState<_HealthTile> {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// The last 7 days of what came from / went to Health: label on the left,
+/// a plain number on the right.
+class _HealthSummaryBlock extends ConsumerWidget {
+  const _HealthSummaryBlock({required this.app, required this.android});
+
+  final ConnectableApp app;
+  final bool android;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final sum = ref.watch(healthSummaryProvider);
+    if (sum == null) return const SizedBox.shrink();
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final caption = AppText.caption.copyWith(color: palette.textSecondary);
+    final rows = [
+      (l10n.connectedAppsSummarySteps, sum.stepsDays),
+      (l10n.connectedAppsSummarySleep, sum.sleepNights),
+      (l10n.connectedAppsSummaryRhr, sum.restingHrDays),
+      (l10n.connectedAppsSummaryHrv, sum.hrvDays),
+      (l10n.connectedAppsSummaryWeight, sum.weighIns),
+      (l10n.connectedAppsSummaryImported, sum.workoutsImported),
+      (l10n.connectedAppsSummaryWritten(app.title), sum.workoutsWritten),
+    ];
+    return Column(
+      key: const Key('health-summary'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.connectedAppsSummaryTitle(app.title),
+            style: AppText.bodyStrong.copyWith(color: palette.textPrimary)),
+        const SizedBox(height: AppSpacing.xs),
+        for (final r in rows)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: Text(r.$1, style: caption)),
+                const SizedBox(width: AppSpacing.xs),
+                Text('${r.$2}',
+                    style: AppText.bodyStrong
+                        .copyWith(color: palette.textPrimary)),
+              ],
+            ),
+          ),
+        if (sum.onlySteps) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+              android
+                  ? l10n.connectedAppsSummaryHintAndroid
+                  : l10n.connectedAppsSummaryHintIos,
+              key: const Key('health-summary-hint'),
+              style: caption),
+        ],
+      ],
     );
   }
 }

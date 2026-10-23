@@ -101,6 +101,16 @@ void main() {
     expect(fake.written.single.meters, 10234.6);
   });
 
+  test('a write is recorded with its time; old ids have none', () async {
+    await connect();
+    await prefs.setString(HealthWriter.key, '["legacy"]');
+    c.read(workoutHistoryProvider.notifier).add(_w('a'));
+    await settle();
+    final t = DateTime(2000);
+    expect(HealthWriter.writtenSince(prefs, t), 1);
+    expect(HealthWriter.writtenSince(prefs, DateTime(2100)), 0);
+  });
+
   test('toggle off, not connected: no write', () async {
     await connect(write: false);
     c.read(workoutHistoryProvider.notifier).add(_w('a'));

@@ -7076,6 +7076,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete workout'**
   String get importedDelete;
+
+  /// No description provided for @connectedAppsSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'From {health} · last 7 days'**
+  String connectedAppsSummaryTitle(String health);
+
+  /// No description provided for @connectedAppsSummarySteps.
+  ///
+  /// In en, this message translates to:
+  /// **'Days with steps'**
+  String get connectedAppsSummarySteps;
+
+  /// No description provided for @connectedAppsSummarySleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Nights with sleep'**
+  String get connectedAppsSummarySleep;
+
+  /// No description provided for @connectedAppsSummaryRhr.
+  ///
+  /// In en, this message translates to:
+  /// **'Days with resting HR'**
+  String get connectedAppsSummaryRhr;
+
+  /// No description provided for @connectedAppsSummaryHrv.
+  ///
+  /// In en, this message translates to:
+  /// **'Days with HRV'**
+  String get connectedAppsSummaryHrv;
+
+  /// No description provided for @connectedAppsSummaryWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weigh-ins imported'**
+  String get connectedAppsSummaryWeight;
+
+  /// No description provided for @connectedAppsSummaryImported.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts imported'**
+  String get connectedAppsSummaryImported;
+
+  /// No description provided for @connectedAppsSummaryWritten.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts saved to {health}'**
+  String connectedAppsSummaryWritten(String health);
+
+  /// No description provided for @connectedAppsSummaryHintIos.
+  ///
+  /// In en, this message translates to:
+  /// **'No watch data yet — a watch (Apple Watch, Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts.'**
+  String get connectedAppsSummaryHintIos;
+
+  /// No description provided for @connectedAppsSummaryHintAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'No watch data yet — a watch (Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts.'**
+  String get connectedAppsSummaryHintAndroid;
 }
 
 class _AppLocalizationsDelegate

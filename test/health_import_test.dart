@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -419,6 +420,21 @@ void main() {
       expect(w.kg, 81.4);
       expect(w.at.day, 22);
       expect(prefs.getString('user_weight'), '81.4');
+    });
+
+    test('imported weigh-in days are remembered, trimmed to 60', () async {
+      await prefs.setString(
+          'health_weight_imported_v1',
+          jsonEncode([
+            for (var i = 1; i <= 60; i++)
+              '2026-08-${i.toString().padLeft(2, '0')}'
+          ]));
+      fake.weightSamples = [_kg(DateTime(2026, 10, 22, 7, 30), 81.4)];
+      await importAll();
+      final kept =
+          (jsonDecode(prefs.getString('health_weight_imported_v1')!) as List);
+      expect(kept.length, 60);
+      expect(kept.last, '2026-10-22');
     });
 
     test('latest sample of the day wins; FITRIX and out-of-range skipped',

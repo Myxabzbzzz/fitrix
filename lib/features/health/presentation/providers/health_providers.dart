@@ -7,7 +7,10 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/health/data/health_daily_store.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/health/data/health_importers.dart';
+import 'package:fitrix/features/health/data/health_writer.dart';
+import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/health/domain/health_math.dart';
 
@@ -133,6 +136,10 @@ final healthConnectionProvider =
 /// Bumped when the daily cache changes so [healthTodayProvider] recomputes.
 final _healthCacheVersionProvider = StateProvider<int>((_) => 0);
 
+/// Bumped when the written-workouts or imported-weigh-ins records change
+/// (prefs are not reactive), so the Health summary recomputes.
+final healthLedgerVersionProvider = StateProvider<int>((_) => 0);
+
 class HealthSync {
   HealthSync(this._ref);
 
@@ -212,6 +219,7 @@ class HealthSync {
               _ref.read(healthSourceProvider), firstDay, now, _mayWrite);
         } catch (_) {}
       }
+      if (_mayWrite()) _ref.read(healthLedgerVersionProvider.notifier).state++;
     } catch (_) {
       // Disposed meanwhile: nothing more to do.
     }
@@ -363,4 +371,78 @@ final stepsLast7Provider = Provider<StepsWeek?>((ref) {
   ];
   final week = StepsWeek(days);
   return week.average == null ? null : week;
+});
+
+/// What came from / went to Health in the last 7 days (today included).
+/// Counts of days or items, not today's values.
+class HealthSummary {
+  const HealthSummary({
+    this.stepsDays = 0,
+    this.sleepNights = 0,
+    this.restingHrDays = 0,
+    this.hrvDays = 0,
+    this.weighIns = 0,
+    this.workoutsImported = 0,
+    this.workoutsWritten = 0,
+  });
+
+  final int stepsDays;
+  final int sleepNights;
+  final int restingHrDays;
+  final int hrvDays;
+  final int weighIns;
+  final int workoutsImported;
+  final int workoutsWritten;
+
+  /// Nothing but (maybe) steps: a phone without a watch.
+  bool get onlySteps =>
+      sleepNights == 0 &&
+      restingHrDays == 0 &&
+      hrvDays == 0 &&
+      weighIns == 0 &&
+      workoutsImported == 0 &&
+      workoutsWritten == 0;
+}
+
+/// Null when Health is not connected.
+final healthSummaryProvider = Provider<HealthSummary?>((ref) {
+  final today = ref.watch(todayProvider);
+  ref.watch(_healthCacheVersionProvider);
+  ref.watch(healthLedgerVersionProvider);
+  if (!ref.watch(healthConnectionProvider).connected) return null;
+  final prefs = ref.watch(sharedPreferencesProvider);
+  final start = DateTime(today.year, today.month, today.day - 6);
+  final days = ref.watch(healthDailyStoreProvider).lastDays(7, today).values;
+
+  var weigh = 0;
+  try {
+    final raw = prefs.getString(WeightImporter.importedKey);
+    if (raw != null) {
+      final from = dayKey(start);
+      final to = dayKey(today);
+      weigh = (jsonDecode(raw) as List)
+          .cast<String>()
+          .where((k) => k.compareTo(from) >= 0 && k.compareTo(to) <= 0)
+          .length;
+    }
+  } catch (_) {}
+
+  final imports = ref.watch(healthImportsProvider);
+  final imported = ref
+      .watch(workoutHistoryProvider)
+      .where((w) =>
+          imports.containsKey(w.id) &&
+          !dayOf(w.startedAt).isBefore(start) &&
+          !dayOf(w.startedAt).isAfter(today))
+      .length;
+
+  return HealthSummary(
+    stepsDays: days.where((d) => d.steps != null).length,
+    sleepNights: days.where((d) => d.sleep != null).length,
+    restingHrDays: days.where((d) => d.restingHr != null).length,
+    hrvDays: days.where((d) => d.hrv != null).length,
+    weighIns: weigh,
+    workoutsImported: imported,
+    workoutsWritten: HealthWriter.writtenSince(prefs, start),
+  );
 });

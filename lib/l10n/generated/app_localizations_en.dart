@@ -4357,4 +4357,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get importedDelete => 'Delete workout';
+
+  @override
+  String connectedAppsSummaryTitle(String health) {
+    return 'From $health · last 7 days';
+  }
+
+  @override
+  String get connectedAppsSummarySteps => 'Days with steps';
+
+  @override
+  String get connectedAppsSummarySleep => 'Nights with sleep';
+
+  @override
+  String get connectedAppsSummaryRhr => 'Days with resting HR';
+
+  @override
+  String get connectedAppsSummaryHrv => 'Days with HRV';
+
+  @override
+  String get connectedAppsSummaryWeight => 'Weigh-ins imported';
+
+  @override
+  String get connectedAppsSummaryImported => 'Workouts imported';
+
+  @override
+  String connectedAppsSummaryWritten(String health) {
+    return 'Workouts saved to $health';
+  }
+
+  @override
+  String get connectedAppsSummaryHintIos =>
+      'No watch data yet — a watch (Apple Watch, Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts.';
+
+  @override
+  String get connectedAppsSummaryHintAndroid =>
+      'No watch data yet — a watch (Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts.';
 }

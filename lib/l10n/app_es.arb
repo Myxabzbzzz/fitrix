@@ -1222,5 +1222,17 @@
   "importedFromHealth": "De {health}",
   "importedAvgHr": "{bpm} lpm de media",
   "importedDeleteTitle": "¿Eliminar este entrenamiento?",
-  "importedDelete": "Eliminar entrenamiento"
+  "importedDelete": "Eliminar entrenamiento",
+  "connectedAppsSummaryTitle": "De {health} · últimos 7 días",
+  "@connectedAppsSummaryTitle": {"placeholders": {"health": {"type": "String"}}},
+  "connectedAppsSummarySteps": "Días con pasos",
+  "connectedAppsSummarySleep": "Noches con sueño",
+  "connectedAppsSummaryRhr": "Días con FC en reposo",
+  "connectedAppsSummaryHrv": "Días con VFC",
+  "connectedAppsSummaryWeight": "Pesajes importados",
+  "connectedAppsSummaryImported": "Entrenamientos importados",
+  "connectedAppsSummaryWritten": "Entrenamientos guardados en {health}",
+  "@connectedAppsSummaryWritten": {"placeholders": {"health": {"type": "String"}}},
+  "connectedAppsSummaryHintIos": "Aún no hay datos de reloj: un reloj (Apple Watch, Garmin, WHOOP, Mi Band) añade sueño, pulso y entrenamientos.",
+  "connectedAppsSummaryHintAndroid": "Aún no hay datos de reloj: un reloj (Garmin, WHOOP, Mi Band) añade sueño, pulso y entrenamientos."
 }

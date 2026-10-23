@@ -4376,4 +4376,40 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get importedDelete => 'Eliminar entrenamiento';
+
+  @override
+  String connectedAppsSummaryTitle(String health) {
+    return 'De $health · últimos 7 días';
+  }
+
+  @override
+  String get connectedAppsSummarySteps => 'Días con pasos';
+
+  @override
+  String get connectedAppsSummarySleep => 'Noches con sueño';
+
+  @override
+  String get connectedAppsSummaryRhr => 'Días con FC en reposo';
+
+  @override
+  String get connectedAppsSummaryHrv => 'Días con VFC';
+
+  @override
+  String get connectedAppsSummaryWeight => 'Pesajes importados';
+
+  @override
+  String get connectedAppsSummaryImported => 'Entrenamientos importados';
+
+  @override
+  String connectedAppsSummaryWritten(String health) {
+    return 'Entrenamientos guardados en $health';
+  }
+
+  @override
+  String get connectedAppsSummaryHintIos =>
+      'Aún no hay datos de reloj: un reloj (Apple Watch, Garmin, WHOOP, Mi Band) añade sueño, pulso y entrenamientos.';
+
+  @override
+  String get connectedAppsSummaryHintAndroid =>
+      'Aún no hay datos de reloj: un reloj (Garmin, WHOOP, Mi Band) añade sueño, pulso y entrenamientos.';
 }

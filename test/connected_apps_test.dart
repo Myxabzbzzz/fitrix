@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,10 +7,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/profile/presentation/screens/connected_apps_screen.dart';
 import 'package:fitrix/features/profile/presentation/screens/profile_tab_screen.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'support/fake_health_source.dart';
 import 'support/overflow.dart';
@@ -121,6 +126,9 @@ void main() {
     });
     await tapKey(tester, 'health-disconnect');
     expect(c.read(healthConnectionProvider).connected, isFalse);
+    // The tile got shorter; the list may have been scrolled past its top.
+    await tester.drag(find.byType(ListView), const Offset(0, 800));
+    await tester.pumpAndSettle();
     expect(find.byKey(const Key('connect-apple-health')), findsOneWidget);
     expect(
         find.textContaining('Settings › Health › Data Access'), findsOneWidget);
@@ -224,5 +232,130 @@ void main() {
     await pump(tester, platform: HealthPlatform.healthConnect);
     expect(find.textContaining('Apple Watch'), findsNothing);
     expect(find.textContaining('Garmin, WHOOP and Mi Band'), findsOneWidget);
+  });
+
+  group('From Health summary', () {
+    String conn() => jsonEncode({'connected': true, 'writeWorkouts': true});
+    String days(Map<String, Map<String, Object?>> m) => jsonEncode(m);
+
+    Map<String, Object> seeded({
+      Map<String, Map<String, Object?>>? d,
+      Map<String, Object> extra = const {},
+    }) =>
+        {
+          'health_connection_v1': conn(),
+          'health_days_v1': days(d ??
+              {
+                '2026-10-23': {'steps': 9000},
+                '2026-10-22': {'steps': 7000},
+              }),
+          ...extra,
+        };
+
+    testWidgets('no block when not connected', (tester) async {
+      await pump(tester);
+      expect(find.byKey(const Key('health-summary')), findsNothing);
+    });
+
+    test('counts from cache, imports, weigh-ins and the ledger', () async {
+      SharedPreferences.setMockInitialValues({
+        ...seeded(d: {
+          '2026-10-23': {'steps': 9000, 'sleep': 25200, 'restingHr': 55},
+          '2026-10-21': {'steps': 100, 'sleep': 100, 'sleepInBed': true},
+          '2026-10-18': {'hrv': 50.0, 'hrvKind': 'rmssd', 'steps': 1},
+          '2026-10-16': {'steps': 5, 'sleep': 1, 'restingHr': 50},
+        }),
+        'health_weight_imported_v1':
+            jsonEncode(['2026-10-10', '2026-10-17', '2026-10-22']),
+        'health_written_v1': jsonEncode(['old', 'a', 'b']),
+        'health_written_at_v1': jsonEncode({
+          'a': DateTime(2026, 10, 20, 9).toIso8601String(),
+          'b': DateTime(2026, 10, 10, 9).toIso8601String(),
+        }),
+      });
+      final prefs = await SharedPreferences.getInstance();
+      final c = ProviderContainer(overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        clockProvider.overrideWithValue(() => DateTime(2026, 10, 23, 10)),
+      ]);
+      addTearDown(c.dispose);
+      c
+          .read(healthImportsProvider.notifier)
+          .put('w1', const HealthImport(source: 'Watch', healthUuid: 'u1'));
+      c
+          .read(healthImportsProvider.notifier)
+          .put('w2', const HealthImport(source: 'Watch', healthUuid: 'u2'));
+      CompletedWorkout wk(String id, DateTime at) => CompletedWorkout(
+          id: id,
+          templateId: healthImportTemplateId,
+          name: 'Run',
+          sport: Sport.running,
+          startedAt: at,
+          finishedAt: at.add(const Duration(hours: 1)),
+          exercises: const []);
+      final h = c.read(workoutHistoryProvider.notifier);
+      h.addImported(wk('w1', DateTime(2026, 10, 17, 8)));
+      h.addImported(wk('w2', DateTime(2026, 10, 16, 8)));
+      h.addImported(wk('own', DateTime(2026, 10, 20, 8)));
+      final s = c.read(healthSummaryProvider)!;
+      expect(s.stepsDays, 3); // 23, 21, 18 (16th is outside)
+      expect(s.sleepNights, 2); // in-bed night counts
+      expect(s.restingHrDays, 1);
+      expect(s.hrvDays, 1);
+      expect(s.weighIns, 2); // 17 and 22
+      expect(s.workoutsImported, 1);
+      expect(s.workoutsWritten, 1); // old has no time, b is outside
+      expect(s.onlySteps, isFalse);
+    });
+
+    test('not connected: no summary', () async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final c = ProviderContainer(
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)]);
+      addTearDown(c.dispose);
+      expect(c.read(healthSummaryProvider), isNull);
+    });
+
+    testWidgets('iOS: labelled counts, zeros shown, hint names Apple Watch',
+        (tester) async {
+      await pump(tester, prefsValues: seeded());
+      expect(find.byKey(const Key('health-summary')), findsOneWidget);
+      expect(find.textContaining('last 7 days'), findsOneWidget);
+      expect(find.text('Days with steps'), findsOneWidget);
+      expect(find.text('Nights with sleep'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+      expect(find.text('0'), findsNWidgets(6));
+      expect(find.textContaining('(Apple Watch, Garmin'), findsOneWidget);
+      expect(find.byKey(const Key('health-summary-hint')), findsOneWidget);
+    });
+
+    testWidgets('Android hint has no Apple Watch', (tester) async {
+      await pump(tester,
+          platform: HealthPlatform.healthConnect, prefsValues: seeded());
+      final hint =
+          tester.widget<Text>(find.byKey(const Key('health-summary-hint')));
+      expect(hint.data, contains('Garmin'));
+      expect(hint.data, isNot(contains('Apple Watch')));
+    });
+
+    testWidgets('no hint when something besides steps came', (tester) async {
+      await pump(tester,
+          prefsValues: seeded(d: {
+            '2026-10-23': {'steps': 9000, 'sleep': 25200},
+          }));
+      expect(find.byKey(const Key('health-summary')), findsOneWidget);
+      expect(find.byKey(const Key('health-summary-hint')), findsNothing);
+    });
+
+    testWidgets('SE at 1.3x fits', (tester) async {
+      await pump(tester, textScale: 1.3, prefsValues: seeded());
+      expectNoOverflow(tester);
+      await pump(tester,
+          textScale: 1.3,
+          platform: HealthPlatform.healthConnect,
+          prefsValues: seeded());
+      expectNoOverflow(tester);
+    });
   });
 }

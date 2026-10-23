@@ -3288,5 +3288,17 @@
   "importedAvgHr": "{bpm} bpm avg",
   "@importedAvgHr": {"placeholders": {"bpm": {"type": "int"}}},
   "importedDeleteTitle": "Delete this workout?",
-  "importedDelete": "Delete workout"
+  "importedDelete": "Delete workout",
+  "connectedAppsSummaryTitle": "From {health} · last 7 days",
+  "@connectedAppsSummaryTitle": {"placeholders": {"health": {"type": "String"}}},
+  "connectedAppsSummarySteps": "Days with steps",
+  "connectedAppsSummarySleep": "Nights with sleep",
+  "connectedAppsSummaryRhr": "Days with resting HR",
+  "connectedAppsSummaryHrv": "Days with HRV",
+  "connectedAppsSummaryWeight": "Weigh-ins imported",
+  "connectedAppsSummaryImported": "Workouts imported",
+  "connectedAppsSummaryWritten": "Workouts saved to {health}",
+  "@connectedAppsSummaryWritten": {"placeholders": {"health": {"type": "String"}}},
+  "connectedAppsSummaryHintIos": "No watch data yet — a watch (Apple Watch, Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts.",
+  "connectedAppsSummaryHintAndroid": "No watch data yet — a watch (Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts."
 }

@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
@@ -47,6 +50,26 @@ class HealthWriter {
   static const key = 'health_written_v1';
   static const maxIds = 200;
 
+  /// When each id was written (`{id: ISO time}`), kept beside the id list;
+  /// ids from before this existed have no time and are not counted.
+  static const timesKey = 'health_written_at_v1';
+
+  /// Ids written at or after [since], per the time ledger.
+  static int writtenSince(SharedPreferences prefs, DateTime since) {
+    try {
+      final raw = prefs.getString(timesKey);
+      if (raw == null) return 0;
+      var n = 0;
+      for (final v in (jsonDecode(raw) as Map).values) {
+        final t = DateTime.tryParse('$v');
+        if (t != null && !t.isBefore(since)) n++;
+      }
+      return n;
+    } catch (_) {
+      return 0;
+    }
+  }
+
   List<String> _load() {
     try {
       final raw = _ref.read(sharedPreferencesProvider).getString(key);
@@ -60,7 +83,18 @@ class HealthWriter {
   Future<void> _remember(String id) async {
     final ids = _load()..add(id);
     final kept = ids.length > maxIds ? ids.sublist(ids.length - maxIds) : ids;
-    await _ref.read(sharedPreferencesProvider).setString(key, jsonEncode(kept));
+    final prefs = _ref.read(sharedPreferencesProvider);
+    await prefs.setString(key, jsonEncode(kept));
+    Map<String, dynamic> times = {};
+    try {
+      final raw = prefs.getString(timesKey);
+      if (raw != null) times = (jsonDecode(raw) as Map).cast<String, dynamic>();
+    } catch (_) {}
+    times[id] = _ref.read(clockProvider)().toIso8601String();
+    final keep = kept.toSet();
+    times.removeWhere((k, _) => !keep.contains(k));
+    await prefs.setString(timesKey, jsonEncode(times));
+    _ref.read(healthLedgerVersionProvider.notifier).state++;
   }
 
   /// A workout was created locally. Never throws.
