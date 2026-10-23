@@ -1,5 +1,6 @@
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
+import 'package:fitrix/features/health/domain/health_math.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
 enum SleepQuality { poor, ok, good }
@@ -69,7 +70,8 @@ typedef ReadinessFactor = ({String factor, int delta});
 class Readiness {
   final int score;
 
-  /// In order: sleep, soreness, energy, stress, load.
+  /// In order: sleep, soreness, energy, stress, load, then restingHr and hrv
+  /// when health signals with baselines were given.
   final List<ReadinessFactor> factors;
   final ReadinessLabel label;
 
@@ -82,10 +84,16 @@ abstract final class ReadinessFactorKey {
       soreness = 'soreness',
       energy = 'energy',
       stress = 'stress',
-      load = 'load';
+      load = 'load',
+      restingHr = 'restingHr',
+      hrv = 'hrv';
 }
 
-Readiness readiness(CheckIn c, {required int hardDaysLast7}) {
+Readiness readiness(
+  CheckIn c, {
+  required int hardDaysLast7,
+  HealthSignals? health,
+}) {
   final hours = c.sleep.inMinutes / 60;
   final sleepDelta = switch (c.quality) {
         SleepQuality.poor => -10,
@@ -123,6 +131,20 @@ Readiness readiness(CheckIn c, {required int hardDaysLast7}) {
     (factor: ReadinessFactorKey.stress, delta: stressDelta),
     (factor: ReadinessFactorKey.load, delta: loadDelta),
   ];
+  final rhr = health?.restingHr, rhrBase = health?.restingHrBaseline;
+  if (rhr != null && rhrBase != null) {
+    factors.add((
+      factor: ReadinessFactorKey.restingHr,
+      delta: restingHrDelta(rhr, rhrBase),
+    ));
+  }
+  final hrv = health?.hrv, hrvBase = health?.hrvBaseline;
+  if (hrv != null && hrvBase != null) {
+    factors.add((
+      factor: ReadinessFactorKey.hrv,
+      delta: hrvDelta(hrv, hrvBase),
+    ));
+  }
   final score =
       (80 + factors.fold<int>(0, (s, f) => s + f.delta)).clamp(0, 100);
   final label = score >= 70
