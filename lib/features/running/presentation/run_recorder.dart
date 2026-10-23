@@ -263,7 +263,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
       ),
     );
     await _end();
-    _emit(RunFinished(track.meters, moving, paceSecPerKm(track.meters, moving)));
+    _emit(
+        RunFinished(track.meters, moving, paceSecPerKm(track.meters, moving)));
     return workout;
   }
 
@@ -415,9 +416,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
         for (final m in j['pauses'] as List)
           (
             pausedAt: DateTime.parse((m as List)[0] as String).toLocal(),
-            resumedAt: m.length > 1
-                ? DateTime.parse(m[1] as String).toLocal()
-                : null,
+            resumedAt:
+                m.length > 1 ? DateTime.parse(m[1] as String).toLocal() : null,
           ),
       ];
 
@@ -491,10 +491,8 @@ final runRecorderProvider =
     prefs: ref.read(sharedPreferencesProvider),
     saveWorkout: (w) => ref.read(workoutHistoryProvider.notifier).add(w),
     saveDetails: (id, d) => ref.read(runsProvider.notifier).put(id, d),
-    templateById: (id) => ref
-        .read(workoutTemplatesProvider)
-        .where((t) => t.id == id)
-        .firstOrNull,
+    templateById: (id) =>
+        ref.read(workoutTemplatesProvider).where((t) => t.id == id).firstOrNull,
     l10n: () =>
         lookupAppLocalizations(Locale(ref.read(selectedLanguageProvider))),
     now: ref.read(clockProvider),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -45,16 +47,18 @@ class RunHistoryList extends StatelessWidget {
   }
 }
 
-class _RunRow extends StatelessWidget {
+class _RunRow extends ConsumerWidget {
   const _RunRow({super.key, required this.run, required this.locale});
 
   final RunEntry run;
   final String locale;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
+    final source =
+        ref.watch(healthImportsProvider.select((m) => m[run.id]?.source));
     final d = run.details;
     final pace = formatPace(paceSecPerKm(d.meters, d.moving));
     return Padding(
@@ -74,9 +78,12 @@ class _RunRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    DateFormat.MMMEd(locale)
-                        .add_Hm()
-                        .format(d.startedAt.toLocal()),
+                    [
+                      DateFormat.MMMEd(locale)
+                          .add_Hm()
+                          .format(d.startedAt.toLocal()),
+                      if (source != null) source,
+                    ].join(' · '),
                     style:
                         AppText.caption.copyWith(color: palette.textSecondary),
                   ),

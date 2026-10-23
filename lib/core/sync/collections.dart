@@ -10,6 +10,7 @@ import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
 import 'package:fitrix/features/football/data/match_log.dart';
 import 'package:fitrix/features/football/data/match_store.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
@@ -45,6 +46,7 @@ List<SyncedCollection> syncedCollections(Ref ref) => [
       WorkoutDeletedCollection(ref),
       RunCollection(ref),
       MatchCollection(ref),
+      HealthImportCollection(ref),
     ];
 
 /// Parses [json] with [parse]; null when it fails.
@@ -600,4 +602,38 @@ class MatchCollection extends SyncedCollection {
 
   @override
   void clear() => _ref.read(matchesProvider.notifier).clear();
+}
+
+/// Details of workouts imported from Health (doc id = workout id).
+class HealthImportCollection extends SyncedCollection {
+  HealthImportCollection(this._ref);
+  final Ref _ref;
+
+  @override
+  String get kind => 'health_import';
+
+  @override
+  Map<String, Map<String, Object?>> read() => {
+        for (final e in _ref.read(healthImportStoreProvider).all().entries)
+          e.key: _plain(e.value.toJson()),
+      };
+
+  @override
+  void apply(Map<String, Map<String, Object?>?> docs) {
+    final updates = <String, HealthImport?>{};
+    for (final e in docs.entries) {
+      final data = e.value;
+      if (data == null) {
+        updates[e.key] = null;
+        continue;
+      }
+      final d = _tryParse(data, (j) => HealthImport.fromJson(j));
+      if (d != null) updates[e.key] = d;
+    }
+    if (updates.isEmpty) return;
+    _ref.read(healthImportsProvider.notifier).applySynced(updates);
+  }
+
+  @override
+  void clear() => _ref.read(healthImportsProvider.notifier).clear();
 }

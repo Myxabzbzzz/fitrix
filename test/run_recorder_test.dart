@@ -132,7 +132,8 @@ void main() {
     expect(await r.recorder.start(), LocationAccess.granted);
     expect(r.session!.phase, RunPhase.running);
     expect(r.source.listening, isTrue);
-    expect(r.container.read(sharedPreferencesProvider).getString(runInProgressKey),
+    expect(
+        r.container.read(sharedPreferencesProvider).getString(runInProgressKey),
         isNotNull);
 
     r.runTo(2100);
@@ -168,7 +169,8 @@ void main() {
     expect(details.route, isNotEmpty);
     expect(r.container.read(runsProvider).keys, [saved.id]);
 
-    expect(r.container.read(sharedPreferencesProvider).getString(runInProgressKey),
+    expect(
+        r.container.read(sharedPreferencesProvider).getString(runInProgressKey),
         isNull);
     expect(r.session, isNull);
     expect(r.source.stops, greaterThan(0));
@@ -200,8 +202,10 @@ void main() {
     await r.container.read(selectedLanguageProvider.notifier).setLanguage('ru');
     await r.recorder.start();
     final saved = await r.recorder.finish();
-    expect(saved.name, lookupAppLocalizations(const Locale('ru')).runNameEvening);
-    expect(saved.name, isNot(lookupAppLocalizations(const Locale('en')).runNameEvening));
+    expect(
+        saved.name, lookupAppLocalizations(const Locale('ru')).runNameEvening);
+    expect(saved.name,
+        isNot(lookupAppLocalizations(const Locale('en')).runNameEvening));
   });
 
   group('two quick starts', () {
@@ -238,13 +242,15 @@ void main() {
     LocationAccess.deniedForever,
     LocationAccess.serviceOff,
   ]) {
-    test('$access: start reports it, no session, no location stream',
-        () async {
+    test('$access: start reports it, no session, no location stream', () async {
       final r = await rig(source: FakeLocationSource(access));
       expect(await r.recorder.start(), access);
       expect(r.session, isNull);
       expect(r.source.starts, 0);
-      expect(r.container.read(sharedPreferencesProvider).getString(runInProgressKey),
+      expect(
+          r.container
+              .read(sharedPreferencesProvider)
+              .getString(runInProgressKey),
           isNull);
     });
   }
@@ -265,8 +271,7 @@ void main() {
     expect(details.pauses, 1);
   });
 
-  test('pause and resume emit events and ignore fixes while paused',
-      () async {
+  test('pause and resume emit events and ignore fixes while paused', () async {
     final r = await rig();
     final events = <RunEvent>[];
     r.recorder.events.listen(events.add);
@@ -280,8 +285,8 @@ void main() {
     r.recorder.resume();
     expect(r.session!.phase, RunPhase.running);
     await pumpEventQueue();
-    expect(events.map((e) => e.runtimeType),
-        [RunStarted, RunPaused, RunResumed]);
+    expect(
+        events.map((e) => e.runtimeType), [RunStarted, RunPaused, RunResumed]);
   });
 
   test('killed after 600 m and a pause: the run comes back and continues',
@@ -324,8 +329,7 @@ void main() {
     expect(saved.startedAt, t0);
   });
 
-  test('killed while running: restored paused at the last saved fix',
-      () async {
+  test('killed while running: restored paused at the last saved fix', () async {
     final r = await rig();
     await r.recorder.start();
     r.runTo(600); // 216 s of fixes, saved at least every 10 s
@@ -341,8 +345,7 @@ void main() {
         inInclusiveRange(200, 216));
   });
 
-  test('GPS status: raw fixes, a restored run before Resume, finish',
-      () async {
+  test('GPS status: raw fixes, a restored run before Resume, finish', () async {
     final r = await rig();
     await r.recorder.start();
     expect(r.recorder.gpsStatus(), GpsStatus.waiting);
@@ -382,7 +385,8 @@ void main() {
     expect(r.session, isNull);
     expect(r.container.read(workoutHistoryProvider), isEmpty);
     expect(r.container.read(runStoreProvider).all(), isEmpty);
-    expect(r.container.read(sharedPreferencesProvider).getString(runInProgressKey),
+    expect(
+        r.container.read(sharedPreferencesProvider).getString(runInProgressKey),
         isNull);
     expect(r.source.listening, isFalse);
   });

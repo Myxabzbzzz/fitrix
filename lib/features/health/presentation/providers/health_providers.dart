@@ -7,6 +7,7 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/health/data/health_daily_store.dart';
+import 'package:fitrix/features/health/data/health_importers.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/health/domain/health_math.dart';
 
@@ -16,7 +17,8 @@ abstract class HealthImporter {
   Future<void> run(HealthSource s, DateTime from, DateTime to);
 }
 
-final healthImportersProvider = Provider<List<HealthImporter>>((_) => const []);
+final healthImportersProvider = Provider<List<HealthImporter>>(
+    (ref) => [WorkoutImporter(ref), WeightImporter(ref)]);
 
 final healthDailyStoreProvider = Provider<HealthDailyStore>((ref) =>
     HealthDailyStore(ref.watch(sharedPreferencesProvider),

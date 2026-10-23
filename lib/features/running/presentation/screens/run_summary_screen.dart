@@ -7,6 +7,7 @@ import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
@@ -73,6 +74,7 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
     _done = true;
     ref.read(workoutHistoryProvider.notifier).remove(widget.id);
     ref.read(runsProvider.notifier).remove(widget.id);
+    ref.read(healthImportsProvider.notifier).remove(widget.id);
     _close();
   }
 
@@ -104,6 +106,7 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
     }
 
     final locale = l10n.localeName;
+    final imported = ref.watch(healthImportsProvider)[widget.id];
     final avg = paceSecPerKm(details.meters, details.moving);
     final rated =
         widget.justFinished ? _rpe : workout.sessionRpe ?? details.rpe;
@@ -137,14 +140,20 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
               padding: const EdgeInsets.only(
                   left: 48 + AppSpacing.xs, bottom: AppSpacing.sm),
               child: Text(
-                DateFormat.yMMMMEEEEd(locale)
-                    .add_Hm()
-                    .format(details.startedAt.toLocal()),
+                [
+                  DateFormat.yMMMMEEEEd(locale)
+                      .add_Hm()
+                      .format(details.startedAt.toLocal()),
+                  if (imported != null) imported.source,
+                ].join(' · '),
                 style: AppText.body14.copyWith(color: palette.textSecondary),
               ),
             ),
-            RunMap(route: details.route),
-            const SizedBox(height: AppSpacing.md),
+            // A run imported from Health has no route: no map at all.
+            if (details.route.isNotEmpty) ...[
+              RunMap(route: details.route),
+              const SizedBox(height: AppSpacing.md),
+            ],
             Wrap(
               spacing: AppSpacing.md,
               runSpacing: AppSpacing.md,
@@ -168,11 +177,12 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
-            Text(
-              l10n.runElapsedLine(formatClock(details.elapsed),
-                  l10n.runPausesCount(details.pauses)),
-              style: AppText.body14.copyWith(color: palette.textSecondary),
-            ),
+            if (imported == null)
+              Text(
+                l10n.runElapsedLine(formatClock(details.elapsed),
+                    l10n.runPausesCount(details.pauses)),
+                style: AppText.body14.copyWith(color: palette.textSecondary),
+              ),
             if (details.splits.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.lg),
               Text(l10n.runSplits,

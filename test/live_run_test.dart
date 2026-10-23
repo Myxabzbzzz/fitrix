@@ -244,8 +244,8 @@ void main() {
     await _openRunningList(r);
     await _tapStart(r, 'Easy 5K');
 
-    final g = await t.startGesture(
-        t.getCenter(find.byKey(const ValueKey('run-finish'))));
+    final g = await t
+        .startGesture(t.getCenter(find.byKey(const ValueKey('run-finish'))));
     await t.pump();
     // Sliding up, as in a pocket or a scroll: 4 px every 100 ms.
     for (var i = 0; i < 12; i++) {

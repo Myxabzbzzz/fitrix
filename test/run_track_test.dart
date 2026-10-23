@@ -155,8 +155,7 @@ void main() {
           .add(stale)
           .add(eastFix(0, 2))
           .add(eastFix(14, 7));
-      expect(track.kept.map((p) => p.at),
-          isNot(contains(stale.at)));
+      expect(track.kept.map((p) => p.at), isNot(contains(stale.at)));
       expect(track.kept, hasLength(2));
       expect(track.meters, closeTo(14, 1));
     });

@@ -74,7 +74,8 @@ void main() {
       final router = GoRouter(routes: [
         GoRoute(
             path: '/',
-            builder: (_, __) => const Scaffold(body: FelixChatScreen(topic: AssistantTopic.app))),
+            builder: (_, __) => const Scaffold(
+                body: FelixChatScreen(topic: AssistantTopic.app))),
         GoRoute(
             path: AppRouter.nutrition,
             builder: (_, __) {

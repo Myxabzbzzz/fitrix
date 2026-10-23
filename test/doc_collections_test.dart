@@ -10,6 +10,7 @@ import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
@@ -457,6 +458,35 @@ void main() {
       expect(col.read(), isEmpty, reason: col.kind);
     }
   });
+  test('health imports: sync as health_import docs, removal is a tombstone',
+      () async {
+    final a = await device(remote);
+    final b = await device(remote);
+    b.c.read(healthImportsProvider); // built before the pull
+
+    a.c.read(healthImportsProvider.notifier).put(
+        'w1',
+        const HealthImport(
+            source: 'Apple Watch',
+            healthUuid: 'u-1',
+            meters: 5200,
+            avgHr: 146,
+            kcal: 310));
+    await a.sync();
+    expect(remote.docsOf(uid).single.key, 'health_import/w1');
+
+    await b.sync();
+    final got = b.c.read(healthImportsProvider)['w1']!;
+    expect((got.source, got.healthUuid, got.meters, got.avgHr, got.kcal),
+        ('Apple Watch', 'u-1', 5200, 146, 310));
+    expect(b.engine.pendingCount(), 0);
+
+    b.c.read(healthImportsProvider.notifier).remove('w1');
+    await b.sync();
+    await a.sync();
+    expect(a.c.read(healthImportsProvider), isEmpty);
+  });
+
   test('another account signing in clears account A data before its pull',
       () async {
     final a = await device(remote);

@@ -115,11 +115,7 @@ class FakeHealthSource implements HealthSource {
     String? title,
   }) async {
     written.add(WrittenWorkout(
-        activity: activity,
-        from: from,
-        to: to,
-        meters: meters,
-        title: title));
+        activity: activity, from: from, to: to, meters: meters, title: title));
     return writeResult;
   }
 }

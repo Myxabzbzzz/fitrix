@@ -193,6 +193,11 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
 
   void add(CompletedWorkout workout) => state = [workout, ...state];
 
+  /// A workout read from Apple Health / Health Connect. Saved and synced
+  /// exactly like [add], but a separate entry point: what hooks [add] (like
+  /// writing finished workouts to Health) must never see imports.
+  void addImported(CompletedWorkout workout) => state = [workout, ...state];
+
   /// Deletes a finished workout. The deletion is remembered so it syncs to
   /// the cloud and other devices, and a sync never brings the workout back.
   void remove(String id) {

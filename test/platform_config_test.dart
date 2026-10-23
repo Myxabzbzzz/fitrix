@@ -31,15 +31,16 @@ void main() {
   });
 
   test('the location usage string says it records runs', () {
-    expect(_plistString(plist, 'NSLocationWhenInUseUsageDescription'),
+    expect(
+        _plistString(plist, 'NSLocationWhenInUseUsageDescription'),
         'FITRIX uses your location to record runs and to show gyms and '
         'parks near you.');
   });
 
   test('only "when in use" location is asked for on iOS', () {
     expect(plist, isNot(contains('NSLocationAlwaysUsageDescription')));
-    expect(plist,
-        isNot(contains('NSLocationAlwaysAndWhenInUseUsageDescription')));
+    expect(
+        plist, isNot(contains('NSLocationAlwaysAndWhenInUseUsageDescription')));
   });
 
   test('Android declares the foreground location service permissions', () {
@@ -69,8 +70,7 @@ void main() {
     expect(a.distanceFilter, lessThanOrEqualTo(5));
   });
 
-  test('Android settings run as a foreground service with a notification',
-      () {
+  test('Android settings run as a foreground service with a notification', () {
     final s =
         GeolocatorLocationSource.settingsForPlatform(TargetPlatform.android);
     expect(s, isA<AndroidSettings>());
@@ -81,10 +81,12 @@ void main() {
   });
 
   test('iOS declares the Health usage strings', () {
-    expect(_plistString(plist, 'NSHealthShareUsageDescription'),
+    expect(
+        _plistString(plist, 'NSHealthShareUsageDescription'),
         'FITRIX reads sleep, heart rate, HRV, steps, weight and workouts to '
         'fill your check-in, recovery and training load.');
-    expect(_plistString(plist, 'NSHealthUpdateUsageDescription'),
+    expect(
+        _plistString(plist, 'NSHealthUpdateUsageDescription'),
         'FITRIX saves the workouts you record so they count in Apple Health '
         'and Fitness.');
   });
@@ -96,11 +98,11 @@ void main() {
             .hasMatch(ent),
         isTrue);
     expect(ent, contains('com.apple.developer.healthkit.access'));
-    final pbx =
-        File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
+    final pbx = File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
     expect(pbx, contains('IPHONEOS_DEPLOYMENT_TARGET = 15.0'));
     expect(pbx, isNot(contains('IPHONEOS_DEPLOYMENT_TARGET = 13.0')));
-    expect('CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;'
+    expect(
+        'CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;'
             .allMatches(pbx)
             .length,
         3);
@@ -130,8 +132,10 @@ void main() {
     expect(manifest, contains('android.intent.action.VIEW_PERMISSION_USAGE'));
     expect(manifest, contains('android.intent.category.HEALTH_PERMISSIONS'));
     expect(manifest, contains('<activity-alias'));
-    expect(manifest,
-        contains('<package android:name="com.google.android.apps.healthdata" />'));
+    expect(
+        manifest,
+        contains(
+            '<package android:name="com.google.android.apps.healthdata" />'));
   });
 
   test('Android uses a fragment activity and minSdk 26', () {
