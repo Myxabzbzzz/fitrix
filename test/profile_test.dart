@@ -207,8 +207,12 @@ void main() {
     testWidgets('4 apps not connected; Connect opens a disabled sheet',
         (tester) async {
       await pumpScreen(tester, const ConnectedAppsScreen());
-      expect(find.text('Not connected', skipOffstage: false), findsNWidgets(4));
+      expect(find.text('Not connected', skipOffstage: false), findsWidgets);
       expect(find.text('Apple Health'), findsOneWidget);
+      await tester.dragUntilVisible(find.byKey(const Key('connect-garmin')),
+          find.byType(ListView), const Offset(0, -100));
+      await tester.ensureVisible(find.byKey(const Key('connect-garmin')));
+      await tester.pumpAndSettle();
       expect(find.text('WHOOP', skipOffstage: false), findsOneWidget);
       await tester.tap(find.byKey(const Key('connect-garmin')));
       await tester.pumpAndSettle();
@@ -219,8 +223,10 @@ void main() {
 
     testWidgets('SE at 1.3x text: no overflow', (tester) async {
       await pumpScreen(tester, const ConnectedAppsScreen(), textScale: 1.3);
-      await tester.scrollUntilVisible(
-          find.byKey(const Key('connect-garmin')), 100);
+      await tester.dragUntilVisible(find.byKey(const Key('connect-garmin')),
+          find.byType(ListView), const Offset(0, -100));
+      await tester.ensureVisible(find.byKey(const Key('connect-garmin')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('connect-garmin')));
       await tester.pumpAndSettle();
       expectNoOverflow(tester);

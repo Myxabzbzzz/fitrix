@@ -1544,14 +1544,21 @@
   "editProfileErrFiveK": "Enter a time from 12:00 to 60:00",
   "connectedAppsTitle": "Connected apps",
   "connectedAppsWhyHeader": "WHY CONNECT",
-  "connectedAppsWhyBody": "When connecting arrives in a later update, a watch could fill in sleep, resting HR and HRV for your morning check-in. Until then, you fill in the check-in yourself.",
-  "connectedAppsAppleDesc": "Sleep, heart rate, steps, weight",
+  "connectedAppsWhyBody": "{health} fills in your morning check-in: last night's sleep, resting HR and HRV for recovery, steps and weight from smart scales. Workouts from your watch appear in your history and training load. Apple Watch, Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through {health} once that app's sync to {health} is on.",
+  "@connectedAppsWhyBody": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsHealthDesc": "Sleep, heart rate, HRV, steps, weight, workouts",
   "connectedAppsGarminDesc": "Activities, HR, sleep, HRV",
   "connectedAppsStravaDesc": "Runs, rides and ski activities",
   "connectedAppsWhoopDesc": "Recovery, strain, sleep, HRV",
   "connectedAppsNotConnected": "Not connected",
   "connectedAppsConnect": "Connect",
-  "connectedAppsFooter": "Once apps can be connected, you will be able to disconnect any of them at any time.",
+  "connectedAppsFooter": "You can disconnect at any time.",
   "connectedAppsSheetTitle": "Connect {app}",
   "@connectedAppsSheetTitle": {
     "placeholders": {
@@ -1562,9 +1569,56 @@
   },
   "connectedAppsSheetSubtitle": "What FITRIX could read",
   "connectedAppsSheetPrivacy": "When this arrives, FITRIX will only read data and never post.",
-  "connectedAppsSheetSoon": "Connecting apps is not available yet. We will add it in a later update.",
+  "connectedAppsSheetSoon": "Connecting {app} directly is not available yet. Meanwhile send its data to {health} and FITRIX will read it from there.",
+  "@connectedAppsSheetSoon": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      },
+      "health": {
+        "type": "String"
+      }
+    }
+  },
   "connectedAppsComingSoon": "Coming in a later update",
   "connectedAppsClose": "Close",
+  "connectedAppsConnected": "Connected",
+  "connectedAppsLastRead": "Last read {time}",
+  "@connectedAppsLastRead": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsReading": "Reading your data…",
+  "connectedAppsWriteWorkouts": "Save my FITRIX workouts to {health}",
+  "@connectedAppsWriteWorkouts": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsDisconnect": "Disconnect",
+  "connectedAppsDisconnectedIos": "To remove access, open Settings › Health › Data Access & Devices › FITRIX.",
+  "connectedAppsDisconnectedAndroid": "To remove access, open Health Connect › App permissions › FITRIX.",
+  "connectedAppsDeniedIos": "Access wasn't granted. You can change it in the Health app.",
+  "connectedAppsDeniedAndroid": "Access wasn't granted. You can change it in Health Connect.",
+  "connectedAppsInstall": "Install",
+  "connectedAppsUpdate": "Update",
+  "connectedAppsNotInstalled": "Health Connect is not installed on this phone.",
+  "connectedAppsNeedsUpdate": "Health Connect needs an update.",
+  "connectedAppsUnavailable": "Not available on this device.",
+  "connectedAppsPrivacy": "Health data stays on this phone; only workouts you import and your check-in are saved to your account.",
+  "connectedAppsDeleteHelp": "Deleting a workout in FITRIX does not delete it from {health}.",
+  "@connectedAppsDeleteHelp": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
   "nutritionToday": "Today",
   "nutritionDateTraining": "{date} · training day",
   "@nutritionDateTraining": {

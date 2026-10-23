@@ -77,6 +77,13 @@ void main() {
     c = make();
   });
 
+  /// connect() returns once access is granted and reads in the background:
+  /// wait for that first 30-day read to land.
+  Future<void> connectAndRead() async {
+    await c.read(healthConnectionProvider.notifier).connect();
+    await c.read(healthSyncProvider).refresh();
+  }
+
   String key(int daysBack) {
     final d = DateTime(2026, 10, 23 - daysBack);
     return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
@@ -85,6 +92,7 @@ void main() {
   test('connect asks for access, marks connected and persists', () async {
     expect(c.read(healthConnectionProvider).connected, isFalse);
     expect(await c.read(healthConnectionProvider.notifier).connect(), isTrue);
+    await c.read(healthSyncProvider).refresh();
     expect(fake.requestAccessCalls, 1);
     expect(c.read(healthConnectionProvider).connected, isTrue);
     expect(
@@ -100,7 +108,7 @@ void main() {
   });
 
   test('refresh fills today with sleep, resting HR, HRV and steps', () async {
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     final d = c.read(healthDailyStoreProvider).day(key(0))!;
     expect(d.sleep, const Duration(hours: 7, minutes: 30));
     expect(d.sleepSource, 'Watch');
@@ -115,19 +123,19 @@ void main() {
 
   test('resting HR falls back to the last 24 hours', () async {
     fake.restingHrSamples = [_s(DateTime(2026, 10, 22, 14), 61)];
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     expect(c.read(healthDailyStoreProvider).day(key(0))!.restingHr, 61);
   });
 
   test('first read covers 30 days', () async {
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     final store = c.read(healthDailyStoreProvider);
     expect(store.day(key(30)), isNotNull);
     expect(store.day(key(31)), isNull);
   });
 
   test('throttled to 15 minutes; force reads anyway', () async {
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     fake.stepsValue = 5;
     now = now.add(const Duration(minutes: 14));
     await c.read(healthSyncProvider).refresh();
@@ -145,7 +153,7 @@ void main() {
   test('later reads start 2 days back', () async {
     final imp = _Counting();
     c = make(importers: [imp]);
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     expect(imp.from, DateTime(2026, 9, 23));
     now = now.add(const Duration(hours: 1));
     await c.read(healthSyncProvider).refresh();
@@ -161,7 +169,7 @@ void main() {
   });
 
   test('a second refresh while one runs shares it', () async {
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     final sync = c.read(healthSyncProvider);
     final a = sync.refresh(force: true);
     final b = sync.refresh(force: true);
@@ -170,7 +178,7 @@ void main() {
   });
 
   test('a throwing source leaves cache and lastReadAt alone', () async {
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     final before = c.read(healthConnectionProvider).lastReadAt;
     final raw = prefs.getString('health_days_v1');
     fake.throwOnRead = true;
@@ -184,14 +192,14 @@ void main() {
     final bad = _Throwing();
     final good = _Counting();
     c = make(importers: [bad, good]);
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     expect(bad.runs, 1);
     expect(good.from, isNotNull);
   });
 
   test('unknown steps stay null, not 0', () async {
     fake.stepsValue = null;
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     expect(c.read(healthDailyStoreProvider).day(key(0))!.steps, isNull);
     expect(c.read(healthTodayProvider).stepsToday, isNull);
   });
@@ -217,7 +225,7 @@ void main() {
     await c.read(healthConnectionProvider.notifier).setWriteWorkouts(false);
     // connect without reading: set state through a read-less source
     fake.throwOnRead = true;
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     fake.throwOnRead = false;
     final store = c.read(healthDailyStoreProvider);
     for (final e in byBack.entries) {
@@ -289,7 +297,7 @@ void main() {
 
   test('clearLocalData and reload empty the store and the connection',
       () async {
-    await c.read(healthConnectionProvider.notifier).connect();
+    await connectAndRead();
     expect(c.read(healthDailyStoreProvider).day(key(0)), isNotNull);
 
     final session = AppSession(prefs);

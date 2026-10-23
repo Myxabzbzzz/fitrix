@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -81,15 +82,21 @@ class HealthConnectionNotifier extends Notifier<HealthConnection> {
   }
 
   /// Asks for access (the one system sheet) and, if granted, marks the app
-  /// connected and reads the first 30 days. Returns whether it is connected.
+  /// connected (workout writing on) and starts the first 30-day read in the
+  /// background: it returns as soon as access is granted, the last read time
+  /// appears when the read lands. Returns whether it is connected.
   Future<bool> connect() async {
     var granted = false;
     try {
       granted = await ref.read(healthSourceProvider).requestAccess();
     } catch (_) {}
     if (!granted) return false;
-    await _set(state.copyWith(connected: true, clearLastReadAt: true));
-    await ref.read(healthSyncProvider).refresh(force: true);
+    await _set(state.copyWith(
+        connected: true, writeWorkouts: true, clearLastReadAt: true));
+    unawaited(ref
+        .read(healthSyncProvider)
+        .refresh(force: true)
+        .catchError((Object _) {}));
     return true;
   }
 
@@ -101,6 +108,18 @@ class HealthConnectionNotifier extends Notifier<HealthConnection> {
 
   Future<void> markRead(DateTime at) => _set(state.copyWith(lastReadAt: at));
 }
+
+/// Whether the platform's health store can be connected (Health Connect may
+/// be missing or outdated). Only asked on Android; Apple Health is always
+/// available.
+final healthAvailabilityProvider =
+    FutureProvider.autoDispose<HealthAvailability>((ref) async {
+  try {
+    return await ref.read(healthSourceProvider).availability();
+  } catch (_) {
+    return HealthAvailability.unsupported;
+  }
+});
 
 final healthConnectionProvider =
     NotifierProvider<HealthConnectionNotifier, HealthConnection>(

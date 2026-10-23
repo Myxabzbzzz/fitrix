@@ -591,20 +591,74 @@
   "editProfileErrFiveK": "12:00 dan 60:00 gacha vaqt kiriting",
   "connectedAppsTitle": "Ulangan ilovalar",
   "connectedAppsWhyHeader": "NEGA ULASH KERAK",
-  "connectedAppsWhyBody": "Ulash keyingi yangilanishlardan birida paydo bo‘lganda, soat ertalabki tekshiruv uchun uyqu, tinch puls va HRVni o‘zi to‘ldira oladi. Hozircha tekshiruvni o‘zingiz to‘ldirasiz.",
-  "connectedAppsAppleDesc": "Uyqu, puls, qadamlar, vazn",
+  "connectedAppsWhyBody": "{health} ertalabki tekshiruvni to‘ldiradi: o‘tgan tungi uyqu, tiklanish uchun tinch puls va HRV, qadamlar va aqlli tarozidagi vazn. Soatdagi mashg‘ulotlar tarix va mashg‘ulot yuklamasida ko‘rinadi. Apple Watch, Garmin, WHOOP va Mi Band (Zepp / Mi Fitness) ma‘lumotlari o‘sha ilovada {health} bilan sinxronlash yoqilgach, {health} orqali keladi.",
+  "@connectedAppsWhyBody": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsHealthDesc": "Uyqu, puls, HRV, qadamlar, vazn, mashg‘ulotlar",
   "connectedAppsGarminDesc": "Mashg‘ulotlar, puls, uyqu, HRV",
   "connectedAppsStravaDesc": "Yugurish, velosiped va chang‘i",
   "connectedAppsWhoopDesc": "Tiklanish, yuklama, uyqu, HRV",
   "connectedAppsNotConnected": "Ulanmagan",
   "connectedAppsConnect": "Ulash",
-  "connectedAppsFooter": "Ilovalarni ulash imkoni paydo bo‘lgach, istalganini istalgan vaqtda uzishingiz mumkin bo‘ladi.",
+  "connectedAppsFooter": "Istalgan vaqtda uzishingiz mumkin.",
   "connectedAppsSheetTitle": "{app} ni ulash",
   "connectedAppsSheetSubtitle": "FITRIX nimalarni o‘qiy oladi",
   "connectedAppsSheetPrivacy": "Bu imkoniyat paydo bo‘lganda, FITRIX faqat ma‘lumotlarni o‘qiydi va hech narsa joylamaydi.",
-  "connectedAppsSheetSoon": "Ilovalarni ulash hozircha mavjud emas. Keyingi yangilanishda qo‘shamiz.",
+  "connectedAppsSheetSoon": "{app} ni to‘g‘ridan-to‘g‘ri ulash hozircha mavjud emas. Hozircha uning ma‘lumotlarini {health} ga yuboring, FITRIX ularni o‘sha yerdan o‘qiydi.",
+  "@connectedAppsSheetSoon": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      },
+      "health": {
+        "type": "String"
+      }
+    }
+  },
   "connectedAppsComingSoon": "Keyingi yangilanishda",
   "connectedAppsClose": "Yopish",
+  "connectedAppsConnected": "Ulangan",
+  "connectedAppsLastRead": "Oxirgi o‘qish: {time}",
+  "@connectedAppsLastRead": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsReading": "Ma‘lumotlar o‘qilmoqda…",
+  "connectedAppsWriteWorkouts": "FITRIX mashg‘ulotlarimni {health} ga saqlash",
+  "@connectedAppsWriteWorkouts": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsDisconnect": "Uzish",
+  "connectedAppsDisconnectedIos": "Ruxsatni olib tashlash uchun Sozlamalar › Salomatlik › Ma‘lumotlarga kirish va qurilmalar › FITRIX ni oching.",
+  "connectedAppsDisconnectedAndroid": "Ruxsatni olib tashlash uchun Health Connect › Ilova ruxsatlari › FITRIX ni oching.",
+  "connectedAppsDeniedIos": "Ruxsat berilmadi. Buni Salomatlik ilovasida o‘zgartirishingiz mumkin.",
+  "connectedAppsDeniedAndroid": "Ruxsat berilmadi. Buni Health Connect ilovasida o‘zgartirishingiz mumkin.",
+  "connectedAppsInstall": "O‘rnatish",
+  "connectedAppsUpdate": "Yangilash",
+  "connectedAppsNotInstalled": "Health Connect bu telefonda o‘rnatilmagan.",
+  "connectedAppsNeedsUpdate": "Health Connectni yangilash kerak.",
+  "connectedAppsUnavailable": "Bu qurilmada mavjud emas.",
+  "connectedAppsPrivacy": "Salomatlik ma‘lumotlari shu telefonda qoladi; hisobingizga faqat import qilingan mashg‘ulotlar va tekshiruvingiz saqlanadi.",
+  "connectedAppsDeleteHelp": "FITRIX da mashg‘ulotni o‘chirish uni {health} dan o‘chirmaydi.",
+  "@connectedAppsDeleteHelp": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
   "nutritionToday": "Bugun",
   "nutritionDateTraining": "{date} · mashg‘ulot kuni",
   "nutritionCompleteTitle": "Profilingizni to‘ldiring",

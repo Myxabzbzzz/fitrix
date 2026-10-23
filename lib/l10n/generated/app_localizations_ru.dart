@@ -2160,11 +2160,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get connectedAppsWhyHeader => 'ЗАЧЕМ ПОДКЛЮЧАТЬ';
 
   @override
-  String get connectedAppsWhyBody =>
-      'Когда подключение появится в одном из следующих обновлений, часы смогут сами заполнять сон, пульс покоя и ВСР для утреннего чек-ина. А пока чек-ин заполняете вы.';
+  String connectedAppsWhyBody(String health) {
+    return '$health заполняет утренний чек-ин: сон прошлой ночи, пульс покоя и ВСР для восстановления, шаги и вес с умных весов. Тренировки с часов попадают в историю и тренировочную нагрузку. Данные Apple Watch, Garmin, WHOOP и Mi Band (Zepp / Mi Fitness) приходят через $health, когда в их приложении включена синхронизация с $health.';
+  }
 
   @override
-  String get connectedAppsAppleDesc => 'Сон, пульс, шаги, вес';
+  String get connectedAppsHealthDesc =>
+      'Сон, пульс, ВСР, шаги, вес, тренировки';
 
   @override
   String get connectedAppsGarminDesc => 'Тренировки, пульс, сон, ВСР';
@@ -2182,8 +2184,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get connectedAppsConnect => 'Подключить';
 
   @override
-  String get connectedAppsFooter =>
-      'Когда приложения можно будет подключать, любое из них можно будет отключить в любой момент.';
+  String get connectedAppsFooter => 'Отключить можно в любой момент.';
 
   @override
   String connectedAppsSheetTitle(String app) {
@@ -2198,14 +2199,75 @@ class AppLocalizationsRu extends AppLocalizations {
       'Когда это появится, FITRIX будет только читать данные и ничего не публиковать.';
 
   @override
-  String get connectedAppsSheetSoon =>
-      'Подключение приложений пока недоступно. Мы добавим его в одном из следующих обновлений.';
+  String connectedAppsSheetSoon(String app, String health) {
+    return 'Прямое подключение $app пока недоступно. А пока отправляйте его данные в $health, и FITRIX прочитает их оттуда.';
+  }
 
   @override
   String get connectedAppsComingSoon => 'Появится в одном из обновлений';
 
   @override
   String get connectedAppsClose => 'Закрыть';
+
+  @override
+  String get connectedAppsConnected => 'Подключено';
+
+  @override
+  String connectedAppsLastRead(String time) {
+    return 'Последнее чтение $time';
+  }
+
+  @override
+  String get connectedAppsReading => 'Читаем данные…';
+
+  @override
+  String connectedAppsWriteWorkouts(String health) {
+    return 'Сохранять мои тренировки FITRIX в $health';
+  }
+
+  @override
+  String get connectedAppsDisconnect => 'Отключить';
+
+  @override
+  String get connectedAppsDisconnectedIos =>
+      'Чтобы убрать доступ, откройте Настройки › Здоровье › Доступ к данным и устройства › FITRIX.';
+
+  @override
+  String get connectedAppsDisconnectedAndroid =>
+      'Чтобы убрать доступ, откройте Health Connect › Разрешения приложений › FITRIX.';
+
+  @override
+  String get connectedAppsDeniedIos =>
+      'Доступ не предоставлен. Изменить это можно в приложении «Здоровье».';
+
+  @override
+  String get connectedAppsDeniedAndroid =>
+      'Доступ не предоставлен. Изменить это можно в Health Connect.';
+
+  @override
+  String get connectedAppsInstall => 'Установить';
+
+  @override
+  String get connectedAppsUpdate => 'Обновить';
+
+  @override
+  String get connectedAppsNotInstalled =>
+      'Health Connect не установлен на этом телефоне.';
+
+  @override
+  String get connectedAppsNeedsUpdate => 'Health Connect нужно обновить.';
+
+  @override
+  String get connectedAppsUnavailable => 'Недоступно на этом устройстве.';
+
+  @override
+  String get connectedAppsPrivacy =>
+      'Данные здоровья остаются на этом телефоне; в ваш аккаунт сохраняются только импортированные тренировки и чек-ин.';
+
+  @override
+  String connectedAppsDeleteHelp(String health) {
+    return 'Удаление тренировки в FITRIX не удаляет её из $health.';
+  }
 
   @override
   String get nutritionToday => 'Сегодня';

@@ -2086,11 +2086,13 @@ class AppLocalizationsUz extends AppLocalizations {
   String get connectedAppsWhyHeader => 'NEGA ULASH KERAK';
 
   @override
-  String get connectedAppsWhyBody =>
-      'Ulash keyingi yangilanishlardan birida paydo bo‘lganda, soat ertalabki tekshiruv uchun uyqu, tinch puls va HRVni o‘zi to‘ldira oladi. Hozircha tekshiruvni o‘zingiz to‘ldirasiz.';
+  String connectedAppsWhyBody(String health) {
+    return '$health ertalabki tekshiruvni to‘ldiradi: o‘tgan tungi uyqu, tiklanish uchun tinch puls va HRV, qadamlar va aqlli tarozidagi vazn. Soatdagi mashg‘ulotlar tarix va mashg‘ulot yuklamasida ko‘rinadi. Apple Watch, Garmin, WHOOP va Mi Band (Zepp / Mi Fitness) ma‘lumotlari o‘sha ilovada $health bilan sinxronlash yoqilgach, $health orqali keladi.';
+  }
 
   @override
-  String get connectedAppsAppleDesc => 'Uyqu, puls, qadamlar, vazn';
+  String get connectedAppsHealthDesc =>
+      'Uyqu, puls, HRV, qadamlar, vazn, mashg‘ulotlar';
 
   @override
   String get connectedAppsGarminDesc => 'Mashg‘ulotlar, puls, uyqu, HRV';
@@ -2108,8 +2110,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get connectedAppsConnect => 'Ulash';
 
   @override
-  String get connectedAppsFooter =>
-      'Ilovalarni ulash imkoni paydo bo‘lgach, istalganini istalgan vaqtda uzishingiz mumkin bo‘ladi.';
+  String get connectedAppsFooter => 'Istalgan vaqtda uzishingiz mumkin.';
 
   @override
   String connectedAppsSheetTitle(String app) {
@@ -2124,14 +2125,75 @@ class AppLocalizationsUz extends AppLocalizations {
       'Bu imkoniyat paydo bo‘lganda, FITRIX faqat ma‘lumotlarni o‘qiydi va hech narsa joylamaydi.';
 
   @override
-  String get connectedAppsSheetSoon =>
-      'Ilovalarni ulash hozircha mavjud emas. Keyingi yangilanishda qo‘shamiz.';
+  String connectedAppsSheetSoon(String app, String health) {
+    return '$app ni to‘g‘ridan-to‘g‘ri ulash hozircha mavjud emas. Hozircha uning ma‘lumotlarini $health ga yuboring, FITRIX ularni o‘sha yerdan o‘qiydi.';
+  }
 
   @override
   String get connectedAppsComingSoon => 'Keyingi yangilanishda';
 
   @override
   String get connectedAppsClose => 'Yopish';
+
+  @override
+  String get connectedAppsConnected => 'Ulangan';
+
+  @override
+  String connectedAppsLastRead(String time) {
+    return 'Oxirgi o‘qish: $time';
+  }
+
+  @override
+  String get connectedAppsReading => 'Ma‘lumotlar o‘qilmoqda…';
+
+  @override
+  String connectedAppsWriteWorkouts(String health) {
+    return 'FITRIX mashg‘ulotlarimni $health ga saqlash';
+  }
+
+  @override
+  String get connectedAppsDisconnect => 'Uzish';
+
+  @override
+  String get connectedAppsDisconnectedIos =>
+      'Ruxsatni olib tashlash uchun Sozlamalar › Salomatlik › Ma‘lumotlarga kirish va qurilmalar › FITRIX ni oching.';
+
+  @override
+  String get connectedAppsDisconnectedAndroid =>
+      'Ruxsatni olib tashlash uchun Health Connect › Ilova ruxsatlari › FITRIX ni oching.';
+
+  @override
+  String get connectedAppsDeniedIos =>
+      'Ruxsat berilmadi. Buni Salomatlik ilovasida o‘zgartirishingiz mumkin.';
+
+  @override
+  String get connectedAppsDeniedAndroid =>
+      'Ruxsat berilmadi. Buni Health Connect ilovasida o‘zgartirishingiz mumkin.';
+
+  @override
+  String get connectedAppsInstall => 'O‘rnatish';
+
+  @override
+  String get connectedAppsUpdate => 'Yangilash';
+
+  @override
+  String get connectedAppsNotInstalled =>
+      'Health Connect bu telefonda o‘rnatilmagan.';
+
+  @override
+  String get connectedAppsNeedsUpdate => 'Health Connectni yangilash kerak.';
+
+  @override
+  String get connectedAppsUnavailable => 'Bu qurilmada mavjud emas.';
+
+  @override
+  String get connectedAppsPrivacy =>
+      'Salomatlik ma‘lumotlari shu telefonda qoladi; hisobingizga faqat import qilingan mashg‘ulotlar va tekshiruvingiz saqlanadi.';
+
+  @override
+  String connectedAppsDeleteHelp(String health) {
+    return 'FITRIX da mashg‘ulotni o‘chirish uni $health dan o‘chirmaydi.';
+  }
 
   @override
   String get nutritionToday => 'Bugun';

@@ -449,7 +449,8 @@ class ProfileTabScreen extends ConsumerWidget {
                   icon: Icons.sync,
                   label: l10n.profileConnectedApps,
                   subtitle: l10n.profileConnectedAppsCount(
-                      connectedAppsCount, ConnectableApp.values.length),
+                      connectedAppsCount(ref),
+                      ref.watch(connectableAppsProvider).length),
                   trailing: chevron(),
                   onTap: () => context.push(AppRouter.connectedApps),
                 ),

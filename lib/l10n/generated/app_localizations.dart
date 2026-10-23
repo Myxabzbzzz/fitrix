@@ -3604,14 +3604,14 @@ abstract class AppLocalizations {
   /// No description provided for @connectedAppsWhyBody.
   ///
   /// In en, this message translates to:
-  /// **'When connecting arrives in a later update, a watch could fill in sleep, resting HR and HRV for your morning check-in. Until then, you fill in the check-in yourself.'**
-  String get connectedAppsWhyBody;
+  /// **'{health} fills in your morning check-in: last night\'s sleep, resting HR and HRV for recovery, steps and weight from smart scales. Workouts from your watch appear in your history and training load. Apple Watch, Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through {health} once that app\'s sync to {health} is on.'**
+  String connectedAppsWhyBody(String health);
 
-  /// No description provided for @connectedAppsAppleDesc.
+  /// No description provided for @connectedAppsHealthDesc.
   ///
   /// In en, this message translates to:
-  /// **'Sleep, heart rate, steps, weight'**
-  String get connectedAppsAppleDesc;
+  /// **'Sleep, heart rate, HRV, steps, weight, workouts'**
+  String get connectedAppsHealthDesc;
 
   /// No description provided for @connectedAppsGarminDesc.
   ///
@@ -3646,7 +3646,7 @@ abstract class AppLocalizations {
   /// No description provided for @connectedAppsFooter.
   ///
   /// In en, this message translates to:
-  /// **'Once apps can be connected, you will be able to disconnect any of them at any time.'**
+  /// **'You can disconnect at any time.'**
   String get connectedAppsFooter;
 
   /// No description provided for @connectedAppsSheetTitle.
@@ -3670,8 +3670,8 @@ abstract class AppLocalizations {
   /// No description provided for @connectedAppsSheetSoon.
   ///
   /// In en, this message translates to:
-  /// **'Connecting apps is not available yet. We will add it in a later update.'**
-  String get connectedAppsSheetSoon;
+  /// **'Connecting {app} directly is not available yet. Meanwhile send its data to {health} and FITRIX will read it from there.'**
+  String connectedAppsSheetSoon(String app, String health);
 
   /// No description provided for @connectedAppsComingSoon.
   ///
@@ -3684,6 +3684,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get connectedAppsClose;
+
+  /// No description provided for @connectedAppsConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connectedAppsConnected;
+
+  /// No description provided for @connectedAppsLastRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Last read {time}'**
+  String connectedAppsLastRead(String time);
+
+  /// No description provided for @connectedAppsReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading your data…'**
+  String get connectedAppsReading;
+
+  /// No description provided for @connectedAppsWriteWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Save my FITRIX workouts to {health}'**
+  String connectedAppsWriteWorkouts(String health);
+
+  /// No description provided for @connectedAppsDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get connectedAppsDisconnect;
+
+  /// No description provided for @connectedAppsDisconnectedIos.
+  ///
+  /// In en, this message translates to:
+  /// **'To remove access, open Settings › Health › Data Access & Devices › FITRIX.'**
+  String get connectedAppsDisconnectedIos;
+
+  /// No description provided for @connectedAppsDisconnectedAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'To remove access, open Health Connect › App permissions › FITRIX.'**
+  String get connectedAppsDisconnectedAndroid;
+
+  /// No description provided for @connectedAppsDeniedIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Access wasn\'t granted. You can change it in the Health app.'**
+  String get connectedAppsDeniedIos;
+
+  /// No description provided for @connectedAppsDeniedAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Access wasn\'t granted. You can change it in Health Connect.'**
+  String get connectedAppsDeniedAndroid;
+
+  /// No description provided for @connectedAppsInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Install'**
+  String get connectedAppsInstall;
+
+  /// No description provided for @connectedAppsUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get connectedAppsUpdate;
+
+  /// No description provided for @connectedAppsNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Connect is not installed on this phone.'**
+  String get connectedAppsNotInstalled;
+
+  /// No description provided for @connectedAppsNeedsUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Connect needs an update.'**
+  String get connectedAppsNeedsUpdate;
+
+  /// No description provided for @connectedAppsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available on this device.'**
+  String get connectedAppsUnavailable;
+
+  /// No description provided for @connectedAppsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Health data stays on this phone; only workouts you import and your check-in are saved to your account.'**
+  String get connectedAppsPrivacy;
+
+  /// No description provided for @connectedAppsDeleteHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting a workout in FITRIX does not delete it from {health}.'**
+  String connectedAppsDeleteHelp(String health);
 
   /// No description provided for @nutritionToday.
   ///

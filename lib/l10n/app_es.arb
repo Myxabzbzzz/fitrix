@@ -591,20 +591,74 @@
   "editProfileErrFiveK": "Introduce un tiempo de 12:00 a 60:00",
   "connectedAppsTitle": "Apps conectadas",
   "connectedAppsWhyHeader": "POR QUÉ CONECTAR",
-  "connectedAppsWhyBody": "Cuando la conexión llegue en una próxima actualización, un reloj podrá rellenar el sueño, la FC en reposo y la VFC de tu chequeo matutino. Mientras tanto, lo rellenas tú.",
-  "connectedAppsAppleDesc": "Sueño, frecuencia cardíaca, pasos, peso",
+  "connectedAppsWhyBody": "{health} rellena tu chequeo matutino: el sueño de anoche, la FC en reposo y la VFC para la recuperación, los pasos y el peso de básculas inteligentes. Los entrenamientos del reloj aparecen en tu historial y en la carga de entrenamiento. Los datos de Apple Watch, Garmin, WHOOP y Mi Band (Zepp / Mi Fitness) llegan a través de {health} cuando la sincronización de esa app con {health} está activada.",
+  "@connectedAppsWhyBody": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsHealthDesc": "Sueño, FC, VFC, pasos, peso, entrenamientos",
   "connectedAppsGarminDesc": "Actividades, FC, sueño, VFC",
   "connectedAppsStravaDesc": "Carreras, rutas en bici y esquí",
   "connectedAppsWhoopDesc": "Recuperación, esfuerzo, sueño, VFC",
   "connectedAppsNotConnected": "No conectada",
   "connectedAppsConnect": "Conectar",
-  "connectedAppsFooter": "Cuando se puedan conectar apps, podrás desconectar cualquiera cuando quieras.",
+  "connectedAppsFooter": "Puedes desconectar en cualquier momento.",
   "connectedAppsSheetTitle": "Conectar {app}",
   "connectedAppsSheetSubtitle": "Qué podría leer FITRIX",
   "connectedAppsSheetPrivacy": "Cuando llegue, FITRIX solo leerá datos y nunca publicará.",
-  "connectedAppsSheetSoon": "Conectar apps aún no está disponible. Lo añadiremos en una próxima actualización.",
+  "connectedAppsSheetSoon": "Conectar {app} directamente aún no está disponible. Mientras tanto, envía sus datos a {health} y FITRIX los leerá desde ahí.",
+  "@connectedAppsSheetSoon": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      },
+      "health": {
+        "type": "String"
+      }
+    }
+  },
   "connectedAppsComingSoon": "Llegará en una próxima actualización",
   "connectedAppsClose": "Cerrar",
+  "connectedAppsConnected": "Conectada",
+  "connectedAppsLastRead": "Última lectura {time}",
+  "@connectedAppsLastRead": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsReading": "Leyendo tus datos…",
+  "connectedAppsWriteWorkouts": "Guardar mis entrenamientos de FITRIX en {health}",
+  "@connectedAppsWriteWorkouts": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsDisconnect": "Desconectar",
+  "connectedAppsDisconnectedIos": "Para quitar el acceso, abre Ajustes › Salud › Acceso a datos y dispositivos › FITRIX.",
+  "connectedAppsDisconnectedAndroid": "Para quitar el acceso, abre Health Connect › Permisos de apps › FITRIX.",
+  "connectedAppsDeniedIos": "No se concedió el acceso. Puedes cambiarlo en la app Salud.",
+  "connectedAppsDeniedAndroid": "No se concedió el acceso. Puedes cambiarlo en Health Connect.",
+  "connectedAppsInstall": "Instalar",
+  "connectedAppsUpdate": "Actualizar",
+  "connectedAppsNotInstalled": "Health Connect no está instalado en este teléfono.",
+  "connectedAppsNeedsUpdate": "Health Connect necesita una actualización.",
+  "connectedAppsUnavailable": "No disponible en este dispositivo.",
+  "connectedAppsPrivacy": "Los datos de salud se quedan en este teléfono; en tu cuenta solo se guardan los entrenamientos que importas y tu chequeo.",
+  "connectedAppsDeleteHelp": "Borrar un entrenamiento en FITRIX no lo borra de {health}.",
+  "@connectedAppsDeleteHelp": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
   "nutritionToday": "Hoy",
   "nutritionDateTraining": "{date} · día de entrenamiento",
   "nutritionCompleteTitle": "Completa tu perfil",

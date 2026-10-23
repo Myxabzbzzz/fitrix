@@ -2120,11 +2120,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get connectedAppsWhyHeader => 'WHY CONNECT';
 
   @override
-  String get connectedAppsWhyBody =>
-      'When connecting arrives in a later update, a watch could fill in sleep, resting HR and HRV for your morning check-in. Until then, you fill in the check-in yourself.';
+  String connectedAppsWhyBody(String health) {
+    return '$health fills in your morning check-in: last night\'s sleep, resting HR and HRV for recovery, steps and weight from smart scales. Workouts from your watch appear in your history and training load. Apple Watch, Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through $health once that app\'s sync to $health is on.';
+  }
 
   @override
-  String get connectedAppsAppleDesc => 'Sleep, heart rate, steps, weight';
+  String get connectedAppsHealthDesc =>
+      'Sleep, heart rate, HRV, steps, weight, workouts';
 
   @override
   String get connectedAppsGarminDesc => 'Activities, HR, sleep, HRV';
@@ -2142,8 +2144,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get connectedAppsConnect => 'Connect';
 
   @override
-  String get connectedAppsFooter =>
-      'Once apps can be connected, you will be able to disconnect any of them at any time.';
+  String get connectedAppsFooter => 'You can disconnect at any time.';
 
   @override
   String connectedAppsSheetTitle(String app) {
@@ -2158,14 +2159,75 @@ class AppLocalizationsEn extends AppLocalizations {
       'When this arrives, FITRIX will only read data and never post.';
 
   @override
-  String get connectedAppsSheetSoon =>
-      'Connecting apps is not available yet. We will add it in a later update.';
+  String connectedAppsSheetSoon(String app, String health) {
+    return 'Connecting $app directly is not available yet. Meanwhile send its data to $health and FITRIX will read it from there.';
+  }
 
   @override
   String get connectedAppsComingSoon => 'Coming in a later update';
 
   @override
   String get connectedAppsClose => 'Close';
+
+  @override
+  String get connectedAppsConnected => 'Connected';
+
+  @override
+  String connectedAppsLastRead(String time) {
+    return 'Last read $time';
+  }
+
+  @override
+  String get connectedAppsReading => 'Reading your data…';
+
+  @override
+  String connectedAppsWriteWorkouts(String health) {
+    return 'Save my FITRIX workouts to $health';
+  }
+
+  @override
+  String get connectedAppsDisconnect => 'Disconnect';
+
+  @override
+  String get connectedAppsDisconnectedIos =>
+      'To remove access, open Settings › Health › Data Access & Devices › FITRIX.';
+
+  @override
+  String get connectedAppsDisconnectedAndroid =>
+      'To remove access, open Health Connect › App permissions › FITRIX.';
+
+  @override
+  String get connectedAppsDeniedIos =>
+      'Access wasn\'t granted. You can change it in the Health app.';
+
+  @override
+  String get connectedAppsDeniedAndroid =>
+      'Access wasn\'t granted. You can change it in Health Connect.';
+
+  @override
+  String get connectedAppsInstall => 'Install';
+
+  @override
+  String get connectedAppsUpdate => 'Update';
+
+  @override
+  String get connectedAppsNotInstalled =>
+      'Health Connect is not installed on this phone.';
+
+  @override
+  String get connectedAppsNeedsUpdate => 'Health Connect needs an update.';
+
+  @override
+  String get connectedAppsUnavailable => 'Not available on this device.';
+
+  @override
+  String get connectedAppsPrivacy =>
+      'Health data stays on this phone; only workouts you import and your check-in are saved to your account.';
+
+  @override
+  String connectedAppsDeleteHelp(String health) {
+    return 'Deleting a workout in FITRIX does not delete it from $health.';
+  }
 
   @override
   String get nutritionToday => 'Today';

@@ -591,20 +591,74 @@
   "editProfileErrFiveK": "Введите время от 12:00 до 60:00",
   "connectedAppsTitle": "Подключённые приложения",
   "connectedAppsWhyHeader": "ЗАЧЕМ ПОДКЛЮЧАТЬ",
-  "connectedAppsWhyBody": "Когда подключение появится в одном из следующих обновлений, часы смогут сами заполнять сон, пульс покоя и ВСР для утреннего чек-ина. А пока чек-ин заполняете вы.",
-  "connectedAppsAppleDesc": "Сон, пульс, шаги, вес",
+  "connectedAppsWhyBody": "{health} заполняет утренний чек-ин: сон прошлой ночи, пульс покоя и ВСР для восстановления, шаги и вес с умных весов. Тренировки с часов попадают в историю и тренировочную нагрузку. Данные Apple Watch, Garmin, WHOOP и Mi Band (Zepp / Mi Fitness) приходят через {health}, когда в их приложении включена синхронизация с {health}.",
+  "@connectedAppsWhyBody": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsHealthDesc": "Сон, пульс, ВСР, шаги, вес, тренировки",
   "connectedAppsGarminDesc": "Тренировки, пульс, сон, ВСР",
   "connectedAppsStravaDesc": "Бег, велозаезды и лыжи",
   "connectedAppsWhoopDesc": "Восстановление, нагрузка, сон, ВСР",
   "connectedAppsNotConnected": "Не подключено",
   "connectedAppsConnect": "Подключить",
-  "connectedAppsFooter": "Когда приложения можно будет подключать, любое из них можно будет отключить в любой момент.",
+  "connectedAppsFooter": "Отключить можно в любой момент.",
   "connectedAppsSheetTitle": "Подключить {app}",
   "connectedAppsSheetSubtitle": "Что FITRIX сможет читать",
   "connectedAppsSheetPrivacy": "Когда это появится, FITRIX будет только читать данные и ничего не публиковать.",
-  "connectedAppsSheetSoon": "Подключение приложений пока недоступно. Мы добавим его в одном из следующих обновлений.",
+  "connectedAppsSheetSoon": "Прямое подключение {app} пока недоступно. А пока отправляйте его данные в {health}, и FITRIX прочитает их оттуда.",
+  "@connectedAppsSheetSoon": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      },
+      "health": {
+        "type": "String"
+      }
+    }
+  },
   "connectedAppsComingSoon": "Появится в одном из обновлений",
   "connectedAppsClose": "Закрыть",
+  "connectedAppsConnected": "Подключено",
+  "connectedAppsLastRead": "Последнее чтение {time}",
+  "@connectedAppsLastRead": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsReading": "Читаем данные…",
+  "connectedAppsWriteWorkouts": "Сохранять мои тренировки FITRIX в {health}",
+  "@connectedAppsWriteWorkouts": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsDisconnect": "Отключить",
+  "connectedAppsDisconnectedIos": "Чтобы убрать доступ, откройте Настройки › Здоровье › Доступ к данным и устройства › FITRIX.",
+  "connectedAppsDisconnectedAndroid": "Чтобы убрать доступ, откройте Health Connect › Разрешения приложений › FITRIX.",
+  "connectedAppsDeniedIos": "Доступ не предоставлен. Изменить это можно в приложении «Здоровье».",
+  "connectedAppsDeniedAndroid": "Доступ не предоставлен. Изменить это можно в Health Connect.",
+  "connectedAppsInstall": "Установить",
+  "connectedAppsUpdate": "Обновить",
+  "connectedAppsNotInstalled": "Health Connect не установлен на этом телефоне.",
+  "connectedAppsNeedsUpdate": "Health Connect нужно обновить.",
+  "connectedAppsUnavailable": "Недоступно на этом устройстве.",
+  "connectedAppsPrivacy": "Данные здоровья остаются на этом телефоне; в ваш аккаунт сохраняются только импортированные тренировки и чек-ин.",
+  "connectedAppsDeleteHelp": "Удаление тренировки в FITRIX не удаляет её из {health}.",
+  "@connectedAppsDeleteHelp": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
   "nutritionToday": "Сегодня",
   "nutritionDateTraining": "{date} · день тренировки",
   "nutritionCompleteTitle": "Заполните профиль",
