@@ -4,6 +4,7 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/sync/doc_deletions.dart';
 import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
@@ -193,5 +194,6 @@ final targetsProvider = Provider<Targets?>((ref) {
     proteinPerKg: settings.proteinPerKg,
     fatPerKg: settings.fatPerKg,
     trainingDay: ref.watch(trainingDayProvider),
+    stepsToday: ref.watch(healthTodayProvider).stepsToday,
   );
 });

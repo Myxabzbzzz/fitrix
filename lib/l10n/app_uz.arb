@@ -681,6 +681,7 @@
   "nutritionWaterTitle": "Suv · {drunk} / {target} l",
   "nutritionWaterNoTarget": "Suv · {drunk} l",
   "nutritionWaterWorkout": "Bugungi mashg‘ulot uchun +0,5 l",
+  "nutritionStepsBonus": "Bugungi qadamlar uchun +{kcal} kkal ({steps} qadam)",
   "nutritionAddMl": "+{ml} ml",
   "nutritionMeals": "Ovqatlar",
   "nutritionMealsLogged": "{n} / 4 yozilgan",

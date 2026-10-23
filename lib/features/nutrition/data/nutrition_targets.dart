@@ -23,6 +23,9 @@ class Targets {
   final int carbs;
   final int waterMl;
 
+  /// Calories added to [kcal] for today's steps (0 when none).
+  final int stepsKcal;
+
   const Targets({
     required this.bmr,
     required this.activity,
@@ -32,6 +35,7 @@ class Targets {
     required this.fat,
     required this.carbs,
     required this.waterMl,
+    this.stepsKcal = 0,
   });
 }
 
@@ -42,6 +46,14 @@ double activityFor(double hoursPerWeek) {
   if (hoursPerWeek <= 6) return 1.55;
   if (hoursPerWeek <= 10) return 1.725;
   return 1.9;
+}
+
+/// Extra calories for [steps] beyond the first 5,000 (the base activity
+/// factor already covers those), at 0.04 kcal per step per 70 kg, capped.
+int stepsKcalFor(int? steps, double weightKg) {
+  if (steps == null || steps <= 5000) return 0;
+  final v = ((steps - 5000) * 0.04 * weightKg / 70).round();
+  return v > 800 ? 800 : v;
 }
 
 /// Daily targets from the body numbers (Mifflin-St Jeor), or null when sex,
@@ -56,6 +68,7 @@ Targets? targetsFor({
   double proteinPerKg = 1.8,
   double fatPerKg = 1.0,
   bool trainingDay = false,
+  int? stepsToday,
 }) {
   if (sex == null || age == null || weightKg == null || heightCm == null) {
     return null;
@@ -66,7 +79,8 @@ Targets? targetsFor({
           .round();
   final activity = activityFor(trainingHoursPerWeek);
   final tdee = (bmr * activity).round();
-  final kcal = (tdee * goal.factor / 50).round() * 50;
+  final stepsKcal = stepsKcalFor(stepsToday, weightKg);
+  final kcal = (tdee * goal.factor / 50).round() * 50 + stepsKcal;
   final protein = (proteinPerKg * weightKg).round();
   final fat = (fatPerKg * weightKg).round();
   final carbs = ((kcal - 4 * protein - 9 * fat) / 4).round();
@@ -80,6 +94,7 @@ Targets? targetsFor({
     fat: fat,
     carbs: carbs < 0 ? 0 : carbs,
     waterMl: water,
+    stepsKcal: stepsKcal,
   );
 }
 

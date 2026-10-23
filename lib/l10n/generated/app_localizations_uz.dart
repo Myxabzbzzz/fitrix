@@ -2256,6 +2256,11 @@ class AppLocalizationsUz extends AppLocalizations {
   String get nutritionWaterWorkout => 'Bugungi mashg‘ulot uchun +0,5 l';
 
   @override
+  String nutritionStepsBonus(String kcal, String steps) {
+    return 'Bugungi qadamlar uchun +$kcal kkal ($steps qadam)';
+  }
+
+  @override
   String nutritionAddMl(String ml) {
     return '+$ml ml';
   }

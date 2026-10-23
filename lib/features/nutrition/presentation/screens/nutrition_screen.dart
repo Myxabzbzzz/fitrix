@@ -13,6 +13,7 @@ import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/nutrition/data/dinner_idea.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
@@ -108,6 +109,8 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
                             child: _RingSide(
                               left: targets.kcal - eaten,
                               burned: burned,
+                              stepsKcal: targets.stepsKcal,
+                              steps: ref.watch(healthTodayProvider).stepsToday,
                               onHow: () =>
                                   context.push(AppRouter.nutritionTargets),
                             ),
@@ -399,9 +402,15 @@ class _RingSide extends StatelessWidget {
 
   final int left;
   final int burned;
+  final int stepsKcal;
+  final int? steps;
   final VoidCallback onHow;
   const _RingSide(
-      {required this.left, required this.burned, required this.onHow});
+      {required this.left,
+      required this.burned,
+      required this.onHow,
+      this.stepsKcal = 0,
+      this.steps});
 
   @override
   Widget build(BuildContext context) {
@@ -430,6 +439,14 @@ class _RingSide extends StatelessWidget {
               style: AppText.caption.copyWith(color: palette.textSecondary)),
           Text(l10n.nutritionBurnedValue(fmt.format(burned)),
               style: AppText.headingS.copyWith(color: palette.textPrimary)),
+        ],
+        if (stepsKcal > 0 && steps != null) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+              l10n.nutritionStepsBonus(
+                  fmt.format(stepsKcal), fmt.format(steps)),
+              key: const ValueKey('steps-bonus'),
+              style: AppText.caption.copyWith(color: palette.textSecondary)),
         ],
         GestureDetector(
           behavior: HitTestBehavior.opaque,

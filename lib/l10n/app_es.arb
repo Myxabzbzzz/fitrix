@@ -681,6 +681,7 @@
   "nutritionWaterTitle": "Agua · {drunk} de {target} L",
   "nutritionWaterNoTarget": "Agua · {drunk} L",
   "nutritionWaterWorkout": "+0,5 L por el entrenamiento de hoy",
+  "nutritionStepsBonus": "+{kcal} kcal por los pasos de hoy ({steps} pasos)",
   "nutritionAddMl": "+{ml} ml",
   "nutritionMeals": "Comidas",
   "nutritionMealsLogged": "{n} de 4 registradas",

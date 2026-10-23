@@ -3871,6 +3871,12 @@ abstract class AppLocalizations {
   /// **'+0.5 L for today’s workout'**
   String get nutritionWaterWorkout;
 
+  /// No description provided for @nutritionStepsBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'+{kcal} kcal for steps today ({steps} steps)'**
+  String nutritionStepsBonus(String kcal, String steps);
+
   /// No description provided for @nutritionAddMl.
   ///
   /// In en, this message translates to:

@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/health/data/health_daily_store.dart';
+import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/data/micronutrients.dart';
@@ -21,6 +23,7 @@ import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.
 import 'package:fitrix/features/nutrition/presentation/screens/targets_screen.dart';
 import 'package:fitrix/features/profile/data/performance_store.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'support/fake_health_source.dart';
 import 'support/overflow.dart';
 
 List<Food> _foods() {
@@ -91,6 +94,45 @@ void main() {
         trainingDay: true,
       )!;
       expect(t.waterMl, 3600);
+    });
+
+    group('steps bonus', () {
+      Targets? t(int? steps, {double kg = 94, Sex sex = Sex.male}) =>
+          targetsFor(
+            sex: sex,
+            age: 30,
+            weightKg: kg,
+            heightCm: 180,
+            trainingHoursPerWeek: 3,
+            goal: Goal.maintain,
+            stepsToday: steps,
+          );
+
+      test('14146 steps at 94 kg add 491 kcal, carbs absorb it', () {
+        final base = t(null)!;
+        final b = t(14146)!;
+        expect(b.stepsKcal, 491);
+        expect(b.kcal, base.kcal + 491);
+        expect(b.protein, base.protein);
+        expect(b.fat, base.fat);
+        expect(b.carbs, base.carbs + (491 / 4).round());
+        expect(b.tdee, base.tdee);
+      });
+
+      test('up to 5000 steps add nothing', () {
+        expect(t(4000)!.stepsKcal, 0);
+        expect(t(5000)!.stepsKcal, 0);
+      });
+
+      test('the bonus is capped at 800', () {
+        expect(t(60000)!.stepsKcal, 800);
+      });
+
+      test('null steps equal today\'s targets', () {
+        final n = t(null)!;
+        expect(n.stepsKcal, 0);
+        expect(n.kcal, t(0)!.kcal);
+      });
     });
 
     test('missing height or sex gives null', () {
@@ -342,17 +384,35 @@ void main() {
     double textScale = 1,
     bool se = true,
     ProviderContainer? existing,
+    int? steps,
+    bool connected = true,
   }) async {
     if (se) {
       tester.view.physicalSize = const Size(375, 667) * 3;
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);
     }
-    SharedPreferences.setMockInitialValues(values);
+    SharedPreferences.setMockInitialValues({
+      ...values,
+      if (connected)
+        'health_connection_v1': jsonEncode({
+          'connected': true,
+          'writeWorkouts': false,
+          'lastReadAt': (now ?? DateTime(2026, 10, 17, 12)).toIso8601String(),
+        }),
+    });
     final prefs = await SharedPreferences.getInstance();
     final clock = now ?? DateTime(2026, 10, 17, 12);
+    if (steps != null) {
+      final d = clock;
+      await HealthDailyStore(prefs, now: () => clock).putAll({
+        '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}':
+            HealthDay(steps: steps),
+      });
+    }
     final container = ProviderContainer(overrides: [
       sharedPreferencesProvider.overrideWithValue(prefs),
+      healthSourceProvider.overrideWithValue(FakeHealthSource()),
       clockProvider.overrideWithValue(() => clock),
     ]);
     addTearDown(container.dispose);
@@ -419,6 +479,39 @@ void main() {
           ));
       await t.pumpAndSettle();
       expect(eaten(t).data, '721');
+      expect(t.takeException(), isNull);
+    });
+
+    testWidgets('steps line shows only with a bonus', (t) async {
+      final c = await pump(t, const NutritionScreen(), steps: 14146);
+      final base = targetsFor(
+        sex: Sex.male,
+        age: 26,
+        weightKg: 78.4,
+        heightCm: 181,
+        trainingHoursPerWeek: c.read(trainingHoursProvider).hours,
+        goal: Goal.maintain,
+      )!;
+      final bonus = c.read(targetsProvider)!.stepsKcal;
+      expect(bonus, 410);
+      expect(c.read(targetsProvider)!.kcal, base.kcal + bonus);
+      expect(find.text('+410 kcal for steps today (14,146 steps)'),
+          findsOneWidget);
+      await t.pumpWidget(const SizedBox());
+      await pump(t, const NutritionScreen(), steps: 4000);
+      expect(find.byKey(const ValueKey('steps-bonus')), findsNothing);
+    });
+
+    testWidgets('no bonus when Health is not connected', (t) async {
+      final c = await pump(t, const NutritionScreen(),
+          steps: 14146, connected: false);
+      expect(c.read(targetsProvider)!.stepsKcal, 0);
+      expect(find.byKey(const ValueKey('steps-bonus')), findsNothing);
+    });
+
+    testWidgets('steps line fits SE at text scale 1.3', (t) async {
+      await pump(t, const NutritionScreen(), steps: 14146, textScale: 1.3);
+      expect(find.byKey(const ValueKey('steps-bonus')), findsOneWidget);
       expect(t.takeException(), isNull);
     });
 

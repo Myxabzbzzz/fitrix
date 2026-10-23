@@ -2330,6 +2330,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get nutritionWaterWorkout => '+0,5 л за сегодняшнюю тренировку';
 
   @override
+  String nutritionStepsBonus(String kcal, String steps) {
+    return '+$kcal ккал за шаги сегодня ($steps шагов)';
+  }
+
+  @override
   String nutritionAddMl(String ml) {
     return '+$ml мл';
   }
