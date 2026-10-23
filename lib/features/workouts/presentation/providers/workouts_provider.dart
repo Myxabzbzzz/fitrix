@@ -1,4 +1,5 @@
 import 'package:fitrix/features/health/data/health_import_store.dart';
+import 'package:fitrix/features/health/data/health_writer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/session/session_providers.dart';
@@ -40,6 +41,7 @@ final workoutHistoryProvider =
     ref.watch(deletedWorkoutsStoreProvider),
     onChanged: ref.read(localChangesProvider).notify,
     onRemoved: (id) => ref.read(healthImportsProvider.notifier).remove(id),
+    onAdded: (w) => ref.read(healthWriterProvider).onAdded(w),
   ),
 );
 
@@ -181,11 +183,15 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
   final DeletedWorkoutsStore _deleted;
   final void Function()? _onChanged;
   final void Function(String id)? _onRemoved;
+  final void Function(CompletedWorkout workout)? _onAdded;
 
   WorkoutHistoryNotifier(this._storage, this._deleted,
-      {void Function()? onChanged, void Function(String id)? onRemoved})
+      {void Function()? onChanged,
+      void Function(String id)? onRemoved,
+      void Function(CompletedWorkout workout)? onAdded})
       : _onChanged = onChanged,
         _onRemoved = onRemoved,
+        _onAdded = onAdded,
         super(_storage.loadHistory());
 
   @override
@@ -195,7 +201,11 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
     _onChanged?.call();
   }
 
-  void add(CompletedWorkout workout) => state = [workout, ...state];
+  /// A workout created in FITRIX; reported to [onAdded] (written to Health).
+  void add(CompletedWorkout workout) {
+    state = [workout, ...state];
+    _onAdded?.call(workout);
+  }
 
   /// A workout read from Apple Health / Health Connect. Saved and synced
   /// exactly like [add], but a separate entry point: what hooks [add] (like

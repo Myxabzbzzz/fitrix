@@ -32,6 +32,7 @@ class FakeHealthSource implements HealthSource {
     this.workoutRecords = const [],
     this.throwOnRead = false,
     this.writeResult = true,
+    this.throwOnWrite = false,
   });
 
   @override
@@ -49,6 +50,7 @@ class FakeHealthSource implements HealthSource {
   List<HealthWorkoutRecord> workoutRecords;
   bool throwOnRead;
   bool writeResult;
+  bool throwOnWrite;
 
   int requestAccessCalls = 0;
   int openInstallCalls = 0;
@@ -116,6 +118,7 @@ class FakeHealthSource implements HealthSource {
   }) async {
     written.add(WrittenWorkout(
         activity: activity, from: from, to: to, meters: meters, title: title));
+    if (throwOnWrite) throw StateError('write denied');
     return writeResult;
   }
 }
