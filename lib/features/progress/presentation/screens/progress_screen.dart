@@ -14,6 +14,7 @@ import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/core/widgets/sync_refresh.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/progress/domain/progress_math.dart';
 import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
 import 'package:fitrix/features/progress/presentation/widgets/progress_widgets.dart';
@@ -45,6 +46,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
     final today = ref.watch(todayProvider);
     final all = ref.watch(workoutHistoryProvider);
     final weighIns = ref.watch(bodyWeightProvider);
+    final stepsWeek = ref.watch(stepsLast7Provider);
 
     final present = [
       for (final s in Sport.values)
@@ -316,6 +318,27 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                           ),
                         ),
                       ],
+                    ],
+                    if (stepsWeek != null) ...[
+                      gap(),
+                      ProgressCard(
+                        key: const ValueKey('steps-week'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.healthSteps,
+                                style: AppText.headingS
+                                    .copyWith(color: p.textPrimary)),
+                            gap(AppSpacing.xxs),
+                            Text(l10n.healthStepsDailyAvg(stepsWeek.average!),
+                                key: const ValueKey('steps-avg'),
+                                style: AppText.caption
+                                    .copyWith(color: p.textSecondary)),
+                            gap(),
+                            StepsBarChart(week: stepsWeek),
+                          ],
+                        ),
+                      ),
                     ],
                     gap(AppSpacing.md),
                     ProgressCard(

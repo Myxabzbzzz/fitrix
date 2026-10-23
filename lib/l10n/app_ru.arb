@@ -1203,6 +1203,15 @@
   "healthRestingHrNormal": "{bpm} уд/мин · ваша норма {normal}",
   "healthHrvValue": "{value} мс {kind}",
   "healthHrvNormal": "{value} мс {kind} · ваша норма {normal}",
+  "healthStepsDailyAvg": "В среднем за день: {avg}",
+  "@healthStepsDailyAvg": {
+    "placeholders": {
+      "avg": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
   "healthStepsToday": "Шаги сегодня: {steps}",
   "healthStepsTodayAvg": "Шаги сегодня: {steps} · в среднем за 7 дней {avg}",
   "factorRestingHrHigh": "Пульс покоя выше нормы",

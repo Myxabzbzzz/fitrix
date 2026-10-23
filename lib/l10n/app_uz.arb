@@ -1203,6 +1203,15 @@
   "healthRestingHrNormal": "{bpm} urish/daq · sizning me’yoringiz {normal}",
   "healthHrvValue": "{value} ms {kind}",
   "healthHrvNormal": "{value} ms {kind} · sizning me’yoringiz {normal}",
+  "healthStepsDailyAvg": "Kunlik o‘rtacha: {avg}",
+  "@healthStepsDailyAvg": {
+    "placeholders": {
+      "avg": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
   "healthStepsToday": "Bugungi qadamlar: {steps}",
   "healthStepsTodayAvg": "Bugungi qadamlar: {steps} · 7 kunlik o‘rtacha {avg}",
   "factorRestingHrHigh": "Tinch holatdagi puls me’yordan yuqori",

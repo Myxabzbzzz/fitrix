@@ -1203,6 +1203,15 @@
   "healthRestingHrNormal": "{bpm} lpm · tu habitual {normal}",
   "healthHrvValue": "{value} ms {kind}",
   "healthHrvNormal": "{value} ms {kind} · tu habitual {normal}",
+  "healthStepsDailyAvg": "Media diaria: {avg}",
+  "@healthStepsDailyAvg": {
+    "placeholders": {
+      "avg": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
   "healthStepsToday": "Pasos hoy: {steps}",
   "healthStepsTodayAvg": "Pasos hoy: {steps} · media de 7 días {avg}",
   "factorRestingHrHigh": "Frecuencia en reposo por encima de lo normal",

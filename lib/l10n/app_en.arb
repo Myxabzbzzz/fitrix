@@ -3247,6 +3247,15 @@
       }
     }
   },
+  "healthStepsDailyAvg": "Daily average: {avg}",
+  "@healthStepsDailyAvg": {
+    "placeholders": {
+      "avg": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
   "healthStepsToday": "Steps today: {steps}",
   "@healthStepsToday": {
     "placeholders": {

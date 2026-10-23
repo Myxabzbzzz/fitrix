@@ -4382,6 +4382,15 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String healthStepsDailyAvg(int avg) {
+    final intl.NumberFormat avgNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String avgString = avgNumberFormat.format(avg);
+
+    return 'В среднем за день: $avgString';
+  }
+
+  @override
   String healthStepsToday(int steps) {
     final intl.NumberFormat stepsNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);

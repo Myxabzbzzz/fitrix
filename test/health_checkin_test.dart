@@ -20,6 +20,7 @@ import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/health/data/health_daily_store.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
+import 'package:fitrix/features/progress/presentation/screens/progress_screen.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'support/fake_health_source.dart';
 import 'support/overflow.dart';
@@ -390,27 +391,103 @@ void main() {
   });
 
   group('home', () {
-    testWidgets('steps line only when connected and steps known',
+    testWidgets('steps tile when connected and steps known, no plan needed',
         (tester) async {
       await pump(tester,
           home: const HomeScreen(),
           days: withToday(const HealthDay(steps: 8123)));
+      expect(find.byKey(const Key('home-steps-tile')), findsOneWidget);
       expect(find.text('Steps today: 8,123'), findsOneWidget);
     });
 
-    testWidgets('no steps line when steps unknown', (tester) async {
+    testWidgets('no steps line inside the Today card', (tester) async {
+      await pump(tester,
+          home: const HomeScreen(),
+          days: withToday(const HealthDay(steps: 8123)));
+      expect(
+          find.descendant(
+              of: find.byKey(const Key('home-today-card')),
+              matching: find.textContaining('Steps')),
+          findsNothing);
+    });
+
+    testWidgets('no steps tile when steps unknown', (tester) async {
       await pump(tester,
           home: const HomeScreen(),
           days: withToday(const HealthDay(restingHr: 55)));
+      expect(find.byKey(const Key('home-steps-tile')), findsNothing);
       expect(find.textContaining('steps'), findsNothing);
     });
 
-    testWidgets('no steps line when not connected', (tester) async {
+    testWidgets('no steps tile when not connected', (tester) async {
       await pump(tester,
           home: const HomeScreen(),
           connected: false,
           days: withToday(const HealthDay(steps: 8123)));
+      expect(find.byKey(const Key('home-steps-tile')), findsNothing);
       expect(find.textContaining('steps'), findsNothing);
+    });
+  });
+
+  group('progress steps chart', () {
+    // Today and 6 days back: known on days 0, 2, 3; unknown otherwise.
+    Map<String, HealthDay> week() => {
+          _key(0): const HealthDay(steps: 10000),
+          _key(2): const HealthDay(steps: 5000),
+          _key(3): const HealthDay(steps: 6000),
+        };
+
+    testWidgets('seven bars, unknown days empty, average of known days',
+        (tester) async {
+      await pump(tester, home: const ProgressScreen(), days: week());
+      expect(find.byKey(const ValueKey('steps-week')), findsOneWidget);
+      for (var i = 0; i < 7; i++) {
+        expect(
+            find.byKey(ValueKey('steps-bar-${DateTime(2026, 10, 23 - i).day}')),
+            findsOneWidget);
+      }
+      expect(find.text('10,000'), findsOneWidget);
+      expect(find.text('5,000'), findsOneWidget);
+      expect(find.text('6,000'), findsOneWidget);
+      expect(
+          find.descendant(
+              of: find.byKey(const ValueKey('steps-week')),
+              matching: find.text('0')),
+          findsNothing);
+      // (10000 + 5000 + 6000) / 3 known days, not / 7.
+      expect(find.text('Daily average: 7,000'), findsOneWidget);
+    });
+
+    testWidgets('hidden when no day has steps', (tester) async {
+      await pump(tester,
+          home: const ProgressScreen(),
+          days: {_key(0): const HealthDay(restingHr: 55)});
+      expect(find.byKey(const ValueKey('steps-week')), findsNothing);
+    });
+
+    testWidgets('hidden when not connected', (tester) async {
+      await pump(tester,
+          home: const ProgressScreen(), connected: false, days: week());
+      expect(find.byKey(const ValueKey('steps-week')), findsNothing);
+    });
+
+    testWidgets('no overflow on iPhone SE at 1.3', (tester) async {
+      await pump(tester,
+          home: const ProgressScreen(),
+          days: {
+            for (var i = 0; i < 7; i++) _key(i): const HealthDay(steps: 12345)
+          },
+          size: iPhoneSeSize,
+          textScale: 1.3);
+      expect(find.byKey(const ValueKey('steps-week')), findsOneWidget);
+      expectNoOverflow(tester);
+    });
+
+    test('daily average strings need no plural', () {
+      expect(lookupAppLocalizations(const Locale('ru')).healthStepsDailyAvg(1),
+          'В среднем за день: 1');
+      expect(lookupAppLocalizations(const Locale('uz')).healthStepsDailyAvg(5),
+          'Kunlik o‘rtacha: 5');
     });
   });
 

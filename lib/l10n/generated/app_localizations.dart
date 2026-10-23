@@ -7005,6 +7005,12 @@ abstract class AppLocalizations {
   /// **'{value} ms {kind} · your normal {normal}'**
   String healthHrvNormal(int value, String kind, int normal);
 
+  /// No description provided for @healthStepsDailyAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily average: {avg}'**
+  String healthStepsDailyAvg(int avg);
+
   /// No description provided for @healthStepsToday.
   ///
   /// In en, this message translates to:

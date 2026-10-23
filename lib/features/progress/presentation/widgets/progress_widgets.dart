@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -306,6 +307,75 @@ class LoadBarChart extends StatelessWidget {
                 Text(
                   DateFormat('EEE', locale).format(DateTime(weekStartDay.year,
                       weekStartDay.month, weekStartDay.day + i)),
+                  maxLines: 1,
+                  style: AppText.caption.copyWith(color: p.textSecondary),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Seven bars of daily steps, oldest first. An unknown day is an empty
+/// (placeholder) bar with no number, never a zero.
+class StepsBarChart extends StatelessWidget {
+  final StepsWeek week;
+  const StepsBarChart({super.key, required this.week});
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AppPalette.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final fmt = NumberFormat.decimalPattern(locale);
+    final max =
+        week.days.fold<int>(0, (a, d) => (d.steps ?? 0) > a ? d.steps! : a);
+    const barArea = 84.0;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        for (final d in week.days)
+          Expanded(
+            child: Column(
+              key: ValueKey('steps-bar-${d.day.day}'),
+              children: [
+                SizedBox(
+                  height: AppText.micro.fontSize! * 1.4 + AppSpacing.xxs,
+                  child: d.steps == null
+                      ? null
+                      : FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(fmt.format(d.steps),
+                              style: AppText.microStrong
+                                  .copyWith(color: p.textPrimary)),
+                        ),
+                ),
+                SizedBox(
+                  height: barArea,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: FractionallySizedBox(
+                      widthFactor: 0.7,
+                      child: d.steps == null || d.steps == 0 || max == 0
+                          ? Container(
+                              height: 4,
+                              decoration: BoxDecoration(
+                                  color: p.border,
+                                  borderRadius: BorderRadius.circular(2)))
+                          : Container(
+                              height: (barArea * d.steps! / max)
+                                  .clamp(4.0, barArea),
+                              decoration: BoxDecoration(
+                                  color: p.accent,
+                                  borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(6)))),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(
+                  DateFormat('EEE', locale).format(d.day),
                   maxLines: 1,
                   style: AppText.caption.copyWith(color: p.textSecondary),
                 ),

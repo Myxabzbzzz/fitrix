@@ -152,10 +152,47 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
+                    const _StepsTile(),
                     const _TodayCard(),
                   ],
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Today's steps from Health: a compact tile, only while connected and
+/// today's steps are known. Independent of the plan.
+class _StepsTile extends ConsumerWidget {
+  const _StepsTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final steps = ref.watch(healthTodayProvider).stepsToday;
+    if (steps == null) return const SizedBox.shrink();
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      child: Container(
+        key: const Key('home-steps-tile'),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+        decoration:
+            BoxDecoration(color: palette.tile, borderRadius: AppRadius.smAll),
+        child: Row(
+          children: [
+            Icon(Icons.directions_walk, size: 20, color: palette.accent),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+              child: Text(l10n.healthStepsToday(steps),
+                  style:
+                      AppText.bodyStrong.copyWith(color: palette.textPrimary)),
             ),
           ],
         ),
@@ -177,7 +214,6 @@ class _TodayCard extends ConsumerWidget {
     final templates = ref.watch(workoutTemplatesProvider);
     final plan = ref.watch(todayPlanProvider);
     final active = ref.watch(activeWorkoutProvider);
-    final steps = ref.watch(healthTodayProvider).stepsToday;
 
     final String title;
     final String meta;
@@ -243,12 +279,6 @@ class _TodayCard extends ConsumerWidget {
                       style: AppText.caption
                           .copyWith(color: palette.textSecondary),
                     ),
-                    if (steps != null)
-                      Text(
-                        l10n.healthStepsToday(steps),
-                        style: AppText.caption
-                            .copyWith(color: palette.textSecondary),
-                      ),
                   ],
                 ),
               ),

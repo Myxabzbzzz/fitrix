@@ -328,3 +328,39 @@ final healthTodayDayProvider = Provider<HealthDay?>((ref) {
   if (!ref.watch(healthConnectionProvider).connected) return null;
   return ref.watch(healthDailyStoreProvider).day(dayKey(today));
 });
+
+/// The last seven days of steps, oldest first, ending today.
+class StepsWeek {
+  const StepsWeek(this.days);
+
+  /// Seven entries; a null value is an unknown day (not zero).
+  final List<({DateTime day, int? steps})> days;
+
+  /// Average over the known days only, null when none is known.
+  int? get average {
+    final known = [
+      for (final d in days)
+        if (d.steps != null) d.steps!
+    ];
+    if (known.isEmpty) return null;
+    return (known.reduce((a, b) => a + b) / known.length).round();
+  }
+}
+
+/// Seven days of cached steps, null when not connected or no day has steps.
+final stepsLast7Provider = Provider<StepsWeek?>((ref) {
+  final today = ref.watch(todayProvider);
+  ref.watch(_healthCacheVersionProvider);
+  if (!ref.watch(healthConnectionProvider).connected) return null;
+  final cached = ref.watch(healthDailyStoreProvider).lastDays(7, today);
+  final days = [
+    for (var i = 6; i >= 0; i--)
+      (
+        day: DateTime(today.year, today.month, today.day - i),
+        steps: cached[dayKey(DateTime(today.year, today.month, today.day - i))]
+            ?.steps,
+      ),
+  ];
+  final week = StepsWeek(days);
+  return week.average == null ? null : week;
+});
