@@ -174,6 +174,7 @@ class _StepsTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final steps = ref.watch(healthTodayProvider).stepsToday;
     if (steps == null) return const SizedBox.shrink();
+    final avg = ref.watch(stepsLast7Provider)?.average;
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     return Padding(
@@ -190,7 +191,10 @@ class _StepsTile extends ConsumerWidget {
             Icon(Icons.directions_walk, size: 20, color: palette.accent),
             const SizedBox(width: AppSpacing.xs),
             Expanded(
-              child: Text(l10n.healthStepsToday(steps),
+              child: Text(
+                  avg == null
+                      ? l10n.healthStepsToday(steps)
+                      : l10n.healthStepsTodayAvg(steps, avg),
                   style:
                       AppText.bodyStrong.copyWith(color: palette.textPrimary)),
             ),

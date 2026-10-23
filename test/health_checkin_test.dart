@@ -21,6 +21,7 @@ import 'package:fitrix/features/health/data/health_daily_store.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
 import 'package:fitrix/features/progress/presentation/screens/progress_screen.dart';
+import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'support/fake_health_source.dart';
 import 'support/overflow.dart';
@@ -320,7 +321,6 @@ void main() {
           days: withToday(const HealthDay(sleep: Duration(hours: 7))));
       expect(find.textContaining('bpm'), findsNothing);
       expect(find.textContaining('SDNN'), findsNothing);
-      expect(find.textContaining('steps'), findsNothing);
       expect(find.text('Health data'), findsNothing);
     });
 
@@ -329,7 +329,6 @@ void main() {
       await pump(tester,
           home: const RecoveryScreen(), checkedIn: true, days: _history());
       expect(find.textContaining('bpm'), findsNothing);
-      expect(find.textContaining('steps'), findsNothing);
       expect(find.textContaining('SDNN'), findsNothing);
     });
 
@@ -397,13 +396,25 @@ void main() {
           home: const HomeScreen(),
           days: withToday(const HealthDay(steps: 8123)));
       expect(find.byKey(const Key('home-steps-tile')), findsOneWidget);
-      expect(find.text('Steps today: 8,123'), findsOneWidget);
+      // 8,123 today and 7 days at 9,400: (8123 + 6 * 9400) / 7 = 9,217.6 rounded.
+      expect(find.text('Steps today: 8,123 · 7-day avg 9,218'), findsOneWidget);
+    });
+
+    testWidgets('steps tile without any plan or templates', (tester) async {
+      final c = await pump(tester,
+          home: const HomeScreen(),
+          days: withToday(const HealthDay(steps: 8123)));
+      c.read(workoutTemplatesProvider.notifier).state = [];
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('home-today-card')), findsNothing);
+      expect(find.byKey(const Key('home-steps-tile')), findsOneWidget);
     });
 
     testWidgets('no steps line inside the Today card', (tester) async {
       await pump(tester,
           home: const HomeScreen(),
           days: withToday(const HealthDay(steps: 8123)));
+      expect(find.byKey(const Key('home-today-card')), findsOneWidget);
       expect(
           find.descendant(
               of: find.byKey(const Key('home-today-card')),
