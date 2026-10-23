@@ -48,7 +48,8 @@ class BodyWeightNotifier extends StateNotifier<List<WeighIn>> {
   /// Weigh-ins read from Health. A day that already has an entry (manual or
   /// imported earlier) is never replaced. The newest imported one updates the
   /// profile weight only when it is newer than every weigh-in already there.
-  Future<void> importWeighIns(List<WeighIn> imported) async {
+  /// Returns the weigh-ins actually added.
+  Future<List<WeighIn>> importWeighIns(List<WeighIn> imported) async {
     final store = _ref.read(bodyWeightStoreProvider);
     final existing = store.all();
     final days = {for (final e in existing) dayKey(e.at)};
@@ -60,7 +61,7 @@ class BodyWeightNotifier extends StateNotifier<List<WeighIn>> {
       }
       if (days.add(dayKey(w.at))) fresh.add(w);
     }
-    if (fresh.isEmpty) return;
+    if (fresh.isEmpty) return const [];
     for (final w in fresh) {
       await store.add(w);
     }
@@ -70,6 +71,7 @@ class BodyWeightNotifier extends StateNotifier<List<WeighIn>> {
     if (latestBefore == null || newest.at.isAfter(latestBefore)) {
       await _setProfileWeight(newest.kg);
     }
+    return fresh;
   }
 
   /// Stores the weigh-in without touching the profile. Returns the weigh-in

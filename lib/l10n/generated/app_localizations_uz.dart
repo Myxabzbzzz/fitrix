@@ -4310,7 +4310,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String connectedAppsSummaryTitle(String health) {
-    return '$health dan · 7 kun ichida';
+    return '$health dan · so‘nggi 7 kun';
   }
 
   @override
@@ -4323,10 +4323,10 @@ class AppLocalizationsUz extends AppLocalizations {
   String get connectedAppsSummaryRhr => 'Tinch pulsli kunlar';
 
   @override
-  String get connectedAppsSummaryHrv => 'HRV li kunlar';
+  String get connectedAppsSummaryHrv => 'HRV’li kunlar';
 
   @override
-  String get connectedAppsSummaryWeight => 'Olingan tortishlar';
+  String get connectedAppsSummaryWeight => 'Olingan vazn o‘lchovlari';
 
   @override
   String get connectedAppsSummaryImported => 'Olingan mashg‘ulotlar';

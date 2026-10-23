@@ -4444,7 +4444,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String connectedAppsSummaryTitle(String health) {
-    return 'Из $health · за 7 дней';
+    return 'Из $health · последние 7 дней';
   }
 
   @override
@@ -4457,17 +4457,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get connectedAppsSummaryRhr => 'Дни с пульсом покоя';
 
   @override
-  String get connectedAppsSummaryHrv => 'Дни с HRV';
+  String get connectedAppsSummaryHrv => 'Дни с ВСР';
 
   @override
-  String get connectedAppsSummaryWeight => 'Взвешиваний получено';
+  String get connectedAppsSummaryWeight => 'Дни со взвешиванием из Health';
 
   @override
-  String get connectedAppsSummaryImported => 'Тренировок получено';
+  String get connectedAppsSummaryImported => 'Тренировки из Health';
 
   @override
   String connectedAppsSummaryWritten(String health) {
-    return 'Тренировок сохранено в $health';
+    return 'Тренировки, сохранённые в $health';
   }
 
   @override

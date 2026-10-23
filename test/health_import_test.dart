@@ -437,6 +437,17 @@ void main() {
       expect(kept.last, '2026-10-22');
     });
 
+    test('a day with a manual weigh-in is not remembered as imported',
+        () async {
+      await c
+          .read(bodyWeightProvider.notifier)
+          .importWeighIns([WeighIn(at: DateTime(2026, 10, 22, 6), kg: 80)]);
+      fake.weightSamples = [_kg(DateTime(2026, 10, 22, 7, 30), 81.4)];
+      await importAll();
+      expect(c.read(bodyWeightProvider).single.kg, 80);
+      expect(prefs.getString('health_weight_imported_v1') ?? '[]', '[]');
+    });
+
     test('latest sample of the day wins; FITRIX and out-of-range skipped',
         () async {
       fake.weightSamples = [

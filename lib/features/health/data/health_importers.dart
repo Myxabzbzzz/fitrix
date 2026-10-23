@@ -133,10 +133,10 @@ class WeightImporter implements HealthImporter {
     }
     if (latest.isEmpty || !mayWrite()) return;
     final list = latest.values.toList()..sort((a, b) => a.to.compareTo(b.to));
-    await _ref.read(bodyWeightProvider.notifier).importWeighIns([
+    final added = await _ref.read(bodyWeightProvider.notifier).importWeighIns([
       for (final x in list) WeighIn(at: x.to, kg: x.value),
     ]);
-    await _remember(latest.keys);
+    await _remember([for (final w in added) dayKey(w.at)]);
   }
 
   /// Prefs: day keys that got an imported weigh-in, newest 60.
