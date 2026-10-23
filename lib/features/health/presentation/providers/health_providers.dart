@@ -14,7 +14,10 @@ import 'package:fitrix/features/health/domain/health_math.dart';
 /// Reads that an importer (workouts, weight, ...) does with the same window
 /// as the daily values.
 abstract class HealthImporter {
-  Future<void> run(HealthSource s, DateTime from, DateTime to);
+  /// [mayWrite] turns false once nothing may be written anymore (signed
+  /// out, another account, disconnected): check it before every write.
+  Future<void> run(
+      HealthSource s, DateTime from, DateTime to, bool Function() mayWrite);
 }
 
 final healthImportersProvider = Provider<List<HealthImporter>>(
@@ -136,6 +139,29 @@ class HealthSync {
   final Ref _ref;
   Future<void>? _inFlight;
 
+  /// False once the provider is disposed (sign-out, account switch): a read
+  /// still running then must not write into the next account's data.
+  bool _alive = true;
+
+  void dispose() => _alive = false;
+
+  /// Whether a running read may still write: not disposed and connected,
+  /// in memory and in storage (cleared local data reads as disconnected).
+  bool _mayWrite() {
+    if (!_alive) return false;
+    try {
+      if (!_ref.read(healthConnectionProvider).connected) return false;
+      final raw = _ref
+          .read(sharedPreferencesProvider)
+          .getString(HealthConnectionNotifier.key);
+      if (raw == null) return false;
+      return HealthConnection.fromJson(jsonDecode(raw) as Map<String, dynamic>)
+          .connected;
+    } catch (_) {
+      return false;
+    }
+  }
+
   static const throttle = Duration(minutes: 15);
   static const firstReadDays = 30;
 
@@ -143,6 +169,7 @@ class HealthSync {
   /// connected, or when read less than 15 minutes ago unless [force]. A
   /// call while a read runs returns that read. Never throws.
   Future<void> refresh({bool force = false}) {
+    if (!_alive) return Future.value();
     final running = _inFlight;
     if (running != null) return running;
     final conn = _ref.read(healthConnectionProvider);
@@ -167,20 +194,26 @@ class HealthSync {
     try {
       final source = _ref.read(healthSourceProvider);
       final days = await _readDays(source, firstDay, now);
-      // Disconnected while reading: drop the results.
-      if (!_ref.read(healthConnectionProvider).connected) return;
+      // Disconnected or signed out while reading: drop the results.
+      if (!_mayWrite()) return;
       await _ref.read(healthDailyStoreProvider).putAll(days);
-      if (!_ref.read(healthConnectionProvider).connected) return;
+      if (!_mayWrite()) return;
       await _ref.read(healthConnectionProvider.notifier).markRead(now);
+      if (!_mayWrite()) return;
       _ref.read(_healthCacheVersionProvider.notifier).state++;
     } catch (_) {
       // Locked phone etc.: keep the cache, try again next time.
     }
-    for (final i in _ref.read(healthImportersProvider)) {
-      if (!_ref.read(healthConnectionProvider).connected) return;
-      try {
-        await i.run(_ref.read(healthSourceProvider), firstDay, now);
-      } catch (_) {}
+    try {
+      for (final i in _ref.read(healthImportersProvider)) {
+        if (!_mayWrite()) return;
+        try {
+          await i.run(
+              _ref.read(healthSourceProvider), firstDay, now, _mayWrite);
+        } catch (_) {}
+      }
+    } catch (_) {
+      // Disposed meanwhile: nothing more to do.
     }
   }
 
@@ -244,7 +277,11 @@ class HealthSync {
   }
 }
 
-final healthSyncProvider = Provider<HealthSync>((ref) => HealthSync(ref));
+final healthSyncProvider = Provider<HealthSync>((ref) {
+  final sync = HealthSync(ref);
+  ref.onDispose(sync.dispose);
+  return sync;
+});
 
 /// Today's cached values and their baselines. Only today's entry counts: no
 /// entry for today means all values are null.

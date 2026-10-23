@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,7 +24,8 @@ HealthSample _s(DateTime to, double v) => HealthSample(
 class _Throwing implements HealthImporter {
   int runs = 0;
   @override
-  Future<void> run(HealthSource s, DateTime from, DateTime to) async {
+  Future<void> run(HealthSource s, DateTime from, DateTime to,
+      bool Function() mayWrite) async {
     runs++;
     throw StateError('boom');
   }
@@ -32,7 +34,9 @@ class _Throwing implements HealthImporter {
 class _Counting implements HealthImporter {
   DateTime? from;
   @override
-  Future<void> run(HealthSource s, DateTime f, DateTime to) async => from = f;
+  Future<void> run(HealthSource s, DateTime f, DateTime to,
+          bool Function() mayWrite) async =>
+      from = f;
 }
 
 class _Gated extends FakeHealthSource {
@@ -43,6 +47,35 @@ class _Gated extends FakeHealthSource {
     return super.sleep(from, to);
   }
 }
+
+/// Waits in `workouts()` (the workout importer's read) until released.
+class _GatedWorkouts extends FakeHealthSource {
+  final entered = Completer<void>();
+  final gate = Completer<void>();
+  @override
+  Future<List<HealthWorkoutRecord>> workouts(DateTime from, DateTime to) async {
+    if (!entered.isCompleted) entered.complete();
+    await gate.future;
+    return super.workouts(from, to);
+  }
+}
+
+final _watchRun = HealthWorkoutRecord(
+    uuid: 'r1',
+    activity: 'RUNNING',
+    from: DateTime(2026, 10, 22, 18),
+    to: DateTime(2026, 10, 22, 18, 30),
+    meters: 5000,
+    sourceId: 'com.apple.health.watch',
+    sourceName: 'Apple Watch');
+
+final _scale = HealthSample(
+    uuid: 'kg1',
+    from: DateTime(2026, 10, 22, 7),
+    to: DateTime(2026, 10, 22, 7),
+    value: 81.4,
+    sourceId: 'com.mi',
+    sourceName: 'Mi Fitness');
 
 void main() {
   late SharedPreferences prefs;
@@ -339,5 +372,81 @@ void main() {
     expect(c.read(healthConnectionProvider).lastReadAt, isNull);
     expect(c.read(healthDailyStoreProvider).day(key(0)), isNull);
     expect(counting.from, isNull);
+  });
+
+  group('sign-out / account switch while reading', () {
+    // The real importers, as in the app.
+    ProviderContainer real(FakeHealthSource source) => ProviderContainer(
+          overrides: [
+            sharedPreferencesProvider.overrideWithValue(prefs),
+            healthSourceProvider.overrideWithValue(source),
+            clockProvider.overrideWithValue(() => now),
+          ],
+        );
+
+    Map<String, Object?> stored() =>
+        {for (final k in prefs.getKeys()) k: prefs.get(k)};
+
+    Future<void> connected() => prefs.setString('health_connection_v1',
+        jsonEncode({'connected': true, 'writeWorkouts': true}));
+
+    test('disposed during the day read: nothing written, no error', () async {
+      await connected();
+      final gated = _Gated()
+        ..restingHrSamples = fake.restingHrSamples
+        ..stepsValue = 1200
+        ..workoutRecords = [_watchRun]
+        ..weightSamples = [_scale];
+      final cc = real(gated);
+      final f = cc.read(healthSyncProvider).refresh();
+      final before = stored();
+      cc.dispose();
+      gated.gate.complete();
+      await expectLater(f, completes);
+      expect(stored(), before);
+    });
+
+    test('disposed while importing workouts: no workout written', () async {
+      await connected();
+      final gated = _GatedWorkouts()
+        ..workoutRecords = [_watchRun]
+        ..weightSamples = [_scale];
+      final cc = real(gated);
+      final f = cc.read(healthSyncProvider).refresh();
+      await gated.entered.future;
+      final before = stored();
+      expect(before.keys, contains('health_days_v1'));
+      cc.dispose();
+      gated.gate.complete();
+      await expectLater(f, completes);
+      expect(stored(), before);
+    });
+
+    test('local data cleared during the read: nothing written', () async {
+      await connected();
+      final gated = _Gated()
+        ..stepsValue = 1200
+        ..workoutRecords = [_watchRun]
+        ..weightSamples = [_scale];
+      final cc = real(gated);
+      addTearDown(cc.dispose);
+      final f = cc.read(healthSyncProvider).refresh();
+      // What clearLocalData does before the app rebuilds its state.
+      for (final k in prefs.getKeys().toList()) {
+        await prefs.remove(k);
+      }
+      gated.gate.complete();
+      await expectLater(f, completes);
+      expect(prefs.getKeys(), isEmpty);
+    });
+
+    test('refresh after dispose is a no-op', () async {
+      await connected();
+      final cc = real(fake);
+      final sync = cc.read(healthSyncProvider);
+      cc.dispose();
+      await expectLater(sync.refresh(force: true), completes);
+      expect(fake.readCalls, 0);
+    });
   });
 }

@@ -24,6 +24,7 @@ import 'package:flutter_map/flutter_map.dart';
 
 import 'package:fitrix/core/sync/collections.dart';
 import 'package:fitrix/features/football/data/match_log.dart';
+import 'package:fitrix/features/football/data/match_store.dart';
 import 'package:fitrix/features/football/presentation/football_screen.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
@@ -97,7 +98,8 @@ void main() {
 
   Future<void> importAll() async {
     for (final i in c.read(healthImportersProvider)) {
-      await i.run(fake, DateTime(2026, 9, 23), DateTime(2026, 10, 23, 10));
+      await i.run(
+          fake, DateTime(2026, 9, 23), DateTime(2026, 10, 23, 10), () => true);
     }
   }
 
@@ -598,6 +600,67 @@ void main() {
       await t.pumpAndSettle();
       expect(c.read(workoutHistoryProvider).single.sessionRpe, 9);
       expect(c.read(healthImportsProvider)[id]!.rpe, 9);
+      expectNoOverflow(t);
+    });
+
+    testWidgets('a rated imported run shows its RPE once, on the scale',
+        (t) async {
+      se(t);
+      fake.workoutRecords = [_rec('r1')];
+      await importAll();
+      final id = c.read(workoutHistoryProvider).single.id;
+      c.read(workoutHistoryProvider.notifier).setRpe(id, 6);
+      await t.pumpWidget(host(RunSummaryScreen(id: id)));
+      await t.pumpAndSettle();
+      expect(find.text('6 / 10'), findsNothing);
+      await t.scrollUntilVisible(
+          find.byKey(const ValueKey('importedRpe-6')), 200,
+          scrollable: find.byType(Scrollable).first);
+      expect(find.text('How hard did it feel?'), findsOneWidget);
+      expectNoOverflow(t);
+    });
+
+    testWidgets('football history: logs and imports by date, newest first',
+        (t) async {
+      se(t);
+      fake.workoutRecords = [_rec('f1', activity: 'SOCCER')]; // 22 Oct
+      await importAll();
+      final importId = c.read(workoutHistoryProvider).single.id;
+      String logOn(DateTime finishedAt) {
+        final w = CompletedWorkout(
+          templateId: footballLogTemplateId,
+          name: 'Football training',
+          sport: Sport.football,
+          startedAt: finishedAt.subtract(const Duration(minutes: 60)),
+          finishedAt: finishedAt,
+          exercises: const [],
+        );
+        c.read(workoutHistoryProvider.notifier).add(w);
+        c.read(matchesProvider.notifier).put(
+            w.id,
+            MatchLog(
+                type: FootballType.training,
+                date: finishedAt,
+                minutes: 60,
+                templateId: footballLogTemplateId));
+        return w.id;
+      }
+
+      final newer = logOn(DateTime(2026, 10, 23, 9));
+      final older = logOn(DateTime(2026, 10, 21, 20));
+      expect(c.read(workoutHistoryProvider), hasLength(3));
+      await t.pumpWidget(host(const FootballScreen()));
+      await t.pumpAndSettle();
+      final rows = [
+        find.byKey(ValueKey('fb-row-$newer')),
+        find.byKey(ValueKey('imported-row-$importId')),
+        find.byKey(ValueKey('fb-row-$older')),
+      ];
+      await t.scrollUntilVisible(rows.last, 200,
+          scrollable: find.byType(Scrollable).first);
+      final ys = [for (final r in rows) t.getTopLeft(r).dy];
+      expect(ys[0], lessThan(ys[1]));
+      expect(ys[1], lessThan(ys[2]));
       expectNoOverflow(t);
     });
 

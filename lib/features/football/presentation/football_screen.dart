@@ -50,6 +50,12 @@ class FootballScreen extends ConsumerWidget {
     final entries = ref.watch(footballHistoryProvider);
     final imported = ref.watch(importedWorkoutsProvider(Sport.football));
     void log(WorkoutTemplate t) => startWorkout(context, ref, t);
+    // Logs and workouts from Health in one list, newest first.
+    final rows = <({DateTime at, Widget row})>[
+      for (final e in entries) (at: e.log.date, row: _Row(entry: e)),
+      for (final e in imported)
+        (at: e.workout.finishedAt, row: ImportedWorkoutRow(entry: e)),
+    ]..sort((a, b) => b.at.compareTo(a.at));
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -94,10 +100,8 @@ class FootballScreen extends ConsumerWidget {
                             style: AppText.body14
                                 .copyWith(color: palette.textSecondary)),
                       )
-                    else ...[
-                      for (final e in entries) _Row(entry: e),
-                      for (final e in imported) ImportedWorkoutRow(entry: e),
-                    ],
+                    else
+                      for (final r in rows) r.row,
                     const SizedBox(height: AppSpacing.lg),
                     SectionHeader(l10n.footballWorkouts),
                     const SizedBox(height: AppSpacing.xs),

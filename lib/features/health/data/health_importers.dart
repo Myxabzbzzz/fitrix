@@ -26,13 +26,16 @@ class WorkoutImporter implements HealthImporter {
   final Ref _ref;
 
   @override
-  Future<void> run(HealthSource s, DateTime from, DateTime to) async {
+  Future<void> run(HealthSource s, DateTime from, DateTime to,
+      bool Function() mayWrite) async {
     final records = await s.workouts(from, to);
+    if (!mayWrite()) return;
     final platform = s.platform;
     final l10n =
         lookupAppLocalizations(Locale(_ref.read(selectedLanguageProvider)));
     final seen = <String>{};
     for (final r in records) {
+      if (!mayWrite()) return;
       if (r.sourceId == fitrixHealthSourceId) continue;
       if (!r.to.isAfter(r.from)) continue;
       final id = importedWorkoutId(platform, r.uuid);
@@ -59,6 +62,7 @@ class WorkoutImporter implements HealthImporter {
       final meters = (r.meters ?? 0) > 0 ? r.meters : null;
       final kcal = (r.kcal ?? 0) > 0 ? r.kcal : null;
       final avgHr = await _avgHr(s, r.from, r.to);
+      if (!mayWrite()) return;
 
       _ref.read(healthImportsProvider.notifier).put(
             id,
@@ -112,7 +116,8 @@ class WeightImporter implements HealthImporter {
   final Ref _ref;
 
   @override
-  Future<void> run(HealthSource s, DateTime from, DateTime to) async {
+  Future<void> run(HealthSource s, DateTime from, DateTime to,
+      bool Function() mayWrite) async {
     final samples = await s.weightKg(from, to);
     final latest = <String, HealthSample>{};
     for (final x in samples) {
@@ -124,7 +129,7 @@ class WeightImporter implements HealthImporter {
       final cur = latest[k];
       if (cur == null || x.to.isAfter(cur.to)) latest[k] = x;
     }
-    if (latest.isEmpty) return;
+    if (latest.isEmpty || !mayWrite()) return;
     final list = latest.values.toList()..sort((a, b) => a.to.compareTo(b.to));
     await _ref.read(bodyWeightProvider.notifier).importWeighIns([
       for (final x in list) WeighIn(at: x.to, kg: x.value),

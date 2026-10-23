@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -69,12 +71,16 @@ class _SyncBootstrapState extends ConsumerState<SyncBootstrap> {
     _lifecycle = AppLifecycleListener(
       onResume: () {
         ref.read(syncEngineProvider)?.sync();
-        ref.read(healthSyncProvider).refresh();
+        unawaited(
+            ref.read(healthSyncProvider).refresh().catchError((Object _) {}));
       },
     );
     // After the first frame, when the session has been restored.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) ref.read(healthSyncProvider).refresh();
+      if (mounted) {
+        unawaited(
+            ref.read(healthSyncProvider).refresh().catchError((Object _) {}));
+      }
     });
   }
 

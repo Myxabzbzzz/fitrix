@@ -173,7 +173,8 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
                       label: l10n.runElevation,
                       value: l10n.runElevationValue(
                           formatMeters(details.elevationGain!, locale))),
-                if (rated != null && !widget.justFinished)
+                // An imported run shows its rating on the scale below.
+                if (rated != null && !widget.justFinished && imported == null)
                   _Figure(label: l10n.runRpeTitle, value: '$rated / 10'),
               ],
             ),
