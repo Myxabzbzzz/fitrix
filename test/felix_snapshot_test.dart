@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/chat/data/felix_snapshot.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/football/data/match_log.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
+import 'package:fitrix/features/health/data/health_source.dart';
+import 'package:fitrix/features/health/domain/health_math.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
@@ -38,6 +43,8 @@ void main() {
     List<WeighIn> weighIns = const [],
     Map<String, RunDetails> runs = const {},
     Map<String, MatchLog> matches = const {},
+    HealthSignals? health,
+    Map<String, HealthImport> imports = const {},
   }) =>
       buildFelixSnapshot(
         topic: topic,
@@ -51,6 +58,8 @@ void main() {
         weighIns: weighIns,
         runs: runs,
         matches: matches,
+        health: health,
+        imports: imports,
       ).toJson();
 
   test('empty inputs give only the date, weekday and an unplanned today', () {
@@ -291,6 +300,115 @@ void main() {
       });
       expect((j['lastWorkout'] as Map)['match'],
           {'type': 'training', 'minutes': 60, 'rpe': 5});
+    });
+  });
+
+  group('health values', () {
+    const full = HealthSignals(
+        restingHr: 52.4,
+        restingHrBaseline: 55.04,
+        hrv: 61.6,
+        hrvBaseline: 58.26,
+        hrvKind: HrvKind.sdnn,
+        stepsToday: 4200,
+        steps7dAvg: 8123);
+    const ready = Readiness(
+        70,
+        [
+          (factor: ReadinessFactorKey.restingHr, delta: 5),
+          (factor: ReadinessFactorKey.hrv, delta: -3),
+        ],
+        ReadinessLabel.ready);
+
+    test('recovery gets every health field and the factors', () {
+      final r = json(AssistantTopic.recovery,
+          readiness: ready, health: full)['readiness'] as Map;
+      expect(r['restingHr'], 52);
+      expect(r['restingHrBaseline'], 55.0);
+      expect(r['hrv'], 62);
+      expect(r['hrvKind'], 'sdnn');
+      expect(r['hrvBaseline'], 58.3);
+      expect(r['stepsToday'], 4200);
+      expect(r['steps7dAvg'], 8123);
+      expect((r['factors'] as List).map((f) => (f as Map)['factor']),
+          ['restingHr', 'hrv']);
+    });
+
+    test('null values are omitted, and hrv needs its kind', () {
+      final r = json(AssistantTopic.recovery,
+          readiness: ready,
+          health: const HealthSignals(
+              hrv: 50, hrvBaseline: 50, stepsToday: 0))['readiness'] as Map;
+      for (final k in [
+        'restingHr',
+        'restingHrBaseline',
+        'hrv',
+        'hrvBaseline',
+        'hrvKind',
+        'steps7dAvg'
+      ]) {
+        expect(r.containsKey(k), isFalse, reason: k);
+      }
+      expect(r['stepsToday'], 0);
+    });
+
+    test('sport topics keep only score and label', () {
+      final r =
+          json(AssistantTopic.gym, readiness: ready, health: full)['readiness']
+              as Map;
+      expect(r, {'score': 70, 'label': 'ready'});
+    });
+
+    test('nutrition is unchanged', () {
+      expect(json(AssistantTopic.nutrition, readiness: ready, health: full),
+          json(AssistantTopic.nutrition));
+    });
+
+    test('an imported last workout carries source, avgHr and distance', () {
+      final w =
+          workout(Sport.running, DateTime(2026, 10, 19, 7), 'Run', minutes: 30);
+      final last = json(AssistantTopic.running, history: [
+        w
+      ], imports: {
+        w.id: const HealthImport(
+            source: 'Apple Watch', healthUuid: 'u', meters: 6000, avgHr: 148)
+      })['lastWorkout'] as Map;
+      expect(last['source'], 'Apple Watch');
+      expect(last['avgHr'], 148);
+      expect(last['distanceKm'], 6.0);
+      expect(last['paceSecPerKm'], 300);
+    });
+
+    test('the run doc distance wins over the import meters', () {
+      final w =
+          workout(Sport.running, DateTime(2026, 10, 19, 7), 'Run', minutes: 30);
+      final last = json(AssistantTopic.running, history: [
+        w
+      ], runs: {
+        w.id: RunDetails(
+            startedAt: w.startedAt,
+            moving: const Duration(minutes: 30),
+            elapsed: const Duration(minutes: 30),
+            pauses: 0,
+            meters: 5000,
+            splits: const [],
+            route: const [])
+      }, imports: {
+        w.id: const HealthImport(
+            source: 'Watch', healthUuid: 'u', meters: 6000, avgHr: 20)
+      })['lastWorkout'] as Map;
+      expect(last['distanceKm'], 5.0);
+      expect(last.containsKey('avgHr'), isFalse);
+    });
+
+    test('stays under 8 KB with 60 cached days of history', () {
+      final history = [
+        for (var i = 0; i < 60; i++)
+          workout(Sport.running, today.subtract(Duration(days: i)), 'Run $i')
+      ];
+      final j = json(AssistantTopic.recovery,
+          history: history, readiness: ready, health: full, sleepHours: 7);
+      expect(jsonEncode(j).length, lessThan(8192));
     });
   });
 }

@@ -2,6 +2,9 @@ import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/football/data/match_log.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
+import 'package:fitrix/features/health/data/health_source.dart';
+import 'package:fitrix/features/health/domain/health_math.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
@@ -26,6 +29,12 @@ class FelixSnapshot {
   /// Run or football details of [lastWorkout], when it has them.
   final RunDetails? lastRun;
   final MatchLog? lastMatch;
+
+  /// Apple Health / Health Connect details of [lastWorkout], when imported.
+  final HealthImport? lastImport;
+
+  /// Health values; only given to the recovery topic.
+  final HealthSignals? health;
   final int? load7;
   final double? acwr;
   final AcwrBand? band;
@@ -46,6 +55,8 @@ class FelixSnapshot {
     this.lastWorkout,
     this.lastRun,
     this.lastMatch,
+    this.lastImport,
+    this.health,
     this.load7,
     this.acwr,
     this.band,
@@ -68,6 +79,39 @@ class FelixSnapshot {
     return {
       if (run.meters > 0 && km <= 500) 'distanceKm': (km * 100).round() / 100,
       if (run.meters >= 50 && pace >= 120 && pace <= 1800) 'paceSecPerKm': pace,
+    };
+  }
+
+  /// Pace of [meters] covered in [moving], same limits as [_runJson].
+  static Map<String, Object> _importDistanceJson(double meters, Duration d) =>
+      _runJson(RunDetails(
+          startedAt: DateTime(2000),
+          moving: d,
+          elapsed: d,
+          pauses: 0,
+          meters: meters,
+          splits: const [],
+          route: const []));
+
+  static Map<String, Object> _healthJson(HealthSignals h) {
+    final rhr = h.restingHr;
+    final rhrBase = h.restingHrBaseline;
+    final hrv = h.hrv;
+    final hrvBase = h.hrvBaseline;
+    final hasKind = h.hrvKind != null;
+    final steps = h.stepsToday;
+    final avg = h.steps7dAvg;
+    return {
+      if (rhr != null && rhr >= 25 && rhr <= 220) 'restingHr': rhr.round(),
+      if (rhrBase != null && rhrBase >= 25 && rhrBase <= 220)
+        'restingHrBaseline': _round1(rhrBase),
+      if (hasKind && hrv != null && hrv >= 1 && hrv <= 300) 'hrv': hrv.round(),
+      if (hasKind && hrvBase != null && hrvBase >= 1 && hrvBase <= 300)
+        'hrvBaseline': _round1(hrvBase),
+      if (hasKind && (hrv != null || hrvBase != null))
+        'hrvKind': h.hrvKind == HrvKind.sdnn ? 'sdnn' : 'rmssd',
+      if (steps != null && steps >= 0 && steps <= 100000) 'stepsToday': steps,
+      if (avg != null && avg >= 0 && avg <= 100000) 'steps7dAvg': avg,
     };
   }
 
@@ -99,6 +143,8 @@ class FelixSnapshot {
     final lastWorkout = this.lastWorkout;
     final lastRun = this.lastRun;
     final lastMatch = this.lastMatch;
+    final lastImport = this.lastImport;
+    final health = this.health;
     final match = lastMatch == null ? null : _matchJson(lastMatch);
     final next = this.next;
     final readiness = this.readiness;
@@ -136,6 +182,7 @@ class FelixSnapshot {
           'score': readiness.score,
           'label': readiness.label.name,
           if (sleepHours != null) 'sleepHours': _round1(sleepHours),
+          if (health != null) ..._healthJson(health),
           if (readiness.factors.isNotEmpty)
             'factors': [
               for (final f in readiness.factors)
@@ -149,7 +196,18 @@ class FelixSnapshot {
           'name': lastWorkout.name,
           if (lastWorkout.duration.inMinutes > 0)
             'minutes': lastWorkout.duration.inMinutes,
-          if (lastRun != null) ..._runJson(lastRun),
+          if (lastRun != null)
+            ..._runJson(lastRun)
+          else if (lastImport?.meters != null)
+            ..._importDistanceJson(lastImport!.meters!, lastWorkout.duration),
+          if (lastImport != null) ...{
+            if (lastImport.source.isNotEmpty && lastImport.source.length <= 40)
+              'source': lastImport.source,
+            if (lastImport.avgHr != null &&
+                lastImport.avgHr! >= 30 &&
+                lastImport.avgHr! <= 230)
+              'avgHr': lastImport.avgHr!,
+          },
           if (match != null) 'match': match,
         },
       if (load7 != null)
@@ -200,6 +258,8 @@ FelixSnapshot buildFelixSnapshot({
   List<WeighIn> weighIns = const [],
   Map<String, RunDetails> runs = const {},
   Map<String, MatchLog> matches = const {},
+  HealthSignals? health,
+  Map<String, HealthImport> imports = const {},
 }) {
   final day = dayOf(today);
   final sport = topic.sport;
@@ -277,6 +337,8 @@ FelixSnapshot buildFelixSnapshot({
     lastWorkout: lastWorkout,
     lastRun: lastWorkout == null ? null : runs[lastWorkout.id],
     lastMatch: lastWorkout == null ? null : matches[lastWorkout.id],
+    lastImport: lastWorkout == null ? null : imports[lastWorkout.id],
+    health: isRecovery && readiness != null ? health : null,
     load7: load7,
     acwr: isRecovery ? summary?.acwr : null,
     band: summary?.band,

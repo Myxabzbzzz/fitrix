@@ -4,6 +4,8 @@ import 'package:fitrix/features/chat/data/felix_snapshot.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
 import 'package:fitrix/features/football/data/match_store.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
 import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
@@ -28,5 +30,9 @@ final felixSnapshotProvider =
     weighIns: ref.watch(bodyWeightProvider),
     runs: ref.watch(runsProvider),
     matches: ref.watch(matchesProvider),
+    health: topic == AssistantTopic.recovery
+        ? ref.watch(healthTodayProvider)
+        : null,
+    imports: ref.watch(healthImportsProvider),
   );
 });
