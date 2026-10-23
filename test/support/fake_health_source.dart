@@ -52,9 +52,14 @@ class FakeHealthSource implements HealthSource {
 
   int requestAccessCalls = 0;
   int openInstallCalls = 0;
+
+  /// Every read method (sleep, restingHr, hrv, steps, heartRate, weightKg,
+  /// workouts) counts here.
+  int readCalls = 0;
   final List<WrittenWorkout> written = [];
 
   T _read<T>(T v) {
+    readCalls++;
     if (throwOnRead) {
       throw StateError('Protected health data is inaccessible');
     }

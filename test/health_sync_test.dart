@@ -153,8 +153,8 @@ void main() {
   });
 
   test('not connected: no reads, no permission request', () async {
-    fake.throwOnRead = true;
     await c.read(healthSyncProvider).refresh(force: true);
+    expect(fake.readCalls, 0);
     expect(fake.requestAccessCalls, 0);
     expect(c.read(healthDailyStoreProvider).day(key(0)), isNull);
     expect(c.read(healthConnectionProvider).lastReadAt, isNull);
