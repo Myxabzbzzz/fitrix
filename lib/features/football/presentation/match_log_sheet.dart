@@ -16,9 +16,6 @@ import 'package:fitrix/features/workouts/presentation/providers/workouts_provide
 import 'package:fitrix/features/workouts/presentation/widgets/live_log_rpe_sheet.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
-/// Template id of a football log made without a plan.
-const footballLogTemplateId = 'football_log';
-
 const _defaultMinutes = 50;
 const _defaultFormat = '7x7';
 const _maxMinutes = 300;

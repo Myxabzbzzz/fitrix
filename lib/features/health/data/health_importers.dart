@@ -43,12 +43,18 @@ class WorkoutImporter implements HealthImporter {
       final history = _ref.read(workoutHistoryProvider);
       if (history.any((w) => w.id == id)) continue;
       final sport = sportForActivity(r.activity);
-      final imports = _ref.read(healthImportsProvider);
-      final own = [
-        for (final w in history)
-          if (!imports.containsKey(w.id)) w
-      ];
-      if (overlapsSameSport(r, sport, own)) continue;
+      final workout = CompletedWorkout(
+        id: id,
+        templateId: healthImportTemplateId,
+        name: sport.localizedLabel(l10n),
+        sport: sport,
+        startedAt: r.from,
+        finishedAt: r.to,
+        exercises: const [],
+      );
+      // Logged in FITRIX, already imported from another source, or earlier
+      // in this read: the same session once is enough.
+      if (history.any((w) => sameSession(workout, w))) continue;
 
       final meters = (r.meters ?? 0) > 0 ? r.meters : null;
       final kcal = (r.kcal ?? 0) > 0 ? r.kcal : null;
@@ -80,17 +86,7 @@ class WorkoutImporter implements HealthImporter {
               ),
             );
       }
-      _ref.read(workoutHistoryProvider.notifier).addImported(
-            CompletedWorkout(
-              id: id,
-              templateId: healthImportTemplateId,
-              name: sport.localizedLabel(l10n),
-              sport: sport,
-              startedAt: r.from,
-              finishedAt: r.to,
-              exercises: const [],
-            ),
-          );
+      _ref.read(workoutHistoryProvider.notifier).addImported(workout);
     }
   }
 

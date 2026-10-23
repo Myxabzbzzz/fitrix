@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
+import 'package:fitrix/features/football/data/match_log.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/health/domain/health_math.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -17,14 +18,6 @@ CompletedWorkout own(Sport s, DateTime a, DateTime b) => CompletedWorkout(
     startedAt: a,
     finishedAt: b,
     exercises: const []);
-
-HealthWorkoutRecord rec(DateTime a, DateTime b) => HealthWorkoutRecord(
-    uuid: 'u',
-    activity: 'RUNNING',
-    from: a,
-    to: b,
-    sourceId: 's',
-    sourceName: 'n');
 
 void main() {
   final today = DateTime(2026, 10, 23);
@@ -165,24 +158,62 @@ void main() {
     expect(a, isNot(importedWorkoutId(HealthPlatform.appleHealth, 'y')));
   });
 
-  group('overlapsSameSport', () {
-    final r = rec(t(0, 18), t(0, 18, 40));
+  group('sameSession', () {
+    CompletedWorkout imp(Sport s, DateTime a, DateTime b) => CompletedWorkout(
+        templateId: 'health_import',
+        name: 'n',
+        sport: s,
+        startedAt: a,
+        finishedAt: b,
+        exercises: const []);
+    CompletedWorkout log(int minutes, DateTime finishedAt) => CompletedWorkout(
+        templateId: footballLogTemplateId,
+        name: 'Football 7×7',
+        sport: Sport.football,
+        startedAt: finishedAt.subtract(Duration(minutes: minutes)),
+        finishedAt: finishedAt,
+        exercises: const []);
+    final r = imp(Sport.running, t(0, 18), t(0, 18, 40));
+    final match = imp(Sport.football, t(0, 18, 30), t(0, 20));
+
     test('same sport mostly overlapping', () {
-      expect(
-          overlapsSameSport(r, Sport.running,
-              [own(Sport.running, t(0, 18, 5), t(0, 18, 45))]),
+      expect(sameSession(r, own(Sport.running, t(0, 18, 5), t(0, 18, 45))),
           isTrue);
     });
     test('different sport', () {
       expect(
-          overlapsSameSport(
-              r, Sport.running, [own(Sport.gym, t(0, 18, 5), t(0, 18, 45))]),
-          isFalse);
+          sameSession(r, own(Sport.gym, t(0, 18, 5), t(0, 18, 45))), isFalse);
     });
     test('10 of 40 minutes', () {
+      expect(sameSession(r, own(Sport.running, t(0, 18, 30), t(0, 19, 30))),
+          isFalse);
+    });
+    test('exactly half is not more than half', () {
       expect(
-          overlapsSameSport(r, Sport.running,
-              [own(Sport.running, t(0, 18, 30), t(0, 19, 30))]),
+          sameSession(r, own(Sport.running, t(0, 18, 20), t(0, 19))), isFalse);
+    });
+    test('football log at 21:00 matches the 90-min watch match', () {
+      // 19:30-21:00 vs 18:30-20:00: 30 of 90 minutes overlap.
+      expect(sameSession(match, log(90, t(0, 21))), isTrue);
+    });
+    test('past-day football log (20:00) matches by day and minutes', () {
+      final past = imp(Sport.football, t(-2, 10), t(-2, 11, 30));
+      expect(sameSession(past, log(60, t(-2, 20))), isTrue);
+      expect(sameSession(past, log(135, t(-2, 20))), isTrue); // 150 %
+      expect(sameSession(past, log(45, t(-2, 20))), isTrue); // 50 %
+    });
+    test('40-min football log vs 90-min match: not the same', () {
+      expect(sameSession(match, log(40, t(0, 23))), isFalse);
+    });
+    test('football log on another day: not the same', () {
+      expect(sameSession(match, log(90, t(-1, 20))), isFalse);
+    });
+    test('a non-log football workout needs the overlap', () {
+      final plan = own(Sport.football, t(0, 21, 30), t(0, 23));
+      expect(sameSession(match, plan), isFalse);
+    });
+    test('a gym import the same day as a football log', () {
+      expect(sameSession(imp(Sport.gym, t(0, 8), t(0, 9)), log(60, t(0, 21))),
           isFalse);
     });
   });

@@ -1,5 +1,7 @@
 import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/health/data/health_writer.dart';
+import 'package:fitrix/features/health/domain/health_math.dart';
+import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/session/session_providers.dart';
@@ -40,8 +42,13 @@ final workoutHistoryProvider =
     ref.watch(workoutStorageProvider),
     ref.watch(deletedWorkoutsStoreProvider),
     onChanged: ref.read(localChangesProvider).notify,
-    onRemoved: (id) => ref.read(healthImportsProvider.notifier).remove(id),
+    onRemoved: (id) {
+      final imported = ref.read(healthImportsProvider).containsKey(id);
+      ref.read(healthImportsProvider.notifier).remove(id);
+      if (imported) ref.read(runsProvider.notifier).remove(id);
+    },
     onAdded: (w) => ref.read(healthWriterProvider).onAdded(w),
+    isImported: (id) => ref.read(healthImportsProvider).containsKey(id),
   ),
 );
 
@@ -184,14 +191,17 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
   final void Function()? _onChanged;
   final void Function(String id)? _onRemoved;
   final void Function(CompletedWorkout workout)? _onAdded;
+  final bool Function(String id)? _isImported;
 
   WorkoutHistoryNotifier(this._storage, this._deleted,
       {void Function()? onChanged,
       void Function(String id)? onRemoved,
-      void Function(CompletedWorkout workout)? onAdded})
+      void Function(CompletedWorkout workout)? onAdded,
+      bool Function(String id)? isImported})
       : _onChanged = onChanged,
         _onRemoved = onRemoved,
         _onAdded = onAdded,
+        _isImported = isImported,
         super(_storage.loadHistory());
 
   @override
@@ -204,9 +214,24 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
   /// A workout created in FITRIX; reported to [onAdded] (written to Health).
   /// [toHealth] false is for an edit that replaces a logged workout: not a
   /// new session, so it is not written to Health again.
+  /// A workout imported from Health that is the same session (see
+  /// [sameSession]) is removed: the FITRIX one replaces it.
   void add(CompletedWorkout workout, {bool toHealth = true}) {
     state = [workout, ...state];
+    final twin = _importedTwinOf(workout);
+    if (twin != null) remove(twin);
     if (toHealth) _onAdded?.call(workout);
+  }
+
+  String? _importedTwinOf(CompletedWorkout workout) {
+    final isImported = _isImported;
+    if (isImported == null) return null;
+    for (final w in state) {
+      if (w.id != workout.id && isImported(w.id) && sameSession(w, workout)) {
+        return w.id;
+      }
+    }
+    return null;
   }
 
   /// A workout read from Apple Health / Health Connect. Saved and synced

@@ -23,6 +23,7 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 
 import 'package:fitrix/core/sync/collections.dart';
+import 'package:fitrix/features/football/data/match_log.dart';
 import 'package:fitrix/features/football/presentation/football_screen.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
@@ -196,13 +197,124 @@ void main() {
       expect(c.read(healthImportsProvider), hasLength(1));
     });
 
-    test('an imported workout does not block another import', () async {
+    test('the same session from two sources is imported once', () async {
       fake.workoutRecords = [
         _rec('r1', sourceName: 'Apple Watch'),
         _rec('r2', sourceName: 'Garmin Connect', sourceId: 'com.garmin'),
       ];
       await importAll();
-      expect(c.read(workoutHistoryProvider), hasLength(2));
+      expect(c.read(workoutHistoryProvider), hasLength(1));
+      expect(c.read(healthImportsProvider), hasLength(1));
+      // Reading again: the accepted one is skipped by id, the other still
+      // overlaps it.
+      await importAll();
+      expect(c.read(workoutHistoryProvider), hasLength(1));
+    });
+
+    test('an already imported session blocks the same one from another source',
+        () async {
+      fake.workoutRecords = [_rec('r1')];
+      await importAll();
+      fake.workoutRecords = [
+        _rec('r1'),
+        _rec('r2', sourceName: 'Garmin Connect', sourceId: 'com.garmin'),
+      ];
+      await importAll();
+      expect(c.read(workoutHistoryProvider).single.id,
+          importedWorkoutId(HealthPlatform.appleHealth, 'r1'));
+    });
+
+    group('football log and watch match', () {
+      // A 90-minute watch match 18:30-20:00 on 22 Oct.
+      HealthWorkoutRecord watchMatch() => _rec('m1',
+          activity: 'SOCCER',
+          from: DateTime(2026, 10, 22, 18, 30),
+          minutes: 90);
+      // The log made after it: the sheet puts its end at the save time.
+      CompletedWorkout footballLog(int minutes, DateTime finishedAt) =>
+          CompletedWorkout(
+            templateId: footballLogTemplateId,
+            name: 'Football 7×7',
+            sport: Sport.football,
+            startedAt: finishedAt.subtract(Duration(minutes: minutes)),
+            finishedAt: finishedAt,
+            exercises: const [],
+          );
+
+      test('watch then log: the log replaces the import', () async {
+        fake.workoutRecords = [watchMatch()];
+        await importAll();
+        final importId = c.read(workoutHistoryProvider).single.id;
+        final log = footballLog(90, DateTime(2026, 10, 22, 21));
+        c.read(workoutHistoryProvider.notifier).add(log);
+        expect(c.read(workoutHistoryProvider).single.id, log.id);
+        expect(c.read(deletedWorkoutsStoreProvider).deletedAt(importId),
+            isNotNull);
+        expect(c.read(healthImportsProvider), isEmpty);
+        await importAll();
+        expect(c.read(workoutHistoryProvider).single.id, log.id);
+      });
+
+      test('an edit (toHealth false) replaces the import as well', () async {
+        fake.workoutRecords = [watchMatch()];
+        await importAll();
+        c
+            .read(workoutHistoryProvider.notifier)
+            .add(footballLog(80, DateTime(2026, 10, 22, 21)), toHealth: false);
+        expect(c.read(workoutHistoryProvider).single.templateId,
+            footballLogTemplateId);
+      });
+
+      test('log then watch: the import is skipped', () async {
+        final log = footballLog(90, DateTime(2026, 10, 22, 21));
+        c.read(workoutHistoryProvider.notifier).add(log);
+        fake.workoutRecords = [watchMatch()];
+        await importAll();
+        expect(c.read(workoutHistoryProvider).single.id, log.id);
+        expect(c.read(healthImportsProvider), isEmpty);
+      });
+
+      test('a gym import the same day as a football log is kept', () async {
+        fake.workoutRecords = [
+          _rec('g1',
+              activity: 'TRADITIONAL_STRENGTH_TRAINING',
+              from: DateTime(2026, 10, 22, 8),
+              minutes: 60),
+        ];
+        await importAll();
+        c
+            .read(workoutHistoryProvider.notifier)
+            .add(footballLog(60, DateTime(2026, 10, 22, 21)));
+        expect(c.read(workoutHistoryProvider), hasLength(2));
+        expect(c.read(healthImportsProvider), hasLength(1));
+      });
+
+      test('a 40-minute log and a 90-minute match are not merged', () async {
+        fake.workoutRecords = [watchMatch()];
+        await importAll();
+        c
+            .read(workoutHistoryProvider.notifier)
+            .add(footballLog(40, DateTime(2026, 10, 22, 21)));
+        expect(c.read(workoutHistoryProvider), hasLength(2));
+        expect(c.read(healthImportsProvider), hasLength(1));
+      });
+    });
+
+    test('a FITRIX run replacing an imported run drops its run doc too',
+        () async {
+      fake.workoutRecords = [_rec('r1')];
+      await importAll();
+      expect(c.read(runsProvider), hasLength(1));
+      c.read(workoutHistoryProvider.notifier).add(CompletedWorkout(
+            templateId: 'free_run',
+            name: 'Run',
+            sport: Sport.running,
+            startedAt: DateTime(2026, 10, 22, 18, 2),
+            finishedAt: DateTime(2026, 10, 22, 18, 30),
+            exercises: const [],
+          ));
+      expect(c.read(workoutHistoryProvider).single.templateId, 'free_run');
+      expect(c.read(runsProvider), isEmpty);
     });
 
     test('a deleted imported workout is not imported again', () async {

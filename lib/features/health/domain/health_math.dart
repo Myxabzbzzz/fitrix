@@ -1,6 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 import 'package:fitrix/core/time/day_key.dart';
+import 'package:fitrix/features/football/data/match_log.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
@@ -106,20 +107,26 @@ const healthImportNamespace = '7b1d4c52-3e8a-4f6b-9a0d-5c2e8f1b6a37';
 String importedWorkoutId(HealthPlatform p, String healthUuid) =>
     const Uuid().v5(healthImportNamespace, '${p.name}:$healthUuid');
 
-/// True if a FITRIX workout of [sport] overlaps [r] by more than half of
-/// [r]'s duration.
-bool overlapsSameSport(
-  HealthWorkoutRecord r,
-  Sport sport,
-  List<CompletedWorkout> own,
-) {
-  final dur = r.to.difference(r.from);
+/// Whether [imported] (read from Health) and [own] are the same session.
+/// Same sport and either they overlap by more than half of [imported]'s
+/// duration, or [own] is a football log (its times are made up: only the
+/// day and the minutes are real) on the same calendar day with 50-150 % of
+/// [imported]'s minutes.
+bool sameSession(CompletedWorkout imported, CompletedWorkout own) {
+  if (imported.sport != own.sport) return false;
+  final dur = imported.duration;
   if (dur <= Duration.zero) return false;
-  for (final w in own) {
-    if (w.sport != sport) continue;
-    final start = w.startedAt.isAfter(r.from) ? w.startedAt : r.from;
-    final end = w.finishedAt.isBefore(r.to) ? w.finishedAt : r.to;
-    if (end.difference(start) * 2 > dur) return true;
+  final start = own.startedAt.isAfter(imported.startedAt)
+      ? own.startedAt
+      : imported.startedAt;
+  final end = own.finishedAt.isBefore(imported.finishedAt)
+      ? own.finishedAt
+      : imported.finishedAt;
+  if (end.difference(start) * 2 > dur) return true;
+  if (own.templateId != footballLogTemplateId) return false;
+  if (dayOf(own.startedAt.toLocal()) != dayOf(imported.startedAt.toLocal())) {
+    return false;
   }
-  return false;
+  final ratio = own.duration.inSeconds / dur.inSeconds;
+  return ratio >= 0.5 && ratio <= 1.5;
 }

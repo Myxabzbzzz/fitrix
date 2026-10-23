@@ -1,3 +1,6 @@
+/// Template id of a football log made without a plan.
+const footballLogTemplateId = 'football_log';
+
 enum FootballType { match, training }
 
 /// Formats, as stored (shown as 5×5 …).
