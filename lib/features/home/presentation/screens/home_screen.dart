@@ -172,9 +172,10 @@ class _StepsTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final steps = ref.watch(healthTodayProvider).stepsToday;
+    final today = ref.watch(healthTodayProvider);
+    final steps = today.stepsToday;
     if (steps == null) return const SizedBox.shrink();
-    final avg = ref.watch(stepsLast7Provider)?.average;
+    final avg = today.steps7dAvg;
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     return Padding(

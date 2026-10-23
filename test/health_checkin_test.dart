@@ -396,8 +396,8 @@ void main() {
           home: const HomeScreen(),
           days: withToday(const HealthDay(steps: 8123)));
       expect(find.byKey(const Key('home-steps-tile')), findsOneWidget);
-      // 8,123 today and 7 days at 9,400: (8123 + 6 * 9400) / 7 = 9,217.6 rounded.
-      expect(find.text('Steps today: 8,123 · 7-day avg 9,218'), findsOneWidget);
+      // Same average as the check-in card: the 7 earlier days, not today.
+      expect(find.text('Steps today: 8,123 · 7-day avg 9,400'), findsOneWidget);
     });
 
     testWidgets('steps tile without any plan or templates', (tester) async {
