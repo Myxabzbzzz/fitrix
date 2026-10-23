@@ -267,7 +267,8 @@ const DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 const WEEKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 const TODAY_STATUSES = ['session', 'rest', 'done', 'unplanned'];
 const READINESS_LABELS = ['ready', 'trainLight', 'rest'];
-const READINESS_FACTORS = ['sleep', 'soreness', 'energy', 'stress', 'load'];
+const READINESS_FACTORS = ['sleep', 'soreness', 'energy', 'stress', 'load', 'restingHr', 'hrv'];
+const HRV_KINDS = ['sdnn', 'rmssd'];
 const LOAD_BANDS = ['low', 'sweetSpot', 'risky'];
 
 function pick(value, allowed) {
@@ -326,6 +327,11 @@ function formatPace(secPerKm) {
   const m = Math.floor(secPerKm / 60);
   const s = String(secPerKm % 60).padStart(2, '0');
   return `${m}:${s}/km`;
+}
+
+function cleanSource(value) {
+  const cleaned = cleanText(value, 41);
+  return cleaned && cleaned.length <= 40 ? cleaned : undefined;
 }
 
 function cleanFactors(value) {
@@ -393,10 +399,19 @@ function sanitizeContext(raw) {
   if (isObject(raw.readiness)) {
     const score = num(raw.readiness.score, 0, 100);
     if (score !== undefined) {
+      // HRV without its kind is meaningless (sdnn and rmssd never mix).
+      const hrvKind = pick(raw.readiness.hrvKind, HRV_KINDS);
       readiness = compact({
         score,
         label: pick(raw.readiness.label, READINESS_LABELS),
         sleepHours: num(raw.readiness.sleepHours, 0, 24),
+        restingHr: num(raw.readiness.restingHr, 25, 220, 0),
+        restingHrBaseline: num(raw.readiness.restingHrBaseline, 25, 220),
+        hrv: hrvKind ? num(raw.readiness.hrv, 1, 300, 0) : undefined,
+        hrvKind,
+        hrvBaseline: hrvKind ? num(raw.readiness.hrvBaseline, 1, 300) : undefined,
+        stepsToday: num(raw.readiness.stepsToday, 0, 100000, 0),
+        steps7dAvg: num(raw.readiness.steps7dAvg, 0, 100000, 0),
         factors: cleanFactors(raw.readiness.factors),
       });
     }
@@ -416,6 +431,8 @@ function sanitizeContext(raw) {
         distanceKm: num(raw.lastWorkout.distanceKm, 0, 500, 2),
         paceSecPerKm: num(raw.lastWorkout.paceSecPerKm, 120, 1800, 0),
         match: cleanMatch(raw.lastWorkout.match),
+        source: cleanSource(raw.lastWorkout.source),
+        avgHr: num(raw.lastWorkout.avgHr, 30, 230, 0),
       });
     }
   }
@@ -507,6 +524,18 @@ function describeContext(ctx) {
     let line = `Check-in today: readiness ${r.score}/100`;
     if (r.label) line += ` (${READINESS_TEXT[r.label]})`;
     if (r.sleepHours !== undefined) line += `, slept ${r.sleepHours} h`;
+    if (r.restingHr !== undefined) {
+      line += `, resting HR ${r.restingHr} bpm`;
+      if (r.restingHrBaseline !== undefined) line += ` (normal ${r.restingHrBaseline})`;
+    }
+    if (r.hrv !== undefined) {
+      line += `, HRV ${r.hrv} ms ${r.hrvKind.toUpperCase()}`;
+      if (r.hrvBaseline !== undefined) line += ` (normal ${r.hrvBaseline})`;
+    }
+    if (r.stepsToday !== undefined) {
+      line += `, steps today ${r.stepsToday}`;
+      if (r.steps7dAvg !== undefined) line += ` (7-day avg ${r.steps7dAvg})`;
+    }
     if (r.factors) {
       line += `; factors: ${r.factors.map((f) => `${f.factor} ${signed(f.delta)}`).join(', ')}`;
     }
@@ -528,6 +557,8 @@ function describeContext(ctx) {
         line += `, result ${m.goalsFor}-${m.goalsAgainst}`;
       }
     }
+    if (w.source) line += `, recorded by ${w.source}`;
+    if (w.avgHr !== undefined) line += `, avg HR ${w.avgHr}`;
     lines.push(line);
   }
   if (ctx.load) {

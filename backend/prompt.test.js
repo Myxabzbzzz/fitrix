@@ -299,3 +299,50 @@ test('describeContext prints run pace and match result', () => {
   }));
   assert.ok(game.includes('football match 7x7, 50 min, RPE 8, result 3-4'));
 });
+
+test('readiness keeps health values within range', () => {
+  const ctx = sanitizeContext({
+    readiness: {
+      score: 70, label: 'ready', restingHr: 58, restingHrBaseline: 54.24, hrv: 41,
+      hrvKind: 'sdnn', hrvBaseline: 48, stepsToday: 8123, steps7dAvg: 9400,
+      factors: [{ factor: 'hrv', delta: -6 }, { factor: 'restingHr', delta: -6 }, { factor: 'mood', delta: 2 }],
+    },
+  });
+  const r = ctx.readiness;
+  assert.equal(r.restingHr, 58);
+  assert.equal(r.restingHrBaseline, 54.2);
+  assert.equal(r.hrv, 41);
+  assert.equal(r.hrvKind, 'sdnn');
+  assert.equal(r.hrvBaseline, 48);
+  assert.equal(r.stepsToday, 8123);
+  assert.equal(r.steps7dAvg, 9400);
+  assert.deepEqual(r.factors, [{ factor: 'hrv', delta: -6 }, { factor: 'restingHr', delta: -6 }]);
+  assert.equal(sanitizeContext({ readiness: { score: 70, restingHr: 300 } }).readiness.restingHr, undefined);
+  const noKind = sanitizeContext({ readiness: { score: 70, hrv: 41, hrvBaseline: 48 } }).readiness;
+  assert.equal(noKind.hrv, undefined);
+  assert.equal(noKind.hrvBaseline, undefined);
+});
+
+test('lastWorkout keeps source and avgHr within range', () => {
+  const base = { date: '2026-10-20', sport: 'running', name: 'Run' };
+  const ok = sanitizeContext({ lastWorkout: { ...base, source: ' Apple Watch ', avgHr: 148 } }).lastWorkout;
+  assert.equal(ok.source, 'Apple Watch');
+  assert.equal(ok.avgHr, 148);
+  const bad = sanitizeContext({ lastWorkout: { ...base, source: 'x'.repeat(41), avgHr: 20 } }).lastWorkout;
+  assert.equal(bad.source, undefined);
+  assert.equal(bad.avgHr, undefined);
+});
+
+test('describeContext prints health values', () => {
+  const prompt = buildSystemPrompt('app', {}, 'en', sanitizeContext({
+    readiness: {
+      score: 70, restingHr: 58, restingHrBaseline: 54.2, hrv: 41, hrvKind: 'sdnn',
+      hrvBaseline: 48, stepsToday: 8123, steps7dAvg: 9400,
+    },
+    lastWorkout: { date: '2026-10-20', sport: 'running', name: 'Run', source: 'Apple Watch', avgHr: 148 },
+  }));
+  assert.ok(prompt.includes('resting HR 58 bpm (normal 54.2)'));
+  assert.ok(prompt.includes('HRV 41 ms SDNN (normal 48)'));
+  assert.ok(prompt.includes('steps today 8123 (7-day avg 9400)'));
+  assert.ok(prompt.includes('recorded by Apple Watch, avg HR 148'));
+});
