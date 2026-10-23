@@ -516,6 +516,10 @@ class WorkoutDeletedCollection extends SyncedCollection {
       _store.add(e.key, at ?? DateTime.now());
       gone.add(e.key);
     }
+    // The deleted workouts' import docs go with them.
+    for (final id in gone) {
+      _ref.read(healthImportsProvider.notifier).remove(id);
+    }
     final notifier = _ref.read(workoutHistoryProvider.notifier);
     final history = _ref.read(workoutHistoryProvider);
     if (history.any((w) => gone.contains(w.id))) {
@@ -632,6 +636,7 @@ class HealthImportCollection extends SyncedCollection {
     }
     if (updates.isEmpty) return;
     _ref.read(healthImportsProvider.notifier).applySynced(updates);
+    applyDocRpe(_ref);
   }
 
   @override

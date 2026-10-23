@@ -4341,4 +4341,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get factorHrvHigh => 'VFC por encima de lo normal';
+
+  @override
+  String importedFromHealth(String health) {
+    return 'De $health';
+  }
+
+  @override
+  String importedAvgHr(int bpm) {
+    return '$bpm lpm de media';
+  }
+
+  @override
+  String get importedDeleteTitle => '¿Eliminar este entrenamiento?';
+
+  @override
+  String get importedDelete => 'Eliminar entrenamiento';
 }

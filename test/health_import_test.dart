@@ -22,6 +22,12 @@ import 'package:fitrix/features/workouts/presentation/providers/workouts_provide
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 
+import 'package:fitrix/core/sync/collections.dart';
+import 'package:fitrix/features/football/presentation/football_screen.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart';
+import 'package:fitrix/features/running/presentation/run_format.dart';
+import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_screen.dart';
+
 import 'support/fake_health_source.dart';
 import 'support/overflow.dart';
 
@@ -361,6 +367,163 @@ void main() {
       expect(find.byType(FlutterMap), findsNothing);
       expect(find.text('No route recorded'), findsNothing);
       expect(find.textContaining('Apple Watch'), findsOneWidget);
+      expectNoOverflow(t);
+    });
+  });
+
+  group('review fixes', () {
+    test('an imported run completes a planned templated running session',
+        () async {
+      fake.workoutRecords = [_rec('r1')];
+      await importAll();
+      final session = PlannedSession(
+          id: 's1',
+          day: DateTime(2026, 10, 22),
+          sport: Sport.running,
+          title: 'Easy run',
+          templateId: 'tpl-easy',
+          minutes: 30,
+          intensity: Intensity.easy);
+      expect(completedFor(session, c.read(workoutHistoryProvider)), isNotNull);
+    });
+
+    test('unknown distance shows the dash, not 0.00 km', () async {
+      fake.workoutRecords = [_rec('r1', meters: null)];
+      await importAll();
+      expect(c.read(healthImportsProvider).values.single.meters, isNull);
+    });
+
+    test('deleting an imported workout drops its health_import doc', () async {
+      fake.workoutRecords = [_rec('c1', activity: 'BIKING')];
+      await importAll();
+      final id = c.read(workoutHistoryProvider).single.id;
+      c.read(workoutHistoryProvider.notifier).remove(id);
+      expect(c.read(healthImportsProvider), isEmpty);
+      expect(prefs.getString('health_imports_v1'), '{}');
+    });
+
+    test('a pulled workout_deleted drops the health_import doc', () async {
+      fake.workoutRecords = [_rec('c1', activity: 'BIKING')];
+      await importAll();
+      final id = c.read(workoutHistoryProvider).single.id;
+      WorkoutDeletedCollection(c.read(Provider((ref) => ref))).apply({
+        id: {'deletedAt': DateTime(2026, 10, 23).toUtc().toIso8601String()},
+      });
+      expect(c.read(workoutHistoryProvider), isEmpty);
+      expect(c.read(healthImportsProvider), isEmpty);
+    });
+
+    test('RPE in a pulled health_import doc lands on the workout', () async {
+      fake.workoutRecords = [_rec('c1', activity: 'BIKING')];
+      await importAll();
+      final id = c.read(workoutHistoryProvider).single.id;
+      HealthImportCollection(c.read(Provider((ref) => ref))).apply({
+        id: {'source': 'Apple Watch', 'healthUuid': 'c1', 'rpe': 7},
+      });
+      expect(c.read(workoutHistoryProvider).single.sessionRpe, 7);
+      expect(c.read(healthImportsProvider)[id]!.rpe, 7);
+      // Out-of-range RPE is ignored.
+      expect(
+          HealthImport.fromJson({'source': 'x', 'healthUuid': 'y', 'rpe': 11})
+              .rpe,
+          isNull);
+    });
+
+    Widget host(Widget child, {double scale = 1.3}) =>
+        UncontrolledProviderScope(
+          container: c,
+          child: MaterialApp(
+            theme: AppTheme.lightTheme,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: TextScaler.linear(scale)),
+              child: child!,
+            ),
+            home: child,
+          ),
+        );
+
+    void se(WidgetTester t) {
+      t.view.physicalSize = const Size(375, 667) * 3;
+      t.view.devicePixelRatio = 3;
+      addTearDown(t.view.reset);
+    }
+
+    testWidgets('unknown distance run: dash in row and summary', (t) async {
+      se(t);
+      fake.workoutRecords = [_rec('r1', meters: null)];
+      await importAll();
+      final id = c.read(workoutHistoryProvider).single.id;
+      await t.pumpWidget(host(Scaffold(
+          body: Consumer(
+              builder: (_, ref, __) =>
+                  RunHistoryList(runs: ref.watch(runHistoryProvider))))));
+      await t.pumpAndSettle();
+      expect(find.textContaining('0.00'), findsNothing);
+      expect(find.textContaining('$noValue km'), findsOneWidget);
+      await t.pumpWidget(host(RunSummaryScreen(id: id)));
+      await t.pumpAndSettle();
+      expect(find.text('0.00'), findsNothing);
+      expectNoOverflow(t);
+    });
+
+    testWidgets('football history lists imported soccer; sheet rates + deletes',
+        (t) async {
+      se(t);
+      fake.workoutRecords = [
+        _rec('f1', activity: 'SOCCER', meters: 6400),
+      ];
+      fake.heartRateSamples = [_hr(DateTime(2026, 10, 22, 18, 10), 150)];
+      await importAll();
+      final id = c.read(workoutHistoryProvider).single.id;
+      await t.pumpWidget(host(const FootballScreen()));
+      await t.pumpAndSettle();
+      expectNoOverflow(t);
+      final row = find.byKey(ValueKey('imported-row-$id'));
+      await t.scrollUntilVisible(row, 200,
+          scrollable: find.byType(Scrollable).first);
+      expect(find.textContaining('Apple Watch'), findsOneWidget);
+      expect(find.textContaining('150 bpm avg'), findsOneWidget);
+      expect(find.textContaining('6.40 km'), findsOneWidget);
+      await t.tap(row);
+      await t.pumpAndSettle();
+      expectNoOverflow(t);
+      await t.tap(find.byKey(const ValueKey('importedRpe-8')));
+      await t.pumpAndSettle();
+      expect(c.read(workoutHistoryProvider).single.sessionRpe, 8);
+      expect(c.read(healthImportsProvider)[id]!.rpe, 8);
+      expectNoOverflow(t);
+
+      await t.tap(find.byKey(const ValueKey('imported-delete')));
+      await t.pumpAndSettle();
+      await t.tap(find.byKey(const ValueKey('imported-delete-confirm')));
+      await t.pumpAndSettle();
+      expect(c.read(workoutHistoryProvider), isEmpty);
+      expect(c.read(healthImportsProvider), isEmpty);
+      expect(c.read(deletedWorkoutsStoreProvider).deletedAt(id), isNotNull);
+      expectNoOverflow(t);
+    });
+
+    testWidgets('sport screen shows a From section only when there are imports',
+        (t) async {
+      se(t);
+      await t.pumpWidget(host(const SportWorkoutsScreen(sport: Sport.cycling)));
+      await t.pumpAndSettle();
+      expect(find.text('From Apple Health'), findsNothing);
+
+      fake.workoutRecords = [
+        _rec('c1', activity: 'BIKING', sourceName: 'Garmin Connect'),
+        _rec('c2',
+            activity: 'BIKING',
+            from: DateTime(2026, 10, 21, 7),
+            sourceName: 'Garmin Connect'),
+      ];
+      await importAll();
+      await t.pumpAndSettle();
+      expect(find.text('From Apple Health'), findsOneWidget);
+      expect(find.textContaining('Garmin Connect'), findsNWidgets(2));
       expectNoOverflow(t);
     });
   });

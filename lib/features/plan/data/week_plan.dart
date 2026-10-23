@@ -1,3 +1,4 @@
+import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -78,8 +79,13 @@ class PlannedSession {
 }
 
 /// Template ids of workouts logged without a plan: a free run
-/// (`freeRunTemplateId`) and a football log (`footballLogTemplateId`).
-const _unplannedTemplateIds = {'free_run', 'football_log'};
+/// (`freeRunTemplateId`), a football log (`footballLogTemplateId`) and a
+/// workout imported from Health.
+const _unplannedTemplateIds = {
+  'free_run',
+  'football_log',
+  healthImportTemplateId,
+};
 
 CompletedWorkout? _ownMatch(PlannedSession s, List<CompletedWorkout> history) {
   for (final w in history) {

@@ -4406,4 +4406,20 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get factorHrvHigh => 'ВСР выше нормы';
+
+  @override
+  String importedFromHealth(String health) {
+    return 'Из $health';
+  }
+
+  @override
+  String importedAvgHr(int bpm) {
+    return '$bpm уд/мин в среднем';
+  }
+
+  @override
+  String get importedDeleteTitle => 'Удалить эту тренировку?';
+
+  @override
+  String get importedDelete => 'Удалить тренировку';
 }

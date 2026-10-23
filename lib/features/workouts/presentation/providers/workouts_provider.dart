@@ -1,3 +1,4 @@
+import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/session/session_providers.dart';
@@ -38,6 +39,7 @@ final workoutHistoryProvider =
     ref.watch(workoutStorageProvider),
     ref.watch(deletedWorkoutsStoreProvider),
     onChanged: ref.read(localChangesProvider).notify,
+    onRemoved: (id) => ref.read(healthImportsProvider.notifier).remove(id),
   ),
 );
 
@@ -178,10 +180,12 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
   final WorkoutStorage _storage;
   final DeletedWorkoutsStore _deleted;
   final void Function()? _onChanged;
+  final void Function(String id)? _onRemoved;
 
   WorkoutHistoryNotifier(this._storage, this._deleted,
-      {void Function()? onChanged})
+      {void Function()? onChanged, void Function(String id)? onRemoved})
       : _onChanged = onChanged,
+        _onRemoved = onRemoved,
         super(_storage.loadHistory());
 
   @override
@@ -207,6 +211,7 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
       for (final w in state)
         if (w.id != id) w
     ];
+    _onRemoved?.call(id);
   }
 
   /// Sets the session RPE of the finished workout [id].

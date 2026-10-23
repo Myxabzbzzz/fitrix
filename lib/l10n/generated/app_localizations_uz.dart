@@ -4272,4 +4272,20 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get factorHrvHigh => 'HRV me‘yordan yuqori';
+
+  @override
+  String importedFromHealth(String health) {
+    return '$health dan';
+  }
+
+  @override
+  String importedAvgHr(int bpm) {
+    return 'o‘rtacha $bpm urish/daq';
+  }
+
+  @override
+  String get importedDeleteTitle => 'Bu mashg‘ulot o‘chirilsinmi?';
+
+  @override
+  String get importedDelete => 'Mashg‘ulotni o‘chirish';
 }

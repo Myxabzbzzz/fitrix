@@ -74,7 +74,6 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
     _done = true;
     ref.read(workoutHistoryProvider.notifier).remove(widget.id);
     ref.read(runsProvider.notifier).remove(widget.id);
-    ref.read(healthImportsProvider.notifier).remove(widget.id);
     _close();
   }
 
@@ -160,7 +159,9 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
               children: [
                 _Figure(
                     label: '${l10n.runDistance}, ${l10n.runUnitKm}',
-                    value: formatKm(details.meters, locale)),
+                    value: imported != null && imported.meters == null
+                        ? noValue
+                        : formatKm(details.meters, locale)),
                 _Figure(
                     label: l10n.runMovingTime,
                     value: formatClock(details.moving)),

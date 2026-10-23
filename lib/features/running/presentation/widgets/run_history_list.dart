@@ -57,8 +57,9 @@ class _RunRow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
-    final source =
-        ref.watch(healthImportsProvider.select((m) => m[run.id]?.source));
+    final imp = ref.watch(healthImportsProvider.select((m) => m[run.id]));
+    final source = imp?.source;
+    final noDistance = imp != null && imp.meters == null;
     final d = run.details;
     final pace = formatPace(paceSecPerKm(d.meters, d.moving));
     return Padding(
@@ -88,7 +89,7 @@ class _RunRow extends ConsumerWidget {
                         AppText.caption.copyWith(color: palette.textSecondary),
                   ),
                   Text(
-                    '${formatKm(d.meters, locale)} ${l10n.runUnitKm}'
+                    '${noDistance ? noValue : formatKm(d.meters, locale)} ${l10n.runUnitKm}'
                     ' · ${formatClock(d.moving)}'
                     ' · $pace ${l10n.runUnitPerKm}',
                     style: AppText.bodyStrong.copyWith(

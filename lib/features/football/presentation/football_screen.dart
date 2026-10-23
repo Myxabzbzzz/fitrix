@@ -14,6 +14,7 @@ import 'package:fitrix/core/widgets/sync_refresh.dart';
 import 'package:fitrix/features/football/data/match_log.dart';
 import 'package:fitrix/features/football/data/match_store.dart';
 import 'package:fitrix/features/football/presentation/match_log_sheet.dart';
+import 'package:fitrix/features/health/presentation/widgets/imported_workouts.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
@@ -47,6 +48,7 @@ class FootballScreen extends ConsumerWidget {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final entries = ref.watch(footballHistoryProvider);
+    final imported = ref.watch(importedWorkoutsProvider(Sport.football));
     void log(WorkoutTemplate t) => startWorkout(context, ref, t);
 
     return Scaffold(
@@ -84,7 +86,7 @@ class FootballScreen extends ConsumerWidget {
                     const SizedBox(height: AppSpacing.lg),
                     SectionHeader(l10n.footballHistory),
                     const SizedBox(height: AppSpacing.xs),
-                    if (entries.isEmpty)
+                    if (entries.isEmpty && imported.isEmpty)
                       Padding(
                         padding:
                             const EdgeInsets.symmetric(vertical: AppSpacing.sm),
@@ -92,8 +94,10 @@ class FootballScreen extends ConsumerWidget {
                             style: AppText.body14
                                 .copyWith(color: palette.textSecondary)),
                       )
-                    else
+                    else ...[
                       for (final e in entries) _Row(entry: e),
+                      for (final e in imported) ImportedWorkoutRow(entry: e),
+                    ],
                     const SizedBox(height: AppSpacing.lg),
                     SectionHeader(l10n.footballWorkouts),
                     const SizedBox(height: AppSpacing.xs),

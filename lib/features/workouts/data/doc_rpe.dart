@@ -1,10 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fitrix/features/football/data/match_store.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 
-/// Session RPE rated on a detail document (run or match), by workout id.
+/// Session RPE rated on a detail document (run, match or Health import), by workout id.
 List<Map<String, int>> _rpeSources(Ref ref) => [
       {
         for (final e in ref.read(runsProvider).entries)
@@ -12,6 +13,10 @@ List<Map<String, int>> _rpeSources(Ref ref) => [
       },
       {
         for (final e in ref.read(matchesProvider).entries)
+          if (e.value.rpe != null) e.key: e.value.rpe!,
+      },
+      {
+        for (final e in ref.read(healthImportsProvider).entries)
           if (e.value.rpe != null) e.key: e.value.rpe!,
       },
     ];

@@ -7,6 +7,9 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/sync/doc_deletions.dart';
 import 'package:fitrix/core/sync/local_changes.dart';
 
+/// `templateId` of every imported workout (it belongs to no plan).
+const healthImportTemplateId = 'health_import';
+
 /// What came with a workout imported from Apple Health / Health Connect
 /// (the `health_import` document; id = the workout id).
 class HealthImport {
@@ -16,6 +19,7 @@ class HealthImport {
     this.meters,
     this.avgHr,
     this.kcal,
+    this.rpe,
   });
 
   /// The app or device that recorded it ("Apple Watch").
@@ -25,12 +29,25 @@ class HealthImport {
   final int? avgHr;
   final double? kcal;
 
+  /// Session RPE 1-10 the user gave the workout; synced here because the
+  /// workout itself keeps its RPE local.
+  final int? rpe;
+
+  HealthImport withRpe(int rpe) => HealthImport(
+      source: source,
+      healthUuid: healthUuid,
+      meters: meters,
+      avgHr: avgHr,
+      kcal: kcal,
+      rpe: rpe);
+
   Map<String, Object?> toJson() => {
         'source': source,
         'healthUuid': healthUuid,
         if (meters != null) 'meters': meters,
         if (avgHr != null) 'avgHr': avgHr,
         if (kcal != null) 'kcal': kcal,
+        if (rpe != null) 'rpe': rpe,
       };
 
   factory HealthImport.fromJson(Map<String, Object?> j) => HealthImport(
@@ -39,7 +56,13 @@ class HealthImport {
         meters: (j['meters'] as num?)?.toDouble(),
         avgHr: (j['avgHr'] as num?)?.toInt(),
         kcal: (j['kcal'] as num?)?.toDouble(),
+        rpe: _rpeOf(j['rpe']),
       );
+
+  static int? _rpeOf(Object? v) {
+    final n = (v as num?)?.toInt();
+    return n != null && n >= 1 && n <= 10 ? n : null;
+  }
 }
 
 /// Import details by workout id, kept on the device (prefs
@@ -108,6 +131,12 @@ class HealthImportsNotifier extends StateNotifier<Map<String, HealthImport>> {
     _store.put(id, d);
     state = _store.all();
     _ref.read(localChangesProvider).notify();
+  }
+
+  void setRpe(String id, int rpe) {
+    final d = state[id];
+    if (d == null || d.rpe == rpe) return;
+    put(id, d.withRpe(rpe));
   }
 
   /// The user deleted the workout: the doc goes too (reported for sync).

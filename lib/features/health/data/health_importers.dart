@@ -18,9 +18,6 @@ import 'package:fitrix/features/workouts/presentation/providers/workouts_provide
 import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
-/// `templateId` of every imported workout (it belongs to no plan).
-const healthImportTemplateId = 'health_import';
-
 /// Workouts recorded by other apps and watches become completed workouts,
 /// once: the id is derived from the Health record id.
 class WorkoutImporter implements HealthImporter {

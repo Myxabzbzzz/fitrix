@@ -3258,5 +3258,11 @@
   "factorRestingHrNormal": "Resting heart rate near normal",
   "factorHrvLow": "HRV below normal",
   "factorHrvNormal": "HRV near normal",
-  "factorHrvHigh": "HRV above normal"
+  "factorHrvHigh": "HRV above normal",
+  "importedFromHealth": "From {health}",
+  "@importedFromHealth": {"placeholders": {"health": {"type": "String"}}},
+  "importedAvgHr": "{bpm} bpm avg",
+  "@importedAvgHr": {"placeholders": {"bpm": {"type": "int"}}},
+  "importedDeleteTitle": "Delete this workout?",
+  "importedDelete": "Delete workout"
 }

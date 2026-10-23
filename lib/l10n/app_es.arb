@@ -1207,5 +1207,9 @@
   "factorRestingHrNormal": "Frecuencia en reposo normal",
   "factorHrvLow": "VFC por debajo de lo normal",
   "factorHrvNormal": "VFC normal",
-  "factorHrvHigh": "VFC por encima de lo normal"
+  "factorHrvHigh": "VFC por encima de lo normal",
+  "importedFromHealth": "De {health}",
+  "importedAvgHr": "{bpm} lpm de media",
+  "importedDeleteTitle": "¿Eliminar este entrenamiento?",
+  "importedDelete": "Eliminar entrenamiento"
 }

@@ -1207,5 +1207,9 @@
   "factorRestingHrNormal": "Пульс покоя в норме",
   "factorHrvLow": "ВСР ниже нормы",
   "factorHrvNormal": "ВСР в норме",
-  "factorHrvHigh": "ВСР выше нормы"
+  "factorHrvHigh": "ВСР выше нормы",
+  "importedFromHealth": "Из {health}",
+  "importedAvgHr": "{bpm} уд/мин в среднем",
+  "importedDeleteTitle": "Удалить эту тренировку?",
+  "importedDelete": "Удалить тренировку"
 }

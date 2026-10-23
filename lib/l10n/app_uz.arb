@@ -1207,5 +1207,9 @@
   "factorRestingHrNormal": "Tinch holatdagi puls me‘yorida",
   "factorHrvLow": "HRV me‘yordan past",
   "factorHrvNormal": "HRV me‘yorida",
-  "factorHrvHigh": "HRV me‘yordan yuqori"
+  "factorHrvHigh": "HRV me‘yordan yuqori",
+  "importedFromHealth": "{health} dan",
+  "importedAvgHr": "o‘rtacha {bpm} urish/daq",
+  "importedDeleteTitle": "Bu mashg‘ulot o‘chirilsinmi?",
+  "importedDelete": "Mashg‘ulotni o‘chirish"
 }

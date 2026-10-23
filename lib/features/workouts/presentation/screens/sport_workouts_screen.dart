@@ -7,6 +7,7 @@ import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/features/health/presentation/widgets/imported_workouts.dart';
 import 'package:fitrix/features/workouts/presentation/start_workout.dart';
 import 'package:fitrix/core/widgets/sync_refresh.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/sport_coach_card.dart';
@@ -64,6 +65,7 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
                       onAction: _start,
                     ),
                     SportCoachCard(sport: _sport, onStart: _start),
+                    ImportedWorkoutsSection(sport: _sport),
                   ],
                 ),
               ),

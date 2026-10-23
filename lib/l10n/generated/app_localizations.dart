@@ -7034,6 +7034,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'HRV above normal'**
   String get factorHrvHigh;
+
+  /// No description provided for @importedFromHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'From {health}'**
+  String importedFromHealth(String health);
+
+  /// No description provided for @importedAvgHr.
+  ///
+  /// In en, this message translates to:
+  /// **'{bpm} bpm avg'**
+  String importedAvgHr(int bpm);
+
+  /// No description provided for @importedDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this workout?'**
+  String get importedDeleteTitle;
+
+  /// No description provided for @importedDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete workout'**
+  String get importedDelete;
 }
 
 class _AppLocalizationsDelegate
