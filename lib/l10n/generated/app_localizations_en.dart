@@ -4256,6 +4256,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String healthInBedFromSource(String source) {
+    return 'in bed, from $source';
+  }
+
+  @override
   String get healthSectionTitle => 'Health data';
 
   @override

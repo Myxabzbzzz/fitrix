@@ -4206,6 +4206,11 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
+  String healthInBedFromSource(String source) {
+    return '$source: yotoqda bo‘lgan vaqt';
+  }
+
+  @override
   String get healthSectionTitle => 'Salomatlik ma‘lumotlari';
 
   @override

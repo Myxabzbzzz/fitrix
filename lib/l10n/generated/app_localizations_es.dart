@@ -4274,6 +4274,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String healthInBedFromSource(String source) {
+    return 'en la cama, de $source';
+  }
+
+  @override
   String get healthSectionTitle => 'Datos de salud';
 
   @override

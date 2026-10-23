@@ -3184,6 +3184,14 @@
       }
     }
   },
+  "healthInBedFromSource": "in bed, from {source}",
+  "@healthInBedFromSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
   "healthSectionTitle": "Health data",
   "healthRestingHr": "Resting heart rate",
   "healthHrv": "Heart rate variability",

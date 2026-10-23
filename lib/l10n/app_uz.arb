@@ -1193,6 +1193,7 @@
   "footballHistoryEmpty": "Hozircha yozuv yo‘q. O‘yindan keyin qayd qiling.",
   "footballWorkouts": "Mashg‘ulotlar",
   "healthFromSource": "{source} ma‘lumoti",
+  "healthInBedFromSource": "{source}: yotoqda bo‘lgan vaqt",
   "healthSectionTitle": "Salomatlik ma‘lumotlari",
   "healthRestingHr": "Tinch holatdagi puls",
   "healthHrv": "Yurak urishi o‘zgaruvchanligi",

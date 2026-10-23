@@ -8,8 +8,8 @@ import 'package:fitrix/features/health/domain/health_math.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
 SleepSegment seg(DateTime a, DateTime b,
-        {bool asleep = true, String src = 'w'}) =>
-    SleepSegment(from: a, to: b, asleep: asleep, sourceName: src);
+        {bool asleep = true, bool inBed = false, String src = 'w'}) =>
+    SleepSegment(from: a, to: b, asleep: asleep, inBed: inBed, sourceName: src);
 
 CompletedWorkout own(Sport s, DateTime a, DateTime b) => CompletedWorkout(
     templateId: 't',
@@ -56,6 +56,36 @@ void main() {
           const Duration(hours: 8));
     });
     test('empty is null', () => expect(sleepLastNight([], today), isNull));
+  });
+
+  group('lastNightSleep', () {
+    test('in bed only falls back, flagged inBed', () {
+      final r = lastNightSleep(
+          [seg(t(-1, 23), t(0, 7), asleep: false, inBed: true)], today);
+      expect(r?.sleep, const Duration(hours: 8));
+      expect(r?.inBed, isTrue);
+    });
+    test('asleep wins over in bed', () {
+      final r = lastNightSleep([
+        seg(t(-1, 23), t(0, 7), asleep: false, inBed: true),
+        seg(t(-1, 23, 30), t(0, 6, 30)),
+      ], today);
+      expect(r?.sleep, const Duration(hours: 7));
+      expect(r?.inBed, isFalse);
+    });
+    test('awake never counted', () {
+      expect(lastNightSleep([seg(t(-1, 23), t(0, 7), asleep: false)], today),
+          isNull);
+    });
+    test('overlapping in-bed from two sources counted once', () {
+      final r = lastNightSleep([
+        seg(t(-1, 23), t(0, 6), asleep: false, inBed: true, src: 'a'),
+        seg(t(-1, 23, 30), t(0, 7), asleep: false, inBed: true, src: 'b'),
+      ], today);
+      expect(r?.sleep, const Duration(hours: 8));
+      expect(r?.inBed, isTrue);
+    });
+    test('empty is null', () => expect(lastNightSleep([], today), isNull));
   });
 
   group('baseline', () {

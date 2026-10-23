@@ -6945,6 +6945,12 @@ abstract class AppLocalizations {
   /// **'from {source}'**
   String healthFromSource(String source);
 
+  /// No description provided for @healthInBedFromSource.
+  ///
+  /// In en, this message translates to:
+  /// **'in bed, from {source}'**
+  String healthInBedFromSource(String source);
+
   /// No description provided for @healthSectionTitle.
   ///
   /// In en, this message translates to:

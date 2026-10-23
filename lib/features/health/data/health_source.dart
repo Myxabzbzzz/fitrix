@@ -25,17 +25,20 @@ class HealthSample {
   final String sourceId, sourceName;
 }
 
-/// One sleep stage. [asleep] is false for awake / in bed.
+/// One sleep stage. [asleep] is false for awake / in bed; [inBed] marks the
+/// in-bed span (the iPhone Sleep schedule), which is only a fallback.
 class SleepSegment {
   const SleepSegment({
     required this.from,
     required this.to,
     required this.asleep,
+    this.inBed = false,
     required this.sourceName,
   });
 
   final DateTime from, to;
   final bool asleep;
+  final bool inBed;
   final String sourceName;
 }
 

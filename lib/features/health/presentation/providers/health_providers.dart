@@ -233,19 +233,12 @@ class HealthSync {
         d = DateTime(d.year, d.month, d.day + 1)) {
       final next = DateTime(d.year, d.month, d.day + 1);
       final end = d == today ? now : next;
-      final night = sleepLastNight(sleep, d);
+      final night = lastNightSleep(sleep, d);
       final nightFrom = DateTime(d.year, d.month, d.day - 1, 18);
       final nightTo = DateTime(d.year, d.month, d.day, 12);
-
-      String? source;
-      if (night != null) {
-        final segs = [
-          for (final x in sleep)
-            if (x.asleep && x.to.isAfter(nightFrom) && !x.to.isAfter(nightTo))
-              x,
-        ]..sort((a, b) => a.from.compareTo(b.from));
-        source = segs.first.sourceName;
-      }
+      final source = night == null
+          ? null
+          : nightSegments(sleep, d).segments.first.sourceName;
 
       var rhrDay = _latest(rhr, d, end);
       if (rhrDay == null && d == today) {
@@ -254,8 +247,9 @@ class HealthSync {
       final hrvDay = _latest(hrv, nightFrom, nightTo);
       final steps = await s.steps(d, end);
       out[dayKey(d)] = HealthDay(
-        sleep: night,
+        sleep: night?.sleep,
         sleepSource: source,
+        sleepInBed: night?.inBed ?? false,
         restingHr: rhrDay?.value,
         hrv: hrvDay?.value,
         hrvKind: hrvDay == null ? null : s.hrvKind,

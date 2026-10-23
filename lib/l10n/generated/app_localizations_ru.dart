@@ -4340,6 +4340,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String healthInBedFromSource(String source) {
+    return 'в постели, из $source';
+  }
+
+  @override
   String get healthSectionTitle => 'Данные о здоровье';
 
   @override

@@ -47,6 +47,7 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
   int _sleepMinutes = 7 * 60 + 30;
   // Where the pre-filled sleep came from; dropped once the user moves it.
   String? _sleepSource;
+  bool _sleepInBed = false;
   bool _sleepTouched = false;
   SleepQuality _quality = SleepQuality.ok;
   Soreness _soreness = Soreness.none;
@@ -74,7 +75,8 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
     if (sleep == null || _sleepTouched) return;
     _sleepMinutes =
         ((sleep.inMinutes / 15).round() * 15).clamp(_minSleep, _maxSleep);
-    _sleepSource = day!.sleepSource ??
+    _sleepInBed = day!.sleepInBed;
+    _sleepSource = day.sleepSource ??
         (ref.read(healthSourceProvider).platform == HealthPlatform.healthConnect
             ? 'Health Connect'
             : 'Apple Health');
@@ -224,7 +226,10 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
                   ],
                 ),
                 if (_sleepSource != null)
-                  Text(l10n.healthFromSource(_sleepSource!),
+                  Text(
+                      _sleepInBed
+                          ? l10n.healthInBedFromSource(_sleepSource!)
+                          : l10n.healthFromSource(_sleepSource!),
                       style: AppText.caption
                           .copyWith(color: palette.textSecondary)),
                 _Segmented<SleepQuality>(

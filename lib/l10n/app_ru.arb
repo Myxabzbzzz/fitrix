@@ -1193,6 +1193,7 @@
   "footballHistoryEmpty": "Пока нет записей. Запишите игру после матча или тренировки.",
   "footballWorkouts": "Тренировки",
   "healthFromSource": "из {source}",
+  "healthInBedFromSource": "в постели, из {source}",
   "healthSectionTitle": "Данные о здоровье",
   "healthRestingHr": "Пульс покоя",
   "healthHrv": "Вариабельность пульса",

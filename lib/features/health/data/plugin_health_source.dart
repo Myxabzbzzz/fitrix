@@ -172,6 +172,7 @@ class PluginHealthSource implements HealthSource {
             from: p.dateFrom,
             to: p.dateTo,
             asleep: _asleepTypes.contains(p.type),
+            inBed: p.type == HealthDataType.SLEEP_IN_BED,
             sourceName: p.sourceName,
           ),
     ];

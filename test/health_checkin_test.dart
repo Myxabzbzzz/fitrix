@@ -151,6 +151,35 @@ void main() {
       expect(find.text('from Apple Health'), findsOneWidget);
     });
 
+    testWidgets('in-bed sleep is labelled as in bed', (tester) async {
+      await pump(tester,
+          home: const HomeScreen(),
+          days: withToday(const HealthDay(
+              sleep: Duration(hours: 8),
+              sleepSource: 'Apple Health',
+              sleepInBed: true)));
+      await openSheet(tester);
+      expect(find.text('in bed, from Apple Health'), findsOneWidget);
+      expect(find.text('from Apple Health'), findsNothing);
+    });
+
+    testWidgets('an in-bed-only night read from Health fills the sheet',
+        (tester) async {
+      fake.sleepSegments = [
+        SleepSegment(
+            from: DateTime(2026, 10, 22, 23),
+            to: DateTime(2026, 10, 23, 7),
+            asleep: false,
+            inBed: true,
+            sourceName: 'Apple Health'),
+      ];
+      await pump(tester, home: const HomeScreen(), throttled: false);
+      await openSheet(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('8 h 0 m'), findsWidgets);
+      expect(find.text('in bed, from Apple Health'), findsOneWidget);
+    });
+
     testWidgets('moving the slider drops the label', (tester) async {
       await pump(tester,
           home: const HomeScreen(),

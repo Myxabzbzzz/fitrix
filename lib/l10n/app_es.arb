@@ -1193,6 +1193,7 @@
   "footballHistoryEmpty": "Aún no hay registros. Registra uno después de jugar.",
   "footballWorkouts": "Entrenamientos",
   "healthFromSource": "de {source}",
+  "healthInBedFromSource": "en la cama, de {source}",
   "healthSectionTitle": "Datos de salud",
   "healthRestingHr": "Frecuencia cardíaca en reposo",
   "healthHrv": "Variabilidad de la frecuencia cardíaca",

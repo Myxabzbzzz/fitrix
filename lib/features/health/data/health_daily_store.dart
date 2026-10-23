@@ -11,6 +11,7 @@ class HealthDay {
   const HealthDay({
     this.sleep,
     this.sleepSource,
+    this.sleepInBed = false,
     this.restingHr,
     this.hrv,
     this.hrvKind,
@@ -19,6 +20,9 @@ class HealthDay {
 
   final Duration? sleep;
   final String? sleepSource;
+
+  /// The sleep is in-bed time, not time asleep.
+  final bool sleepInBed;
   final double? restingHr;
   final double? hrv;
   final HrvKind? hrvKind;
@@ -29,6 +33,7 @@ class HealthDay {
   HealthDay merge(HealthDay o) => HealthDay(
         sleep: o.sleep ?? sleep,
         sleepSource: o.sleep != null ? o.sleepSource : sleepSource,
+        sleepInBed: o.sleep != null ? o.sleepInBed : sleepInBed,
         restingHr: o.restingHr ?? restingHr,
         hrv: o.hrv ?? hrv,
         hrvKind: o.hrv != null ? o.hrvKind : hrvKind,
@@ -38,6 +43,7 @@ class HealthDay {
   Map<String, dynamic> toJson() => {
         if (sleep != null) 'sleep': sleep!.inSeconds,
         if (sleepSource != null) 'sleepSource': sleepSource,
+        if (sleepInBed) 'sleepInBed': true,
         if (restingHr != null) 'restingHr': restingHr,
         if (hrv != null) 'hrv': hrv,
         if (hrvKind != null) 'hrvKind': hrvKind!.name,
@@ -49,6 +55,7 @@ class HealthDay {
             ? null
             : Duration(seconds: (j['sleep'] as num).toInt()),
         sleepSource: j['sleepSource'] as String?,
+        sleepInBed: j['sleepInBed'] == true,
         restingHr: (j['restingHr'] as num?)?.toDouble(),
         hrv: (j['hrv'] as num?)?.toDouble(),
         hrvKind: HrvKind.values

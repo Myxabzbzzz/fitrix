@@ -5,19 +5,32 @@ import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
-/// Time asleep for the night that ended on [today]: the asleep segments that
-/// end in (yesterday 18:00, today 12:00], overlaps merged. Null if none.
-Duration? sleepLastNight(List<SleepSegment> s, DateTime today) {
+/// The segments counted for the night that ended on [today]: the asleep ones
+/// ending in (yesterday 18:00, today 12:00]; when there are none, the in-bed
+/// ones. Awake never counts.
+({List<SleepSegment> segments, bool inBed}) nightSegments(
+    List<SleepSegment> s, DateTime today) {
   final from = DateTime(today.year, today.month, today.day - 1, 18);
   final to = DateTime(today.year, today.month, today.day, 12);
-  final spans = [
-    for (final x in s)
-      if (x.asleep &&
-          x.to.isAfter(from) &&
-          !x.to.isAfter(to) &&
-          x.to.isAfter(x.from))
-        x,
-  ]..sort((a, b) => a.from.compareTo(b.from));
+  List<SleepSegment> pick(bool Function(SleepSegment) want) => [
+        for (final x in s)
+          if (want(x) &&
+              x.to.isAfter(from) &&
+              !x.to.isAfter(to) &&
+              x.to.isAfter(x.from))
+            x,
+      ]..sort((a, b) => a.from.compareTo(b.from));
+  final asleep = pick((x) => x.asleep);
+  if (asleep.isNotEmpty) return (segments: asleep, inBed: false);
+  return (segments: pick((x) => x.inBed && !x.asleep), inBed: true);
+}
+
+/// Time for the night that ended on [today], overlaps merged: asleep time,
+/// else (iPhone without a watch) in-bed time flagged `inBed`. Null if none.
+({Duration sleep, bool inBed})? lastNightSleep(
+    List<SleepSegment> s, DateTime today) {
+  final n = nightSegments(s, today);
+  final spans = n.segments;
   if (spans.isEmpty) return null;
   var total = Duration.zero;
   var curFrom = spans.first.from;
@@ -32,7 +45,13 @@ Duration? sleepLastNight(List<SleepSegment> s, DateTime today) {
     }
   }
   total += curTo.difference(curFrom);
-  return total;
+  return (sleep: total, inBed: n.inBed);
+}
+
+/// Time asleep only (no in-bed fallback). Null if none.
+Duration? sleepLastNight(List<SleepSegment> s, DateTime today) {
+  final r = lastNightSleep(s, today);
+  return r == null || r.inBed ? null : r.sleep;
 }
 
 /// Mean of the previous (up to 28) days before [today], keyed by `dayKey`.
