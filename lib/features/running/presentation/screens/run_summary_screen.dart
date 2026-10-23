@@ -211,6 +211,22 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
                 onPressed: () => _save(details),
               ),
             ],
+            if (imported != null && !widget.justFinished) ...[
+              Text(l10n.runRpeTitle,
+                  style: AppText.headingS.copyWith(color: palette.textPrimary)),
+              const SizedBox(height: AppSpacing.xs),
+              RpeScale(
+                keyPrefix: 'importedRpe',
+                selected: workout.sessionRpe ?? imported.rpe,
+                onPick: (n) {
+                  ref
+                      .read(workoutHistoryProvider.notifier)
+                      .setRpe(widget.id, n);
+                  ref.read(healthImportsProvider.notifier).setRpe(widget.id, n);
+                },
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
             Center(
               child: TextButton(
                 key: const ValueKey('run-delete'),

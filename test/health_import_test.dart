@@ -469,6 +469,26 @@ void main() {
       expectNoOverflow(t);
     });
 
+    testWidgets('an imported run can be rated and re-rated in the summary',
+        (t) async {
+      se(t);
+      fake.workoutRecords = [_rec('r1')];
+      await importAll();
+      final id = c.read(workoutHistoryProvider).single.id;
+      await t.pumpWidget(host(RunSummaryScreen(id: id)));
+      await t.pumpAndSettle();
+      expect(find.byKey(const ValueKey('importedRpe-5')), findsOneWidget);
+      await t.tap(find.byKey(const ValueKey('importedRpe-5')));
+      await t.pumpAndSettle();
+      expect(c.read(workoutHistoryProvider).single.sessionRpe, 5);
+      expect(c.read(healthImportsProvider)[id]!.rpe, 5);
+      await t.tap(find.byKey(const ValueKey('importedRpe-9')));
+      await t.pumpAndSettle();
+      expect(c.read(workoutHistoryProvider).single.sessionRpe, 9);
+      expect(c.read(healthImportsProvider)[id]!.rpe, 9);
+      expectNoOverflow(t);
+    });
+
     testWidgets('football history lists imported soccer; sheet rates + deletes',
         (t) async {
       se(t);
