@@ -195,4 +195,34 @@ void main() {
         textScale: 1.3);
     expectNoOverflow(tester);
   });
+
+  testWidgets(
+      'Android: back from the store, the Connect button replaces Install',
+      (tester) async {
+    await pump(tester,
+        platform: HealthPlatform.healthConnect,
+        availability: HealthAvailability.notInstalled);
+    expect(find.byKey(const Key('health-install')), findsOneWidget);
+    fake.availabilityValue = HealthAvailability.available;
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('health-install')), findsNothing);
+    expect(find.byKey(const Key('connect-health-connect')), findsOneWidget);
+  });
+
+  testWidgets('why-box names Apple Watch on iOS', (tester) async {
+    await pump(tester);
+    expect(find.textContaining('Apple Watch, Garmin'), findsOneWidget);
+  });
+
+  testWidgets('why-box has no Apple Watch on Android', (tester) async {
+    await pump(tester, platform: HealthPlatform.healthConnect);
+    expect(find.textContaining('Apple Watch'), findsNothing);
+    expect(find.textContaining('Garmin, WHOOP and Mi Band'), findsOneWidget);
+  });
 }

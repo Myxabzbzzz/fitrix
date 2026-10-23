@@ -1544,8 +1544,16 @@
   "editProfileErrFiveK": "Enter a time from 12:00 to 60:00",
   "connectedAppsTitle": "Connected apps",
   "connectedAppsWhyHeader": "WHY CONNECT",
-  "connectedAppsWhyBody": "{health} fills in your morning check-in: last night's sleep, resting HR and HRV for recovery, steps and weight from smart scales. Workouts from your watch appear in your history and training load. Apple Watch, Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through {health} once that app's sync to {health} is on.",
+  "connectedAppsWhyBody": "{health} fills in last night's sleep for your check-in, resting HR and HRV for recovery, steps, and weight from smart scales. Workouts from your watch appear in your history and training load. Apple Watch, Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through {health} once that app's sync to {health} is on.",
   "@connectedAppsWhyBody": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsWhyBodyAndroid": "{health} fills in last night's sleep for your check-in, resting HR and HRV for recovery, steps, and weight from smart scales. Workouts from your watch appear in your history and training load. Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through {health} once that app's sync to {health} is on.",
+  "@connectedAppsWhyBodyAndroid": {
     "placeholders": {
       "health": {
         "type": "String"

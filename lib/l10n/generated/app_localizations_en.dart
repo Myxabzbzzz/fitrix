@@ -2121,7 +2121,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String connectedAppsWhyBody(String health) {
-    return '$health fills in your morning check-in: last night\'s sleep, resting HR and HRV for recovery, steps and weight from smart scales. Workouts from your watch appear in your history and training load. Apple Watch, Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through $health once that app\'s sync to $health is on.';
+    return '$health fills in last night\'s sleep for your check-in, resting HR and HRV for recovery, steps, and weight from smart scales. Workouts from your watch appear in your history and training load. Apple Watch, Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through $health once that app\'s sync to $health is on.';
+  }
+
+  @override
+  String connectedAppsWhyBodyAndroid(String health) {
+    return '$health fills in last night\'s sleep for your check-in, resting HR and HRV for recovery, steps, and weight from smart scales. Workouts from your watch appear in your history and training load. Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through $health once that app\'s sync to $health is on.';
   }
 
   @override

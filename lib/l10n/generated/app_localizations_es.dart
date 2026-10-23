@@ -2125,7 +2125,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String connectedAppsWhyBody(String health) {
-    return '$health rellena tu chequeo matutino: el sueño de anoche, la FC en reposo y la VFC para la recuperación, los pasos y el peso de básculas inteligentes. Los entrenamientos del reloj aparecen en tu historial y en la carga de entrenamiento. Los datos de Apple Watch, Garmin, WHOOP y Mi Band (Zepp / Mi Fitness) llegan a través de $health cuando la sincronización de esa app con $health está activada.';
+    return '$health rellena el sueño de anoche en tu chequeo y aporta la FC en reposo y la VFC para la recuperación, los pasos y el peso de básculas inteligentes. Los entrenamientos del reloj se tienen en cuenta en tu historial y en la carga de entrenamiento. Los datos de Apple Watch, Garmin, WHOOP y Mi Band (Zepp / Mi Fitness) llegan a través de $health cuando la sincronización de esa app con $health está activada.';
+  }
+
+  @override
+  String connectedAppsWhyBodyAndroid(String health) {
+    return '$health rellena el sueño de anoche en tu chequeo y aporta la FC en reposo y la VFC para la recuperación, los pasos y el peso de básculas inteligentes. Los entrenamientos del reloj se tienen en cuenta en tu historial y en la carga de entrenamiento. Los datos de Garmin, WHOOP y Mi Band (Zepp / Mi Fitness) llegan a través de $health cuando la sincronización de esa app con $health está activada.';
   }
 
   @override
@@ -2178,7 +2183,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String connectedAppsLastRead(String time) {
-    return 'Última lectura $time';
+    return 'Última lectura: $time';
   }
 
   @override
@@ -2198,7 +2203,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get connectedAppsDisconnectedAndroid =>
-      'Para quitar el acceso, abre Health Connect › Permisos de apps › FITRIX.';
+      'Para quitar el acceso, abre Health Connect › Permisos de aplicaciones › FITRIX.';
 
   @override
   String get connectedAppsDeniedIos =>

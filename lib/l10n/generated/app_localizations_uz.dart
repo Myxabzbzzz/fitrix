@@ -2087,7 +2087,12 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String connectedAppsWhyBody(String health) {
-    return '$health ertalabki tekshiruvni to‘ldiradi: o‘tgan tungi uyqu, tiklanish uchun tinch puls va HRV, qadamlar va aqlli tarozidagi vazn. Soatdagi mashg‘ulotlar tarix va mashg‘ulot yuklamasida ko‘rinadi. Apple Watch, Garmin, WHOOP va Mi Band (Zepp / Mi Fitness) ma‘lumotlari o‘sha ilovada $health bilan sinxronlash yoqilgach, $health orqali keladi.';
+    return '$health tekshiruvdagi o‘tgan tungi uyquni to‘ldiradi, shuningdek tiklanish uchun tinch puls va HRV, qadamlar hamda aqlli tarozidagi vaznni beradi. Soatdagi mashg‘ulotlar tarix va mashg‘ulot yuklamasida hisobga olinadi. Apple Watch, Garmin, WHOOP va Mi Band (Zepp / Mi Fitness) ma‘lumotlari o‘sha ilovada $health bilan sinxronlash yoqilgach, $health orqali keladi.';
+  }
+
+  @override
+  String connectedAppsWhyBodyAndroid(String health) {
+    return '$health tekshiruvdagi o‘tgan tungi uyquni to‘ldiradi, shuningdek tiklanish uchun tinch puls va HRV, qadamlar hamda aqlli tarozidagi vaznni beradi. Soatdagi mashg‘ulotlar tarix va mashg‘ulot yuklamasida hisobga olinadi. Garmin, WHOOP va Mi Band (Zepp / Mi Fitness) ma‘lumotlari o‘sha ilovada $health bilan sinxronlash yoqilgach, $health orqali keladi.';
   }
 
   @override

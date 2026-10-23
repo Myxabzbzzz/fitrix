@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,6 +33,15 @@ class _Counting implements HealthImporter {
   DateTime? from;
   @override
   Future<void> run(HealthSource s, DateTime f, DateTime to) async => from = f;
+}
+
+class _Gated extends FakeHealthSource {
+  final gate = Completer<void>();
+  @override
+  Future<List<SleepSegment>> sleep(DateTime from, DateTime to) async {
+    await gate.future;
+    return super.sleep(from, to);
+  }
 }
 
 void main() {
@@ -313,5 +324,20 @@ void main() {
         c2.read(healthDailyStoreProvider).lastDays(60, DateTime(2026, 10, 23)),
         isEmpty);
     expect(c2.read(healthTodayProvider).restingHr, isNull);
+  });
+
+  test('disconnect during the first read drops its results', () async {
+    final gated = _Gated();
+    fake = gated;
+    final counting = _Counting();
+    c = make(importers: [counting]);
+    await c.read(healthConnectionProvider.notifier).connect();
+    await c.read(healthConnectionProvider.notifier).disconnect();
+    gated.gate.complete();
+    await c.read(healthSyncProvider).refresh();
+    expect(c.read(healthConnectionProvider).connected, isFalse);
+    expect(c.read(healthConnectionProvider).lastReadAt, isNull);
+    expect(c.read(healthDailyStoreProvider).day(key(0)), isNull);
+    expect(counting.from, isNull);
   });
 }

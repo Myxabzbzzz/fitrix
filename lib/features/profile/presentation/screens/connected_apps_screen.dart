@@ -105,7 +105,10 @@ class ConnectedAppsScreen extends ConsumerWidget {
                             style: AppText.microStrong
                                 .copyWith(color: palette.accent)),
                         const SizedBox(height: AppSpacing.xs),
-                        Text(l10n.connectedAppsWhyBody(health),
+                        Text(
+                            apps.first == ConnectableApp.healthConnect
+                                ? l10n.connectedAppsWhyBodyAndroid(health)
+                                : l10n.connectedAppsWhyBody(health),
                             style: AppText.bodyRegular
                                 .copyWith(color: palette.textPrimary)),
                         const SizedBox(height: AppSpacing.xs),
@@ -224,6 +227,21 @@ class _HealthTile extends ConsumerStatefulWidget {
 class _HealthTileState extends ConsumerState<_HealthTile> {
   bool _busy = false;
   bool _justDisconnected = false;
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    // Back from the Play Store: Health Connect may be installed now.
+    _lifecycle = AppLifecycleListener(
+        onResume: () => ref.invalidate(healthAvailabilityProvider));
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
 
   bool get _android => widget.app == ConnectableApp.healthConnect;
 

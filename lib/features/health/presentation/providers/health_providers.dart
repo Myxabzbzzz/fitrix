@@ -165,13 +165,17 @@ class HealthSync {
     try {
       final source = _ref.read(healthSourceProvider);
       final days = await _readDays(source, firstDay, now);
+      // Disconnected while reading: drop the results.
+      if (!_ref.read(healthConnectionProvider).connected) return;
       await _ref.read(healthDailyStoreProvider).putAll(days);
+      if (!_ref.read(healthConnectionProvider).connected) return;
       await _ref.read(healthConnectionProvider.notifier).markRead(now);
       _ref.read(_healthCacheVersionProvider.notifier).state++;
     } catch (_) {
       // Locked phone etc.: keep the cache, try again next time.
     }
     for (final i in _ref.read(healthImportersProvider)) {
+      if (!_ref.read(healthConnectionProvider).connected) return;
       try {
         await i.run(_ref.read(healthSourceProvider), firstDay, now);
       } catch (_) {}

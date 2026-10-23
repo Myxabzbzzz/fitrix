@@ -2161,7 +2161,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String connectedAppsWhyBody(String health) {
-    return '$health заполняет утренний чек-ин: сон прошлой ночи, пульс покоя и ВСР для восстановления, шаги и вес с умных весов. Тренировки с часов попадают в историю и тренировочную нагрузку. Данные Apple Watch, Garmin, WHOOP и Mi Band (Zepp / Mi Fitness) приходят через $health, когда в их приложении включена синхронизация с $health.';
+    return '$health заполняет в чек-ине сон прошлой ночи, а также даёт пульс покоя и ВСР для восстановления, шаги и вес с умных весов. Тренировки с часов учитываются в истории и тренировочной нагрузке. Данные Apple Watch, Garmin, WHOOP и Mi Band (Zepp / Mi Fitness) приходят через $health, когда в их приложении включена синхронизация с $health.';
+  }
+
+  @override
+  String connectedAppsWhyBodyAndroid(String health) {
+    return '$health заполняет в чек-ине сон прошлой ночи, а также даёт пульс покоя и ВСР для восстановления, шаги и вес с умных весов. Тренировки с часов учитываются в истории и тренировочной нагрузке. Данные Garmin, WHOOP и Mi Band (Zepp / Mi Fitness) приходят через $health, когда в их приложении включена синхронизация с $health.';
   }
 
   @override
@@ -2200,7 +2205,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String connectedAppsSheetSoon(String app, String health) {
-    return 'Прямое подключение $app пока недоступно. А пока отправляйте его данные в $health, и FITRIX прочитает их оттуда.';
+    return 'Прямое подключение $app пока недоступно. Но уже сейчас можно передавать его данные в $health — FITRIX прочитает их оттуда.';
   }
 
   @override
@@ -2214,7 +2219,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String connectedAppsLastRead(String time) {
-    return 'Последнее чтение $time';
+    return 'Обновлено в $time';
   }
 
   @override
@@ -2262,7 +2267,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get connectedAppsPrivacy =>
-      'Данные здоровья остаются на этом телефоне; в ваш аккаунт сохраняются только импортированные тренировки и чек-ин.';
+      'Данные о здоровье остаются на этом телефоне; в ваш аккаунт сохраняются только импортированные тренировки и чек-ин.';
 
   @override
   String connectedAppsDeleteHelp(String health) {

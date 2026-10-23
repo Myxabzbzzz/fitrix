@@ -591,8 +591,16 @@
   "editProfileErrFiveK": "Introduce un tiempo de 12:00 a 60:00",
   "connectedAppsTitle": "Apps conectadas",
   "connectedAppsWhyHeader": "POR QUÉ CONECTAR",
-  "connectedAppsWhyBody": "{health} rellena tu chequeo matutino: el sueño de anoche, la FC en reposo y la VFC para la recuperación, los pasos y el peso de básculas inteligentes. Los entrenamientos del reloj aparecen en tu historial y en la carga de entrenamiento. Los datos de Apple Watch, Garmin, WHOOP y Mi Band (Zepp / Mi Fitness) llegan a través de {health} cuando la sincronización de esa app con {health} está activada.",
+  "connectedAppsWhyBody": "{health} rellena el sueño de anoche en tu chequeo y aporta la FC en reposo y la VFC para la recuperación, los pasos y el peso de básculas inteligentes. Los entrenamientos del reloj se tienen en cuenta en tu historial y en la carga de entrenamiento. Los datos de Apple Watch, Garmin, WHOOP y Mi Band (Zepp / Mi Fitness) llegan a través de {health} cuando la sincronización de esa app con {health} está activada.",
   "@connectedAppsWhyBody": {
+    "placeholders": {
+      "health": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedAppsWhyBodyAndroid": "{health} rellena el sueño de anoche en tu chequeo y aporta la FC en reposo y la VFC para la recuperación, los pasos y el peso de básculas inteligentes. Los entrenamientos del reloj se tienen en cuenta en tu historial y en la carga de entrenamiento. Los datos de Garmin, WHOOP y Mi Band (Zepp / Mi Fitness) llegan a través de {health} cuando la sincronización de esa app con {health} está activada.",
+  "@connectedAppsWhyBodyAndroid": {
     "placeholders": {
       "health": {
         "type": "String"
@@ -623,7 +631,7 @@
   "connectedAppsComingSoon": "Llegará en una próxima actualización",
   "connectedAppsClose": "Cerrar",
   "connectedAppsConnected": "Conectada",
-  "connectedAppsLastRead": "Última lectura {time}",
+  "connectedAppsLastRead": "Última lectura: {time}",
   "@connectedAppsLastRead": {
     "placeholders": {
       "time": {
@@ -642,7 +650,7 @@
   },
   "connectedAppsDisconnect": "Desconectar",
   "connectedAppsDisconnectedIos": "Para quitar el acceso, abre Ajustes › Salud › Acceso a datos y dispositivos › FITRIX.",
-  "connectedAppsDisconnectedAndroid": "Para quitar el acceso, abre Health Connect › Permisos de apps › FITRIX.",
+  "connectedAppsDisconnectedAndroid": "Para quitar el acceso, abre Health Connect › Permisos de aplicaciones › FITRIX.",
   "connectedAppsDeniedIos": "No se concedió el acceso. Puedes cambiarlo en la app Salud.",
   "connectedAppsDeniedAndroid": "No se concedió el acceso. Puedes cambiarlo en Health Connect.",
   "connectedAppsInstall": "Instalar",

@@ -3604,8 +3604,14 @@ abstract class AppLocalizations {
   /// No description provided for @connectedAppsWhyBody.
   ///
   /// In en, this message translates to:
-  /// **'{health} fills in your morning check-in: last night\'s sleep, resting HR and HRV for recovery, steps and weight from smart scales. Workouts from your watch appear in your history and training load. Apple Watch, Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through {health} once that app\'s sync to {health} is on.'**
+  /// **'{health} fills in last night\'s sleep for your check-in, resting HR and HRV for recovery, steps, and weight from smart scales. Workouts from your watch appear in your history and training load. Apple Watch, Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through {health} once that app\'s sync to {health} is on.'**
   String connectedAppsWhyBody(String health);
+
+  /// No description provided for @connectedAppsWhyBodyAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'{health} fills in last night\'s sleep for your check-in, resting HR and HRV for recovery, steps, and weight from smart scales. Workouts from your watch appear in your history and training load. Garmin, WHOOP and Mi Band (Zepp / Mi Fitness) data arrives through {health} once that app\'s sync to {health} is on.'**
+  String connectedAppsWhyBodyAndroid(String health);
 
   /// No description provided for @connectedAppsHealthDesc.
   ///
