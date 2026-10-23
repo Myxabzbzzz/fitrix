@@ -1,7 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 import 'package:fitrix/core/time/day_key.dart';
-import 'package:fitrix/features/football/data/match_log.dart';
+import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 
@@ -109,9 +109,9 @@ String importedWorkoutId(HealthPlatform p, String healthUuid) =>
 
 /// Whether [imported] (read from Health) and [own] are the same session.
 /// Same sport and either they overlap by more than half of [imported]'s
-/// duration, or [own] is a football log (its times are made up: only the
-/// day and the minutes are real) on the same calendar day with 50-150 % of
-/// [imported]'s minutes.
+/// duration, or [own] is a football workout logged in FITRIX (with or
+/// without a plan its times are made up: only the day and the minutes are
+/// real) on the same calendar day with 50-150 % of [imported]'s minutes.
 bool sameSession(CompletedWorkout imported, CompletedWorkout own) {
   if (imported.sport != own.sport) return false;
   final dur = imported.duration;
@@ -123,7 +123,9 @@ bool sameSession(CompletedWorkout imported, CompletedWorkout own) {
       ? own.finishedAt
       : imported.finishedAt;
   if (end.difference(start) * 2 > dur) return true;
-  if (own.templateId != footballLogTemplateId) return false;
+  if (own.sport != Sport.football || own.templateId == healthImportTemplateId) {
+    return false;
+  }
   if (dayOf(own.startedAt.toLocal()) != dayOf(imported.startedAt.toLocal())) {
     return false;
   }

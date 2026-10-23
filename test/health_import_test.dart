@@ -233,9 +233,10 @@ void main() {
           from: DateTime(2026, 10, 22, 18, 30),
           minutes: 90);
       // The log made after it: the sheet puts its end at the save time.
-      CompletedWorkout footballLog(int minutes, DateTime finishedAt) =>
+      CompletedWorkout footballLog(int minutes, DateTime finishedAt,
+              {String templateId = footballLogTemplateId}) =>
           CompletedWorkout(
-            templateId: footballLogTemplateId,
+            templateId: templateId,
             name: 'Football 7×7',
             sport: Sport.football,
             startedAt: finishedAt.subtract(Duration(minutes: minutes)),
@@ -274,6 +275,50 @@ void main() {
         await importAll();
         expect(c.read(workoutHistoryProvider).single.id, log.id);
         expect(c.read(healthImportsProvider), isEmpty);
+      });
+
+      test('watch then plan log: the plan log replaces the import', () async {
+        fake.workoutRecords = [watchMatch()];
+        await importAll();
+        final importId = c.read(workoutHistoryProvider).single.id;
+        final log = footballLog(90, DateTime(2026, 10, 22, 21),
+            templateId: 'plan-football-tue');
+        c.read(workoutHistoryProvider.notifier).add(log);
+        expect(c.read(workoutHistoryProvider).single.id, log.id);
+        expect(c.read(deletedWorkoutsStoreProvider).deletedAt(importId),
+            isNotNull);
+        expect(c.read(healthImportsProvider), isEmpty);
+        await importAll();
+        expect(c.read(workoutHistoryProvider).single.id, log.id);
+      });
+
+      test('plan log then watch: the import is skipped', () async {
+        final log = footballLog(90, DateTime(2026, 10, 22, 21),
+            templateId: 'plan-football-tue');
+        c.read(workoutHistoryProvider.notifier).add(log);
+        fake.workoutRecords = [watchMatch()];
+        await importAll();
+        expect(c.read(workoutHistoryProvider).single.id, log.id);
+        expect(c.read(healthImportsProvider), isEmpty);
+      });
+
+      test('only the first matching import is replaced', () async {
+        fake.workoutRecords = [
+          watchMatch(),
+          _rec('m2',
+              activity: 'SOCCER',
+              from: DateTime(2026, 10, 22, 10),
+              minutes: 90,
+              sourceName: 'Garmin Connect',
+              sourceId: 'com.garmin'),
+        ];
+        await importAll();
+        expect(c.read(healthImportsProvider), hasLength(2));
+        c.read(workoutHistoryProvider.notifier).add(footballLog(
+            90, DateTime(2026, 10, 22, 21),
+            templateId: 'plan-football-tue'));
+        expect(c.read(workoutHistoryProvider), hasLength(2));
+        expect(c.read(healthImportsProvider), hasLength(1));
       });
 
       test('a gym import the same day as a football log is kept', () async {

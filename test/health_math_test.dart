@@ -208,9 +208,17 @@ void main() {
     test('football log on another day: not the same', () {
       expect(sameSession(match, log(90, t(-1, 20))), isFalse);
     });
-    test('a non-log football workout needs the overlap', () {
+    test('a plan football log (made-up times too) matches by day and minutes',
+        () {
+      // own() has a plan template id ('t'), not football_log.
       final plan = own(Sport.football, t(0, 21, 30), t(0, 23));
-      expect(sameSession(match, plan), isFalse);
+      expect(sameSession(match, plan), isTrue);
+      expect(sameSession(match, own(Sport.football, t(0, 22), t(0, 22, 40))),
+          isFalse); // 40 of 90 minutes
+    });
+    test('two imported football sessions the same day need the overlap', () {
+      expect(sameSession(match, imp(Sport.football, t(0, 21), t(0, 22, 30))),
+          isFalse);
     });
     test('a gym import the same day as a football log', () {
       expect(sameSession(imp(Sport.gym, t(0, 8), t(0, 9)), log(60, t(0, 21))),
