@@ -79,4 +79,67 @@ void main() {
     expect(n!.notificationTitle, 'Recording your run');
     expect(n.setOngoing, isTrue);
   });
+
+  test('iOS declares the Health usage strings', () {
+    expect(_plistString(plist, 'NSHealthShareUsageDescription'),
+        'FITRIX reads sleep, heart rate, HRV, steps, weight and workouts to '
+        'fill your check-in, recovery and training load.');
+    expect(_plistString(plist, 'NSHealthUpdateUsageDescription'),
+        'FITRIX saves the workouts you record so they count in Apple Health '
+        'and Fitness.');
+  });
+
+  test('iOS has the HealthKit entitlement wired into the project', () {
+    final ent = File('ios/Runner/Runner.entitlements').readAsStringSync();
+    expect(
+        RegExp(r'<key>com\.apple\.developer\.healthkit</key>\s*<true/>')
+            .hasMatch(ent),
+        isTrue);
+    expect(ent, contains('com.apple.developer.healthkit.access'));
+    final pbx =
+        File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
+    expect(pbx, contains('IPHONEOS_DEPLOYMENT_TARGET = 15.0'));
+    expect(pbx, isNot(contains('IPHONEOS_DEPLOYMENT_TARGET = 13.0')));
+    expect('CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;'
+            .allMatches(pbx)
+            .length,
+        3);
+  });
+
+  test('Android declares Health Connect permissions, rationale and query', () {
+    final manifest =
+        File('android/app/src/main/AndroidManifest.xml').readAsStringSync();
+    for (final p in [
+      'READ_STEPS',
+      'READ_HEART_RATE',
+      'READ_RESTING_HEART_RATE',
+      'READ_HEART_RATE_VARIABILITY',
+      'READ_SLEEP',
+      'READ_WEIGHT',
+      'READ_EXERCISE',
+      'READ_DISTANCE',
+      'READ_ACTIVE_CALORIES_BURNED',
+      'READ_HEALTH_DATA_HISTORY',
+      'WRITE_EXERCISE',
+      'WRITE_DISTANCE',
+    ]) {
+      expect(manifest, contains('android.permission.health.$p"'), reason: p);
+    }
+    expect(manifest,
+        contains('androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE'));
+    expect(manifest, contains('android.intent.action.VIEW_PERMISSION_USAGE'));
+    expect(manifest, contains('android.intent.category.HEALTH_PERMISSIONS'));
+    expect(manifest, contains('<activity-alias'));
+    expect(manifest,
+        contains('<package android:name="com.google.android.apps.healthdata" />'));
+  });
+
+  test('Android uses a fragment activity and minSdk 26', () {
+    expect(
+        File('android/app/src/main/kotlin/com/elibayev/fitrix/MainActivity.kt')
+            .readAsStringSync(),
+        contains('class MainActivity : FlutterFragmentActivity()'));
+    expect(File('android/app/build.gradle.kts').readAsStringSync(),
+        contains('minSdk = 26'));
+  });
 }

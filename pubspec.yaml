@@ -42,6 +42,7 @@ dependencies:
   image: ^4.12.0
   path: ^1.9.1
   flutter_tts: ^4.2.5
+  health: ^13.3.2
 
 dev_dependencies:
   flutter_test:
