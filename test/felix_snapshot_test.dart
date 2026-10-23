@@ -352,6 +352,32 @@ void main() {
       expect(r['stepsToday'], 0);
     });
 
+    test('recovery without a check-in still gets the health values', () {
+      final r = json(AssistantTopic.recovery, health: full)['readiness'] as Map;
+      expect(r, {
+        'restingHr': 52,
+        'restingHrBaseline': 55.0,
+        'hrv': 62,
+        'hrvBaseline': 58.3,
+        'hrvKind': 'sdnn',
+        'stepsToday': 4200,
+        'steps7dAvg': 8123,
+      });
+    });
+
+    test('no check-in and no health values: no readiness block', () {
+      expect(
+          json(AssistantTopic.recovery, health: const HealthSignals())
+              .containsKey('readiness'),
+          isFalse);
+      expect(json(AssistantTopic.recovery).containsKey('readiness'), isFalse);
+    });
+
+    test('sport topics without a check-in get no health values', () {
+      expect(json(AssistantTopic.gym, health: full).containsKey('readiness'),
+          isFalse);
+    });
+
     test('sport topics keep only score and label', () {
       final r =
           json(AssistantTopic.gym, readiness: ready, health: full)['readiness']

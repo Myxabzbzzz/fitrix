@@ -397,23 +397,33 @@ function sanitizeContext(raw) {
 
   let readiness;
   if (isObject(raw.readiness)) {
-    const score = num(raw.readiness.score, 0, 100);
+    const r = raw.readiness;
+    const score = num(r.score, 0, 100);
+    // HRV without its kind is meaningless (sdnn and rmssd never mix).
+    const hrvKind = pick(r.hrvKind, HRV_KINDS);
+    const health = {
+      restingHr: num(r.restingHr, 25, 220, 0),
+      restingHrBaseline: num(r.restingHrBaseline, 25, 220),
+      hrv: hrvKind ? num(r.hrv, 1, 300, 0) : undefined,
+      hrvKind,
+      hrvBaseline: hrvKind ? num(r.hrvBaseline, 1, 300) : undefined,
+      stepsToday: num(r.stepsToday, 0, 100000, 0),
+      steps7dAvg: num(r.steps7dAvg, 0, 100000, 0),
+    };
     if (score !== undefined) {
-      // HRV without its kind is meaningless (sdnn and rmssd never mix).
-      const hrvKind = pick(raw.readiness.hrvKind, HRV_KINDS);
       readiness = compact({
         score,
-        label: pick(raw.readiness.label, READINESS_LABELS),
-        sleepHours: num(raw.readiness.sleepHours, 0, 24),
-        restingHr: num(raw.readiness.restingHr, 25, 220, 0),
-        restingHrBaseline: num(raw.readiness.restingHrBaseline, 25, 220),
-        hrv: hrvKind ? num(raw.readiness.hrv, 1, 300, 0) : undefined,
-        hrvKind,
-        hrvBaseline: hrvKind ? num(raw.readiness.hrvBaseline, 1, 300) : undefined,
-        stepsToday: num(raw.readiness.stepsToday, 0, 100000, 0),
-        steps7dAvg: num(raw.readiness.steps7dAvg, 0, 100000, 0),
-        factors: cleanFactors(raw.readiness.factors),
+        label: pick(r.label, READINESS_LABELS),
+        sleepHours: num(r.sleepHours, 0, 24),
+        ...health,
+        factors: cleanFactors(r.factors),
       });
+    } else {
+      // No check-in today: the health values alone, when any is valid.
+      if (health.hrv === undefined && health.hrvBaseline === undefined) {
+        health.hrvKind = undefined;
+      }
+      readiness = compact(health);
     }
   }
 
@@ -521,25 +531,34 @@ function describeContext(ctx) {
   }
   if (ctx.readiness) {
     const r = ctx.readiness;
-    let line = `Check-in today: readiness ${r.score}/100`;
-    if (r.label) line += ` (${READINESS_TEXT[r.label]})`;
-    if (r.sleepHours !== undefined) line += `, slept ${r.sleepHours} h`;
+    const health = [];
     if (r.restingHr !== undefined) {
-      line += `, resting HR ${r.restingHr} bpm`;
-      if (r.restingHrBaseline !== undefined) line += ` (normal ${r.restingHrBaseline})`;
+      let part = `resting HR ${r.restingHr} bpm`;
+      if (r.restingHrBaseline !== undefined) part += ` (normal ${r.restingHrBaseline})`;
+      health.push(part);
     }
     if (r.hrv !== undefined) {
-      line += `, HRV ${r.hrv} ms ${r.hrvKind.toUpperCase()}`;
-      if (r.hrvBaseline !== undefined) line += ` (normal ${r.hrvBaseline})`;
+      let part = `HRV ${r.hrv} ms ${r.hrvKind.toUpperCase()}`;
+      if (r.hrvBaseline !== undefined) part += ` (normal ${r.hrvBaseline})`;
+      health.push(part);
     }
     if (r.stepsToday !== undefined) {
-      line += `, steps today ${r.stepsToday}`;
-      if (r.steps7dAvg !== undefined) line += ` (7-day avg ${r.steps7dAvg})`;
+      let part = `steps today ${r.stepsToday}`;
+      if (r.steps7dAvg !== undefined) part += ` (7-day avg ${r.steps7dAvg})`;
+      health.push(part);
     }
-    if (r.factors) {
-      line += `; factors: ${r.factors.map((f) => `${f.factor} ${signed(f.delta)}`).join(', ')}`;
+    if (r.score === undefined) {
+      if (health.length) lines.push(`Health today: ${health.join(', ')}`);
+    } else {
+      let line = `Check-in today: readiness ${r.score}/100`;
+      if (r.label) line += ` (${READINESS_TEXT[r.label]})`;
+      if (r.sleepHours !== undefined) line += `, slept ${r.sleepHours} h`;
+      for (const part of health) line += `, ${part}`;
+      if (r.factors) {
+        line += `; factors: ${r.factors.map((f) => `${f.factor} ${signed(f.delta)}`).join(', ')}`;
+      }
+      lines.push(line);
     }
-    lines.push(line);
   }
   if (ctx.lastWorkout) {
     const w = ctx.lastWorkout;

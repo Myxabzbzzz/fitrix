@@ -13,6 +13,7 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/data/checkin_store.dart';
+import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
 import 'package:fitrix/features/checkin/presentation/screens/recovery_screen.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_sheet.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
@@ -312,6 +313,46 @@ void main() {
       expect(find.textContaining('steps'), findsNothing);
     });
 
+    testWidgets('without a check-in the Health values show above the prompt',
+        (tester) async {
+      await pump(tester,
+          home: const RecoveryScreen(),
+          days: withToday(const HealthDay(
+              restingHr: 60, hrv: 41, hrvKind: HrvKind.sdnn, steps: 8123)));
+      expect(find.text('No check-in yet'), findsOneWidget);
+      expect(find.text('Health data'), findsOneWidget);
+      expect(find.text('60 bpm · your normal 54'), findsOneWidget);
+      expect(find.text('41 ms SDNN · your normal 48'), findsOneWidget);
+      expect(tester.getTopLeft(find.text('60 bpm · your normal 54')).dy,
+          lessThan(tester.getTopLeft(find.text('No check-in yet')).dy));
+      expect(find.text('Check in'), findsOneWidget);
+    });
+
+    testWidgets('without a check-in and Health values: only the prompt',
+        (tester) async {
+      await pump(tester, home: const RecoveryScreen(), days: _history());
+      expect(find.text('No check-in yet'), findsOneWidget);
+      expect(find.text('Health data'), findsNothing);
+    });
+
+    testWidgets("today's bar in the last 7 days is the ring's score",
+        (tester) async {
+      final c = await pump(tester,
+          home: const RecoveryScreen(),
+          checkedIn: true,
+          days: withToday(const HealthDay(
+              restingHr: 60, hrv: 41, hrvKind: HrvKind.sdnn, steps: 8123)));
+      final ring = c.read(todayReadinessProvider)!.score;
+      final withoutHealth = readiness(_checkIn(), hardDaysLast7: 0).score;
+      expect(ring, isNot(withoutHealth));
+      await tester.scrollUntilVisible(find.text('Last 7 days'), 200,
+          scrollable: find.byType(Scrollable).first);
+      expect(find.text('$ring%'), findsOneWidget); // the ring
+      expect(find.text('$ring'), findsOneWidget); // today's bar
+      expect(find.text('avg $ring%'), findsOneWidget);
+      expect(find.text('$withoutHealth'), findsNothing);
+    });
+
     testWidgets('opening recovery refreshes Health', (tester) async {
       await pump(tester,
           home: const RecoveryScreen(), checkedIn: true, throttled: false);
@@ -362,6 +403,19 @@ void main() {
       expectNoOverflow(tester);
       await openSheet(tester);
       expectNoOverflow(tester);
+    });
+
+    testWidgets('recovery without a check-in', (tester) async {
+      await pump(tester,
+          home: const RecoveryScreen(),
+          days: full,
+          size: iPhoneSeSize,
+          textScale: 1.3);
+      expectNoOverflow(tester);
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -600));
+      await tester.pumpAndSettle();
+      expectNoOverflow(tester);
+      expect(find.text('Check in'), findsOneWidget);
     });
 
     testWidgets('recovery', (tester) async {

@@ -352,3 +352,39 @@ test('readiness keeps all seven factors, zero deltas included', () => {
     .map((factor) => ({ factor, delta: 0 }));
   assert.deepEqual(sanitizeContext({ readiness: { score: 70, factors } }).readiness.factors, factors);
 });
+
+test('readiness without a check-in keeps only the health values', () => {
+  const ctx = sanitizeContext({
+    readiness: {
+      label: 'ready', sleepHours: 7, restingHr: 58, restingHrBaseline: 54.24, hrv: 41,
+      hrvKind: 'sdnn', hrvBaseline: 48, stepsToday: 8123, steps7dAvg: 9400,
+      factors: [{ factor: 'sleep', delta: 5 }],
+    },
+  });
+  assert.deepEqual(ctx.readiness, {
+    restingHr: 58, restingHrBaseline: 54.2, hrv: 41, hrvKind: 'sdnn', hrvBaseline: 48,
+    stepsToday: 8123, steps7dAvg: 9400,
+  });
+  // Nothing valid left: no block (and no context).
+  assert.equal(sanitizeContext({ readiness: { restingHr: 300, hrvKind: 'sdnn' } }), null);
+  assert.equal(sanitizeContext({ readiness: { hrv: 41 } }), null);
+  assert.deepEqual(sanitizeContext({ readiness: { stepsToday: 0 } }).readiness, { stepsToday: 0 });
+});
+
+test('describeContext prints health values without a readiness score', () => {
+  const prompt = buildSystemPrompt('app', {}, 'en', sanitizeContext({
+    readiness: {
+      restingHr: 58, restingHrBaseline: 54.2, hrv: 41, hrvKind: 'sdnn',
+      hrvBaseline: 48, stepsToday: 8123, steps7dAvg: 9400,
+    },
+  }));
+  assert.ok(prompt.includes(
+    'Health today: resting HR 58 bpm (normal 54.2), HRV 41 ms SDNN (normal 48), steps today 8123 (7-day avg 9400)',
+  ));
+  assert.ok(!prompt.includes('Check-in today'));
+  assert.ok(!prompt.includes('readiness undefined'));
+  const stepsOnly = buildSystemPrompt('app', {}, 'en', sanitizeContext({
+    readiness: { stepsToday: 4100 },
+  }));
+  assert.ok(stepsOnly.includes('Health today: steps today 4100'));
+});

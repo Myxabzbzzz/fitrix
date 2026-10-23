@@ -33,7 +33,8 @@ class FelixSnapshot {
   /// Apple Health / Health Connect details of [lastWorkout], when imported.
   final HealthImport? lastImport;
 
-  /// Health values; only given to the recovery topic.
+  /// Health values; only given to the recovery topic (also without a
+  /// check-in: then `readiness` holds only them).
   final HealthSignals? health;
   final int? load7;
   final double? acwr;
@@ -159,6 +160,10 @@ class FelixSnapshot {
     final waterMl = this.waterMl;
     final weightChange8w = this.weightChange8w;
     final todayKind = this.todayKind;
+    // Without a check-in the health values still go, without a score.
+    final healthOnly = readiness == null && health != null
+        ? _healthJson(health)
+        : const <String, Object>{};
     return {
       'date': dayKey(today),
       'weekday': _weekdays[today.weekday - 1],
@@ -188,7 +193,9 @@ class FelixSnapshot {
               for (final f in readiness.factors)
                 {'factor': f.factor, 'delta': f.delta},
             ],
-        },
+        }
+      else if (healthOnly.isNotEmpty)
+        'readiness': healthOnly,
       if (lastWorkout != null)
         'lastWorkout': {
           'date': dayKey(lastWorkout.finishedAt),
@@ -338,7 +345,7 @@ FelixSnapshot buildFelixSnapshot({
     lastRun: lastWorkout == null ? null : runs[lastWorkout.id],
     lastMatch: lastWorkout == null ? null : matches[lastWorkout.id],
     lastImport: lastWorkout == null ? null : imports[lastWorkout.id],
-    health: isRecovery && readiness != null ? health : null,
+    health: isRecovery ? health : null,
     load7: load7,
     acwr: isRecovery ? summary?.acwr : null,
     band: summary?.band,

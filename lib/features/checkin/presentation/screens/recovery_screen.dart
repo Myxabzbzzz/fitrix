@@ -70,32 +70,46 @@ class _RecoveryScreenState extends ConsumerState<RecoveryScreen> {
   }
 }
 
-class _Empty extends StatelessWidget {
+/// No check-in yet today: today's Health values (if any) above the prompt.
+class _Empty extends ConsumerWidget {
   final AppLocalizations l10n;
   const _Empty({required this.l10n});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(l10n.recoveryNoCheckin,
-              textAlign: TextAlign.center,
-              style: AppText.headingM.copyWith(color: palette.textPrimary)),
-          const SizedBox(height: AppSpacing.xs),
-          Text(l10n.recoveryNoCheckinBody,
-              textAlign: TextAlign.center,
-              style:
-                  AppText.bodyRegular.copyWith(color: palette.textSecondary)),
-          const SizedBox(height: AppSpacing.md),
-          AppButton(
-            label: l10n.checkinCardAction,
-            onPressed: () => showCheckInSheet(context),
+    return LayoutBuilder(
+      builder: (context, box) => SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+              minHeight: (box.maxHeight - 2 * AppSpacing.lg)
+                  .clamp(0, double.infinity)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _HealthRows(
+                  health: ref.watch(healthTodayProvider),
+                  padding: const EdgeInsets.only(bottom: AppSpacing.lg)),
+              Text(l10n.recoveryNoCheckin,
+                  textAlign: TextAlign.center,
+                  style: AppText.headingM.copyWith(color: palette.textPrimary)),
+              const SizedBox(height: AppSpacing.xs),
+              Text(l10n.recoveryNoCheckinBody,
+                  textAlign: TextAlign.center,
+                  style: AppText.bodyRegular
+                      .copyWith(color: palette.textSecondary)),
+              const SizedBox(height: AppSpacing.md),
+              Center(
+                child: AppButton(
+                  label: l10n.checkinCardAction,
+                  onPressed: () => showCheckInSheet(context),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -319,7 +333,10 @@ class _Content extends ConsumerWidget {
 /// Nothing is shown for a value that is not known today.
 class _HealthRows extends StatelessWidget {
   final HealthSignals health;
-  const _HealthRows({required this.health});
+  final EdgeInsets padding;
+  const _HealthRows(
+      {required this.health,
+      this.padding = const EdgeInsets.only(top: AppSpacing.lg)});
 
   @override
   Widget build(BuildContext context) {
@@ -375,7 +392,7 @@ class _HealthRows extends StatelessWidget {
     }
     if (rows.isEmpty) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.lg),
+      padding: padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -468,12 +485,15 @@ class _Last7 extends ConsumerWidget {
     final locale = Localizations.localeOf(context).toString();
     final history = ref.watch(workoutHistoryProvider);
     final checkIns = ref.watch(checkInHistoryProvider);
+    // Today's bar is the ring's score (with the Health factors).
+    final todayScore = ref.watch(todayReadinessProvider)?.score;
 
     final today = dayOf(now);
     final days = [
       for (var i = 6; i >= 0; i--) today.subtract(Duration(days: i)),
     ];
     int? scoreFor(DateTime day) {
+      if (day == today && todayScore != null) return todayScore;
       for (final c in checkIns) {
         if (DateTime(c.at.year, c.at.month, c.at.day) == day) {
           return readiness(c, hardDaysLast7: hardDaysLast7(history, c.at))
