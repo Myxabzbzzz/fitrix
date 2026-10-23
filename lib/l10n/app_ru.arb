@@ -681,7 +681,7 @@
   "nutritionWaterTitle": "Вода · {drunk} из {target} л",
   "nutritionWaterNoTarget": "Вода · {drunk} л",
   "nutritionWaterWorkout": "+0,5 л за сегодняшнюю тренировку",
-  "nutritionStepsBonus": "+{kcal} ккал за шаги сегодня ({steps} шагов)",
+  "nutritionStepsBonus": "+{kcal} ккал за шаги сегодня (шагов: {steps})",
   "nutritionAddMl": "+{ml} мл",
   "nutritionMeals": "Приёмы пищи",
   "nutritionMealsLogged": "{n} из 4 записано",

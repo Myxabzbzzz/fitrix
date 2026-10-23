@@ -1689,7 +1689,7 @@
     }
   },
   "nutritionWaterWorkout": "+0.5 L for today’s workout",
-  "nutritionStepsBonus": "+{kcal} kcal for steps today ({steps} steps)",
+  "nutritionStepsBonus": "+{kcal} kcal for steps today (steps: {steps})",
   "@nutritionStepsBonus": {
     "placeholders": {
       "kcal": {"type": "String"},

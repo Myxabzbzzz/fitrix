@@ -2331,7 +2331,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String nutritionStepsBonus(String kcal, String steps) {
-    return '+$kcal ккал за шаги сегодня ($steps шагов)';
+    return '+$kcal ккал за шаги сегодня (шагов: $steps)';
   }
 
   @override

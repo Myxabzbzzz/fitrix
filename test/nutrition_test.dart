@@ -495,11 +495,21 @@ void main() {
       final bonus = c.read(targetsProvider)!.stepsKcal;
       expect(bonus, 410);
       expect(c.read(targetsProvider)!.kcal, base.kcal + bonus);
-      expect(find.text('+410 kcal for steps today (14,146 steps)'),
+      expect(find.text('+410 kcal for steps today (steps: 14,146)'),
           findsOneWidget);
       await t.pumpWidget(const SizedBox());
       await pump(t, const NutritionScreen(), steps: 4000);
       expect(find.byKey(const ValueKey('steps-bonus')), findsNothing);
+    });
+
+    testWidgets('targets screen explains the steps bonus, fits SE x1.3',
+        (t) async {
+      await pump(t, const TargetsScreen(), steps: 14146, textScale: 1.3);
+      expect(find.textContaining('kcal for steps today'), findsOneWidget);
+      expect(t.takeException(), isNull);
+      await t.pumpWidget(const SizedBox());
+      await pump(t, const TargetsScreen(), steps: 4000);
+      expect(find.textContaining('kcal for steps today'), findsNothing);
     });
 
     testWidgets('no bonus when Health is not connected', (t) async {

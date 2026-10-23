@@ -8,6 +8,7 @@ import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
 import 'package:fitrix/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:fitrix/features/nutrition/presentation/widgets/nutrition_cards.dart';
@@ -41,6 +42,7 @@ class _TargetsScreenState extends ConsumerState<TargetsScreen> {
     final body = ref.watch(bodyStatsProvider);
     final hours = ref.watch(trainingHoursProvider);
     final sex = ref.watch(performanceProfileProvider).sex;
+    final steps = ref.watch(healthTodayProvider).stepsToday;
     final t = targetsFor(
       sex: sex,
       age: body.age,
@@ -50,6 +52,7 @@ class _TargetsScreenState extends ConsumerState<TargetsScreen> {
       goal: _draft.goal,
       proteinPerKg: _draft.proteinPerKg,
       fatPerKg: _draft.fatPerKg,
+      stepsToday: steps,
     );
 
     Widget row(String title, String sub, String value, {bool big = false}) =>
@@ -223,9 +226,17 @@ class _TargetsScreenState extends ConsumerState<TargetsScreen> {
                                   Goal.leanBulk => l10n.targetsAdjBulk,
                                 },
                                 '',
-                                '${t.kcal - t.tdee >= 0 ? '+' : '−'}'
-                                    '${fmt.format((t.kcal - t.tdee).abs())}',
+                                '${t.kcal - t.stepsKcal - t.tdee >= 0 ? '+' : '−'}'
+                                    '${fmt.format((t.kcal - t.stepsKcal - t.tdee).abs())}',
                               ),
+                              if (t.stepsKcal > 0 && steps != null)
+                                row(
+                                  l10n.nutritionStepsBonus(
+                                      fmt.format(t.stepsKcal),
+                                      fmt.format(steps)),
+                                  '',
+                                  '+${fmt.format(t.stepsKcal)}',
+                                ),
                               Divider(color: palette.border),
                               row(
                                 l10n.targetsDaily,
