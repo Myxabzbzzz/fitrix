@@ -182,16 +182,19 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
       }
     } else {
       final id = const Uuid().v4();
-      history.add(CompletedWorkout(
-        id: id,
-        templateId: templateId,
-        name: _name(original),
-        sport: Sport.football,
-        startedAt: finishedAt.subtract(Duration(minutes: _minutes)),
-        finishedAt: finishedAt,
-        exercises: const [],
-        sessionRpe: _rpe,
-      ));
+      // An edit replaces the session: only a new log goes to Health.
+      history.add(
+          toHealth: original == null,
+          CompletedWorkout(
+            id: id,
+            templateId: templateId,
+            name: _name(original),
+            sport: Sport.football,
+            startedAt: finishedAt.subtract(Duration(minutes: _minutes)),
+            finishedAt: finishedAt,
+            exercises: const [],
+            sessionRpe: _rpe,
+          ));
       matches.put(id, log);
       if (original != null) {
         history.remove(original.id);

@@ -244,6 +244,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
       exercises: const [],
       sessionRpe: rpe,
     );
+    // Load-bearing: the Health writer reads the run's distance right after
+    // this synchronous pair, so details must be saved with no await between.
     _saveWorkout(workout);
     _saveDetails(
       workout.id,

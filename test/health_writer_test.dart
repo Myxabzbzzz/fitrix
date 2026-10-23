@@ -124,16 +124,19 @@ void main() {
     expect(fake.written, isEmpty);
   });
 
-  test('editing (re-adding the same id) does not write again', () async {
+  test('editing a logged workout (new id, old removed) does not write again',
+      () async {
     await connect();
     final n = c.read(workoutHistoryProvider.notifier);
     n.add(_w('a'));
     await settle();
-    n.add(_w('a', name: 'Edited'));
+    // What the match log sheet does when the time or length changes.
+    n.add(_w('b', name: 'Edited'), toHealth: false);
+    n.remove('a');
     await settle();
     expect(fake.written, hasLength(1));
 
-    // Also after a restart.
+    // Also after a restart: the original id is still remembered.
     c = make();
     await connect();
     c.read(workoutHistoryProvider.notifier).add(_w('a'));

@@ -202,9 +202,11 @@ class WorkoutHistoryNotifier extends StateNotifier<List<CompletedWorkout>> {
   }
 
   /// A workout created in FITRIX; reported to [onAdded] (written to Health).
-  void add(CompletedWorkout workout) {
+  /// [toHealth] false is for an edit that replaces a logged workout: not a
+  /// new session, so it is not written to Health again.
+  void add(CompletedWorkout workout, {bool toHealth = true}) {
     state = [workout, ...state];
-    _onAdded?.call(workout);
+    if (toHealth) _onAdded?.call(workout);
   }
 
   /// A workout read from Apple Health / Health Connect. Saved and synced
