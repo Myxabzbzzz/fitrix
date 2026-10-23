@@ -136,6 +136,7 @@ class WeightImporter implements HealthImporter {
     final added = await _ref.read(bodyWeightProvider.notifier).importWeighIns([
       for (final x in list) WeighIn(at: x.to, kg: x.value),
     ]);
+    if (added.isEmpty || !mayWrite()) return;
     await _remember([for (final w in added) dayKey(w.at)]);
   }
 

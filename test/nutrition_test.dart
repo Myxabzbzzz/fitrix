@@ -505,11 +505,13 @@ void main() {
     testWidgets('targets screen explains the steps bonus, fits SE x1.3',
         (t) async {
       await pump(t, const TargetsScreen(), steps: 14146, textScale: 1.3);
-      expect(find.textContaining('kcal for steps today'), findsOneWidget);
+      expect(find.text('Steps today: 14,146'), findsOneWidget);
+      expect(find.text('+410'), findsOneWidget);
+      expect(find.textContaining('kcal for steps today'), findsNothing);
       expect(t.takeException(), isNull);
       await t.pumpWidget(const SizedBox());
       await pump(t, const TargetsScreen(), steps: 4000);
-      expect(find.textContaining('kcal for steps today'), findsNothing);
+      expect(find.textContaining('Steps today'), findsNothing);
     });
 
     testWidgets('no bonus when Health is not connected', (t) async {

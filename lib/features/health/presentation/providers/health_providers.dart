@@ -154,6 +154,8 @@ class HealthSync {
 
   /// Whether a running read may still write: not disposed and connected,
   /// in memory and in storage (cleared local data reads as disconnected).
+  bool mayWrite() => _mayWrite();
+
   bool _mayWrite() {
     if (!_alive) return false;
     try {
@@ -309,12 +311,6 @@ final healthTodayProvider = Provider<HealthSignals>((ref) {
               e.key: e.value.hrv!,
         }, today);
 
-  final steps = <int>[];
-  for (var i = 1; i <= 7; i++) {
-    final s =
-        days[dayKey(DateTime(today.year, today.month, today.day - i))]?.steps;
-    if (s != null) steps.add(s);
-  }
   return HealthSignals(
     restingHr: t?.restingHr,
     restingHrBaseline: rhrBase,
@@ -322,9 +318,7 @@ final healthTodayProvider = Provider<HealthSignals>((ref) {
     hrvBaseline: hrvBase,
     hrvKind: hrvKind,
     stepsToday: t?.steps,
-    steps7dAvg: steps.isEmpty
-        ? null
-        : (steps.reduce((a, b) => a + b) / steps.length).round(),
+    steps7dAvg: stepsPrev7dAvg(days, today),
   );
 });
 
@@ -337,22 +331,33 @@ final healthTodayDayProvider = Provider<HealthDay?>((ref) {
   return ref.watch(healthDailyStoreProvider).day(dayKey(today));
 });
 
+/// Average steps over the 7 completed days before [today] (today's partial
+/// day excluded), over the known days only; null when none is known. The one
+/// definition behind the check-in/Home average and the Progress average.
+int? stepsPrev7dAvg(Map<String, HealthDay> days, DateTime today) {
+  final steps = <int>[];
+  for (var i = 1; i <= 7; i++) {
+    final s =
+        days[dayKey(DateTime(today.year, today.month, today.day - i))]?.steps;
+    if (s != null) steps.add(s);
+  }
+  if (steps.isEmpty) return null;
+  return (steps.reduce((a, b) => a + b) / steps.length).round();
+}
+
 /// The last seven days of steps, oldest first, ending today.
 class StepsWeek {
-  const StepsWeek(this.days);
+  const StepsWeek(this.days, {this.average});
 
   /// Seven entries; a null value is an unknown day (not zero).
   final List<({DateTime day, int? steps})> days;
 
-  /// Average over the known days only, null when none is known.
-  int? get average {
-    final known = [
-      for (final d in days)
-        if (d.steps != null) d.steps!
-    ];
-    if (known.isEmpty) return null;
-    return (known.reduce((a, b) => a + b) / known.length).round();
-  }
+  /// Daily average, same definition as the check-in's 7-day average: the
+  /// completed days before today, known days only; null when none is known.
+  final int? average;
+
+  /// Whether any of the seven days has steps (the bars have something to show).
+  bool get hasSteps => days.any((d) => d.steps != null);
 }
 
 /// Seven days of cached steps, null when not connected or no day has steps.
@@ -360,7 +365,7 @@ final stepsLast7Provider = Provider<StepsWeek?>((ref) {
   final today = ref.watch(todayProvider);
   ref.watch(_healthCacheVersionProvider);
   if (!ref.watch(healthConnectionProvider).connected) return null;
-  final cached = ref.watch(healthDailyStoreProvider).lastDays(7, today);
+  final cached = ref.watch(healthDailyStoreProvider).lastDays(8, today);
   final days = [
     for (var i = 6; i >= 0; i--)
       (
@@ -369,8 +374,8 @@ final stepsLast7Provider = Provider<StepsWeek?>((ref) {
             ?.steps,
       ),
   ];
-  final week = StepsWeek(days);
-  return week.average == null ? null : week;
+  final week = StepsWeek(days, average: stepsPrev7dAvg(cached, today));
+  return week.hasSteps ? week : null;
 });
 
 /// What came from / went to Health in the last 7 days (today included).
@@ -394,14 +399,13 @@ class HealthSummary {
   final int workoutsImported;
   final int workoutsWritten;
 
-  /// Nothing but (maybe) steps: a phone without a watch.
-  bool get onlySteps =>
+  /// Nothing that only a watch provides (sleep, resting HR, HRV, imported
+  /// workouts). Workouts saved to Health and scale weigh-ins do not count.
+  bool get noWatchData =>
       sleepNights == 0 &&
       restingHrDays == 0 &&
       hrvDays == 0 &&
-      weighIns == 0 &&
-      workoutsImported == 0 &&
-      workoutsWritten == 0;
+      workoutsImported == 0;
 }
 
 /// Null when Health is not connected.

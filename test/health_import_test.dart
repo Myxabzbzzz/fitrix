@@ -8,6 +8,7 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/health/data/health_import_store.dart';
+import 'package:fitrix/features/health/data/health_importers.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/health/domain/health_math.dart';
 import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
@@ -435,6 +436,19 @@ void main() {
           (jsonDecode(prefs.getString('health_weight_imported_v1')!) as List);
       expect(kept.length, 60);
       expect(kept.last, '2026-10-22');
+    });
+
+    test('mayWrite false before remembering: no ledger write', () async {
+      fake.weightSamples = [_kg(DateTime(2026, 10, 22, 7, 30), 81.4)];
+      var calls = 0;
+      await c
+          .read(healthImportersProvider)
+          .whereType<WeightImporter>()
+          .single
+          .run(fake, DateTime(2026, 9, 23), DateTime(2026, 10, 23, 10),
+              () => ++calls == 1);
+      expect(c.read(bodyWeightProvider), hasLength(1)); // imported
+      expect(prefs.containsKey('health_weight_imported_v1'), isFalse);
     });
 
     test('a day with a manual weigh-in is not remembered as imported',

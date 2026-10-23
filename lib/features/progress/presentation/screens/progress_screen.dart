@@ -329,11 +329,13 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                             Text(l10n.healthSteps,
                                 style: AppText.headingS
                                     .copyWith(color: p.textPrimary)),
-                            gap(AppSpacing.xxs),
-                            Text(l10n.healthStepsDailyAvg(stepsWeek.average!),
-                                key: const ValueKey('steps-avg'),
-                                style: AppText.caption
-                                    .copyWith(color: p.textSecondary)),
+                            if (stepsWeek.average != null) ...[
+                              gap(AppSpacing.xxs),
+                              Text(l10n.healthStepsDailyAvg(stepsWeek.average!),
+                                  key: const ValueKey('steps-avg'),
+                                  style: AppText.caption
+                                      .copyWith(color: p.textSecondary)),
+                            ],
                             gap(),
                             StepsBarChart(week: stepsWeek),
                           ],

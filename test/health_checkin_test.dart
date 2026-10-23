@@ -422,6 +422,18 @@ void main() {
           findsNothing);
     });
 
+    testWidgets('SE at 375x667, 1.3x: steps tile with average fits',
+        (tester) async {
+      await pump(tester,
+          home: const HomeScreen(),
+          size: iPhoneSeSize,
+          textScale: 1.3,
+          days: withToday(const HealthDay(steps: 8123)));
+      expect(find.byKey(const Key('home-steps-tile')), findsOneWidget);
+      expect(find.text('Steps today: 8,123 · 7-day avg 9,400'), findsOneWidget);
+      expectNoOverflow(tester);
+    });
+
     testWidgets('no steps tile when steps unknown', (tester) async {
       await pump(tester,
           home: const HomeScreen(),
@@ -465,8 +477,9 @@ void main() {
               of: find.byKey(const ValueKey('steps-week')),
               matching: find.text('0')),
           findsNothing);
-      // (10000 + 5000 + 6000) / 3 known days, not / 7.
-      expect(find.text('Daily average: 7,000'), findsOneWidget);
+      // Same as the check-in: completed days only, today's partial day
+      // excluded: (5000 + 6000) / 2, not / 7.
+      expect(find.text('Daily average: 5,500'), findsOneWidget);
     });
 
     testWidgets('hidden when no day has steps', (tester) async {

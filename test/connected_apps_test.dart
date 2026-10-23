@@ -305,7 +305,7 @@ void main() {
       expect(s.weighIns, 2); // 17 and 22
       expect(s.workoutsImported, 1);
       expect(s.workoutsWritten, 1); // old has no time, b is outside
-      expect(s.onlySteps, isFalse);
+      expect(s.noWatchData, isFalse);
     });
 
     test('not connected: no summary', () async {
@@ -343,6 +343,28 @@ void main() {
       await pump(tester,
           prefsValues: seeded(d: {
             '2026-10-23': {'steps': 9000, 'sleep': 25200},
+          }));
+      expect(find.byKey(const Key('health-summary')), findsOneWidget);
+      expect(find.byKey(const Key('health-summary-hint')), findsNothing);
+    });
+
+    testWidgets('hint shown with steps, saved workouts and a weigh-in only',
+        (tester) async {
+      await pump(tester,
+          prefsValues: seeded(extra: {
+            'health_weight_imported_v1': jsonEncode(['2026-10-22']),
+            'health_written_v1': jsonEncode(['a']),
+            'health_written_at_v1':
+                jsonEncode({'a': DateTime(2026, 10, 20, 9).toIso8601String()}),
+          }));
+      expect(find.byKey(const Key('health-summary-hint')), findsOneWidget);
+    });
+
+    testWidgets('hint hidden with a single HRV day', (tester) async {
+      await pump(tester,
+          prefsValues: seeded(d: {
+            '2026-10-23': {'steps': 9000},
+            '2026-10-21': {'hrv': 50.0, 'hrvKind': 'rmssd'},
           }));
       expect(find.byKey(const Key('health-summary')), findsOneWidget);
       expect(find.byKey(const Key('health-summary-hint')), findsNothing);

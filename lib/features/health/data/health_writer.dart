@@ -124,7 +124,10 @@ class HealthWriter {
           meters: meters,
           title: w.name,
         );
-        if (ok) await _remember(w.id);
+        // Signed out / disconnected while writing: leave the ledger alone.
+        if (ok && _ref.read(healthSyncProvider).mayWrite()) {
+          await _remember(w.id);
+        }
       } finally {
         _inFlight.remove(w.id);
       }

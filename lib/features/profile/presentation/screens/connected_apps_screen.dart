@@ -454,7 +454,7 @@ class _HealthSummaryBlock extends ConsumerWidget {
               ],
             ),
           ),
-        if (sum.onlySteps) ...[
+        if (sum.noWatchData) ...[
           const SizedBox(height: AppSpacing.xs),
           Text(
               android

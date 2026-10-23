@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,6 +29,25 @@ CompletedWorkout _w(String id,
       finishedAt: DateTime(2026, 10, 23, 10),
       exercises: const [],
     );
+
+class _SlowWrite extends FakeHealthSource {
+  final gate = Completer<void>();
+  final entered = Completer<void>();
+
+  @override
+  Future<bool> writeWorkout({
+    required String activity,
+    required DateTime from,
+    required DateTime to,
+    double? meters,
+    String? title,
+  }) async {
+    entered.complete();
+    await gate.future;
+    return super.writeWorkout(
+        activity: activity, from: from, to: to, meters: meters, title: title);
+  }
+}
 
 void main() {
   late SharedPreferences prefs;
@@ -80,6 +101,21 @@ void main() {
     expect(w.to, DateTime(2026, 10, 23, 10));
     expect(w.title, 'Push day');
     expect(w.meters, isNull);
+  });
+
+  test('disconnected while the write runs: ledger untouched', () async {
+    final gated = _SlowWrite();
+    fake = gated;
+    c = make();
+    await connect();
+    c.read(workoutHistoryProvider.notifier).add(_w('a'));
+    await gated.entered.future;
+    await c.read(healthConnectionProvider.notifier).disconnect();
+    gated.gate.complete();
+    await settle();
+    expect(gated.written, hasLength(1));
+    expect(prefs.containsKey(HealthWriter.key), isFalse);
+    expect(prefs.containsKey(HealthWriter.timesKey), isFalse);
   });
 
   test('a run carries the meters saved right after the workout', () async {

@@ -231,9 +231,7 @@ class _TargetsScreenState extends ConsumerState<TargetsScreen> {
                               ),
                               if (t.stepsKcal > 0 && steps != null)
                                 row(
-                                  l10n.nutritionStepsBonus(
-                                      fmt.format(t.stepsKcal),
-                                      fmt.format(steps)),
+                                  l10n.healthStepsToday(steps),
                                   '',
                                   '+${fmt.format(t.stepsKcal)}',
                                 ),
