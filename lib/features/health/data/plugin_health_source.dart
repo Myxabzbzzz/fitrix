@@ -229,8 +229,7 @@ class PluginHealthSource implements HealthSource {
   }
 
   @override
-  Future<List<HealthWorkoutRecord>> workouts(
-      DateTime from, DateTime to) async {
+  Future<List<HealthWorkoutRecord>> workouts(DateTime from, DateTime to) async {
     return _workouts(await _read([HealthDataType.WORKOUT], from, to));
   }
 

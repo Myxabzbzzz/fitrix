@@ -6,6 +6,7 @@ import 'package:fitrix/core/sync/remote_store.dart';
 import 'package:fitrix/core/sync/supabase_remote_store.dart';
 import 'package:fitrix/core/sync/sync_engine.dart';
 import 'package:fitrix/core/sync/sync_local.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 
 /// Where synced data lives on the server; null in local-only mode (no
 /// Supabase, e.g. in tests). Tests override it with an in-memory store.
@@ -66,8 +67,15 @@ class _SyncBootstrapState extends ConsumerState<SyncBootstrap> {
   void initState() {
     super.initState();
     _lifecycle = AppLifecycleListener(
-      onResume: () => ref.read(syncEngineProvider)?.sync(),
+      onResume: () {
+        ref.read(syncEngineProvider)?.sync();
+        ref.read(healthSyncProvider).refresh();
+      },
     );
+    // After the first frame, when the session has been restored.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.read(healthSyncProvider).refresh();
+    });
   }
 
   @override
