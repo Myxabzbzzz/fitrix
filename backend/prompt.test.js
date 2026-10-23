@@ -346,3 +346,9 @@ test('describeContext prints health values', () => {
   assert.ok(prompt.includes('steps today 8123 (7-day avg 9400)'));
   assert.ok(prompt.includes('recorded by Apple Watch, avg HR 148'));
 });
+
+test('readiness keeps all seven factors, zero deltas included', () => {
+  const factors = ['sleep', 'soreness', 'energy', 'stress', 'load', 'restingHr', 'hrv']
+    .map((factor) => ({ factor, delta: 0 }));
+  assert.deepEqual(sanitizeContext({ readiness: { score: 70, factors } }).readiness.factors, factors);
+});

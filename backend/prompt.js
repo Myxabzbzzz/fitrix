@@ -342,7 +342,7 @@ function cleanFactors(value) {
     const factor = pick(item.factor, READINESS_FACTORS);
     const delta = num(item.delta, -50, 50);
     if (factor && delta !== undefined) factors.push({ factor, delta });
-    if (factors.length === 5) break;
+    if (factors.length === READINESS_FACTORS.length) break;
   }
   return factors.length ? factors : undefined;
 }
