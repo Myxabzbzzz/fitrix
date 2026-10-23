@@ -1191,5 +1191,21 @@
   "footballDeleteAction": "Удалить",
   "footballHistory": "История",
   "footballHistoryEmpty": "Пока нет записей. Запишите игру после матча или тренировки.",
-  "footballWorkouts": "Тренировки"
+  "footballWorkouts": "Тренировки",
+  "healthFromSource": "из {source}",
+  "healthSectionTitle": "Данные о здоровье",
+  "healthRestingHr": "Пульс покоя",
+  "healthHrv": "Вариабельность пульса",
+  "healthSteps": "Шаги",
+  "healthRestingHrValue": "{bpm} уд/мин",
+  "healthRestingHrNormal": "{bpm} уд/мин · ваша норма {normal}",
+  "healthHrvValue": "{value} мс {kind}",
+  "healthHrvNormal": "{value} мс {kind} · ваша норма {normal}",
+  "healthStepsToday": "{steps} шагов сегодня",
+  "healthStepsTodayAvg": "{steps} шагов сегодня · в среднем за 7 дней {avg}",
+  "factorRestingHrHigh": "Пульс покоя выше нормы",
+  "factorRestingHrNormal": "Пульс покоя в норме",
+  "factorHrvLow": "ВСР ниже нормы",
+  "factorHrvNormal": "ВСР в норме",
+  "factorHrvHigh": "ВСР выше нормы"
 }

@@ -3175,5 +3175,88 @@
   "footballDeleteAction": "Delete",
   "footballHistory": "History",
   "footballHistoryEmpty": "No games logged yet. Log one after you play.",
-  "footballWorkouts": "Workouts"
+  "footballWorkouts": "Workouts",
+  "healthFromSource": "from {source}",
+  "@healthFromSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "healthSectionTitle": "Health data",
+  "healthRestingHr": "Resting heart rate",
+  "healthHrv": "Heart rate variability",
+  "healthSteps": "Steps",
+  "healthRestingHrValue": "{bpm} bpm",
+  "@healthRestingHrValue": {
+    "placeholders": {
+      "bpm": {
+        "type": "int"
+      }
+    }
+  },
+  "healthRestingHrNormal": "{bpm} bpm · your normal {normal}",
+  "@healthRestingHrNormal": {
+    "placeholders": {
+      "bpm": {
+        "type": "int"
+      },
+      "normal": {
+        "type": "int"
+      }
+    }
+  },
+  "healthHrvValue": "{value} ms {kind}",
+  "@healthHrvValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "healthHrvNormal": "{value} ms {kind} · your normal {normal}",
+  "@healthHrvNormal": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "kind": {
+        "type": "String"
+      },
+      "normal": {
+        "type": "int"
+      }
+    }
+  },
+  "healthStepsToday": "{steps} steps today",
+  "@healthStepsToday": {
+    "placeholders": {
+      "steps": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "healthStepsTodayAvg": "{steps} steps today · 7-day avg {avg}",
+  "@healthStepsTodayAvg": {
+    "placeholders": {
+      "steps": {
+        "type": "int",
+        "format": "decimalPattern"
+      },
+      "avg": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "factorRestingHrHigh": "Resting heart rate above normal",
+  "factorRestingHrNormal": "Resting heart rate near normal",
+  "factorHrvLow": "HRV below normal",
+  "factorHrvNormal": "HRV near normal",
+  "factorHrvHigh": "HRV above normal"
 }

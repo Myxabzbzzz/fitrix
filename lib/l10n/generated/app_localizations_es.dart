@@ -4267,4 +4267,78 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get footballWorkouts => 'Entrenamientos';
+
+  @override
+  String healthFromSource(String source) {
+    return 'de $source';
+  }
+
+  @override
+  String get healthSectionTitle => 'Datos de salud';
+
+  @override
+  String get healthRestingHr => 'Frecuencia cardíaca en reposo';
+
+  @override
+  String get healthHrv => 'Variabilidad de la frecuencia cardíaca';
+
+  @override
+  String get healthSteps => 'Pasos';
+
+  @override
+  String healthRestingHrValue(int bpm) {
+    return '$bpm lpm';
+  }
+
+  @override
+  String healthRestingHrNormal(int bpm, int normal) {
+    return '$bpm lpm · tu normal $normal';
+  }
+
+  @override
+  String healthHrvValue(int value, String kind) {
+    return '$value ms $kind';
+  }
+
+  @override
+  String healthHrvNormal(int value, String kind, int normal) {
+    return '$value ms $kind · tu normal $normal';
+  }
+
+  @override
+  String healthStepsToday(int steps) {
+    final intl.NumberFormat stepsNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String stepsString = stepsNumberFormat.format(steps);
+
+    return '$stepsString pasos hoy';
+  }
+
+  @override
+  String healthStepsTodayAvg(int steps, int avg) {
+    final intl.NumberFormat stepsNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String stepsString = stepsNumberFormat.format(steps);
+    final intl.NumberFormat avgNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String avgString = avgNumberFormat.format(avg);
+
+    return '$stepsString pasos hoy · media de 7 días $avgString';
+  }
+
+  @override
+  String get factorRestingHrHigh =>
+      'Frecuencia en reposo por encima de lo normal';
+
+  @override
+  String get factorRestingHrNormal => 'Frecuencia en reposo normal';
+
+  @override
+  String get factorHrvLow => 'VFC por debajo de lo normal';
+
+  @override
+  String get factorHrvNormal => 'VFC normal';
+
+  @override
+  String get factorHrvHigh => 'VFC por encima de lo normal';
 }

@@ -4,6 +4,7 @@ import 'package:fitrix/core/sync/local_changes.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/data/checkin_store.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -63,7 +64,9 @@ final hardDaysProvider = Provider<int>((ref) {
 final todayReadinessProvider = Provider<Readiness?>((ref) {
   final c = ref.watch(todayCheckInProvider);
   if (c == null) return null;
-  return readiness(c, hardDaysLast7: ref.watch(hardDaysProvider));
+  return readiness(c,
+      hardDaysLast7: ref.watch(hardDaysProvider),
+      health: ref.watch(healthTodayProvider));
 });
 
 /// Today's planned gym session: the first one on the week plan that isn't

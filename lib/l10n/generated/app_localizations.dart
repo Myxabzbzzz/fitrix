@@ -6938,6 +6938,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Workouts'**
   String get footballWorkouts;
+
+  /// No description provided for @healthFromSource.
+  ///
+  /// In en, this message translates to:
+  /// **'from {source}'**
+  String healthFromSource(String source);
+
+  /// No description provided for @healthSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Health data'**
+  String get healthSectionTitle;
+
+  /// No description provided for @healthRestingHr.
+  ///
+  /// In en, this message translates to:
+  /// **'Resting heart rate'**
+  String get healthRestingHr;
+
+  /// No description provided for @healthHrv.
+  ///
+  /// In en, this message translates to:
+  /// **'Heart rate variability'**
+  String get healthHrv;
+
+  /// No description provided for @healthSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps'**
+  String get healthSteps;
+
+  /// No description provided for @healthRestingHrValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{bpm} bpm'**
+  String healthRestingHrValue(int bpm);
+
+  /// No description provided for @healthRestingHrNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'{bpm} bpm · your normal {normal}'**
+  String healthRestingHrNormal(int bpm, int normal);
+
+  /// No description provided for @healthHrvValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} ms {kind}'**
+  String healthHrvValue(int value, String kind);
+
+  /// No description provided for @healthHrvNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} ms {kind} · your normal {normal}'**
+  String healthHrvNormal(int value, String kind, int normal);
+
+  /// No description provided for @healthStepsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{steps} steps today'**
+  String healthStepsToday(int steps);
+
+  /// No description provided for @healthStepsTodayAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'{steps} steps today · 7-day avg {avg}'**
+  String healthStepsTodayAvg(int steps, int avg);
+
+  /// No description provided for @factorRestingHrHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Resting heart rate above normal'**
+  String get factorRestingHrHigh;
+
+  /// No description provided for @factorRestingHrNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Resting heart rate near normal'**
+  String get factorRestingHrNormal;
+
+  /// No description provided for @factorHrvLow.
+  ///
+  /// In en, this message translates to:
+  /// **'HRV below normal'**
+  String get factorHrvLow;
+
+  /// No description provided for @factorHrvNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'HRV near normal'**
+  String get factorHrvNormal;
+
+  /// No description provided for @factorHrvHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'HRV above normal'**
+  String get factorHrvHigh;
 }
 
 class _AppLocalizationsDelegate

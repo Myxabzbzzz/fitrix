@@ -286,3 +286,12 @@ final healthTodayProvider = Provider<HealthSignals>((ref) {
         : (steps.reduce((a, b) => a + b) / steps.length).round(),
   );
 });
+
+/// Today's cached entry (sleep with its source, ...), null when not
+/// connected or nothing is cached for today.
+final healthTodayDayProvider = Provider<HealthDay?>((ref) {
+  final today = ref.watch(todayProvider);
+  ref.watch(_healthCacheVersionProvider);
+  if (!ref.watch(healthConnectionProvider).connected) return null;
+  return ref.watch(healthDailyStoreProvider).day(dayKey(today));
+});

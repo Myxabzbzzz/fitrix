@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +12,9 @@ import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_text.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/readiness_ring.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
+import 'package:fitrix/features/health/data/health_daily_store.dart';
+import 'package:fitrix/features/health/data/health_source.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Opens the morning check-in. Completes with true when it was saved.
@@ -40,12 +45,40 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
   static const _maxSleep = 12 * 60;
 
   int _sleepMinutes = 7 * 60 + 30;
+  // Where the pre-filled sleep came from; dropped once the user moves it.
+  String? _sleepSource;
+  bool _sleepTouched = false;
   SleepQuality _quality = SleepQuality.ok;
   Soreness _soreness = Soreness.none;
   Set<BodyArea> _sore = {};
   Level3 _energy = Level3.ok;
   Level3 _stress = Level3.ok;
   bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final saved = ref.read(todayCheckInProvider);
+    if (saved != null) {
+      _sleepMinutes = saved.sleep.inMinutes.clamp(_minSleep, _maxSleep);
+    } else {
+      _prefillSleep(ref.read(healthTodayDayProvider));
+    }
+    // Fire and forget: the sheet follows the cache when the read lands.
+    unawaited(ref.read(healthSyncProvider).refresh().catchError((Object _) {}));
+  }
+
+  /// Health's last night, rounded to the slider's 15-minute step.
+  void _prefillSleep(HealthDay? day) {
+    final sleep = day?.sleep;
+    if (sleep == null || _sleepTouched) return;
+    _sleepMinutes =
+        ((sleep.inMinutes / 15).round() * 15).clamp(_minSleep, _maxSleep);
+    _sleepSource = day!.sleepSource ??
+        (ref.read(healthSourceProvider).platform == HealthPlatform.healthConnect
+            ? 'Health Connect'
+            : 'Apple Health');
+  }
 
   CheckIn _current() => CheckIn(
         at: ref.read(clockProvider)(),
@@ -57,8 +90,11 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
         stress: _stress,
       );
 
-  void _step(int minutes) => setState(() =>
-      _sleepMinutes = (_sleepMinutes + minutes).clamp(_minSleep, _maxSleep));
+  void _step(int minutes) => setState(() {
+        _sleepTouched = true;
+        _sleepSource = null;
+        _sleepMinutes = (_sleepMinutes + minutes).clamp(_minSleep, _maxSleep);
+      });
 
   Future<void> _save() async {
     if (_saving) return;
@@ -82,8 +118,14 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
+    ref.listen(healthTodayDayProvider, (_, day) {
+      if (ref.read(todayCheckInProvider) != null) return;
+      setState(() => _prefillSleep(day));
+    });
     final checkIn = _current();
-    final r = readiness(checkIn, hardDaysLast7: ref.watch(hardDaysProvider));
+    final r = readiness(checkIn,
+        hardDaysLast7: ref.watch(hardDaysProvider),
+        health: ref.watch(healthTodayProvider));
     final now = checkIn.at;
 
     Widget label(String text) => Padding(
@@ -165,8 +207,11 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
                         divisions: (_maxSleep - _minSleep) ~/ 15,
                         activeColor: palette.accent,
                         inactiveColor: palette.buttonMuted,
-                        onChanged: (v) =>
-                            setState(() => _sleepMinutes = v.round()),
+                        onChanged: (v) => setState(() {
+                          _sleepTouched = true;
+                          _sleepSource = null;
+                          _sleepMinutes = v.round();
+                        }),
                       ),
                     ),
                     IconButton(
@@ -178,6 +223,10 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
                     ),
                   ],
                 ),
+                if (_sleepSource != null)
+                  Text(l10n.healthFromSource(_sleepSource!),
+                      style: AppText.caption
+                          .copyWith(color: palette.textSecondary)),
                 _Segmented<SleepQuality>(
                   values: SleepQuality.values,
                   selected: _quality,

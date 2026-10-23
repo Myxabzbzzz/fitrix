@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,17 +20,32 @@ import 'package:fitrix/features/checkin/presentation/widgets/checkin_text.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/readiness_ring.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
+import 'package:fitrix/features/health/data/health_source.dart';
+import 'package:fitrix/features/health/domain/health_math.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/start_workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Today's recovery: score ring, what shaped it, the adjusted plan and the
 /// last 7 days.
-class RecoveryScreen extends ConsumerWidget {
+class RecoveryScreen extends ConsumerStatefulWidget {
   const RecoveryScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RecoveryScreen> createState() => _RecoveryScreenState();
+}
+
+class _RecoveryScreenState extends ConsumerState<RecoveryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fire and forget: the values appear when the cache updates.
+    unawaited(ref.read(healthSyncProvider).refresh().catchError((Object _) {}));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final checkIn = ref.watch(todayCheckInProvider);
@@ -180,8 +197,9 @@ class _Content extends ConsumerWidget {
                   if (i > 0)
                     Divider(height: 1, thickness: 1, color: palette.background),
                   _FactorRow(
-                    icon: _icons[i],
-                    title: _title(l10n, readiness.factors[i].factor, hardDays),
+                    icon: _icon(readiness.factors[i].factor),
+                    title: _title(l10n, readiness.factors[i].factor, hardDays,
+                        readiness.factors[i].delta),
                     subtitle:
                         _subtitle(l10n, readiness.factors[i].factor, hardDays),
                     delta: readiness.factors[i].delta,
@@ -190,6 +208,7 @@ class _Content extends ConsumerWidget {
               ],
             ),
           ),
+          _HealthRows(health: ref.watch(healthTodayProvider)),
           const SizedBox(height: AppSpacing.lg),
           if (shown.isNotEmpty && template != null)
             Container(
@@ -237,16 +256,28 @@ class _Content extends ConsumerWidget {
     );
   }
 
-  static const _icons = [
-    Icons.bed_outlined,
-    Icons.healing_outlined,
-    Icons.battery_5_bar_outlined,
-    Icons.cloud_outlined,
-    Icons.bolt_outlined,
-  ];
+  static IconData _icon(String factor) => switch (factor) {
+        ReadinessFactorKey.sleep => Icons.bed_outlined,
+        ReadinessFactorKey.soreness => Icons.healing_outlined,
+        ReadinessFactorKey.energy => Icons.battery_5_bar_outlined,
+        ReadinessFactorKey.stress => Icons.cloud_outlined,
+        ReadinessFactorKey.restingHr => Icons.favorite_border,
+        ReadinessFactorKey.hrv => Icons.monitor_heart_outlined,
+        _ => Icons.bolt_outlined,
+      };
 
-  String _title(AppLocalizations l10n, String factor, int hardDays) {
+  String _title(AppLocalizations l10n, String factor, int hardDays, int delta) {
     switch (factor) {
+      case ReadinessFactorKey.restingHr:
+        return delta < 0
+            ? l10n.factorRestingHrHigh
+            : l10n.factorRestingHrNormal;
+      case ReadinessFactorKey.hrv:
+        return delta < 0
+            ? l10n.factorHrvLow
+            : delta > 0
+                ? l10n.factorHrvHigh
+                : l10n.factorHrvNormal;
       case ReadinessFactorKey.sleep:
         return l10n.factorSleep(l10n.sleepText(checkIn.sleep));
       case ReadinessFactorKey.soreness:
@@ -284,17 +315,96 @@ class _Content extends ConsumerWidget {
   }
 }
 
+/// Today's resting HR, HRV and steps from Health, each against your normal.
+/// Nothing is shown for a value that is not known today.
+class _HealthRows extends StatelessWidget {
+  final HealthSignals health;
+  const _HealthRows({required this.health});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final rows = <Widget>[];
+    void add(IconData icon, String title, String subtitle) {
+      if (rows.isNotEmpty) {
+        rows.add(Divider(height: 1, thickness: 1, color: palette.background));
+      }
+      rows.add(_FactorRow(
+          icon: icon,
+          title: title,
+          subtitle: subtitle,
+          delta: 0,
+          showDelta: false));
+    }
+
+    final rhr = health.restingHr;
+    if (rhr != null) {
+      final base = health.restingHrBaseline;
+      add(
+        Icons.favorite_border,
+        base == null
+            ? l10n.healthRestingHrValue(rhr.round())
+            : l10n.healthRestingHrNormal(rhr.round(), base.round()),
+        l10n.healthRestingHr,
+      );
+    }
+    final hrv = health.hrv;
+    final kind = health.hrvKind;
+    if (hrv != null && kind != null) {
+      final base = health.hrvBaseline;
+      final kindName = kind == HrvKind.sdnn ? 'SDNN' : 'RMSSD';
+      add(
+        Icons.monitor_heart_outlined,
+        base == null
+            ? l10n.healthHrvValue(hrv.round(), kindName)
+            : l10n.healthHrvNormal(hrv.round(), kindName, base.round()),
+        l10n.healthHrv,
+      );
+    }
+    final steps = health.stepsToday;
+    if (steps != null) {
+      final avg = health.steps7dAvg;
+      add(
+        Icons.directions_walk,
+        avg == null
+            ? l10n.healthStepsToday(steps)
+            : l10n.healthStepsTodayAvg(steps, avg),
+        l10n.healthSteps,
+      );
+    }
+    if (rows.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SectionHeader(l10n.healthSectionTitle),
+          const SizedBox(height: AppSpacing.xs),
+          Container(
+            decoration: BoxDecoration(
+                color: palette.tile, borderRadius: AppRadius.smAll),
+            child: Column(children: rows),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _FactorRow extends StatelessWidget {
   final IconData icon;
   final String title;
   final String? subtitle;
   final int delta;
+  final bool showDelta;
 
   const _FactorRow({
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.delta,
+    this.showDelta = true,
   });
 
   @override
@@ -336,9 +446,11 @@ class _FactorRow extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: AppSpacing.xs),
-          Text('$sign${delta.abs()}',
-              style: AppText.headingS.copyWith(color: color)),
+          if (showDelta) ...[
+            const SizedBox(width: AppSpacing.xs),
+            Text('$sign${delta.abs()}',
+                style: AppText.headingS.copyWith(color: color)),
+          ],
         ],
       ),
     );

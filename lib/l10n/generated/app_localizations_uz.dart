@@ -4199,4 +4199,77 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get footballWorkouts => 'Mashg‘ulotlar';
+
+  @override
+  String healthFromSource(String source) {
+    return '$source ma‘lumoti';
+  }
+
+  @override
+  String get healthSectionTitle => 'Salomatlik ma‘lumotlari';
+
+  @override
+  String get healthRestingHr => 'Tinch holatdagi puls';
+
+  @override
+  String get healthHrv => 'Yurak urishi o‘zgaruvchanligi';
+
+  @override
+  String get healthSteps => 'Qadamlar';
+
+  @override
+  String healthRestingHrValue(int bpm) {
+    return '$bpm urish/daq';
+  }
+
+  @override
+  String healthRestingHrNormal(int bpm, int normal) {
+    return '$bpm urish/daq · sizning me‘yoringiz $normal';
+  }
+
+  @override
+  String healthHrvValue(int value, String kind) {
+    return '$value ms $kind';
+  }
+
+  @override
+  String healthHrvNormal(int value, String kind, int normal) {
+    return '$value ms $kind · sizning me‘yoringiz $normal';
+  }
+
+  @override
+  String healthStepsToday(int steps) {
+    final intl.NumberFormat stepsNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String stepsString = stepsNumberFormat.format(steps);
+
+    return 'Bugun $stepsString qadam';
+  }
+
+  @override
+  String healthStepsTodayAvg(int steps, int avg) {
+    final intl.NumberFormat stepsNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String stepsString = stepsNumberFormat.format(steps);
+    final intl.NumberFormat avgNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String avgString = avgNumberFormat.format(avg);
+
+    return 'Bugun $stepsString qadam · 7 kunlik o‘rtacha $avgString';
+  }
+
+  @override
+  String get factorRestingHrHigh => 'Tinch holatdagi puls me‘yordan yuqori';
+
+  @override
+  String get factorRestingHrNormal => 'Tinch holatdagi puls me‘yorida';
+
+  @override
+  String get factorHrvLow => 'HRV me‘yordan past';
+
+  @override
+  String get factorHrvNormal => 'HRV me‘yorida';
+
+  @override
+  String get factorHrvHigh => 'HRV me‘yordan yuqori';
 }

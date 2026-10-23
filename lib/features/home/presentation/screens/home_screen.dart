@@ -10,6 +10,7 @@ import 'package:fitrix/core/widgets/feature_tile.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_card.dart';
 import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
 import 'package:fitrix/features/plan/presentation/widgets/plan_format.dart';
@@ -176,6 +177,7 @@ class _TodayCard extends ConsumerWidget {
     final templates = ref.watch(workoutTemplatesProvider);
     final plan = ref.watch(todayPlanProvider);
     final active = ref.watch(activeWorkoutProvider);
+    final steps = ref.watch(healthTodayProvider).stepsToday;
 
     final String title;
     final String meta;
@@ -241,6 +243,12 @@ class _TodayCard extends ConsumerWidget {
                       style: AppText.caption
                           .copyWith(color: palette.textSecondary),
                     ),
+                    if (steps != null)
+                      Text(
+                        l10n.healthStepsToday(steps),
+                        style: AppText.caption
+                            .copyWith(color: palette.textSecondary),
+                      ),
                   ],
                 ),
               ),

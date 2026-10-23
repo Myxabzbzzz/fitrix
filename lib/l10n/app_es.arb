@@ -1191,5 +1191,21 @@
   "footballDeleteAction": "Eliminar",
   "footballHistory": "Historial",
   "footballHistoryEmpty": "Aún no hay registros. Registra uno después de jugar.",
-  "footballWorkouts": "Entrenamientos"
+  "footballWorkouts": "Entrenamientos",
+  "healthFromSource": "de {source}",
+  "healthSectionTitle": "Datos de salud",
+  "healthRestingHr": "Frecuencia cardíaca en reposo",
+  "healthHrv": "Variabilidad de la frecuencia cardíaca",
+  "healthSteps": "Pasos",
+  "healthRestingHrValue": "{bpm} lpm",
+  "healthRestingHrNormal": "{bpm} lpm · tu normal {normal}",
+  "healthHrvValue": "{value} ms {kind}",
+  "healthHrvNormal": "{value} ms {kind} · tu normal {normal}",
+  "healthStepsToday": "{steps} pasos hoy",
+  "healthStepsTodayAvg": "{steps} pasos hoy · media de 7 días {avg}",
+  "factorRestingHrHigh": "Frecuencia en reposo por encima de lo normal",
+  "factorRestingHrNormal": "Frecuencia en reposo normal",
+  "factorHrvLow": "VFC por debajo de lo normal",
+  "factorHrvNormal": "VFC normal",
+  "factorHrvHigh": "VFC por encima de lo normal"
 }

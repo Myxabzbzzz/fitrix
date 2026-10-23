@@ -1191,5 +1191,21 @@
   "footballDeleteAction": "O‘chirish",
   "footballHistory": "Tarix",
   "footballHistoryEmpty": "Hozircha yozuv yo‘q. O‘yindan keyin qayd qiling.",
-  "footballWorkouts": "Mashg‘ulotlar"
+  "footballWorkouts": "Mashg‘ulotlar",
+  "healthFromSource": "{source} ma‘lumoti",
+  "healthSectionTitle": "Salomatlik ma‘lumotlari",
+  "healthRestingHr": "Tinch holatdagi puls",
+  "healthHrv": "Yurak urishi o‘zgaruvchanligi",
+  "healthSteps": "Qadamlar",
+  "healthRestingHrValue": "{bpm} urish/daq",
+  "healthRestingHrNormal": "{bpm} urish/daq · sizning me‘yoringiz {normal}",
+  "healthHrvValue": "{value} ms {kind}",
+  "healthHrvNormal": "{value} ms {kind} · sizning me‘yoringiz {normal}",
+  "healthStepsToday": "Bugun {steps} qadam",
+  "healthStepsTodayAvg": "Bugun {steps} qadam · 7 kunlik o‘rtacha {avg}",
+  "factorRestingHrHigh": "Tinch holatdagi puls me‘yordan yuqori",
+  "factorRestingHrNormal": "Tinch holatdagi puls me‘yorida",
+  "factorHrvLow": "HRV me‘yordan past",
+  "factorHrvNormal": "HRV me‘yorida",
+  "factorHrvHigh": "HRV me‘yordan yuqori"
 }

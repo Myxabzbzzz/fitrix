@@ -4249,4 +4249,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get footballWorkouts => 'Workouts';
+
+  @override
+  String healthFromSource(String source) {
+    return 'from $source';
+  }
+
+  @override
+  String get healthSectionTitle => 'Health data';
+
+  @override
+  String get healthRestingHr => 'Resting heart rate';
+
+  @override
+  String get healthHrv => 'Heart rate variability';
+
+  @override
+  String get healthSteps => 'Steps';
+
+  @override
+  String healthRestingHrValue(int bpm) {
+    return '$bpm bpm';
+  }
+
+  @override
+  String healthRestingHrNormal(int bpm, int normal) {
+    return '$bpm bpm · your normal $normal';
+  }
+
+  @override
+  String healthHrvValue(int value, String kind) {
+    return '$value ms $kind';
+  }
+
+  @override
+  String healthHrvNormal(int value, String kind, int normal) {
+    return '$value ms $kind · your normal $normal';
+  }
+
+  @override
+  String healthStepsToday(int steps) {
+    final intl.NumberFormat stepsNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String stepsString = stepsNumberFormat.format(steps);
+
+    return '$stepsString steps today';
+  }
+
+  @override
+  String healthStepsTodayAvg(int steps, int avg) {
+    final intl.NumberFormat stepsNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String stepsString = stepsNumberFormat.format(steps);
+    final intl.NumberFormat avgNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String avgString = avgNumberFormat.format(avg);
+
+    return '$stepsString steps today · 7-day avg $avgString';
+  }
+
+  @override
+  String get factorRestingHrHigh => 'Resting heart rate above normal';
+
+  @override
+  String get factorRestingHrNormal => 'Resting heart rate near normal';
+
+  @override
+  String get factorHrvLow => 'HRV below normal';
+
+  @override
+  String get factorHrvNormal => 'HRV near normal';
+
+  @override
+  String get factorHrvHigh => 'HRV above normal';
 }
