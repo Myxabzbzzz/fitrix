@@ -350,13 +350,14 @@ class RunTrack {
   }
 
   // Whole km a split ends at: 1, 2, 3 for km splits; 5, 10 for 5 km ones. A
-  // partial split of a longer split length is labelled by its real distance
-  // (11 km ride -> 11), never past the distance covered.
+  // partial split of a longer split length is labelled by the whole km
+  // covered as the distance is shown, to 10 m (11 km ride -> 11, 10.3 ->
+  // 10, 5.05 -> 5), never past it.
   int _label(int index, {bool partial = false}) {
     final split = profile.splitMeters;
     if (split == 1000) return index;
     if (!partial) return index * split ~/ 1000;
-    return math.max((index - 1) * split ~/ 1000 + 1, (meters / 1000).round());
+    return (meters / 10).round() ~/ 100;
   }
 
   /// Full splits, then the partial rest (if any distance is left).

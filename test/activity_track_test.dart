@@ -147,6 +147,19 @@ void main() {
       expect(s[2].meters, closeTo(1000, 20));
       expect(s[2].km, 11);
     });
+
+    test('the last partial ride split never names more than was ridden', () {
+      List<RunSplit> at(int secs) =>
+          cruise(RunTrack(startedAt: t0, profile: rideProfile), 10, 0, secs)
+              .splits;
+      final short = at(505); // 5.05 km
+      expect(short.map((s) => s.km), [5, 5]);
+      expect(short.last.meters, closeTo(50, 15));
+      final longer = at(1030); // 10.3 km
+      expect(longer.map((s) => s.km), [5, 10, 10]);
+      expect(longer.last.meters, closeTo(300, 20));
+      expect(at(320).map((s) => s.km), [3]); // 3.2 km
+    });
   });
 
   group('max speed', () {
