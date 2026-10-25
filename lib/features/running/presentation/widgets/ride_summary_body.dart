@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
-import 'package:fitrix/features/running/data/activity_kind.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_figure.dart';
