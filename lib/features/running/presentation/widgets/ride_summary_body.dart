@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/features/running/data/activity_kind.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_figure.dart';
@@ -101,7 +102,17 @@ class _RideSplitRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
       child: Row(
         children: [
-          Expanded(flex: 2, child: Text('${split.km}', style: style)),
+          // A full 5 km split by the km it ends at; the rest by its length,
+          // as the run summary does.
+          Expanded(
+            flex: 2,
+            child: Text(
+              split.meters >= rideProfile.splitMeters
+                  ? '${split.km}'
+                  : '${formatKm(split.meters, l10n.localeName)} ${l10n.runUnitKm}',
+              style: style,
+            ),
+          ),
           Expanded(
               flex: 2,
               child: Text(formatClock(split.time),

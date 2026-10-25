@@ -192,7 +192,14 @@ List<List<double>> _route(int n) => [
       for (var i = 0; i < n; i++) [41 + i * 0.0005, 69 + i * 0.0004]
     ];
 
-RunDetails _rideDetails({bool indoor = false, double meters = 15000}) =>
+RunDetails _rideDetails(
+        {bool indoor = false,
+        double meters = 15000,
+        List<RunSplit> splits = const [
+          RunSplit(km: 5, meters: 5000, time: Duration(seconds: 600)),
+          RunSplit(km: 10, meters: 5000, time: Duration(seconds: 1000)),
+          RunSplit(km: 11, meters: 1000, time: Duration(seconds: 200)),
+        ]}) =>
     RunDetails(
       startedAt: _t0,
       moving: const Duration(seconds: 3000),
@@ -200,11 +207,7 @@ RunDetails _rideDetails({bool indoor = false, double meters = 15000}) =>
       pauses: 1,
       meters: meters,
       elevationGain: 85,
-      splits: const [
-        RunSplit(km: 5, meters: 5000, time: Duration(seconds: 600)),
-        RunSplit(km: 10, meters: 5000, time: Duration(seconds: 1000)),
-        RunSplit(km: 11, meters: 1000, time: Duration(seconds: 200)),
-      ],
+      splits: splits,
       route: indoor ? const [] : _route(12),
       kind: ActivityKind.ride,
       maxSpeed: 12,
@@ -350,6 +353,42 @@ void main() {
   });
 
   group('ride summary', () {
+    for (final (label, meters, splits, rows) in [
+      (
+        '5.05 km',
+        5050.0,
+        const [
+          RunSplit(km: 5, meters: 5000, time: Duration(seconds: 600)),
+          RunSplit(km: 5, meters: 50, time: Duration(seconds: 6)),
+        ],
+        ['5', '0.05 km'],
+      ),
+      (
+        '0.8 km',
+        800.0,
+        const [RunSplit(km: 0, meters: 800, time: Duration(seconds: 100))],
+        ['0.80 km'],
+      ),
+    ]) {
+      testWidgets('a $label ride names its last split by its length',
+          (t) async {
+        final r = await _rig(t, size: iPhoneSeSize, textScale: 1.3);
+        _saveSummary(r, 'r1', Sport.cycling,
+            _rideDetails(meters: meters, splits: splits));
+        r.router.go(AppRouter.runSummary('r1'));
+        await t.pumpAndSettle();
+        await t.drag(find.byType(ListView), const Offset(0, -2000));
+        await t.pumpAndSettle();
+        for (final row in rows) {
+          expect(find.text(row), findsOneWidget, reason: row);
+        }
+        expect(find.text('0'), findsNothing);
+        expect(
+            find.text('5'), rows.contains('5') ? findsOneWidget : findsNothing);
+        expectNoOverflow(t);
+      });
+    }
+
     testWidgets('speeds, elevation, 5 km splits and the map', (t) async {
       final r = await _rig(t, size: iPhoneSeSize, textScale: 1.3);
       _saveSummary(r, 'r1', Sport.cycling, _rideDetails());
@@ -365,7 +404,7 @@ void main() {
       expect(find.text('85 m'), findsOneWidget);
       expect(find.text('30.0 km/h'), findsOneWidget); // 5 km in 10:00
       expect(find.text('18.0 km/h'), findsWidgets);
-      expect(find.text('11'), findsOneWidget); // partial split
+      expect(find.text('1.00 km'), findsOneWidget); // partial split
       expectNoOverflow(t);
       await t.drag(find.byType(ListView), const Offset(0, -2000));
       await t.pumpAndSettle();
