@@ -7600,6 +7600,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unfinished ski day · {distance} km'**
   String skiUnfinishedLaunchTitle(String distance);
+
+  /// No description provided for @rideLocationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off for FITRIX. Allow it in Settings to record a ride.'**
+  String get rideLocationOff;
+
+  /// No description provided for @skiLocationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off for FITRIX. Allow it in Settings to record a ski day.'**
+  String get skiLocationOff;
+
+  /// No description provided for @rideLocationServiceOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are off. Turn them on in Settings to record a ride.'**
+  String get rideLocationServiceOff;
+
+  /// No description provided for @skiLocationServiceOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are off. Turn them on in Settings to record a ski day.'**
+  String get skiLocationServiceOff;
+
+  /// No description provided for @rideFinishFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t finish the ride. Try again.'**
+  String get rideFinishFailed;
+
+  /// No description provided for @skiFinishFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t finish the ski day. Try again.'**
+  String get skiFinishFailed;
+
+  /// No description provided for @rideNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This ride is no longer here.'**
+  String get rideNotFound;
+
+  /// No description provided for @skiNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This ski day is no longer here.'**
+  String get skiNotFound;
+
+  /// No description provided for @skiUnfinishedLaunchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick it up where you left off, save what was recorded, or discard it.'**
+  String get skiUnfinishedLaunchBody;
 }
 
 class _AppLocalizationsDelegate

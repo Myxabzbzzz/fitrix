@@ -1317,5 +1317,14 @@
   "rideUnfinishedLaunchTitle": "Незавершённая поездка · {distance} км",
   "@rideUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
   "skiUnfinishedLaunchTitle": "Незавершённый лыжный день · {distance} км",
-  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}}
+  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
+  "rideLocationOff": "Геолокация для FITRIX выключена. Разрешите её в настройках, чтобы записать поездку.",
+  "skiLocationOff": "Геолокация для FITRIX выключена. Разрешите её в настройках, чтобы записать лыжный день.",
+  "rideLocationServiceOff": "Службы геолокации выключены. Включите их в настройках, чтобы записать поездку.",
+  "skiLocationServiceOff": "Службы геолокации выключены. Включите их в настройках, чтобы записать лыжный день.",
+  "rideFinishFailed": "Не удалось завершить поездку. Попробуйте ещё раз.",
+  "skiFinishFailed": "Не удалось завершить лыжный день. Попробуйте ещё раз.",
+  "rideNotFound": "Этой поездки больше нет.",
+  "skiNotFound": "Этого лыжного дня больше нет.",
+  "skiUnfinishedLaunchBody": "Продолжите с того места, где остановились, сохраните записанное или сбросьте."
 }

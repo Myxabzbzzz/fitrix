@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -11,8 +9,8 @@ import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/cycling/presentation/indoor_ride_sheet.dart';
 import 'package:fitrix/features/football/presentation/match_log_sheet.dart';
 import 'package:fitrix/features/running/data/activity_kind.dart';
-import 'package:fitrix/features/running/data/location_source.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
+import 'package:fitrix/features/running/presentation/start_activity.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_dialogs.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -164,23 +162,5 @@ Future<void> _startRun(
 }
 
 Future<void> _beginRun(BuildContext context, GoRouter router,
-    RunRecorder recorder, WorkoutTemplate template, ActivityKind kind) async {
-  final l10n = AppLocalizations.of(context);
-  final access = await recorder.start(kind: kind, template: template);
-  if (!context.mounted) return;
-  if (access == LocationAccess.granted) {
-    openLiveRun(router);
-    return;
-  }
-  final serviceOff = access == LocationAccess.serviceOff;
-  showAppSnack(
-    context,
-    serviceOff ? l10n.runLocationServiceOff : l10n.runLocationOff,
-    action: SnackBarAction(
-      label: l10n.runOpenSettings,
-      onPressed: () => serviceOff
-          ? Geolocator.openLocationSettings()
-          : Geolocator.openAppSettings(),
-    ),
-  );
-}
+        RunRecorder recorder, WorkoutTemplate template, ActivityKind kind) =>
+    beginActivity(context, router, recorder, kind, template);

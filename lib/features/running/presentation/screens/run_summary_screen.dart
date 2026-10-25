@@ -10,6 +10,7 @@ import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_dialogs.dart';
 import 'package:fitrix/features/running/presentation/widgets/ride_summary_body.dart';
@@ -93,7 +94,17 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
         body: _done
             ? const SizedBox.shrink()
             : Center(
-                child: Text(l10n.runNotFound,
+                child: Text(
+                    switch (details?.kind ??
+                        switch (workout?.sport) {
+                          Sport.cycling => ActivityKind.ride,
+                          Sport.winterSports => ActivityKind.ski,
+                          _ => ActivityKind.run,
+                        }) {
+                      ActivityKind.run => l10n.runNotFound,
+                      ActivityKind.ride => l10n.rideNotFound,
+                      ActivityKind.ski => l10n.skiNotFound,
+                    },
                     style:
                         AppText.body14.copyWith(color: palette.textSecondary))),
       );

@@ -1317,5 +1317,14 @@
   "rideUnfinishedLaunchTitle": "Salida sin terminar · {distance} km",
   "@rideUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
   "skiUnfinishedLaunchTitle": "Día de esquí sin terminar · {distance} km",
-  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}}
+  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
+  "rideLocationOff": "La ubicación está desactivada para FITRIX. Permítela en Ajustes para registrar una salida.",
+  "skiLocationOff": "La ubicación está desactivada para FITRIX. Permítela en Ajustes para registrar un día de esquí.",
+  "rideLocationServiceOff": "Los servicios de ubicación están desactivados. Actívalos en Ajustes para registrar una salida.",
+  "skiLocationServiceOff": "Los servicios de ubicación están desactivados. Actívalos en Ajustes para registrar un día de esquí.",
+  "rideFinishFailed": "No se pudo terminar la salida. Inténtalo de nuevo.",
+  "skiFinishFailed": "No se pudo terminar el día de esquí. Inténtalo de nuevo.",
+  "rideNotFound": "Esta salida ya no está aquí.",
+  "skiNotFound": "Este día de esquí ya no está aquí.",
+  "skiUnfinishedLaunchBody": "Continúa donde lo dejaste, guarda lo registrado o descártalo."
 }

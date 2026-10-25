@@ -43,6 +43,7 @@ class _SilentSpeaker implements Speaker {
 class _Source implements LocationSource {
   int starts = 0;
   StreamController<RunPoint>? _c;
+  void emit(RunPoint p) => _c!.add(p);
   @override
   Future<LocationAccess> ensureAccess() async => LocationAccess.granted;
   @override
@@ -180,6 +181,19 @@ Future<_Rig> _rig(
   return _Rig(tester, container, router, source);
 }
 
+/// Feeds a minute of moving fixes to the open recording and finishes it.
+Future<CompletedWorkout> _finishRecording(WidgetTester t, _Rig r) async {
+  for (var i = 0; i <= 12; i++) {
+    r.source.emit(RunPoint(
+        lat: 41 + i * 0.0001,
+        lng: 69,
+        accuracy: 5,
+        at: _now.add(Duration(seconds: i * 5))));
+  }
+  return (await t.runAsync(
+      () => r.container.read(runRecorderProvider.notifier).finish()))!;
+}
+
 void main() {
   testWidgets('Start ski day starts a ski session and opens live', (t) async {
     final r = await _rig(t);
@@ -285,8 +299,21 @@ void main() {
     final s = r.container.read(runRecorderProvider)!;
     expect(s.kind, ActivityKind.ski);
     expect(s.templateId, tpl.id);
-    await t.runAsync(
-        () => r.container.read(runRecorderProvider.notifier).discard());
+    await r.container.read(weekPlanProvider.notifier).add(PlannedSession(
+          id: 'p1',
+          day: DateTime(2026, 10, 20),
+          sport: Sport.winterSports,
+          title: 'Powder day',
+          templateId: tpl.id,
+          minutes: 120,
+          intensity: Intensity.hard,
+        ));
+    final saved = await _finishRecording(t, r);
+    expect(saved.templateId, tpl.id);
+    expect(saved.sport, Sport.winterSports);
+    expect(r.runs[saved.id]!.kind, ActivityKind.ski);
+    final plan = r.container.read(weekPlanProvider).single;
+    expect(statusOf(plan, r.history, _now), SessionStatus.done);
   });
 
   testWidgets('a free ski day fills the open winterSports session', (t) async {
@@ -302,12 +329,16 @@ void main() {
         ));
     var plan = r.container.read(weekPlanProvider).single;
     expect(statusOf(plan, r.history, _now), SessionStatus.today);
-    r.saveSki('a', DateTime(2026, 10, 20, 9));
+    await r.open();
+    await r.tap('ski-start');
+    final saved = await _finishRecording(t, r);
+    expect(saved.templateId, 'free_ski');
     plan = r.container.read(weekPlanProvider).single;
     expect(statusOf(plan, r.history, _now, plan: [plan]), SessionStatus.done);
   });
 
-  testWidgets('another unfinished activity asks, naming a ski day', (t) async {
+  testWidgets('starting a ski day over an unfinished ride asks about the ride',
+      (t) async {
     final r = await _rig(t);
     r.container
         .read(workoutTemplatesProvider.notifier)

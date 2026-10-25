@@ -101,7 +101,13 @@ class _LiveRunScreenState extends ConsumerState<LiveRunScreen> {
       }
       // Saving failed: the run keeps recording and Finish can be tried again.
       setState(() => _finishing = false);
-      showAppSnack(context, l10n.runFinishFailed);
+      showAppSnack(
+          context,
+          switch (ref.read(runRecorderProvider)?.kind ?? _last?.kind) {
+            ActivityKind.ride => l10n.rideFinishFailed,
+            ActivityKind.ski => l10n.skiFinishFailed,
+            _ => l10n.runFinishFailed,
+          });
     }
   }
 

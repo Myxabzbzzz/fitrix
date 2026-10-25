@@ -1317,5 +1317,14 @@
   "rideUnfinishedLaunchTitle": "Tugallanmagan safar · {distance} km",
   "@rideUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
   "skiUnfinishedLaunchTitle": "Tugallanmagan chang‘i kuni · {distance} km",
-  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}}
+  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
+  "rideLocationOff": "FITRIX uchun joylashuv o‘chiq. Safarni yozish uchun sozlamalarda ruxsat bering.",
+  "skiLocationOff": "FITRIX uchun joylashuv o‘chiq. Chang‘i kunini yozish uchun sozlamalarda ruxsat bering.",
+  "rideLocationServiceOff": "Joylashuv xizmatlari o‘chiq. Safarni yozish uchun ularni sozlamalarda yoqing.",
+  "skiLocationServiceOff": "Joylashuv xizmatlari o‘chiq. Chang‘i kunini yozish uchun ularni sozlamalarda yoqing.",
+  "rideFinishFailed": "Safarni tugatib bo‘lmadi. Qayta urinib ko‘ring.",
+  "skiFinishFailed": "Chang‘i kunini tugatib bo‘lmadi. Qayta urinib ko‘ring.",
+  "rideNotFound": "Bu safar endi yo‘q.",
+  "skiNotFound": "Bu chang‘i kuni endi yo‘q.",
+  "skiUnfinishedLaunchBody": "Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling."
 }

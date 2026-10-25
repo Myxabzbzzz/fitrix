@@ -4653,4 +4653,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String skiUnfinishedLaunchTitle(String distance) {
     return 'Unfinished ski day · $distance km';
   }
+
+  @override
+  String get rideLocationOff =>
+      'Location is off for FITRIX. Allow it in Settings to record a ride.';
+
+  @override
+  String get skiLocationOff =>
+      'Location is off for FITRIX. Allow it in Settings to record a ski day.';
+
+  @override
+  String get rideLocationServiceOff =>
+      'Location services are off. Turn them on in Settings to record a ride.';
+
+  @override
+  String get skiLocationServiceOff =>
+      'Location services are off. Turn them on in Settings to record a ski day.';
+
+  @override
+  String get rideFinishFailed => 'Couldn’t finish the ride. Try again.';
+
+  @override
+  String get skiFinishFailed => 'Couldn’t finish the ski day. Try again.';
+
+  @override
+  String get rideNotFound => 'This ride is no longer here.';
+
+  @override
+  String get skiNotFound => 'This ski day is no longer here.';
+
+  @override
+  String get skiUnfinishedLaunchBody =>
+      'Pick it up where you left off, save what was recorded, or discard it.';
 }

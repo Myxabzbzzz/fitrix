@@ -4737,4 +4737,38 @@ class AppLocalizationsRu extends AppLocalizations {
   String skiUnfinishedLaunchTitle(String distance) {
     return 'Незавершённый лыжный день · $distance км';
   }
+
+  @override
+  String get rideLocationOff =>
+      'Геолокация для FITRIX выключена. Разрешите её в настройках, чтобы записать поездку.';
+
+  @override
+  String get skiLocationOff =>
+      'Геолокация для FITRIX выключена. Разрешите её в настройках, чтобы записать лыжный день.';
+
+  @override
+  String get rideLocationServiceOff =>
+      'Службы геолокации выключены. Включите их в настройках, чтобы записать поездку.';
+
+  @override
+  String get skiLocationServiceOff =>
+      'Службы геолокации выключены. Включите их в настройках, чтобы записать лыжный день.';
+
+  @override
+  String get rideFinishFailed =>
+      'Не удалось завершить поездку. Попробуйте ещё раз.';
+
+  @override
+  String get skiFinishFailed =>
+      'Не удалось завершить лыжный день. Попробуйте ещё раз.';
+
+  @override
+  String get rideNotFound => 'Этой поездки больше нет.';
+
+  @override
+  String get skiNotFound => 'Этого лыжного дня больше нет.';
+
+  @override
+  String get skiUnfinishedLaunchBody =>
+      'Продолжите с того места, где остановились, сохраните записанное или сбросьте.';
 }

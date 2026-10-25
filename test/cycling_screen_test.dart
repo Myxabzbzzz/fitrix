@@ -42,6 +42,7 @@ class _SilentSpeaker implements Speaker {
 class _Source implements LocationSource {
   int starts = 0;
   StreamController<RunPoint>? _c;
+  void emit(RunPoint p) => _c!.add(p);
   @override
   Future<LocationAccess> ensureAccess() async => LocationAccess.granted;
   @override
@@ -160,6 +161,19 @@ Future<_Rig> _rig(
   ));
   await tester.pumpAndSettle();
   return _Rig(tester, container, router, source);
+}
+
+/// Feeds a minute of moving fixes to the open recording and finishes it.
+Future<CompletedWorkout> _finishRecording(WidgetTester t, _Rig r) async {
+  for (var i = 0; i <= 12; i++) {
+    r.source.emit(RunPoint(
+        lat: 41 + i * 0.0001,
+        lng: 69,
+        accuracy: 5,
+        at: _now.add(Duration(seconds: i * 5))));
+  }
+  return (await t.runAsync(
+      () => r.container.read(runRecorderProvider.notifier).finish()))!;
 }
 
 void main() {
@@ -423,8 +437,23 @@ void main() {
       final s = r.container.read(runRecorderProvider)!;
       expect(s.kind, ActivityKind.ride);
       expect(s.templateId, tpl.id);
-      await t.runAsync(
-          () => r.container.read(runRecorderProvider.notifier).discard());
+      await r.container.read(weekPlanProvider.notifier).add(PlannedSession(
+            id: 'po',
+            day: DateTime(2026, 10, 20),
+            sport: Sport.cycling,
+            title: 'Hill repeats',
+            templateId: tpl.id,
+            minutes: 60,
+            intensity: Intensity.normal,
+          ));
+      final saved = await _finishRecording(t, r);
+      expect(saved.templateId, tpl.id);
+      expect(r.runs[saved.id]!.kind, ActivityKind.ride);
+      final outdoor = r.container.read(weekPlanProvider).single;
+      expect(statusOf(outdoor, r.history, _now), SessionStatus.done);
+      await r.container.read(weekPlanProvider.notifier).remove('po');
+      r.container.read(workoutHistoryProvider.notifier).remove(saved.id);
+      r.container.read(runsProvider.notifier).remove(saved.id);
 
       // Indoor: logs under the template, so the plan marks it done.
       r.router.go(AppRouter.sportWorkouts(Sport.cycling));
@@ -438,6 +467,10 @@ void main() {
             minutes: 60,
             intensity: Intensity.normal,
           ));
+      for (var i = 0; i < 8 && start().evaluate().isEmpty; i++) {
+        await t.drag(find.byType(ListView).last, const Offset(0, -300));
+        await t.pumpAndSettle();
+      }
       await r.scrollTo(start());
       await t.tap(start());
       await t.pumpAndSettle();

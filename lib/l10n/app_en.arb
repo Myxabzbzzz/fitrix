@@ -3387,5 +3387,14 @@
   "rideUnfinishedLaunchTitle": "Unfinished ride · {distance} km",
   "@rideUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
   "skiUnfinishedLaunchTitle": "Unfinished ski day · {distance} km",
-  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}}
+  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
+  "rideLocationOff": "Location is off for FITRIX. Allow it in Settings to record a ride.",
+  "skiLocationOff": "Location is off for FITRIX. Allow it in Settings to record a ski day.",
+  "rideLocationServiceOff": "Location services are off. Turn them on in Settings to record a ride.",
+  "skiLocationServiceOff": "Location services are off. Turn them on in Settings to record a ski day.",
+  "rideFinishFailed": "Couldn’t finish the ride. Try again.",
+  "skiFinishFailed": "Couldn’t finish the ski day. Try again.",
+  "rideNotFound": "This ride is no longer here.",
+  "skiNotFound": "This ski day is no longer here.",
+  "skiUnfinishedLaunchBody": "Pick it up where you left off, save what was recorded, or discard it."
 }

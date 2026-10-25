@@ -4672,4 +4672,38 @@ class AppLocalizationsEs extends AppLocalizations {
   String skiUnfinishedLaunchTitle(String distance) {
     return 'Día de esquí sin terminar · $distance km';
   }
+
+  @override
+  String get rideLocationOff =>
+      'La ubicación está desactivada para FITRIX. Permítela en Ajustes para registrar una salida.';
+
+  @override
+  String get skiLocationOff =>
+      'La ubicación está desactivada para FITRIX. Permítela en Ajustes para registrar un día de esquí.';
+
+  @override
+  String get rideLocationServiceOff =>
+      'Los servicios de ubicación están desactivados. Actívalos en Ajustes para registrar una salida.';
+
+  @override
+  String get skiLocationServiceOff =>
+      'Los servicios de ubicación están desactivados. Actívalos en Ajustes para registrar un día de esquí.';
+
+  @override
+  String get rideFinishFailed =>
+      'No se pudo terminar la salida. Inténtalo de nuevo.';
+
+  @override
+  String get skiFinishFailed =>
+      'No se pudo terminar el día de esquí. Inténtalo de nuevo.';
+
+  @override
+  String get rideNotFound => 'Esta salida ya no está aquí.';
+
+  @override
+  String get skiNotFound => 'Este día de esquí ya no está aquí.';
+
+  @override
+  String get skiUnfinishedLaunchBody =>
+      'Continúa donde lo dejaste, guarda lo registrado o descártalo.';
 }

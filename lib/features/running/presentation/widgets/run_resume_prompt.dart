@@ -60,7 +60,9 @@ class _RunResumePromptState extends ConsumerState<RunResumePrompt> {
                 ActivityKind.ski => l10n.skiUnfinishedLaunchTitle(km),
               };
             }()),
-            content: Text(l10n.runUnfinishedLaunchBody),
+            content: Text(session.kind == ActivityKind.ski
+                ? l10n.skiUnfinishedLaunchBody
+                : l10n.runUnfinishedLaunchBody),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, _Choice.discard),

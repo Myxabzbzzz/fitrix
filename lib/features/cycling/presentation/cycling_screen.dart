@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -9,7 +8,6 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
-import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/core/widgets/section_header.dart';
@@ -18,12 +16,10 @@ import 'package:fitrix/features/cycling/presentation/indoor_ride_sheet.dart';
 import 'package:fitrix/features/health/presentation/widgets/imported_workouts.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/running/data/activity_kind.dart';
-import 'package:fitrix/features/running/data/location_source.dart';
 import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
-import 'package:fitrix/features/running/presentation/run_recorder.dart';
-import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
+import 'package:fitrix/features/running/presentation/start_activity.dart';
 import 'package:fitrix/features/running/presentation/widgets/activity_settings_sheet.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_history_list.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -50,35 +46,6 @@ final rideHistoryProvider = Provider<List<RunEntry>>((ref) {
 /// Cycling: Start ride, Log indoor ride, this week, the history and the plans.
 class CyclingScreen extends ConsumerWidget {
   const CyclingScreen({super.key});
-
-  Future<void> _startFree(BuildContext context, WidgetRef ref) async {
-    final router = GoRouter.of(context);
-    // A recording that exists is reopened, never replaced by a second one.
-    if (ref.read(runRecorderProvider) != null) {
-      openLiveRun(router);
-      return;
-    }
-    final l10n = AppLocalizations.of(context);
-    final access = await ref
-        .read(runRecorderProvider.notifier)
-        .start(kind: ActivityKind.ride);
-    if (!context.mounted) return;
-    if (access == LocationAccess.granted) {
-      openLiveRun(router);
-      return;
-    }
-    final serviceOff = access == LocationAccess.serviceOff;
-    showAppSnack(
-      context,
-      serviceOff ? l10n.runLocationServiceOff : l10n.runLocationOff,
-      action: SnackBarAction(
-        label: l10n.runOpenSettings,
-        onPressed: () => serviceOff
-            ? Geolocator.openLocationSettings()
-            : Geolocator.openAppSettings(),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -125,7 +92,8 @@ class CyclingScreen extends ConsumerWidget {
                             label: l10n.cyclingStart,
                             size: AppButtonSize.large,
                             expand: true,
-                            onPressed: () => _startFree(context, ref),
+                            onPressed: () => startFreeActivity(
+                                context, ref, ActivityKind.ride),
                           ),
                         ),
                         const SizedBox(width: AppSpacing.xs),

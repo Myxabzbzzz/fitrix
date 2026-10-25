@@ -4603,4 +4603,38 @@ class AppLocalizationsUz extends AppLocalizations {
   String skiUnfinishedLaunchTitle(String distance) {
     return 'Tugallanmagan chang‘i kuni · $distance km';
   }
+
+  @override
+  String get rideLocationOff =>
+      'FITRIX uchun joylashuv o‘chiq. Safarni yozish uchun sozlamalarda ruxsat bering.';
+
+  @override
+  String get skiLocationOff =>
+      'FITRIX uchun joylashuv o‘chiq. Chang‘i kunini yozish uchun sozlamalarda ruxsat bering.';
+
+  @override
+  String get rideLocationServiceOff =>
+      'Joylashuv xizmatlari o‘chiq. Safarni yozish uchun ularni sozlamalarda yoqing.';
+
+  @override
+  String get skiLocationServiceOff =>
+      'Joylashuv xizmatlari o‘chiq. Chang‘i kunini yozish uchun ularni sozlamalarda yoqing.';
+
+  @override
+  String get rideFinishFailed =>
+      'Safarni tugatib bo‘lmadi. Qayta urinib ko‘ring.';
+
+  @override
+  String get skiFinishFailed =>
+      'Chang‘i kunini tugatib bo‘lmadi. Qayta urinib ko‘ring.';
+
+  @override
+  String get rideNotFound => 'Bu safar endi yo‘q.';
+
+  @override
+  String get skiNotFound => 'Bu chang‘i kuni endi yo‘q.';
+
+  @override
+  String get skiUnfinishedLaunchBody =>
+      'Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling.';
 }
