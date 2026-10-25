@@ -1307,5 +1307,15 @@
   "skiDiscardTitle": "Bu chang‘i kuni bekor qilinsinmi?",
   "rideDeleteTitle": "Bu safar o‘chirilsinmi?",
   "skiDeleteTitle": "Bu chang‘i kuni o‘chirilsinmi?",
-  "skiDeleteBody": "U tarixdan o‘chiriladi."
+  "skiDeleteBody": "U tarixdan o‘chiriladi.",
+  "rideBarTitle": "Safar",
+  "skiBarTitle": "Chang‘i kuni",
+  "rideDiscardRun": "Safarni bekor qilish",
+  "skiDiscardRun": "Chang‘i kunini bekor qilish",
+  "rideDeleteRun": "Safarni o‘chirish",
+  "skiDeleteRun": "Chang‘i kunini o‘chirish",
+  "rideUnfinishedLaunchTitle": "Tugallanmagan safar · {distance} km",
+  "@rideUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
+  "skiUnfinishedLaunchTitle": "Tugallanmagan chang‘i kuni · {distance} km",
+  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}}
 }

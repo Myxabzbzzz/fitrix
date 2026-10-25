@@ -1307,5 +1307,15 @@
   "skiDiscardTitle": "Сбросить этот лыжный день?",
   "rideDeleteTitle": "Удалить эту поездку?",
   "skiDeleteTitle": "Удалить этот лыжный день?",
-  "skiDeleteBody": "Он будет удалён из истории."
+  "skiDeleteBody": "Он будет удалён из истории.",
+  "rideBarTitle": "Поездка",
+  "skiBarTitle": "Лыжный день",
+  "rideDiscardRun": "Сбросить поездку",
+  "skiDiscardRun": "Сбросить лыжный день",
+  "rideDeleteRun": "Удалить поездку",
+  "skiDeleteRun": "Удалить лыжный день",
+  "rideUnfinishedLaunchTitle": "Незавершённая поездка · {distance} км",
+  "@rideUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
+  "skiUnfinishedLaunchTitle": "Незавершённый лыжный день · {distance} км",
+  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}}
 }

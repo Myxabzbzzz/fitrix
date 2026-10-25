@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/features/running/data/activity_kind.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_dialogs.dart';
@@ -51,8 +52,14 @@ class _RunResumePromptState extends ConsumerState<RunResumePrompt> {
         builder: (context) {
           final l10n = AppLocalizations.of(context);
           return AlertDialog(
-            title: Text(l10n.runUnfinishedLaunchTitle(
-                formatKm(session.track.meters, l10n.localeName))),
+            title: Text(() {
+              final km = formatKm(session.track.meters, l10n.localeName);
+              return switch (session.kind) {
+                ActivityKind.run => l10n.runUnfinishedLaunchTitle(km),
+                ActivityKind.ride => l10n.rideUnfinishedLaunchTitle(km),
+                ActivityKind.ski => l10n.skiUnfinishedLaunchTitle(km),
+              };
+            }()),
             content: Text(l10n.runUnfinishedLaunchBody),
             actions: [
               TextButton(

@@ -4625,4 +4625,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get skiDeleteBody => 'It will be removed from your history.';
+
+  @override
+  String get rideBarTitle => 'Ride in progress';
+
+  @override
+  String get skiBarTitle => 'Ski day in progress';
+
+  @override
+  String get rideDiscardRun => 'Discard ride';
+
+  @override
+  String get skiDiscardRun => 'Discard ski day';
+
+  @override
+  String get rideDeleteRun => 'Delete ride';
+
+  @override
+  String get skiDeleteRun => 'Delete ski day';
+
+  @override
+  String rideUnfinishedLaunchTitle(String distance) {
+    return 'Unfinished ride · $distance km';
+  }
+
+  @override
+  String skiUnfinishedLaunchTitle(String distance) {
+    return 'Unfinished ski day · $distance km';
+  }
 }

@@ -241,7 +241,17 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
                 key: const ValueKey('run-delete'),
                 onPressed: _delete,
                 child: Text(
-                  widget.justFinished ? l10n.runDiscardRun : l10n.runDeleteRun,
+                  switch (details.kind) {
+                    ActivityKind.run => widget.justFinished
+                        ? l10n.runDiscardRun
+                        : l10n.runDeleteRun,
+                    ActivityKind.ride => widget.justFinished
+                        ? l10n.rideDiscardRun
+                        : l10n.rideDeleteRun,
+                    ActivityKind.ski => widget.justFinished
+                        ? l10n.skiDiscardRun
+                        : l10n.skiDeleteRun,
+                  },
                   textAlign: TextAlign.center,
                   style:
                       AppText.bodyStrong.copyWith(color: palette.textSecondary),

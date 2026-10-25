@@ -292,7 +292,12 @@ class _LiveRunScreenState extends ConsumerState<LiveRunScreen> {
                   TextButton(
                     key: const ValueKey('run-discard'),
                     onPressed: _finishing ? null : _discard,
-                    child: Text(l10n.runDiscardRun,
+                    child: Text(
+                        switch (kind) {
+                          ActivityKind.run => l10n.runDiscardRun,
+                          ActivityKind.ride => l10n.rideDiscardRun,
+                          ActivityKind.ski => l10n.skiDiscardRun,
+                        },
                         style: AppText.bodyStrong
                             .copyWith(color: palette.textSecondary)),
                   ),

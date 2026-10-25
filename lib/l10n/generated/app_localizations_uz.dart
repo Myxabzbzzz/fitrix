@@ -4575,4 +4575,32 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get skiDeleteBody => 'U tarixdan o‘chiriladi.';
+
+  @override
+  String get rideBarTitle => 'Safar';
+
+  @override
+  String get skiBarTitle => 'Chang‘i kuni';
+
+  @override
+  String get rideDiscardRun => 'Safarni bekor qilish';
+
+  @override
+  String get skiDiscardRun => 'Chang‘i kunini bekor qilish';
+
+  @override
+  String get rideDeleteRun => 'Safarni o‘chirish';
+
+  @override
+  String get skiDeleteRun => 'Chang‘i kunini o‘chirish';
+
+  @override
+  String rideUnfinishedLaunchTitle(String distance) {
+    return 'Tugallanmagan safar · $distance km';
+  }
+
+  @override
+  String skiUnfinishedLaunchTitle(String distance) {
+    return 'Tugallanmagan chang‘i kuni · $distance km';
+  }
 }

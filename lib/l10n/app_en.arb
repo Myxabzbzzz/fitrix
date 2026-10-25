@@ -3377,5 +3377,15 @@
   "skiDiscardTitle": "Discard this ski day?",
   "rideDeleteTitle": "Delete this ride?",
   "skiDeleteTitle": "Delete this ski day?",
-  "skiDeleteBody": "It will be removed from your history."
+  "skiDeleteBody": "It will be removed from your history.",
+  "rideBarTitle": "Ride in progress",
+  "skiBarTitle": "Ski day in progress",
+  "rideDiscardRun": "Discard ride",
+  "skiDiscardRun": "Discard ski day",
+  "rideDeleteRun": "Delete ride",
+  "skiDeleteRun": "Delete ski day",
+  "rideUnfinishedLaunchTitle": "Unfinished ride · {distance} km",
+  "@rideUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
+  "skiUnfinishedLaunchTitle": "Unfinished ski day · {distance} km",
+  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}}
 }

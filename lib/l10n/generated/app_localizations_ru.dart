@@ -4709,4 +4709,32 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get skiDeleteBody => 'Он будет удалён из истории.';
+
+  @override
+  String get rideBarTitle => 'Поездка';
+
+  @override
+  String get skiBarTitle => 'Лыжный день';
+
+  @override
+  String get rideDiscardRun => 'Сбросить поездку';
+
+  @override
+  String get skiDiscardRun => 'Сбросить лыжный день';
+
+  @override
+  String get rideDeleteRun => 'Удалить поездку';
+
+  @override
+  String get skiDeleteRun => 'Удалить лыжный день';
+
+  @override
+  String rideUnfinishedLaunchTitle(String distance) {
+    return 'Незавершённая поездка · $distance км';
+  }
+
+  @override
+  String skiUnfinishedLaunchTitle(String distance) {
+    return 'Незавершённый лыжный день · $distance км';
+  }
 }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/features/running/data/activity_kind.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -22,7 +23,8 @@ class RunInProgressBar extends ConsumerWidget {
     final meters = ref.watch(
       runRecorderProvider.select((s) => s?.track.meters),
     );
-    if (meters == null) return const SizedBox.shrink();
+    final kind = ref.watch(runRecorderProvider.select((s) => s?.kind));
+    if (meters == null || kind == null) return const SizedBox.shrink();
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     return SizedBox(
@@ -42,7 +44,11 @@ class RunInProgressBar extends ConsumerWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          l10n.runBarTitle,
+                          switch (kind) {
+                            ActivityKind.run => l10n.runBarTitle,
+                            ActivityKind.ride => l10n.rideBarTitle,
+                            ActivityKind.ski => l10n.skiBarTitle,
+                          },
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppText.bodyStrong

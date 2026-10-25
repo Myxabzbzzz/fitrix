@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -146,6 +147,7 @@ Future<_Rig> _rig(
   Size size = const Size(390, 844),
   double textScale = 1,
   String language = 'en',
+  Map<String, Object> prefsValues = const {},
 }) async {
   tester.view.physicalSize = size * 3;
   tester.view.devicePixelRatio = 3;
@@ -156,6 +158,7 @@ Future<_Rig> _rig(
     AppConstants.keyOnboardingComplete: true,
     'user_name': 'Alex',
     'language': language,
+    ...prefsValues,
   });
   final prefs = await SharedPreferences.getInstance();
   final session = AppSession(prefs);
@@ -349,7 +352,98 @@ void main() {
             .first);
     await r.scrollTo(find.byKey(const ValueKey('run-delete')));
     await r.tap('run-delete');
+    expect(find.text('Delete ski day'), findsOneWidget);
     expect(find.text('Delete this ski day?'), findsOneWidget);
     expectNoOverflow(t);
+  });
+
+  testWidgets('the in-progress bar names a ride and a ski day', (t) async {
+    final r = await _rig(t);
+    final rec = r.container.read(runRecorderProvider.notifier);
+    await rec.start(kind: ActivityKind.ride);
+    r.router.go(AppRouter.home);
+    await t.pumpAndSettle();
+    expect(find.text('Ride in progress'), findsOneWidget);
+    await t.runAsync(rec.discard);
+    await t.pumpAndSettle();
+    await rec.start(kind: ActivityKind.ski);
+    await t.pumpAndSettle();
+    expect(find.text('Ski day in progress'), findsOneWidget);
+    expect(find.text('Run in progress'), findsNothing);
+    await t.runAsync(rec.discard);
+  });
+
+  testWidgets('live discard button and dialog fit an SE at 1.3x, ski day',
+      (t) async {
+    final r = await _rig(t, size: iPhoneSeSize, textScale: 1.3);
+    await r.container
+        .read(runRecorderProvider.notifier)
+        .start(kind: ActivityKind.ski);
+    r.router.go(AppRouter.liveRun);
+    await t.pumpAndSettle();
+    await t.ensureVisible(find.byKey(const ValueKey('run-discard')));
+    await t.pumpAndSettle();
+    expect(find.text('Discard ski day'), findsOneWidget);
+    await r.tap('run-discard');
+    expect(find.text('Discard this ski day?'), findsOneWidget);
+    expectNoOverflow(t);
+    await t.runAsync(
+        () => r.container.read(runRecorderProvider.notifier).discard());
+  });
+
+  testWidgets('unfinished-activity dialog fits an SE at 1.3x, ride', (t) async {
+    final r = await _rig(t, size: iPhoneSeSize, textScale: 1.3);
+    r.container
+        .read(workoutTemplatesProvider.notifier)
+        .add(Sport.winterSports, 'Powder day');
+    await r.container
+        .read(runRecorderProvider.notifier)
+        .start(kind: ActivityKind.ride);
+    await r.open();
+    for (var i = 0; i < 6 && find.text('Powder day').evaluate().isEmpty; i++) {
+      await t.drag(find.byType(ListView).last, const Offset(0, -300));
+      await t.pumpAndSettle();
+    }
+    await r.scrollTo(startOf('Powder day'));
+    await t.tap(startOf('Powder day'));
+    await t.pumpAndSettle();
+    expect(find.text('You have an unfinished ride'), findsOneWidget);
+    expectNoOverflow(t);
+    await t.tap(find.text('Discard and start'));
+    await t.pumpAndSettle();
+    expect(find.text('Discard this ride?'), findsOneWidget);
+    expectNoOverflow(t);
+    await t.runAsync(
+        () => r.container.read(runRecorderProvider.notifier).discard());
+  });
+
+  testWidgets('the launch prompt names a restored ski day at 1.3x', (t) async {
+    final start = _now.subtract(const Duration(hours: 1));
+    final r = await _rig(t, size: iPhoneSeSize, textScale: 1.3, prefsValues: {
+      runInProgressKey: jsonEncode({
+        'startedAt': start.toUtc().toIso8601String(),
+        'templateId': null,
+        'kind': 'ski',
+        'phase': 'running',
+        'points': [
+          for (var i = 0; i <= 12; i++)
+            [
+              41.0 + i * 0.0009,
+              69.0,
+              null,
+              5.0,
+              start.add(Duration(seconds: 30 * i)).millisecondsSinceEpoch,
+            ],
+        ],
+        'pauses': <Object>[],
+      }),
+    });
+    expect(find.text('Unfinished ski day · 1.20 km'), findsOneWidget);
+    expectNoOverflow(t);
+    await t.tap(find.text('Discard'));
+    await t.pumpAndSettle();
+    expect(find.text('Discard this ski day?'), findsOneWidget);
+    expectNoOverflow(t);
+    await t.runAsync(() async {});
   });
 }

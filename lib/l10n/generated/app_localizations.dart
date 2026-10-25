@@ -7552,6 +7552,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'It will be removed from your history.'**
   String get skiDeleteBody;
+
+  /// No description provided for @rideBarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride in progress'**
+  String get rideBarTitle;
+
+  /// No description provided for @skiBarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ski day in progress'**
+  String get skiBarTitle;
+
+  /// No description provided for @rideDiscardRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard ride'**
+  String get rideDiscardRun;
+
+  /// No description provided for @skiDiscardRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard ski day'**
+  String get skiDiscardRun;
+
+  /// No description provided for @rideDeleteRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete ride'**
+  String get rideDeleteRun;
+
+  /// No description provided for @skiDeleteRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete ski day'**
+  String get skiDeleteRun;
+
+  /// No description provided for @rideUnfinishedLaunchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfinished ride · {distance} km'**
+  String rideUnfinishedLaunchTitle(String distance);
+
+  /// No description provided for @skiUnfinishedLaunchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfinished ski day · {distance} km'**
+  String skiUnfinishedLaunchTitle(String distance);
 }
 
 class _AppLocalizationsDelegate

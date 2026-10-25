@@ -1307,5 +1307,15 @@
   "skiDiscardTitle": "¿Descartar este día de esquí?",
   "rideDeleteTitle": "¿Eliminar esta salida?",
   "skiDeleteTitle": "¿Eliminar este día de esquí?",
-  "skiDeleteBody": "Se quitará de tu historial."
+  "skiDeleteBody": "Se quitará de tu historial.",
+  "rideBarTitle": "Salida en curso",
+  "skiBarTitle": "Día de esquí en curso",
+  "rideDiscardRun": "Descartar salida",
+  "skiDiscardRun": "Descartar día de esquí",
+  "rideDeleteRun": "Eliminar salida",
+  "skiDeleteRun": "Eliminar día de esquí",
+  "rideUnfinishedLaunchTitle": "Salida sin terminar · {distance} km",
+  "@rideUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}},
+  "skiUnfinishedLaunchTitle": "Día de esquí sin terminar · {distance} km",
+  "@skiUnfinishedLaunchTitle": {"placeholders": {"distance": {"type": "String"}}}
 }
