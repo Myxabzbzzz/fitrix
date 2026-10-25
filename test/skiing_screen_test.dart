@@ -419,7 +419,7 @@ void main() {
 
   testWidgets('the launch prompt names a restored ski day at 1.3x', (t) async {
     final start = _now.subtract(const Duration(hours: 1));
-    final r = await _rig(t, size: iPhoneSeSize, textScale: 1.3, prefsValues: {
+    await _rig(t, size: iPhoneSeSize, textScale: 1.3, prefsValues: {
       runInProgressKey: jsonEncode({
         'startedAt': start.toUtc().toIso8601String(),
         'templateId': null,
