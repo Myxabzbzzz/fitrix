@@ -20,7 +20,8 @@ List<RunPoint> _day(List<_Leg> legs,
     double walk = 0,
     int step = 2,
     double alt0 = 0,
-    int seed = 7}) {
+    int seed = 7,
+    double? jitterM}) {
   final rnd = math.Random(seed);
   final t0 = DateTime.utc(2026, 1, 10, 9);
   final out = <RunPoint>[];
@@ -42,7 +43,7 @@ List<RunPoint> _day(List<_Leg> legs,
 
   out.add(at());
   for (final l in legs) {
-    jitter = l.speed < 0.3 ? 1.5 : 0;
+    jitter = jitterM ?? (l.speed < 0.3 ? 1.5 : 0);
     for (var s = step; s <= l.secs; s += step) {
       lat += l.speed * step / 111195;
       alt += l.dAlt * step / l.secs;
@@ -215,8 +216,16 @@ void main() {
       }
     });
 
+    // Every descent is as long as its own moving time (no stop inside it).
+    void tight(SkiDay day) {
+      for (final d in day.descents) {
+        final span = d.end.difference(d.start).inSeconds;
+        expect(span, lessThanOrEqualTo(1.3 * d.meters / d.avgSpeed + 10));
+      }
+    }
+
     for (final stop in [300, 600]) {
-      test('a ${stop ~/ 60}-minute stop mid-run is one descent', () {
+      test('a ${stop ~/ 60}-minute stop mid-run splits the descent', () {
         final fixes = _day([
           _flat,
           _lift,
@@ -227,14 +236,20 @@ void main() {
           _flat,
         ], walk: 5);
         final day = run(fixes);
-        expect(day.descents, hasLength(1));
-        expect(day.descents.single.avgSpeed, closeTo(12, 2));
-        expect(day.descents.single.vertical, closeTo(300, 25));
+        expect(day.descents, hasLength(2));
+        for (final d in day.descents) {
+          expect(d.avgSpeed, closeTo(12, 2));
+          expect(d.vertical, closeTo(150, 25));
+        }
+        tight(day);
+        // The stop is "other".
+        final gap = day.descents[1].start.difference(day.descents[0].end);
+        expect(gap.inSeconds, greaterThanOrEqualTo(stop - 30));
         expect(day.lifts, 1);
       });
     }
 
-    test('a 40-minute hut stop mid-run is not a 1 m/s run', () {
+    test('a 40-minute hut stop is "other" between two descents', () {
       final fixes = _day([
         _flat,
         _lift,
@@ -245,12 +260,71 @@ void main() {
         _flat,
       ], walk: 6);
       final day = run(fixes);
-      expect(day.descents.length, inInclusiveRange(1, 2));
-      for (final d in day.descents) {
-        expect(d.avgSpeed, greaterThan(8));
-      }
-      expect(day.verticalDown, closeTo(300, 30));
+      expect(day.descents, hasLength(2));
+      tight(day);
+      expect(day.verticalDown, closeTo(300, 40));
+      expect(day.descents[1].start.difference(day.descents[0].end).inMinutes,
+          greaterThanOrEqualTo(38));
     });
+
+    test('40 m, then a 60-minute lunch, then the rest of the run', () {
+      final fixes = _day([
+        _flat,
+        _lift,
+        _flat,
+        const _Leg(20, -40, 12),
+        const _Leg(3600, 0, 0),
+        const _Leg(110, -260, 12),
+        _flat,
+      ], walk: 5);
+      final day = run(fixes);
+      expect(day.descents, hasLength(2));
+      tight(day);
+      expect(day.descents[0].vertical, closeTo(40, 12));
+      expect(day.descents[1].vertical, closeTo(260, 25));
+    });
+
+    test('standing an hour with 4 m position jitter is no descent', () {
+      for (var seed = 1; seed <= 5; seed++) {
+        final fixes =
+            _day([const _Leg(3600, -40, 0)], walk: 7, jitterM: 4, seed: seed);
+        expect(run(fixes).descents, isEmpty, reason: 'seed $seed');
+      }
+    });
+
+    test('a shuffling queue (0.3 m/s, 2 m jitter, 8 m walk) over 50 seeds', () {
+      var bad = 0;
+      for (var seed = 1; seed <= 50; seed++) {
+        final fixes = _day(
+          [
+            for (var i = 0; i < 3; i++) ...[
+              const _Leg(600, 0, 0.3),
+              ...lap,
+            ]
+          ],
+          walk: 8,
+          jitterM: 2,
+          seed: seed,
+        );
+        final day = run(fixes);
+        final ok = day.descents.length == 3 &&
+            day.lifts >= 2 &&
+            day.descents
+                .every((d) => d.end.difference(d.start).inSeconds < 400);
+        if (!ok) bad++;
+      }
+      expect(bad, lessThanOrEqualTo(1));
+    });
+
+    for (final j in [2.0, 3.0]) {
+      test('max speed within 10% under ${j.toInt()} m position jitter', () {
+        for (var seed = 1; seed <= 5; seed++) {
+          final fixes =
+              _day([const _Leg(300, 0, 10)], step: 1, jitterM: j, seed: seed);
+          expect(robustMaxSpeed(fixes), closeTo(10, 1), reason: 'seed $seed');
+        }
+      });
+    }
 
     test('altitude drifting 35 m during lunch is not a descent', () {
       final fixes = _day([

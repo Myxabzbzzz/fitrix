@@ -391,44 +391,53 @@ class RunTrack {
   double? get maxSpeed => robustMaxSpeed(kept, breaks: _breaks);
 }
 
-/// Top speed in m/s of the fixes [from]..[to] (default all): over each
-/// stretch of at least 3 s, the median of its fix-to-fix speeds (the lower
-/// middle for an even count), so one jumpy fix doesn't count. [breaks] are
-/// indexes of fixes that start a new segment (no speed into them). Null when
-/// the range is shorter than 3 s.
+/// Top speed in m/s of the fixes [from]..[to] (default all). The speed at a
+/// fix is the displacement over the shortest stretch of at least 3 s ending
+/// there (endpoint distance over time, so position jitter does not add up
+/// like it does fix to fix); the top speed is the highest *median* of the
+/// speeds of the neighbouring stretches (as many as a bad fix can touch, and
+/// then some), so one jumpy fix is rejected. [breaks] are indexes of fixes
+/// that start a new segment (no speed across them). Null when no stretch of
+/// 3 s exists.
 double? robustMaxSpeed(List<RunPoint> kept,
     {List<int> breaks = const [], int from = 0, int? to}) {
   final end = to ?? kept.length - 1;
   if (end - from < 1) return null;
-  double? best;
+  final w = List<double?>.filled(end - from + 1, null);
+  final len = List<int>.filled(end - from + 1, 0);
   var j = from;
   var segStart = from;
   var breakAt = 0;
   while (breakAt < breaks.length && breaks[breakAt] <= from) {
     breakAt++;
   }
-  final seg = <double?>[null]; // speed of the segment ending at kept[from+k]
   for (var i = from + 1; i <= end; i++) {
     if (breakAt < breaks.length && breaks[breakAt] == i) {
       segStart = i;
       breakAt++;
-      seg.add(null);
       continue;
     }
-    final dt = kept[i].at.difference(kept[i - 1].at).inMilliseconds / 1000;
-    seg.add(dt > 0 ? _between(kept[i - 1], kept[i]) / dt : null);
     if (j < segStart) j = segStart;
     while (j + 1 < i &&
         kept[i].at.difference(kept[j + 1].at).inMilliseconds >= 3000) {
       j++;
     }
-    if (kept[i].at.difference(kept[j].at).inMilliseconds < 3000) continue;
-    final v = <double>[
-      for (var m = j + 1; m <= i; m++)
-        if (seg[m - from] != null) seg[m - from]!,
-    ]..sort();
-    if (v.isEmpty) continue;
-    final med = v[(v.length - 1) ~/ 2];
+    final ms = kept[i].at.difference(kept[j].at).inMilliseconds;
+    if (ms < 3000) continue;
+    w[i - from] = _between(kept[j], kept[i]) / (ms / 1000);
+    len[i - from] = i - j + 1;
+  }
+  double? best;
+  for (var i = 1; i < w.length; i++) {
+    if (w[i] == null) continue;
+    final block = <double>[];
+    for (var m = i; m >= 1 && block.length < 4 * len[i] + 1; m--) {
+      final x = w[m];
+      if (x == null) break;
+      block.add(x);
+    }
+    block.sort();
+    final med = block[(block.length - 1) ~/ 2];
     if (best == null || med > best) best = med;
   }
   return best;

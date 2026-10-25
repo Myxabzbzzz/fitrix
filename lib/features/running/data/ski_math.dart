@@ -43,6 +43,9 @@ const Duration _stillWindow = Duration(seconds: 30);
 /// Standing still this long is a queue, a hut or lunch (not a pause to breathe).
 const Duration _stillMin = Duration(minutes: 2);
 
+/// Holes in a stop up to this long are part of it.
+const Duration _stillHole = Duration(seconds: 30);
+
 /// A descent covers at least this much ground ...
 const double skiDescentMinMeters = 100;
 
@@ -204,6 +207,27 @@ List<bool> _stationary(List<RunPoint> fixes) {
     still[i] = secs >= _stillWindow.inSeconds / 2 &&
         _step(fixes[lo], fixes[hi]) / secs < _stillSpeed;
   }
+  // A short hole (a jittery fix, a step forward in the queue) does not end a
+  // stop.
+  var h = 0;
+  while (h < n) {
+    if (still[h]) {
+      h++;
+      continue;
+    }
+    var e = h;
+    while (e + 1 < n && !still[e + 1]) {
+      e++;
+    }
+    if (h > 0 &&
+        e + 1 < n &&
+        fixes[e + 1].at.difference(fixes[h - 1].at) <= _stillHole) {
+      for (var k = h; k <= e; k++) {
+        still[k] = true;
+      }
+    }
+    h = e + 1;
+  }
   final out = List<bool>.filled(n, false);
   var i = 0;
   while (i < n) {
@@ -328,14 +352,34 @@ List<SkiSegment> _segment(List<RunPoint> fixes, List<double> smooth) {
       b++;
     }
     if (b <= a) return;
-    // A queue or a hut inside the leg splits it. A bit of the leg that is
-    // left on the far side of such a stop and has barely changed altitude
-    // belongs to the stop (queue, waiting), not to the leg.
-    var rise2 = rise;
     final gaps = [
       for (var k = a; k < b; k++)
         if (idx[k + 1] - idx[k] > 1) k,
     ];
+    if (!up) {
+      // A stop (queue, hut, lunch) inside a descent splits it: the stop is
+      // "other", and each part must be a descent on its own.
+      var pa = a;
+      for (final g in [...gaps, b]) {
+        final pb = g == b ? b : g;
+        final r = ((pb == b ? v[k1] : v[pb]) - (pa == a ? v[k0] : v[pa])).abs();
+        if (pb > pa && r >= skiMinVertical) {
+          final from = idx[pa], to = idx[pb];
+          final st = _stats(fixes, still, from, to);
+          if (st.movingSecs > 0 &&
+              st.movingMeters >= skiDescentMinMeters &&
+              st.movingMeters / st.movingSecs >= skiDescentMinSpeed) {
+            cores.add(SkiSegment(SkiSegmentKind.descent, from, to, r));
+          }
+        }
+        pa = g + 1;
+      }
+      return;
+    }
+    // A lift that stalls keeps going afterwards: stops inside it stay in it,
+    // but a bit left on the far side of a stop that barely changed altitude
+    // belongs to the stop (queue, waiting).
+    var rise2 = rise;
     if (gaps.isNotEmpty) {
       var g0 = 0, g1 = gaps.length - 1;
       while (g0 <= g1 && (v[gaps[g0]] - v[a]).abs() < skiHysteresis) {
@@ -352,13 +396,7 @@ List<SkiSegment> _segment(List<RunPoint> fixes, List<double> smooth) {
     }
     final from = idx[a], to = idx[b];
     final st = _stats(fixes, still, from, to);
-    if (!up) {
-      if (st.movingSecs > 0 &&
-          st.movingMeters >= skiDescentMinMeters &&
-          st.movingMeters / st.movingSecs >= skiDescentMinSpeed) {
-        cores.add(SkiSegment(SkiSegmentKind.descent, from, to, rise2));
-      }
-    } else if (st.secs > 0 &&
+    if (st.secs > 0 &&
         rise2 / st.secs >= skiLiftMinClimb &&
         st.meters / st.secs <= skiLiftMaxSpeed) {
       cores.add(SkiSegment(SkiSegmentKind.lift, from, to, rise2));
