@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:latlong2/latlong.dart';
 
 import 'activity_kind.dart';
+import 'ski_math.dart';
 
 export 'activity_kind.dart';
 
@@ -387,44 +388,68 @@ class RunTrack {
   /// Top speed in m/s: over each stretch of at least 3 s of kept fixes, the
   /// median of its fix-to-fix speeds (the lower middle for an even count), so
   /// one jumpy fix doesn't count. Null when the track is shorter than that.
-  double? get maxSpeed {
-    if (kept.length < 2) return null;
-    double? best;
-    var j = 0;
-    var segStart = 0;
-    var breakAt = 0;
-    final seg = <double?>[null]; // speed of the segment ending at kept[i]
-    for (var i = 1; i < kept.length; i++) {
-      if (breakAt < _breaks.length && _breaks[breakAt] == i) {
-        segStart = i;
-        breakAt++;
-        seg.add(null);
-        continue;
-      }
-      final dt = kept[i].at.difference(kept[i - 1].at).inMilliseconds / 1000;
-      seg.add(dt > 0 ? _between(kept[i - 1], kept[i]) / dt : null);
-      if (j < segStart) j = segStart;
-      while (j + 1 < i &&
-          kept[i].at.difference(kept[j + 1].at).inMilliseconds >= 3000) {
-        j++;
-      }
-      if (kept[i].at.difference(kept[j].at).inMilliseconds < 3000) continue;
-      final v = <double>[
-        for (var m = j + 1; m <= i; m++)
-          if (seg[m] != null) seg[m]!,
-      ]..sort();
-      if (v.isEmpty) continue;
-      final med = v[(v.length - 1) ~/ 2];
-      if (best == null || med > best) best = med;
-    }
-    return best;
+  double? get maxSpeed => robustMaxSpeed(kept, breaks: _breaks);
+}
+
+/// Top speed in m/s of the fixes [from]..[to] (default all): over each
+/// stretch of at least 3 s, the median of its fix-to-fix speeds (the lower
+/// middle for an even count), so one jumpy fix doesn't count. [breaks] are
+/// indexes of fixes that start a new segment (no speed into them). Null when
+/// the range is shorter than 3 s.
+double? robustMaxSpeed(List<RunPoint> kept,
+    {List<int> breaks = const [], int from = 0, int? to}) {
+  final end = to ?? kept.length - 1;
+  if (end - from < 1) return null;
+  double? best;
+  var j = from;
+  var segStart = from;
+  var breakAt = 0;
+  while (breakAt < breaks.length && breaks[breakAt] <= from) {
+    breakAt++;
   }
+  final seg = <double?>[null]; // speed of the segment ending at kept[from+k]
+  for (var i = from + 1; i <= end; i++) {
+    if (breakAt < breaks.length && breaks[breakAt] == i) {
+      segStart = i;
+      breakAt++;
+      seg.add(null);
+      continue;
+    }
+    final dt = kept[i].at.difference(kept[i - 1].at).inMilliseconds / 1000;
+    seg.add(dt > 0 ? _between(kept[i - 1], kept[i]) / dt : null);
+    if (j < segStart) j = segStart;
+    while (j + 1 < i &&
+        kept[i].at.difference(kept[j + 1].at).inMilliseconds >= 3000) {
+      j++;
+    }
+    if (kept[i].at.difference(kept[j].at).inMilliseconds < 3000) continue;
+    final v = <double>[
+      for (var m = j + 1; m <= i; m++)
+        if (seg[m - from] != null) seg[m - from]!,
+    ]..sort();
+    if (v.isEmpty) continue;
+    final med = v[(v.length - 1) ~/ 2];
+    if (best == null || med > best) best = med;
+  }
+  return best;
 }
 
 /// Reduces [points] to at most [maxPoints] (Douglas-Peucker with a growing
 /// tolerance), always keeping the first and the last.
 List<RunPoint> simplifyRoute(List<RunPoint> points, {int maxPoints = 2000}) {
   if (points.length <= maxPoints || points.length < 3) return points;
+  return [
+    for (final i in simplifyRouteIndices(points, maxPoints: maxPoints))
+      points[i],
+  ];
+}
+
+/// The indexes into [points] that [simplifyRoute] keeps (ascending, first and
+/// last included).
+List<int> simplifyRouteIndices(List<RunPoint> points, {int maxPoints = 2000}) {
+  if (points.length <= maxPoints || points.length < 3) {
+    return List<int>.generate(points.length, (i) => i);
+  }
   final lat0 = points.first.lat * math.pi / 180;
   const mPerDeg = 111195.0;
   final xs = [for (final p in points) p.lng * mPerDeg * math.cos(lat0)];
@@ -464,13 +489,13 @@ List<RunPoint> simplifyRoute(List<RunPoint> points, {int maxPoints = 2000}) {
   var tol = 1.0;
   for (var i = 0; i < 40; i++) {
     final idx = pass(tol);
-    if (idx.length <= maxPoints) return [for (final j in idx) points[j]];
+    if (idx.length <= maxPoints) return idx;
     tol *= 1.5;
   }
   // Pathological input: an even sample.
   final step = (points.length - 1) / (maxPoints - 1);
   return [
-    for (var i = 0; i < maxPoints; i++) points[(i * step).round()],
+    for (var i = 0; i < maxPoints; i++) (i * step).round(),
   ];
 }
 
@@ -543,6 +568,7 @@ class RunDetails {
     this.elevationLoss,
     this.indoor = false,
     this.avgPowerW,
+    this.ski,
   }) : _route = route;
 
   final DateTime startedAt;
@@ -572,6 +598,9 @@ class RunDetails {
   final bool indoor;
   final int? avgPowerW;
 
+  /// Descents and lifts of a ski day.
+  final SkiDay? ski;
+
   Map<String, Object?> toJson() => {
         'startedAt': startedAt.toUtc().toIso8601String(),
         'movingMs': moving.inMilliseconds,
@@ -591,6 +620,7 @@ class RunDetails {
         if (elevationLoss != null) 'elevationLoss': elevationLoss,
         if (indoor) 'indoor': true,
         if (avgPowerW != null) 'avgPowerW': avgPowerW,
+        if (ski != null) 'ski': ski!.toJson(),
       };
 
   factory RunDetails.fromJson(Map<String, Object?> j) => RunDetails(
@@ -616,6 +646,9 @@ class RunDetails {
         elevationLoss: (j['elevationLoss'] as num?)?.toDouble(),
         indoor: j['indoor'] == true,
         avgPowerW: (j['avgPowerW'] as num?)?.toInt(),
+        ski: j['ski'] is Map
+            ? SkiDay.fromJson((j['ski']! as Map).cast<String, Object?>())
+            : null,
       );
 }
 
