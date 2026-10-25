@@ -548,9 +548,51 @@ void main() {
         final last = lastOf(Sport.winterSports, AssistantTopic.winterSports,
             skiDay([descent(600000, 40000, 100)]));
         expect(last['ski'], {'descents': 1});
+        final many = lastOf(Sport.winterSports, AssistantTopic.winterSports,
+            skiDay([for (var i = 0; i < 301; i++) descent(500, 100, 20)]));
+        expect(many['ski'], {'distanceKm': 150.5, 'maxSpeedKmh': 72.0});
         final none =
             lastOf(Sport.winterSports, AssistantTopic.winterSports, skiDay([]));
-        expect(none['ski'], {'descents': 0, 'verticalM': 0});
+        expect(none.containsKey('ski'), isFalse);
+      });
+
+      test('a ski day without descent data has no ski block and no pace', () {
+        final r = RunDetails(
+            startedAt: DateTime(2026, 10, 19, 7),
+            moving: const Duration(hours: 3),
+            elapsed: const Duration(hours: 3),
+            pauses: 0,
+            meters: 5000,
+            kind: ActivityKind.ski,
+            splits: const [],
+            route: const []);
+        final last = lastOf(Sport.winterSports, AssistantTopic.winterSports, r);
+        expect(last.containsKey('ski'), isFalse);
+        expect(last.containsKey('paceSecPerKm'), isFalse);
+        expect(last.containsKey('distanceKm'), isFalse);
+      });
+
+      test('imported rides get speed and ski days distance, never pace', () {
+        final w = workout(Sport.cycling, DateTime(2026, 10, 19, 7), 'Ride');
+        var last = json(AssistantTopic.cycling, history: [
+          w
+        ], imports: {
+          w.id: const HealthImport(
+              source: 'Watch', healthUuid: 'u', meters: 20000)
+        })['lastWorkout'] as Map;
+        expect(last['distanceKm'], 20.0);
+        expect(last['avgSpeedKmh'], 20.0);
+        expect(last.containsKey('paceSecPerKm'), isFalse);
+        final s = workout(Sport.winterSports, DateTime(2026, 10, 19, 7), 'Ski');
+        last = json(AssistantTopic.winterSports, history: [
+          s
+        ], imports: {
+          s.id: const HealthImport(
+              source: 'Watch', healthUuid: 'u2', meters: 12000)
+        })['lastWorkout'] as Map;
+        expect(last['distanceKm'], 12.0);
+        expect(last.containsKey('paceSecPerKm'), isFalse);
+        expect(last.containsKey('avgSpeedKmh'), isFalse);
       });
     });
 

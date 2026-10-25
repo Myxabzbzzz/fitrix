@@ -113,35 +113,53 @@ class FelixSnapshot {
     };
   }
 
-  /// The `ski` block of a ski day: descents only, no pace.
+  /// The `ski` block of a ski day: descents only, no pace; dropped when
+  /// no field is valid.
   static Map<String, Object> _skiJson(RunDetails day) {
     final ski = day.ski;
-    if (ski == null) return const {};
+    if (ski == null || ski.descents.isEmpty) return const {};
     final count = ski.descents.length;
     final vertical = ski.verticalDown.round();
     final km = ski.skiMeters / 1000;
     final top = ski.maxSpeed == null ? null : _round1(ski.maxSpeed! * 3.6);
-    return {
-      if (count <= 300)
-        'ski': {
-          'descents': count,
-          if (vertical >= 0 && vertical <= 30000) 'verticalM': vertical,
-          if (km > 0 && km <= 500) 'distanceKm': (km * 100).round() / 100,
-          if (top != null && top >= 1 && top <= 200) 'maxSpeedKmh': top,
-        },
+    final block = <String, Object>{
+      if (count <= 300) 'descents': count,
+      if (vertical >= 0 && vertical <= 30000) 'verticalM': vertical,
+      if (km > 0 && km <= 500) 'distanceKm': (km * 100).round() / 100,
+      if (top != null && top >= 1 && top <= 200) 'maxSpeedKmh': top,
     };
+    return block.isEmpty ? const {} : {'ski': block};
   }
 
-  /// Pace of [meters] covered in [moving], same limits as [_runJson].
-  static Map<String, Object> _importDistanceJson(double meters, Duration d) =>
-      _runJson(RunDetails(
-          startedAt: DateTime(2000),
-          moving: d,
-          elapsed: d,
-          pauses: 0,
-          meters: meters,
-          splits: const [],
-          route: const []));
+  /// Distance of an imported workout of [sport]: a run also gets its pace,
+  /// a ride its average speed, winter sports the distance only.
+  static Map<String, Object> _importDistanceJson(
+      Sport sport, double meters, Duration d) {
+    RunDetails details(ActivityKind kind) => RunDetails(
+        startedAt: DateTime(2000),
+        moving: d,
+        elapsed: d,
+        pauses: 0,
+        meters: meters,
+        kind: kind,
+        splits: const [],
+        route: const []);
+    switch (sport) {
+      case Sport.cycling:
+        final j = _rideJson(details(ActivityKind.ride));
+        return {
+          for (final k in const ['distanceKm', 'avgSpeedKmh'])
+            if (j[k] != null) k: j[k]!,
+        };
+      case Sport.winterSports:
+        final km = meters / 1000;
+        return {
+          if (meters > 0 && km <= 500) 'distanceKm': (km * 100).round() / 100,
+        };
+      default:
+        return _runJson(details(ActivityKind.run));
+    }
+  }
 
   static Map<String, Object> _healthJson(HealthSignals h) {
     final rhr = h.restingHr;
@@ -255,7 +273,8 @@ class FelixSnapshot {
           if (lastRun != null)
             ..._runJson(lastRun)
           else if (lastImport?.meters != null)
-            ..._importDistanceJson(lastImport!.meters!, lastWorkout.duration),
+            ..._importDistanceJson(
+                lastWorkout.sport, lastImport!.meters!, lastWorkout.duration),
           if (lastImport != null) ...{
             if (lastImport.source.isNotEmpty && lastImport.source.length <= 40)
               'source': lastImport.source,
