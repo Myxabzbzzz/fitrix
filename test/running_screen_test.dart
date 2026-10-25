@@ -539,6 +539,25 @@ void main() {
     }
   });
 
+  group('workout settings', () {
+    testWidgets('the gear next to Start opens the run voice setting, SE x1.3',
+        (t) async {
+      final r =
+          await _rig(t, size: iPhoneSeSize, textScale: 1.3, language: 'ru');
+      await _openRunning(r);
+      await t.tap(find.byKey(const ValueKey('run-settings')));
+      await t.pumpAndSettle();
+      expect(find.text('Настройки тренировки'), findsOneWidget);
+      expect(
+          t
+              .widget<Switch>(
+                  find.byKey(const ValueKey('activity-voice-toggle')))
+              .value,
+          true);
+      expectNoOverflow(t);
+    });
+  });
+
   group('SE 375x667, text 1.3, ru', () {
     testWidgets('running screen with history and a run in progress', (t) async {
       final r =

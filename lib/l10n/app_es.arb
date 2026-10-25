@@ -1247,5 +1247,16 @@
   "connectedAppsSummaryWritten": "Entrenamientos guardados en {health}",
   "@connectedAppsSummaryWritten": {"placeholders": {"health": {"type": "String"}}},
   "connectedAppsSummaryHintIos": "Aún no hay datos de reloj: un reloj (Apple Watch, Garmin, WHOOP, Mi Band) añade sueño, pulso y entrenamientos.",
-  "connectedAppsSummaryHintAndroid": "Aún no hay datos de reloj: un reloj (Garmin, WHOOP, Mi Band) añade sueño, pulso y entrenamientos."
+  "connectedAppsSummaryHintAndroid": "Aún no hay datos de reloj: un reloj (Garmin, WHOOP, Mi Band) añade sueño, pulso y entrenamientos.",
+  "rideVoiceStart": "Salida iniciada.",
+  "rideVoiceDistance": "{km} kilómetros. Tiempo {time}. Últimos 5 kilómetros a {lastSpeed} kilómetros por hora. Media {avgSpeed}.",
+  "rideVoiceFinish": "Salida terminada. {distance} kilómetros en {time}.",
+  "skiVoiceStart": "Día de esquí iniciado.",
+  "skiVoiceDescent": "Descenso {index}. Distancia {distance} km, desnivel {vertical} metros, máximo {topSpeed} kilómetros por hora.",
+  "skiVoiceFinish": "Día de esquí terminado. {distance} kilómetros de descensos en {time}.",
+  "activitySettingsTitle": "Ajustes del entrenamiento",
+  "activitySettingsVoice": "Voz",
+  "activitySettingsVoiceRun": "Anuncia el inicio, cada kilómetro y el final.",
+  "activitySettingsVoiceRide": "Anuncia el inicio, cada 5 km y el final.",
+  "activitySettingsVoiceSki": "Anuncia el inicio, cada descenso y el final."
 }

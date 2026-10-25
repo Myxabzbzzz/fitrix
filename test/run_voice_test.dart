@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:fitrix/features/running/data/activity_kind.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/presentation/run_voice.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -342,6 +343,117 @@ void main() {
       r.voice.dispose();
       await r.send(const RunStarted());
       expect(r.speaker.spoken, isEmpty);
+    });
+  });
+
+  group('voice per activity', () {
+    ({FakeSpeaker speaker, StreamController<RunEvent> events}) rig(
+      ActivityKind kind,
+      Set<ActivityKind> on, {
+      String app = 'en',
+    }) {
+      final speaker = FakeSpeaker({'en', 'ru', 'uz', 'es'});
+      final events = StreamController<RunEvent>.broadcast(sync: true);
+      RunVoice(speaker, events.stream,
+          appLanguage: () => app,
+          sessionKind: () => kind,
+          voiceOn: on.contains);
+      addTearDown(events.close);
+      return (speaker: speaker, events: events);
+    }
+
+    Future<void> send(StreamController<RunEvent> c, RunEvent e) async {
+      c.add(e);
+      await pumpEventQueue();
+    }
+
+    const km5 = DistanceReached(5000, Duration(minutes: 15), 8.5, 8.0);
+    const descent = SkiDescentDone(3, 1200, 240, 14.5);
+
+    test('ride with voice off says nothing, not even start or finish',
+        () async {
+      final r = rig(ActivityKind.ride, {ActivityKind.run});
+      await send(r.events, const RunStarted());
+      await send(r.events, km5);
+      await send(r.events, const RunPaused());
+      await send(r.events, const RunFinished(5000, Duration(minutes: 15), 180));
+      expect(r.speaker.spoken, isEmpty);
+      expect(r.speaker.prepares, 0);
+    });
+
+    test('ride with voice on: own start, 5 km and finish phrases', () async {
+      final r = rig(ActivityKind.ride, {ActivityKind.ride});
+      await send(r.events, const RunStarted());
+      await send(r.events, km5);
+      await send(r.events, const RunFinished(5200, Duration(minutes: 16), 180));
+      expect(r.speaker.spoken.map((s) => s.text), [
+        'Ride started.',
+        '5 kilometres. Time 15 minutes. Last 5 kilometres 30.6 kilometres per '
+            'hour. Average 28.8.',
+        'Ride finished. 5.2 kilometres in 16 minutes.',
+      ]);
+    });
+
+    test('ski with voice on: a descent phrase in russian', () async {
+      final r = rig(ActivityKind.ski, {ActivityKind.ski}, app: 'ru');
+      await send(r.events, descent);
+      expect(r.speaker.spoken.single.text,
+          'Спуск 3. Расстояние 1,2 км, перепад 240 м, максимум 52 км/ч.');
+    });
+
+    test('ski with voice off says nothing for a descent', () async {
+      final r = rig(ActivityKind.ski, {ActivityKind.run});
+      await send(r.events, descent);
+      expect(r.speaker.spoken, isEmpty);
+    });
+
+    test('ski start and finish are not worded as a run', () async {
+      final r = rig(ActivityKind.ski, {ActivityKind.ski});
+      await send(r.events, const RunStarted());
+      await send(r.events, const RunFinished(9800, Duration(hours: 1), null));
+      expect(r.speaker.spoken.map((s) => s.text), [
+        'Ski day started.',
+        'Ski day finished. 9.8 kilometres of descents in 1 hour.',
+      ]);
+    });
+
+    test('run with the default wording: a km phrase as before', () async {
+      final r = rig(ActivityKind.run, {ActivityKind.run});
+      await send(r.events, const KmReached(1, Duration(minutes: 5), 300, 300));
+      expect(r.speaker.spoken.single.text, startsWith('Kilometre 1.'));
+    });
+
+    test('a toggle between events applies to the next phrase', () async {
+      final on = <ActivityKind>{};
+      final speaker = FakeSpeaker({'en'});
+      final events = StreamController<RunEvent>.broadcast(sync: true);
+      addTearDown(events.close);
+      RunVoice(speaker, events.stream,
+          appLanguage: () => 'en',
+          sessionKind: () => ActivityKind.ride,
+          voiceOn: on.contains);
+      await send(events, km5);
+      on.add(ActivityKind.ride);
+      await send(events, km5);
+      expect(speaker.spoken, hasLength(1));
+    });
+
+    test('ride and ski phrases exist in every language without a placeholder',
+        () {
+      for (final code in ['en', 'ru', 'uz', 'es']) {
+        final t = l(code);
+        for (final text in [
+          t.rideVoiceStart,
+          t.rideVoiceDistance('5', 'a', 'b', 'c'),
+          t.rideVoiceFinish('1', 'a'),
+          t.skiVoiceStart,
+          t.skiVoiceDescent(1, '1.2', 240, '52'),
+          t.skiVoiceFinish('1', 'a'),
+        ]) {
+          expect(text, isNotEmpty);
+          expect(text, isNot(contains('{')));
+        }
+      }
     });
   });
 }

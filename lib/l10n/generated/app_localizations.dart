@@ -7202,6 +7202,74 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No watch data yet — a watch (Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts.'**
   String get connectedAppsSummaryHintAndroid;
+
+  /// No description provided for @rideVoiceStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride started.'**
+  String get rideVoiceStart;
+
+  /// No description provided for @rideVoiceDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} kilometres. Time {time}. Last 5 kilometres {lastSpeed} kilometres per hour. Average {avgSpeed}.'**
+  String rideVoiceDistance(
+      String km, String time, String lastSpeed, String avgSpeed);
+
+  /// No description provided for @rideVoiceFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride finished. {distance} kilometres in {time}.'**
+  String rideVoiceFinish(String distance, String time);
+
+  /// No description provided for @skiVoiceStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Ski day started.'**
+  String get skiVoiceStart;
+
+  /// No description provided for @skiVoiceDescent.
+  ///
+  /// In en, this message translates to:
+  /// **'Descent {index}. Distance {distance} km, vertical drop {vertical} metres, top speed {topSpeed} kilometres per hour.'**
+  String skiVoiceDescent(
+      int index, String distance, int vertical, String topSpeed);
+
+  /// No description provided for @skiVoiceFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Ski day finished. {distance} kilometres of descents in {time}.'**
+  String skiVoiceFinish(String distance, String time);
+
+  /// No description provided for @activitySettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workout settings'**
+  String get activitySettingsTitle;
+
+  /// No description provided for @activitySettingsVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice'**
+  String get activitySettingsVoice;
+
+  /// No description provided for @activitySettingsVoiceRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaks the start, every kilometre and the finish.'**
+  String get activitySettingsVoiceRun;
+
+  /// No description provided for @activitySettingsVoiceRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaks the start, every 5 km and the finish.'**
+  String get activitySettingsVoiceRide;
+
+  /// No description provided for @activitySettingsVoiceSki.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaks the start, each descent and the finish.'**
+  String get activitySettingsVoiceSki;
 }
 
 class _AppLocalizationsDelegate

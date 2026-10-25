@@ -1247,5 +1247,16 @@
   "connectedAppsSummaryWritten": "{health} ga saqlangan mashg‘ulotlar",
   "@connectedAppsSummaryWritten": {"placeholders": {"health": {"type": "String"}}},
   "connectedAppsSummaryHintIos": "Soatdan ma’lumot hali yo‘q — soat (Apple Watch, Garmin, WHOOP, Mi Band) uyqu, puls va mashg‘ulotlarni qo‘shadi.",
-  "connectedAppsSummaryHintAndroid": "Soatdan ma’lumot hali yo‘q — soat (Garmin, WHOOP, Mi Band) uyqu, puls va mashg‘ulotlarni qo‘shadi."
+  "connectedAppsSummaryHintAndroid": "Soatdan ma’lumot hali yo‘q — soat (Garmin, WHOOP, Mi Band) uyqu, puls va mashg‘ulotlarni qo‘shadi.",
+  "rideVoiceStart": "Velosiped mashg‘uloti boshlandi.",
+  "rideVoiceDistance": "{km} km. Vaqt {time}. Oxirgi 5 km tezligi {lastSpeed} km/soat. O‘rtacha {avgSpeed}.",
+  "rideVoiceFinish": "Velosiped mashg‘uloti tugadi. {distance} km, vaqt {time}.",
+  "skiVoiceStart": "Chang‘i kuni boshlandi.",
+  "skiVoiceDescent": "Tushish {index}. Masofa {distance} km, balandlik farqi {vertical} m, eng yuqori tezlik {topSpeed} km/soat.",
+  "skiVoiceFinish": "Chang‘i kuni tugadi. Tushishlar {distance} km, vaqt {time}.",
+  "activitySettingsTitle": "Mashg‘ulot sozlamalari",
+  "activitySettingsVoice": "Ovoz",
+  "activitySettingsVoiceRun": "Boshlanish, har bir kilometr va yakunni aytadi.",
+  "activitySettingsVoiceRide": "Boshlanish, har 5 km va yakunni aytadi.",
+  "activitySettingsVoiceSki": "Boshlanish, har bir tushish va yakunni aytadi."
 }

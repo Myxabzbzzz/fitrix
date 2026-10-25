@@ -4516,4 +4516,50 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get connectedAppsSummaryHintAndroid =>
       'Данных с часов пока нет — часы (Garmin, WHOOP, Mi Band) добавят сон, пульс и тренировки.';
+
+  @override
+  String get rideVoiceStart => 'Поездка началась.';
+
+  @override
+  String rideVoiceDistance(
+      String km, String time, String lastSpeed, String avgSpeed) {
+    return '$km км. Время $time. Последние 5 км со скоростью $lastSpeed км/ч. Средняя $avgSpeed.';
+  }
+
+  @override
+  String rideVoiceFinish(String distance, String time) {
+    return 'Поездка завершена. $distance км. Время $time.';
+  }
+
+  @override
+  String get skiVoiceStart => 'Лыжный день начался.';
+
+  @override
+  String skiVoiceDescent(
+      int index, String distance, int vertical, String topSpeed) {
+    return 'Спуск $index. Расстояние $distance км, перепад $vertical м, максимум $topSpeed км/ч.';
+  }
+
+  @override
+  String skiVoiceFinish(String distance, String time) {
+    return 'Лыжный день завершён. Спуски: $distance км. Время $time.';
+  }
+
+  @override
+  String get activitySettingsTitle => 'Настройки тренировки';
+
+  @override
+  String get activitySettingsVoice => 'Голос';
+
+  @override
+  String get activitySettingsVoiceRun =>
+      'Говорит о старте, каждом километре и финише.';
+
+  @override
+  String get activitySettingsVoiceRide =>
+      'Говорит о старте, каждых 5 км и финише.';
+
+  @override
+  String get activitySettingsVoiceSki =>
+      'Говорит о старте, каждом спуске и финише.';
 }

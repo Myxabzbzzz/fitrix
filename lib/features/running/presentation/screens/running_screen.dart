@@ -12,7 +12,9 @@ import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/core/widgets/section_header.dart';
 import 'package:fitrix/core/widgets/sync_refresh.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
+import 'package:fitrix/features/running/data/activity_kind.dart';
 import 'package:fitrix/features/running/data/run_store.dart';
+import 'package:fitrix/features/running/presentation/widgets/activity_settings_sheet.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_history_list.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -111,12 +113,27 @@ class RunningScreen extends ConsumerWidget {
                   physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(AppSpacing.md),
                   children: [
-                    AppButton(
-                      key: const ValueKey('run-start'),
-                      label: l10n.runStartRun,
-                      size: AppButtonSize.large,
-                      expand: true,
-                      onPressed: () => _startFree(context, ref),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AppButton(
+                            key: const ValueKey('run-start'),
+                            label: l10n.runStartRun,
+                            size: AppButtonSize.large,
+                            expand: true,
+                            onPressed: () => _startFree(context, ref),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        IconButton(
+                          key: const ValueKey('run-settings'),
+                          tooltip: l10n.activitySettingsTitle,
+                          icon: Icon(Icons.settings_outlined,
+                              color: palette.textSecondary),
+                          onPressed: () => showActivitySettingsSheet(
+                              context, ActivityKind.run),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     SectionHeader(l10n.runThisWeek),

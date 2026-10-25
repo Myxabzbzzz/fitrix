@@ -7,6 +7,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:intl/intl.dart';
 
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
+import 'package:fitrix/features/running/data/activity_kind.dart';
+import 'package:fitrix/features/running/data/activity_settings.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -195,6 +197,10 @@ String spokenDuration(AppLocalizations l10n, Duration d) {
 String spokenPace(AppLocalizations l10n, int secPerKm) =>
     l10n.runVoicePace(spokenDuration(l10n, Duration(seconds: secPerKm)));
 
+ActivityKind? _runKind() => ActivityKind.run;
+
+bool _alwaysOn(ActivityKind kind) => true;
+
 Duration _defaultTimeout(String text) =>
     Duration(milliseconds: 5000 + text.length * 150);
 
@@ -205,33 +211,49 @@ class RunVoice {
     Stream<RunEvent> events, {
     required String Function() appLanguage,
     Duration Function(String text) timeoutFor = _defaultTimeout,
+    ActivityKind? Function() sessionKind = _runKind,
+    bool Function(ActivityKind kind) voiceOn = _alwaysOn,
   })  : _appLanguage = appLanguage,
-        _timeoutFor = timeoutFor {
+        _timeoutFor = timeoutFor,
+        _sessionKind = sessionKind,
+        _voiceOn = voiceOn {
     _sub = events.listen(_onEvent);
   }
 
   final Speaker _speaker;
   final String Function() _appLanguage;
   final Duration Function(String text) _timeoutFor;
+  final ActivityKind? Function() _sessionKind;
+  final bool Function(ActivityKind kind) _voiceOn;
   late final StreamSubscription<RunEvent> _sub;
+
+  /// Kind of the latest session; a finish comes after the session is gone.
+  ActivityKind _lastKind = ActivityKind.run;
 
   /// Phrases are said one after another, never over each other.
   Future<void> _queue = Future.value();
 
   void _onEvent(RunEvent e) {
-    _queue = _queue.then((_) => _say(e)).catchError((Object error) {
+    // Decided when it happens, not when its turn in the queue comes.
+    final kind = switch (e) {
+      DistanceReached() => ActivityKind.ride,
+      SkiDescentDone() => ActivityKind.ski,
+      KmReached() => ActivityKind.run,
+      _ => _sessionKind() ?? _lastKind,
+    };
+    _lastKind = kind;
+    if (!_voiceOn(kind)) return;
+    _queue = _queue.then((_) => _say(e, kind)).catchError((Object error) {
       debugPrint('Run voice: $error');
     });
   }
 
-  Future<void> _say(RunEvent e) async {
+  Future<void> _say(RunEvent e, ActivityKind kind) async {
     if (e is RunStarted) await _speaker.prepare();
     final available = await _speaker.languages();
     for (final language in voiceLanguageChain(_appLanguage(), available)) {
       final l10n = lookupAppLocalizations(Locale(language));
-      final text = _phrase(l10n, language, e);
-      // Ride and ski phrases come with their own voice settings.
-      if (text.isEmpty) return;
+      final text = _phrase(l10n, language, kind, e);
       // A phrase the engine never reports as finished must not block the
       // ones after it.
       var timedOut = false;
@@ -249,9 +271,14 @@ class RunVoice {
     }
   }
 
-  String _phrase(AppLocalizations l10n, String language, RunEvent e) =>
+  String _phrase(AppLocalizations l10n, String language, ActivityKind kind,
+          RunEvent e) =>
       switch (e) {
-        RunStarted() => l10n.runVoiceStart,
+        RunStarted() => switch (kind) {
+            ActivityKind.run => l10n.runVoiceStart,
+            ActivityKind.ride => l10n.rideVoiceStart,
+            ActivityKind.ski => l10n.skiVoiceStart,
+          },
         RunPaused() => l10n.runVoicePause,
         RunResumed() => l10n.runVoiceResume,
         KmReached() => l10n.runVoiceKm(
@@ -260,13 +287,33 @@ class RunVoice {
             spokenPace(l10n, e.lastKmSecPerKm),
             spokenPace(l10n, e.avgSecPerKm),
           ),
-        RunFinished() => _finish(l10n, language, e),
-        DistanceReached() || SkiDescentDone() => '',
+        RunFinished() => _finish(l10n, language, kind, e),
+        DistanceReached() => l10n.rideVoiceDistance(
+            NumberFormat('0.#', language).format(e.meters / 1000),
+            spokenDuration(l10n, e.total),
+            _kmh(language, e.lastSplitSpeed),
+            _kmh(language, e.avgSpeed),
+          ),
+        SkiDescentDone() => l10n.skiVoiceDescent(
+            e.index,
+            NumberFormat('0.0', language).format(e.meters / 1000),
+            e.vertical.round(),
+            _kmh(language, e.maxSpeed, decimals: 0),
+          ),
       };
 
-  String _finish(AppLocalizations l10n, String language, RunFinished e) {
+  /// m/s as km/h.
+  static String _kmh(String language, double mps, {int decimals = 1}) =>
+      NumberFormat(decimals == 0 ? '0' : '0.0', language).format(mps * 3.6);
+
+  String _finish(AppLocalizations l10n, String language, ActivityKind kind,
+      RunFinished e) {
     final distance = NumberFormat('0.0', language).format(e.meters / 1000);
     final time = spokenDuration(l10n, e.moving);
+    if (kind == ActivityKind.ride) {
+      return l10n.rideVoiceFinish(distance, time);
+    }
+    if (kind == ActivityKind.ski) return l10n.skiVoiceFinish(distance, time);
     final pace = e.avgSecPerKm;
     return pace == null
         ? l10n.runVoiceFinishShort(distance, time)
@@ -284,6 +331,8 @@ final runVoiceProvider = Provider<RunVoice>((ref) {
     ref.read(speakerProvider),
     ref.read(runRecorderProvider.notifier).events,
     appLanguage: () => ref.read(selectedLanguageProvider),
+    sessionKind: () => ref.read(runRecorderProvider)?.kind,
+    voiceOn: (kind) => ref.read(activityVoiceProvider)[kind] ?? false,
   );
   ref.onDispose(voice.dispose);
   return voice;

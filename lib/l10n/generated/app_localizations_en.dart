@@ -4432,4 +4432,50 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get connectedAppsSummaryHintAndroid =>
       'No watch data yet — a watch (Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts.';
+
+  @override
+  String get rideVoiceStart => 'Ride started.';
+
+  @override
+  String rideVoiceDistance(
+      String km, String time, String lastSpeed, String avgSpeed) {
+    return '$km kilometres. Time $time. Last 5 kilometres $lastSpeed kilometres per hour. Average $avgSpeed.';
+  }
+
+  @override
+  String rideVoiceFinish(String distance, String time) {
+    return 'Ride finished. $distance kilometres in $time.';
+  }
+
+  @override
+  String get skiVoiceStart => 'Ski day started.';
+
+  @override
+  String skiVoiceDescent(
+      int index, String distance, int vertical, String topSpeed) {
+    return 'Descent $index. Distance $distance km, vertical drop $vertical metres, top speed $topSpeed kilometres per hour.';
+  }
+
+  @override
+  String skiVoiceFinish(String distance, String time) {
+    return 'Ski day finished. $distance kilometres of descents in $time.';
+  }
+
+  @override
+  String get activitySettingsTitle => 'Workout settings';
+
+  @override
+  String get activitySettingsVoice => 'Voice';
+
+  @override
+  String get activitySettingsVoiceRun =>
+      'Speaks the start, every kilometre and the finish.';
+
+  @override
+  String get activitySettingsVoiceRide =>
+      'Speaks the start, every 5 km and the finish.';
+
+  @override
+  String get activitySettingsVoiceSki =>
+      'Speaks the start, each descent and the finish.';
 }

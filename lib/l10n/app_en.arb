@@ -3313,5 +3313,20 @@
   "connectedAppsSummaryWritten": "Workouts saved to {health}",
   "@connectedAppsSummaryWritten": {"placeholders": {"health": {"type": "String"}}},
   "connectedAppsSummaryHintIos": "No watch data yet — a watch (Apple Watch, Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts.",
-  "connectedAppsSummaryHintAndroid": "No watch data yet — a watch (Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts."
+  "connectedAppsSummaryHintAndroid": "No watch data yet — a watch (Garmin, WHOOP, Mi Band) adds sleep, heart rate and workouts.",
+  "rideVoiceStart": "Ride started.",
+  "rideVoiceDistance": "{km} kilometres. Time {time}. Last 5 kilometres {lastSpeed} kilometres per hour. Average {avgSpeed}.",
+  "@rideVoiceDistance": {"placeholders": {"km": {"type": "String"}, "time": {"type": "String"}, "lastSpeed": {"type": "String"}, "avgSpeed": {"type": "String"}}},
+  "rideVoiceFinish": "Ride finished. {distance} kilometres in {time}.",
+  "@rideVoiceFinish": {"placeholders": {"distance": {"type": "String"}, "time": {"type": "String"}}},
+  "skiVoiceStart": "Ski day started.",
+  "skiVoiceDescent": "Descent {index}. Distance {distance} km, vertical drop {vertical} metres, top speed {topSpeed} kilometres per hour.",
+  "@skiVoiceDescent": {"placeholders": {"index": {"type": "int"}, "distance": {"type": "String"}, "vertical": {"type": "int"}, "topSpeed": {"type": "String"}}},
+  "skiVoiceFinish": "Ski day finished. {distance} kilometres of descents in {time}.",
+  "@skiVoiceFinish": {"placeholders": {"distance": {"type": "String"}, "time": {"type": "String"}}},
+  "activitySettingsTitle": "Workout settings",
+  "activitySettingsVoice": "Voice",
+  "activitySettingsVoiceRun": "Speaks the start, every kilometre and the finish.",
+  "activitySettingsVoiceRide": "Speaks the start, every 5 km and the finish.",
+  "activitySettingsVoiceSki": "Speaks the start, each descent and the finish."
 }

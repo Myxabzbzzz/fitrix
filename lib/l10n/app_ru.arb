@@ -1247,5 +1247,16 @@
   "connectedAppsSummaryWritten": "Тренировки, сохранённые в {health}",
   "@connectedAppsSummaryWritten": {"placeholders": {"health": {"type": "String"}}},
   "connectedAppsSummaryHintIos": "Данных с часов пока нет — часы (Apple Watch, Garmin, WHOOP, Mi Band) добавят сон, пульс и тренировки.",
-  "connectedAppsSummaryHintAndroid": "Данных с часов пока нет — часы (Garmin, WHOOP, Mi Band) добавят сон, пульс и тренировки."
+  "connectedAppsSummaryHintAndroid": "Данных с часов пока нет — часы (Garmin, WHOOP, Mi Band) добавят сон, пульс и тренировки.",
+  "rideVoiceStart": "Поездка началась.",
+  "rideVoiceDistance": "{km} км. Время {time}. Последние 5 км со скоростью {lastSpeed} км/ч. Средняя {avgSpeed}.",
+  "rideVoiceFinish": "Поездка завершена. {distance} км. Время {time}.",
+  "skiVoiceStart": "Лыжный день начался.",
+  "skiVoiceDescent": "Спуск {index}. Расстояние {distance} км, перепад {vertical} м, максимум {topSpeed} км/ч.",
+  "skiVoiceFinish": "Лыжный день завершён. Спуски: {distance} км. Время {time}.",
+  "activitySettingsTitle": "Настройки тренировки",
+  "activitySettingsVoice": "Голос",
+  "activitySettingsVoiceRun": "Говорит о старте, каждом километре и финише.",
+  "activitySettingsVoiceRide": "Говорит о старте, каждых 5 км и финише.",
+  "activitySettingsVoiceSki": "Говорит о старте, каждом спуске и финише."
 }

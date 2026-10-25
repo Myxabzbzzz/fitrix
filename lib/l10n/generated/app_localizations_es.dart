@@ -4451,4 +4451,50 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get connectedAppsSummaryHintAndroid =>
       'Aún no hay datos de reloj: un reloj (Garmin, WHOOP, Mi Band) añade sueño, pulso y entrenamientos.';
+
+  @override
+  String get rideVoiceStart => 'Salida iniciada.';
+
+  @override
+  String rideVoiceDistance(
+      String km, String time, String lastSpeed, String avgSpeed) {
+    return '$km kilómetros. Tiempo $time. Últimos 5 kilómetros a $lastSpeed kilómetros por hora. Media $avgSpeed.';
+  }
+
+  @override
+  String rideVoiceFinish(String distance, String time) {
+    return 'Salida terminada. $distance kilómetros en $time.';
+  }
+
+  @override
+  String get skiVoiceStart => 'Día de esquí iniciado.';
+
+  @override
+  String skiVoiceDescent(
+      int index, String distance, int vertical, String topSpeed) {
+    return 'Descenso $index. Distancia $distance km, desnivel $vertical metros, máximo $topSpeed kilómetros por hora.';
+  }
+
+  @override
+  String skiVoiceFinish(String distance, String time) {
+    return 'Día de esquí terminado. $distance kilómetros de descensos en $time.';
+  }
+
+  @override
+  String get activitySettingsTitle => 'Ajustes del entrenamiento';
+
+  @override
+  String get activitySettingsVoice => 'Voz';
+
+  @override
+  String get activitySettingsVoiceRun =>
+      'Anuncia el inicio, cada kilómetro y el final.';
+
+  @override
+  String get activitySettingsVoiceRide =>
+      'Anuncia el inicio, cada 5 km y el final.';
+
+  @override
+  String get activitySettingsVoiceSki =>
+      'Anuncia el inicio, cada descenso y el final.';
 }

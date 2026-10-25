@@ -4382,4 +4382,50 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get connectedAppsSummaryHintAndroid =>
       'Soatdan ma’lumot hali yo‘q — soat (Garmin, WHOOP, Mi Band) uyqu, puls va mashg‘ulotlarni qo‘shadi.';
+
+  @override
+  String get rideVoiceStart => 'Velosiped mashg‘uloti boshlandi.';
+
+  @override
+  String rideVoiceDistance(
+      String km, String time, String lastSpeed, String avgSpeed) {
+    return '$km km. Vaqt $time. Oxirgi 5 km tezligi $lastSpeed km/soat. O‘rtacha $avgSpeed.';
+  }
+
+  @override
+  String rideVoiceFinish(String distance, String time) {
+    return 'Velosiped mashg‘uloti tugadi. $distance km, vaqt $time.';
+  }
+
+  @override
+  String get skiVoiceStart => 'Chang‘i kuni boshlandi.';
+
+  @override
+  String skiVoiceDescent(
+      int index, String distance, int vertical, String topSpeed) {
+    return 'Tushish $index. Masofa $distance km, balandlik farqi $vertical m, eng yuqori tezlik $topSpeed km/soat.';
+  }
+
+  @override
+  String skiVoiceFinish(String distance, String time) {
+    return 'Chang‘i kuni tugadi. Tushishlar $distance km, vaqt $time.';
+  }
+
+  @override
+  String get activitySettingsTitle => 'Mashg‘ulot sozlamalari';
+
+  @override
+  String get activitySettingsVoice => 'Ovoz';
+
+  @override
+  String get activitySettingsVoiceRun =>
+      'Boshlanish, har bir kilometr va yakunni aytadi.';
+
+  @override
+  String get activitySettingsVoiceRide =>
+      'Boshlanish, har 5 km va yakunni aytadi.';
+
+  @override
+  String get activitySettingsVoiceSki =>
+      'Boshlanish, har bir tushish va yakunni aytadi.';
 }
