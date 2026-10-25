@@ -53,6 +53,10 @@ const skiQuietAfter = Duration(seconds: 5);
 /// No fix for longer than this means a weak signal.
 const gpsStaleAfter = Duration(seconds: 15);
 
+/// A ski day keeps no fixes while standing (the distance filter), so after a
+/// good fix the signal counts as good this long without a new one.
+const skiGpsQuietFor = Duration(minutes: 10);
+
 enum RunPhase { idle, running, paused }
 
 /// What the GPS is giving the run: no fix kept yet, fixes too old or too
@@ -503,16 +507,21 @@ class RunRecorder extends StateNotifier<RunSession?> {
   /// [GpsStatus.waiting] until the run has a kept fix; then
   /// [GpsStatus.weak] when the last fix is older than [gpsStaleAfter] (or
   /// none came since the fixes started that long ago) or coarser than
-  /// [maxFixAccuracy]. Null without a run, or while the fixes are not
-  /// started (a restored run before Resume).
+  /// [maxFixAccuracy]. A ski day gets no fixes while standing, so after a
+  /// good fix it stays [GpsStatus.good] for [skiGpsQuietFor]. Null without a
+  /// run, or while the fixes are not started (a restored run before Resume).
   GpsStatus? gpsStatus() {
     final s = state;
     final since = _lastRawFixAt ?? _listeningSince;
     if (s == null || _sub == null || since == null) return null;
     if (s.track.kept.isEmpty) return GpsStatus.waiting;
-    if (_now().difference(since) > gpsStaleAfter) return GpsStatus.weak;
     final accuracy = _lastRawAccuracy;
-    if (accuracy != null && accuracy > maxFixAccuracy) return GpsStatus.weak;
+    final coarse = accuracy != null && accuracy > maxFixAccuracy;
+    final quiet = s.kind == ActivityKind.ski && _lastRawFixAt != null
+        ? skiGpsQuietFor
+        : gpsStaleAfter;
+    if (_now().difference(since) > quiet) return GpsStatus.weak;
+    if (coarse) return GpsStatus.weak;
     return GpsStatus.good;
   }
 

@@ -306,4 +306,32 @@ void main() {
           reason: kind.name);
     }
   });
+
+  test('standing on a ski day keeps a good GPS until it is quiet for long',
+      () async {
+    final r = await fileRig(file: tempFile());
+    await r.recorder.start(kind: ActivityKind.ski);
+    final d = Day(r)..fix();
+    d.descent();
+    expect(r.recorder.gpsStatus(), GpsStatus.good);
+    // The distance filter sends nothing while standing.
+    d.quiet(5 * 60);
+    expect(r.recorder.gpsStatus(), GpsStatus.good);
+    d.quiet(skiGpsQuietFor.inSeconds - 5 * 60 + 1);
+    expect(r.recorder.gpsStatus(), GpsStatus.weak);
+    // A coarse fix is weak at once.
+    r.source.emit(
+        RunPoint(lat: 0, lng: 0, alt: 2000, accuracy: 80, at: r.clock.now));
+    expect(r.recorder.gpsStatus(), GpsStatus.weak);
+  });
+
+  test('a ride still shows a weak GPS 15 s after the last fix', () async {
+    final r = await fileRig(file: tempFile());
+    await r.recorder.start(kind: ActivityKind.ride);
+    final d = Day(r)..fix();
+    d.descent();
+    expect(r.recorder.gpsStatus(), GpsStatus.good);
+    d.quiet(gpsStaleAfter.inSeconds + 1);
+    expect(r.recorder.gpsStatus(), GpsStatus.weak);
+  });
 }
