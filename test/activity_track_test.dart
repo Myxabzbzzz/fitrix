@@ -62,10 +62,50 @@ void main() {
       return cruise(t, 8, 20 + stop, 40 + stop, fromMeters: 160);
     }
 
-    test('a 30 s stop is excluded from the moving time', () {
+    test('a 30 s stop counts only the 10 s grace', () {
       final t = ride(30);
       final end = t0.add(const Duration(seconds: 70));
-      expect(t.movingTime(end).inSeconds, closeTo(40, 3));
+      expect(t.movingTime(end).inSeconds, closeTo(50, 3));
+    });
+
+    void nonDecreasing(RunTrack Function(int sec) build, int to) {
+      var prev = Duration.zero;
+      for (var sec = 0; sec <= to; sec++) {
+        final m = build(sec).movingTime(t0.add(Duration(seconds: sec)));
+        expect(m, greaterThanOrEqualTo(prev), reason: 'at $sec s');
+        prev = m;
+      }
+    }
+
+    test('moving time never goes backwards across a 30 s stop', () {
+      nonDecreasing((sec) {
+        var t = RunTrack(startedAt: t0, profile: rideProfile);
+        for (var s = 0; s <= sec; s++) {
+          final m = s <= 20 ? s * 8.0 : (s < 50 ? 160.0 : 160.0 + (s - 50) * 8);
+          t = t.add(fix(m, s));
+        }
+        return t;
+      }, 70);
+    });
+
+    test('moving time never goes backwards over sparse slow fixes', () {
+      nonDecreasing((sec) {
+        var t = RunTrack(startedAt: t0, profile: rideProfile);
+        // 2 m/s with 15 m accuracy: a fix is kept only every ~15 s.
+        for (var s = 0; s <= sec; s++) {
+          t = t.add(fix(s * 2.0, s, accuracy: 15));
+        }
+        return t;
+      }, 120);
+    });
+
+    test('moving time never goes backwards across a pause 15 s after a fix',
+        () {
+      nonDecreasing((sec) {
+        var t = cruise(RunTrack(startedAt: t0, profile: rideProfile), 8, 0, 10);
+        if (sec >= 25) t = t.pause(t0.add(const Duration(seconds: 25)));
+        return t;
+      }, 40);
     });
 
     test('a 5 s stop is included', () {
@@ -105,6 +145,7 @@ void main() {
       expect(s[1].km, 10);
       expect(s[0].time.inSeconds, closeTo(500, 2));
       expect(s[2].meters, closeTo(1000, 20));
+      expect(s[2].km, 11);
     });
   });
 
@@ -120,10 +161,8 @@ void main() {
       var t = cruise(RunTrack(startedAt: t0, profile: rideProfile), 8, 0, 10);
       // One second at 25 m/s.
       t = t.add(fix(80 + 25, 11));
-      t = cruise(t, 8, 12, 22, fromMeters: 105 + 8)
-          .add(fix(105 + 8 + 8 * 11, 23));
-      expect(t.maxSpeed!, lessThan(14));
-      expect(t.maxSpeed!, greaterThan(8));
+      t = cruise(t, 8, 12, 22, fromMeters: 105 + 8);
+      expect(t.maxSpeed!, closeTo(8, 0.8));
     });
 
     test('a steady speed reads as that speed', () {

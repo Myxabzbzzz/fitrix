@@ -9,10 +9,6 @@ export 'activity_kind.dart';
 /// Fixes less accurate than this (metres) are dropped.
 const double maxFixAccuracy = 25;
 
-/// A fix implying a faster move than this (m/s) from the last kept fix is
-/// dropped.
-const double maxRunSpeed = 12;
-
 /// Elevation changes smaller than this (metres) are noise.
 const double elevationHysteresis = 3;
 
@@ -41,8 +37,9 @@ class RunPoint {
 class RunSplit {
   const RunSplit({required this.km, required this.meters, required this.time});
 
-  /// The split's end in whole km (1, 2, 3 for km splits; 5, 10 for 5 km
-  /// ones); the last split may be partial (`meters < splitMeters`).
+  /// Whole km the split ends at (1, 2, 3 for km splits; 5, 10 for 5 km
+  /// ones). The last split may be partial (`meters < splitMeters`); a partial
+  /// 5 km split is labelled by its real distance (11 km ride: 11).
   final int km;
   final double meters;
   final Duration time;
@@ -183,20 +180,21 @@ class RunTrack {
 
   /// Auto-stop rule for the time between two kept fixes (or a fix and the
   /// clock) [gapMs] apart that covered [meters]: it counts in full when the
-  /// average speed is at least 1 m/s, or when the gap is shorter than 10 s
-  /// (a short stop doesn't stop the clock); otherwise it is a stop and counts
-  /// for nothing.
+  /// average speed is at least 1 m/s; otherwise it is a stop and counts for at
+  /// most a 10 s grace, so the clock runs ~10 s into a stop and then freezes.
+  /// The same function serves the live tail, the banked gap and pause(), so
+  /// moving time never goes backwards.
   static int _autoGapMs(int gapMs, double meters) {
     if (gapMs <= 0) return 0;
     if (meters / (gapMs / 1000) >= 1) return gapMs;
-    return gapMs < 10000 ? gapMs : 0;
+    return math.min(gapMs, 10000);
   }
 
   int _movingMsAt(DateTime at, DateTime start) {
     if (profile.autoStop) {
       final a = _autoAt;
       if (a == null || !at.isAfter(a)) return _autoMs;
-      // Time after the last kept fix: counted only while it is a short stop.
+      // Time after the last kept fix: at most the 10 s grace.
       return _autoMs + _autoGapMs(at.difference(a).inMilliseconds, 0);
     }
     return math.max(0, at.difference(start).inMilliseconds - _pausedMs);
@@ -329,8 +327,15 @@ class RunTrack {
     return track._copy(pending: null, finishedAt: at);
   }
 
-  // The split's end in whole km: 1, 2, 3 for km splits; 5, 10 for 5 km ones.
-  int _label(int index) => index * profile.splitMeters ~/ 1000;
+  // Whole km a split ends at: 1, 2, 3 for km splits; 5, 10 for 5 km ones. A
+  // partial split of a longer split length is labelled by its real distance
+  // (11 km ride -> 11), never past the distance covered.
+  int _label(int index, {bool partial = false}) {
+    final split = profile.splitMeters;
+    if (split == 1000) return index;
+    if (!partial) return index * split ~/ 1000;
+    return math.max((index - 1) * split ~/ 1000 + 1, (meters / 1000).round());
+  }
 
   /// Full splits, then the partial rest (if any distance is left).
   List<RunSplit> get splits {
@@ -343,7 +348,7 @@ class RunTrack {
     return [
       ..._done,
       RunSplit(
-        km: _label(_done.length + 1),
+        km: _label(_done.length + 1, partial: true),
         meters: rest,
         time: Duration(
             milliseconds: math.max(0, _movingMsAt(end, start) - _boundaryMs)),
@@ -379,35 +384,38 @@ class RunTrack {
     return (gain, loss);
   }
 
-  /// Top speed in m/s: the fastest stretch of at least 3 s of kept fixes, so
+  /// Top speed in m/s: over each stretch of at least 3 s of kept fixes, the
+  /// median of its fix-to-fix speeds (the lower middle for an even count), so
   /// one jumpy fix doesn't count. Null when the track is shorter than that.
   double? get maxSpeed {
     if (kept.length < 2) return null;
     double? best;
     var j = 0;
-    var cum = 0.0;
-    final cums = <double>[0];
     var segStart = 0;
     var breakAt = 0;
+    final seg = <double?>[null]; // speed of the segment ending at kept[i]
     for (var i = 1; i < kept.length; i++) {
       if (breakAt < _breaks.length && _breaks[breakAt] == i) {
         segStart = i;
         breakAt++;
-        cums.add(cum);
+        seg.add(null);
         continue;
       }
-      cum += _between(kept[i - 1], kept[i]);
-      cums.add(cum);
+      final dt = kept[i].at.difference(kept[i - 1].at).inMilliseconds / 1000;
+      seg.add(dt > 0 ? _between(kept[i - 1], kept[i]) / dt : null);
       if (j < segStart) j = segStart;
-      // Latest window start that is still at least 3 s back.
       while (j + 1 < i &&
           kept[i].at.difference(kept[j + 1].at).inMilliseconds >= 3000) {
         j++;
       }
-      final dt = kept[i].at.difference(kept[j].at).inMilliseconds / 1000;
-      if (dt < 3) continue;
-      final v = (cums[i] - cums[j]) / dt;
-      if (best == null || v > best) best = v;
+      if (kept[i].at.difference(kept[j].at).inMilliseconds < 3000) continue;
+      final v = <double>[
+        for (var m = j + 1; m <= i; m++)
+          if (seg[m] != null) seg[m]!,
+      ]..sort();
+      if (v.isEmpty) continue;
+      final med = v[(v.length - 1) ~/ 2];
+      if (best == null || med > best) best = med;
     }
     return best;
   }
