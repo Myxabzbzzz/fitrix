@@ -322,7 +322,7 @@ void main() {
       ('en', 'Indoor ride'),
       ('ru', 'Тренировка на велотренажёре'),
       ('uz', 'Velotrenajyordagi mashq'),
-      ('es', 'Salida en interior'),
+      ('es', 'Ciclismo en interior'),
     ]) {
       testWidgets('an indoor ride without a plan is named in $language',
           (t) async {

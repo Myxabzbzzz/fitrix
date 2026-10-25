@@ -3964,7 +3964,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get skiDayName => 'Día de esquí';
 
   @override
-  String get indoorRideName => 'Salida en interior';
+  String get indoorRideName => 'Ciclismo en interior';
 
   @override
   String get rideNotificationTitle => 'Grabando tu salida en bici';
@@ -4561,7 +4561,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cyclingStart => 'Empezar a pedalear';
 
   @override
-  String get cyclingLog => 'Registrar salida en interior';
+  String get cyclingLog => 'Registrar ciclismo en interior';
 
   @override
   String get cyclingUnitRides => 'Salidas';
@@ -4589,7 +4589,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cyclingIndoorTag => 'Interior';
 
   @override
-  String get rideLogTitle => 'Registrar salida en interior';
+  String get rideLogTitle => 'Registrar ciclismo en interior';
 
   @override
   String get rideEditTitle => 'Editar registro';
