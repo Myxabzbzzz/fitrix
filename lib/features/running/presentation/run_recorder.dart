@@ -23,6 +23,10 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 /// Prefs key of the run being recorded, so it survives the app being killed.
 const runInProgressKey = 'run_in_progress_v1';
 
+/// Where a [runInProgressKey] entry that could not be restored is kept,
+/// beside its fixes in the recording file's `.broken` copy.
+const brokenRunKey = '$runInProgressKey.broken';
+
 /// Template id of a run started without a plan.
 const freeRunTemplateId = 'free_run';
 
@@ -195,11 +199,20 @@ class RunRecorder extends StateNotifier<RunSession?> {
         _l10n = l10n,
         _now = now,
         super(null) {
+    final header = _prefs.getString(runInProgressKey);
     final restored = _restore();
-    if (restored == null) {
+    if (restored == null && header == null) {
       // No recording to come back to: a fix file left over (signed out, a
-      // different account) is a location trail nobody owns.
+      // different account) is a location trail nobody owns, and so is one
+      // kept aside once its header is gone.
       _file?.delete();
+      if (!_prefs.containsKey(brokenRunKey)) _file?.deleteAside();
+    } else if (restored == null) {
+      // A recording that could not be read back: the app starts without it,
+      // and its header and fixes are kept aside, not thrown away.
+      _prefs.setString(brokenRunKey, header!);
+      _prefs.remove(runInProgressKey);
+      _file?.setAside();
     } else {
       _pendingFromLaunch = true;
       state = restored;

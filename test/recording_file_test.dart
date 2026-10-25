@@ -246,6 +246,55 @@ void _moreTests() {
     expect(file.existsSync(), isFalse);
   });
 
+  for (final header in ['{"startedAt": "not a date"', '{"startedAt": 7}']) {
+    test('a header that cannot be restored keeps the fixes aside: $header',
+        () async {
+      final file = tempFile();
+      final r = await fileRig(file: file);
+      await r.recorder.start(kind: ActivityKind.ski);
+      _recordAndPause(r);
+      r.container.dispose();
+      final fixes = file.readAsStringSync();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(runInProgressKey, header);
+      // An older broken recording is replaced.
+      File('${file.path}.broken').writeAsStringSync('older');
+
+      final r2 = await fileRig(file: file, fresh: false);
+      expect(r2.session, isNull);
+      expect(r2.recorder.hasPendingRun, isFalse);
+      expect(file.existsSync(), isFalse);
+      expect(File('${file.path}.broken').readAsStringSync(), fixes);
+      expect(prefs.getString(runInProgressKey), isNull);
+      expect(prefs.getString('$runInProgressKey.broken'), header);
+
+      // The next launch starts clean and a new recording works.
+      r2.container.dispose();
+      final r3 = await fileRig(file: file, fresh: false);
+      expect(r3.session, isNull);
+      expect(File('${file.path}.broken').readAsStringSync(), fixes);
+      await r3.recorder.start();
+      expect(r3.session, isNotNull);
+
+      // Signed out: the kept header is gone, so are the fixes kept aside.
+      r3.container.dispose();
+      final r4 = await fileRig(file: file);
+      expect(r4.session, isNull);
+      expect(File('${file.path}.broken').existsSync(), isFalse);
+    });
+  }
+
+  test('setAside moves the file beside, replacing an older one', () {
+    final file = tempFile()..writeAsStringSync('new');
+    final aside = File('${file.path}.broken')..writeAsStringSync('old');
+    RecordingFile(file).setAside();
+    expect(file.existsSync(), isFalse);
+    expect(aside.readAsStringSync(), 'new');
+    // Nothing to move: nothing happens.
+    RecordingFile(file).setAside();
+    expect(aside.readAsStringSync(), 'new');
+  });
+
   test('closing the app writes the fixes not written yet', () async {
     final file = tempFile();
     final r = await fileRig(file: file);
