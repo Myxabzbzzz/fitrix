@@ -6423,6 +6423,72 @@ abstract class AppLocalizations {
   /// **'Run recording'**
   String get runNotificationChannel;
 
+  /// No description provided for @rideNameMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning ride'**
+  String get rideNameMorning;
+
+  /// No description provided for @rideNameAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon ride'**
+  String get rideNameAfternoon;
+
+  /// No description provided for @rideNameEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening ride'**
+  String get rideNameEvening;
+
+  /// No description provided for @rideNameNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Night ride'**
+  String get rideNameNight;
+
+  /// No description provided for @skiDayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Ski day'**
+  String get skiDayName;
+
+  /// No description provided for @rideNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording your ride'**
+  String get rideNotificationTitle;
+
+  /// No description provided for @rideNotificationText.
+  ///
+  /// In en, this message translates to:
+  /// **'FITRIX records distance and time while the screen is locked.'**
+  String get rideNotificationText;
+
+  /// No description provided for @rideNotificationChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride recording'**
+  String get rideNotificationChannel;
+
+  /// No description provided for @skiNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording your ski day'**
+  String get skiNotificationTitle;
+
+  /// No description provided for @skiNotificationText.
+  ///
+  /// In en, this message translates to:
+  /// **'FITRIX records distance and time while the screen is locked.'**
+  String get skiNotificationText;
+
+  /// No description provided for @skiNotificationChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ski day recording'**
+  String get skiNotificationChannel;
+
   /// No description provided for @runVoiceHours.
   ///
   /// In en, this message translates to:

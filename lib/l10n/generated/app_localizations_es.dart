@@ -3949,6 +3949,41 @@ class AppLocalizationsEs extends AppLocalizations {
   String get runNotificationChannel => 'Grabación de carreras';
 
   @override
+  String get rideNameMorning => 'Salida en bici matutina';
+
+  @override
+  String get rideNameAfternoon => 'Salida en bici de la tarde';
+
+  @override
+  String get rideNameEvening => 'Salida en bici al anochecer';
+
+  @override
+  String get rideNameNight => 'Salida en bici nocturna';
+
+  @override
+  String get skiDayName => 'Día de esquí';
+
+  @override
+  String get rideNotificationTitle => 'Grabando tu salida en bici';
+
+  @override
+  String get rideNotificationText =>
+      'FITRIX registra la distancia y el tiempo aunque la pantalla esté bloqueada.';
+
+  @override
+  String get rideNotificationChannel => 'Grabación de salidas en bici';
+
+  @override
+  String get skiNotificationTitle => 'Grabando tu día de esquí';
+
+  @override
+  String get skiNotificationText =>
+      'FITRIX registra la distancia y el tiempo aunque la pantalla esté bloqueada.';
+
+  @override
+  String get skiNotificationChannel => 'Grabación de días de esquí';
+
+  @override
   String runVoiceHours(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

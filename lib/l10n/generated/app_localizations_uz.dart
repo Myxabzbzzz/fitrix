@@ -3902,6 +3902,41 @@ class AppLocalizationsUz extends AppLocalizations {
   String get runNotificationChannel => 'Yugurishni yozish';
 
   @override
+  String get rideNameMorning => 'Ertalabki velosiped sayri';
+
+  @override
+  String get rideNameAfternoon => 'Kunduzgi velosiped sayri';
+
+  @override
+  String get rideNameEvening => 'Kechki velosiped sayri';
+
+  @override
+  String get rideNameNight => 'Tungi velosiped sayri';
+
+  @override
+  String get skiDayName => 'Chang‘i kuni';
+
+  @override
+  String get rideNotificationTitle => 'Velosiped sayri yozib olinmoqda';
+
+  @override
+  String get rideNotificationText =>
+      'FITRIX ekran qulflangan bo‘lsa ham masofa va vaqtni yozib boradi.';
+
+  @override
+  String get rideNotificationChannel => 'Velosiped sayrini yozish';
+
+  @override
+  String get skiNotificationTitle => 'Chang‘i kuni yozib olinmoqda';
+
+  @override
+  String get skiNotificationText =>
+      'FITRIX ekran qulflangan bo‘lsa ham masofa va vaqtni yozib boradi.';
+
+  @override
+  String get skiNotificationChannel => 'Chang‘i kunini yozish';
+
+  @override
   String runVoiceHours(int count) {
     return '$count soat';
   }

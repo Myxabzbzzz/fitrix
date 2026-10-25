@@ -3933,6 +3933,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get runNotificationChannel => 'Run recording';
 
   @override
+  String get rideNameMorning => 'Morning ride';
+
+  @override
+  String get rideNameAfternoon => 'Afternoon ride';
+
+  @override
+  String get rideNameEvening => 'Evening ride';
+
+  @override
+  String get rideNameNight => 'Night ride';
+
+  @override
+  String get skiDayName => 'Ski day';
+
+  @override
+  String get rideNotificationTitle => 'Recording your ride';
+
+  @override
+  String get rideNotificationText =>
+      'FITRIX records distance and time while the screen is locked.';
+
+  @override
+  String get rideNotificationChannel => 'Ride recording';
+
+  @override
+  String get skiNotificationTitle => 'Recording your ski day';
+
+  @override
+  String get skiNotificationText =>
+      'FITRIX records distance and time while the screen is locked.';
+
+  @override
+  String get skiNotificationChannel => 'Ski day recording';
+
+  @override
   String runVoiceHours(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

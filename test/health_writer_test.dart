@@ -137,6 +137,30 @@ void main() {
     expect(fake.written.single.meters, 10234.6);
   });
 
+  test('a ride and a ski day carry their meters too', () async {
+    await connect();
+    for (final (id, sport, kind) in [
+      ('b', Sport.cycling, ActivityKind.ride),
+      ('s', Sport.winterSports, ActivityKind.ski),
+    ]) {
+      c.read(workoutHistoryProvider.notifier).add(_w(id, sport: sport));
+      c.read(runsProvider.notifier).put(
+          id,
+          RunDetails(
+            startedAt: DateTime(2026, 10, 23, 9),
+            moving: const Duration(hours: 1),
+            elapsed: const Duration(hours: 1),
+            pauses: 0,
+            meters: 20000,
+            splits: const [],
+            route: const [],
+            kind: kind,
+          ));
+    }
+    await settle();
+    expect(fake.written.map((w) => w.meters), [20000, 20000]);
+  });
+
   test('a write is recorded with its time; old ids have none', () async {
     await connect();
     await prefs.setString(HealthWriter.key, '["legacy"]');

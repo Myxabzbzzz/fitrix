@@ -27,10 +27,25 @@ abstract class LocationSource {
   Future<bool> reducedAccuracy();
 }
 
-class GeolocatorLocationSource implements LocationSource {
+/// A source whose settings depend on what is recorded. The recorder tells it
+/// before [LocationSource.start]; other sources are left as they are.
+abstract class KindAwareLocationSource implements LocationSource {
+  void useKind(ActivityKind kind);
+}
+
+/// A ski day is 5-8 h: fixes closer than this (metres) are skipped to spare
+/// the battery. Moving on skis gives a fix every second anyway; this only
+/// thins out the jitter while standing.
+const skiDistanceFilter = 2;
+
+class GeolocatorLocationSource implements KindAwareLocationSource {
   GeolocatorLocationSource({AppLocalizations Function()? l10n}) : _l10n = l10n;
 
   final AppLocalizations Function()? _l10n;
+  ActivityKind _kind = ActivityKind.run;
+
+  @override
+  void useKind(ActivityKind kind) => _kind = kind;
   StreamController<RunPoint>? _out;
   StreamSubscription<Position>? _sub;
 
@@ -42,13 +57,15 @@ class GeolocatorLocationSource implements LocationSource {
   static LocationSettings settingsForPlatform(
     TargetPlatform platform, {
     AppLocalizations? l10n,
+    ActivityKind kind = ActivityKind.run,
   }) {
+    final filter = kind == ActivityKind.ski ? skiDistanceFilter : 0;
     switch (platform) {
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
         return AppleSettings(
           accuracy: LocationAccuracy.best,
-          distanceFilter: 0,
+          distanceFilter: filter,
           activityType: ActivityType.fitness,
           pauseLocationUpdatesAutomatically: false,
           allowBackgroundLocationUpdates: true,
@@ -58,12 +75,24 @@ class GeolocatorLocationSource implements LocationSource {
         final t = l10n ?? lookupAppLocalizations(const Locale('en'));
         return AndroidSettings(
           accuracy: LocationAccuracy.best,
-          distanceFilter: 0,
+          distanceFilter: filter,
           intervalDuration: const Duration(seconds: 1),
           foregroundNotificationConfig: ForegroundNotificationConfig(
-            notificationTitle: t.runNotificationTitle,
-            notificationText: t.runNotificationText,
-            notificationChannelName: t.runNotificationChannel,
+            notificationTitle: switch (kind) {
+              ActivityKind.run => t.runNotificationTitle,
+              ActivityKind.ride => t.rideNotificationTitle,
+              ActivityKind.ski => t.skiNotificationTitle,
+            },
+            notificationText: switch (kind) {
+              ActivityKind.run => t.runNotificationText,
+              ActivityKind.ride => t.rideNotificationText,
+              ActivityKind.ski => t.skiNotificationText,
+            },
+            notificationChannelName: switch (kind) {
+              ActivityKind.run => t.runNotificationChannel,
+              ActivityKind.ride => t.rideNotificationChannel,
+              ActivityKind.ski => t.skiNotificationChannel,
+            },
             setOngoing: true,
           ),
         );
@@ -103,8 +132,8 @@ class GeolocatorLocationSource implements LocationSource {
     _out?.close();
     final out = _out = StreamController<RunPoint>();
     _sub = Geolocator.getPositionStream(
-      locationSettings:
-          settingsForPlatform(defaultTargetPlatform, l10n: _l10n?.call()),
+      locationSettings: settingsForPlatform(defaultTargetPlatform,
+          l10n: _l10n?.call(), kind: _kind),
     ).listen(
       (p) => out.add(RunPoint(
         lat: p.latitude,

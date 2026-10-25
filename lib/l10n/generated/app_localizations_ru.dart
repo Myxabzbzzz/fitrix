@@ -4005,6 +4005,41 @@ class AppLocalizationsRu extends AppLocalizations {
   String get runNotificationChannel => 'Запись пробежки';
 
   @override
+  String get rideNameMorning => 'Утренняя поездка';
+
+  @override
+  String get rideNameAfternoon => 'Дневная поездка';
+
+  @override
+  String get rideNameEvening => 'Вечерняя поездка';
+
+  @override
+  String get rideNameNight => 'Ночная поездка';
+
+  @override
+  String get skiDayName => 'Лыжный день';
+
+  @override
+  String get rideNotificationTitle => 'Идёт запись поездки';
+
+  @override
+  String get rideNotificationText =>
+      'FITRIX записывает дистанцию и время, даже когда экран заблокирован.';
+
+  @override
+  String get rideNotificationChannel => 'Запись поездки';
+
+  @override
+  String get skiNotificationTitle => 'Идёт запись лыжного дня';
+
+  @override
+  String get skiNotificationText =>
+      'FITRIX записывает дистанцию и время, даже когда экран заблокирован.';
+
+  @override
+  String get skiNotificationChannel => 'Запись лыжного дня';
+
+  @override
   String runVoiceHours(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

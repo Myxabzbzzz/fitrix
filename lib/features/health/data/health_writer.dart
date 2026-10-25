@@ -107,12 +107,14 @@ class HealthWriter {
       if (_inFlight.contains(w.id) || _load().contains(w.id)) return;
       _inFlight.add(w.id);
       try {
-        // A run's details (distance) are saved right after the workout.
+        // A run's, ride's or ski day's details (distance) are saved right after the workout.
         await Future<void>.delayed(Duration.zero);
         final c = _ref.read(healthConnectionProvider);
         if (!c.connected || !c.writeWorkouts) return;
         double? meters;
-        if (w.sport == Sport.running) {
+        if (w.sport == Sport.running ||
+            w.sport == Sport.cycling ||
+            w.sport == Sport.winterSports) {
           final m = _ref.read(runsProvider)[w.id]?.meters;
           if (m != null && m > 0) meters = m;
         }

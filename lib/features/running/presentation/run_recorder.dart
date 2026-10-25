@@ -12,6 +12,7 @@ import 'package:fitrix/features/language/presentation/providers/language_provide
 import 'package:fitrix/features/running/data/location_source.dart';
 import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
+import 'package:fitrix/features/running/data/ski_math.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -22,8 +23,18 @@ const runInProgressKey = 'run_in_progress_v1';
 /// Template id of a run started without a plan.
 const freeRunTemplateId = 'free_run';
 
-/// How often (at most) the recording is written while fixes come in.
+/// How often (at most) the recording is written while fixes come in. A ski
+/// day holds up to ~30k fixes, so it is written less often.
 const _saveEvery = Duration(seconds: 10);
+const _saveEverySki = Duration(seconds: 30);
+
+/// How often (at most, in fix time) a ski day is re-segmented to find the
+/// descents that just ended.
+const skiScanEvery = Duration(seconds: 30);
+
+/// A descent counts as done when it ended this long before the latest fix
+/// (a lift or a stop followed it), so a short breather mid-run is not one.
+const skiDoneAfter = Duration(seconds: 30);
 
 /// No fix for longer than this means a weak signal.
 const gpsStaleAfter = Duration(seconds: 15);
@@ -44,6 +55,7 @@ class RunSession {
     this.template,
     String? templateId,
     this.pauses = const [],
+    this.kind = ActivityKind.run,
   }) : templateId = templateId ?? template?.id;
 
   final RunPhase phase;
@@ -61,6 +73,9 @@ class RunSession {
   /// Every pause, in order; the last one is open while paused.
   final List<RunPauseMark> pauses;
 
+  /// What is being recorded.
+  final ActivityKind kind;
+
   RunSession copyWith({
     RunPhase? phase,
     RunTrack? track,
@@ -73,6 +88,7 @@ class RunSession {
         template: template,
         templateId: templateId,
         pauses: pauses ?? this.pauses,
+        kind: kind,
       );
 }
 
@@ -102,6 +118,31 @@ class KmReached extends RunEvent {
   final Duration total;
   final int lastKmSecPerKm;
   final int avgSecPerKm;
+}
+
+/// A ride passed another 5 km. Speeds in m/s.
+class DistanceReached extends RunEvent {
+  const DistanceReached(
+      this.meters, this.total, this.lastSplitSpeed, this.avgSpeed);
+
+  /// The split boundary passed (5000, 10000, ...).
+  final int meters;
+
+  /// Moving time at this boundary.
+  final Duration total;
+  final double lastSplitSpeed;
+  final double avgSpeed;
+}
+
+/// A ski descent ended (a lift or a stop followed it). [index] counts from 1.
+class SkiDescentDone extends RunEvent {
+  const SkiDescentDone(this.index, this.meters, this.vertical, this.maxSpeed);
+
+  final int index;
+  final double meters, vertical;
+
+  /// m/s.
+  final double maxSpeed;
 }
 
 class RunFinished extends RunEvent {
@@ -137,6 +178,10 @@ class RunRecorder extends StateNotifier<RunSession?> {
     if (restored != null) {
       _pendingFromLaunch = true;
       state = restored;
+      // The descents already done are not announced again.
+      if (restored.kind == ActivityKind.ski) {
+        _scanSki(restored.track, _now(), emit: false);
+      }
     }
   }
 
@@ -160,31 +205,42 @@ class RunRecorder extends StateNotifier<RunSession?> {
   bool _preciseLocationOff = false;
   bool _pendingFromLaunch = false;
 
+  // Ski only: when the day was last scanned for finished descents (fix
+  // time), where the next scan starts in the kept fixes (the end of the last
+  // descent reported), and how many descents were reported.
+  DateTime? _skiScanAt;
+  int _skiFrom = 0, _skiDone = 0;
+
   Stream<RunEvent> get events => _events.stream;
 
   /// Whether [state] is a run restored at launch that the user has not
   /// resumed, finished or discarded yet.
   bool get hasPendingRun => _pendingFromLaunch && state != null;
 
-  /// Starts a run (asking for location if needed). Does nothing and returns
-  /// [LocationAccess.granted] while a run is already being recorded. While a
-  /// start is still asking for access, another call gets that same start's
-  /// answer (and its run), never a second run.
-  Future<LocationAccess> start({WorkoutTemplate? template}) {
+  /// Starts a run, ride or ski day (asking for location if needed). Does
+  /// nothing and returns [LocationAccess.granted] while something is already
+  /// being recorded. While a start is still asking for access, another call
+  /// gets that same start's answer (and its recording), never a second one.
+  Future<LocationAccess> start({
+    ActivityKind kind = ActivityKind.run,
+    WorkoutTemplate? template,
+  }) {
     if (state != null) return Future.value(LocationAccess.granted);
     return _startInFlight ??=
-        _start(template).whenComplete(() => _startInFlight = null);
+        _start(kind, template).whenComplete(() => _startInFlight = null);
   }
 
-  Future<LocationAccess> _start(WorkoutTemplate? template) async {
+  Future<LocationAccess> _start(
+      ActivityKind kind, WorkoutTemplate? template) async {
     final access = await _source.ensureAccess();
     if (access != LocationAccess.granted || !mounted) return access;
     final at = _now();
     state = RunSession(
       phase: RunPhase.running,
-      track: RunTrack(startedAt: at),
+      track: RunTrack(startedAt: at, profile: profileFor(kind)),
       startedAt: at,
       template: template,
+      kind: kind,
     );
     _listen();
     _persist();
@@ -225,27 +281,50 @@ class RunRecorder extends StateNotifier<RunSession?> {
     _emit(const RunResumed());
   }
 
-  /// Saves the run: a running workout (duration = moving time) and its
-  /// [RunDetails] under the same id. Clears the recording.
+  /// Saves the recording: a workout of the kind's sport and its
+  /// [RunDetails] under the same id. Clears the recording. The duration is
+  /// the moving time (a run, a ride with auto-stop) or, for a ski day, the
+  /// day minus the time on lifts minus manual pauses.
   Future<CompletedWorkout> finish({int? rpe}) async {
     final s = state;
     if (s == null) throw StateError('No run to finish');
     final at = _now();
-    final moving = s.track.movingTime(at);
+    final profile = profileFor(s.kind);
     final track = s.track.finish(at);
-    final templateId = s.templateId ?? freeRunTemplateId;
+    final kept = track.kept;
+
+    SkiDay? ski;
+    List<RunPoint> route;
+    Duration moving;
+    if (s.kind == ActivityKind.ski) {
+      final idx = simplifyRouteIndices(kept);
+      route = [for (final i in idx) kept[i]];
+      ski = skiDayFrom(kept, routeIndexMap(kept.length, idx));
+      var paused = Duration.zero;
+      for (final m in s.pauses) {
+        paused += (m.resumedAt ?? at).difference(m.pausedAt);
+      }
+      moving = at.difference(s.startedAt) - ski.liftTime - paused;
+      if (moving.isNegative) moving = Duration.zero;
+    } else {
+      route = simplifyRoute(kept);
+      moving = s.track.movingTime(at);
+    }
+
+    final templateId = s.templateId ?? profile.freeTemplateId;
     final workout = CompletedWorkout(
       id: const Uuid().v4(),
       templateId: templateId,
-      name: s.template?.name ?? defaultRunName(_l10n(), s.startedAt),
-      sport: Sport.running,
+      name:
+          s.template?.name ?? defaultActivityName(_l10n(), s.kind, s.startedAt),
+      sport: profile.sport,
       startedAt: s.startedAt,
       finishedAt: s.startedAt.add(moving),
       exercises: const [],
       sessionRpe: rpe,
     );
-    // Load-bearing: the Health writer reads the run's distance right after
-    // this synchronous pair, so details must be saved with no await between.
+    // Load-bearing: the Health writer reads the distance right after this
+    // synchronous pair, so details must be saved with no await between.
     _saveWorkout(workout);
     _saveDetails(
       workout.id,
@@ -258,15 +337,24 @@ class RunRecorder extends StateNotifier<RunSession?> {
         elevationGain: track.elevationGain,
         splits: track.splits,
         route: [
-          for (final p in simplifyRoute(track.kept)) [p.lat, p.lng],
+          for (final p in route) [p.lat, p.lng],
         ],
         rpe: rpe,
         templateId: templateId,
+        kind: s.kind,
+        // A run's document stays as it always was.
+        maxSpeed: s.kind == ActivityKind.run ? null : track.maxSpeed,
+        elevationLoss: s.kind == ActivityKind.run ? null : track.elevationLoss,
+        ski: ski,
       ),
     );
     await _end();
-    _emit(
-        RunFinished(track.meters, moving, paceSecPerKm(track.meters, moving)));
+    _emit(RunFinished(
+        track.meters,
+        moving,
+        s.kind == ActivityKind.run
+            ? paceSecPerKm(track.meters, moving)
+            : null));
     return workout;
   }
 
@@ -303,6 +391,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
     _pendingFromLaunch = false;
     state = null;
     _lastSaved = null;
+    _skiScanAt = null;
+    _skiFrom = _skiDone = 0;
     _listeningSince = _lastRawFixAt = _lastRawAccuracy = null;
     _preciseLocationOff = false;
     await _prefs.remove(runInProgressKey);
@@ -312,6 +402,10 @@ class RunRecorder extends StateNotifier<RunSession?> {
   void _listen() {
     _listeningSince = _now();
     _lastRawFixAt = _lastRawAccuracy = null;
+    final source = _source;
+    if (source is KindAwareLocationSource) {
+      source.useKind(state?.kind ?? ActivityKind.run);
+    }
     _sub = _source.start().listen(_onPoint, onError: (Object _) {});
     _source.reducedAccuracy().then(
       (reduced) {
@@ -335,30 +429,73 @@ class RunRecorder extends StateNotifier<RunSession?> {
     if (s == null || s.phase != RunPhase.running) return;
     final track = s.track.add(p);
     if (identical(track, s.track)) return;
-    final kmBefore = _fullKm(s.track);
+    final before = _fullSplits(s.track);
     state = s.copyWith(track: track);
-    _emitKms(kmBefore, track);
+    _emitSplits(s.kind, before, track);
+    if (s.kind == ActivityKind.ski) _scanSki(track, p.at);
     _persist(throttled: true);
   }
 
-  static int _fullKm(RunTrack t) => t.meters ~/ 1000;
+  static int _fullSplits(RunTrack t) => t.meters ~/ t.profile.splitMeters;
 
-  void _emitKms(int before, RunTrack track) {
-    final after = _fullKm(track);
+  void _emitSplits(ActivityKind kind, int before, RunTrack track) {
+    final after = _fullSplits(track);
     if (after <= before) return;
     final splits = track.splits;
-    for (var km = before + 1; km <= after && km <= splits.length; km++) {
-      var totalMs = 0;
-      for (final split in splits.take(km)) {
-        totalMs += split.time.inMilliseconds;
+    var totalMs = 0;
+    for (var n = 1; n <= after && n <= splits.length; n++) {
+      final split = splits[n - 1];
+      totalMs += split.time.inMilliseconds;
+      if (n <= before) continue;
+      switch (kind) {
+        case ActivityKind.run:
+          _emit(KmReached(
+            n,
+            Duration(milliseconds: totalMs),
+            (split.time.inMilliseconds / 1000).round(),
+            (totalMs / 1000 / n).round(),
+          ));
+        case ActivityKind.ride:
+          final secs = split.time.inMilliseconds / 1000;
+          final metersDone = n * track.profile.splitMeters;
+          _emit(DistanceReached(
+            metersDone,
+            Duration(milliseconds: totalMs),
+            secs > 0 ? split.meters / secs : 0,
+            totalMs > 0 ? metersDone / (totalMs / 1000) : 0,
+          ));
+        case ActivityKind.ski:
+          break;
       }
-      _emit(KmReached(
-        km,
-        Duration(milliseconds: totalMs),
-        (splits[km - 1].time.inMilliseconds / 1000).round(),
-        (totalMs / 1000 / km).round(),
-      ));
     }
+  }
+
+  /// At most every [skiScanEvery] of fix time: segments the day from the end
+  /// of the last reported descent and reports the descents that have ended
+  /// (a lift or a stop followed them). Cheap enough for a 6-8 h day: it only
+  /// looks at the fixes since the last reported descent.
+  void _scanSki(RunTrack track, DateTime at, {bool emit = true}) {
+    final last = _skiScanAt;
+    if (emit && (last == null || at.difference(last) < skiScanEvery)) {
+      _skiScanAt ??= at;
+      return;
+    }
+    _skiScanAt = at;
+    final kept = track.kept;
+    if (_skiFrom >= kept.length - 1) return;
+    final tail = _skiFrom == 0 ? kept : kept.sublist(_skiFrom);
+    final tailEnd = tail.last.at;
+    var advance = -1;
+    for (final d in skiDayFrom(tail, const []).descents) {
+      // Too close to the latest fix: it may still be going.
+      if (tailEnd.difference(d.end) < skiDoneAfter) continue;
+      _skiDone++;
+      if (emit) {
+        _emit(SkiDescentDone(_skiDone, d.meters, d.vertical, d.maxSpeed));
+      }
+      advance = tail.indexWhere((p) => !p.at.isBefore(d.end));
+    }
+    if (advance >= 0) _skiFrom += advance;
   }
 
   void _emit(RunEvent e) {
@@ -370,7 +507,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
     if (s == null) return;
     final now = _now();
     final last = _lastSaved;
-    if (throttled && last != null && now.difference(last) < _saveEvery) {
+    final every = s.kind == ActivityKind.ski ? _saveEverySki : _saveEvery;
+    if (throttled && last != null && now.difference(last) < every) {
       return;
     }
     _lastSaved = now;
@@ -380,6 +518,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
   static Map<String, Object?> _toJson(RunSession s) => {
         'startedAt': s.startedAt.toUtc().toIso8601String(),
         'templateId': s.templateId,
+        // A run has no kind, as before this was added.
+        if (s.kind != ActivityKind.run) 'kind': s.kind.name,
         'phase': s.phase.name,
         // [lat, lng, alt, accuracy, ms since epoch]
         'points': [
@@ -425,7 +565,9 @@ class RunRecorder extends StateNotifier<RunSession?> {
 
       // A fix stamped after a pause was added after the resume (fixes are
       // stamped before they are delivered), so this order is the original.
-      var track = RunTrack(startedAt: startedAt);
+      final kind =
+          ActivityKind.values.asNameMap()[j['kind']] ?? ActivityKind.run;
+      var track = RunTrack(startedAt: startedAt, profile: profileFor(kind));
       var i = 0;
       for (final m in pauses) {
         while (i < points.length && !points[i].at.isAfter(m.pausedAt)) {
@@ -460,6 +602,7 @@ class RunRecorder extends StateNotifier<RunSession?> {
         template: templateId == null ? null : _templateById(templateId),
         templateId: templateId,
         pauses: pauses,
+        kind: kind,
       );
     } catch (_) {
       return null;
@@ -484,6 +627,23 @@ String defaultRunName(AppLocalizations l10n, DateTime startedAt) {
   if (h >= 12 && h < 17) return l10n.runNameAfternoon;
   if (h >= 17 && h < 22) return l10n.runNameEvening;
   return l10n.runNameNight;
+}
+
+/// "Morning ride", "Ski day"... by the kind and the local hour it started.
+String defaultActivityName(
+    AppLocalizations l10n, ActivityKind kind, DateTime startedAt) {
+  switch (kind) {
+    case ActivityKind.run:
+      return defaultRunName(l10n, startedAt);
+    case ActivityKind.ski:
+      return l10n.skiDayName;
+    case ActivityKind.ride:
+      final h = startedAt.toLocal().hour;
+      if (h >= 5 && h < 12) return l10n.rideNameMorning;
+      if (h >= 12 && h < 17) return l10n.rideNameAfternoon;
+      if (h >= 17 && h < 22) return l10n.rideNameEvening;
+      return l10n.rideNameNight;
+  }
 }
 
 final runRecorderProvider =
