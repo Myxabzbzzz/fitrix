@@ -107,7 +107,10 @@ class _LiveRunScreenState extends ConsumerState<LiveRunScreen> {
 
   Future<void> _discard() async {
     if (_finishing) return;
-    if (!await confirmDiscardRun(context) || !mounted || _finishing) return;
+    final kind = ref.read(runRecorderProvider)?.kind ?? ActivityKind.run;
+    if (!await confirmDiscardRun(context, kind) || !mounted || _finishing) {
+      return;
+    }
     _finishing = true;
     await ref.read(runRecorderProvider.notifier).discard();
     if (mounted) _close();

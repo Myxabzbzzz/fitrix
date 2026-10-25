@@ -3362,5 +3362,20 @@
   "rideEditTitle": "Edit indoor ride",
   "rideLogDistance": "Distance, km (optional)",
   "rideLogPower": "Average power, W (optional)",
-  "rideNote": "Note"
+  "rideNote": "Note",
+  "skiStart": "Start ski day",
+  "skiUnitDays": "Ski days",
+  "skiHistory": "History",
+  "skiHistoryEmpty": "No ski days yet. Ski days you record will show up here.",
+  "skiWorkouts": "Workouts",
+  "skiUnitM": "m",
+  "rideUnfinishedTitle": "You have an unfinished ride",
+  "skiUnfinishedTitle": "You have an unfinished ski day",
+  "skiUnfinishedBody": "Resume it, or discard it and start {next}.",
+  "@skiUnfinishedBody": {"placeholders": {"next": {"type": "String"}}},
+  "rideDiscardTitle": "Discard this ride?",
+  "skiDiscardTitle": "Discard this ski day?",
+  "rideDeleteTitle": "Delete this ride?",
+  "skiDeleteTitle": "Delete this ski day?",
+  "skiDeleteBody": "It will be removed from your history."
 }

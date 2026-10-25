@@ -98,7 +98,7 @@ class _Rig {
   }
 
   void saveRide(String id, DateTime at, double meters, Duration moving,
-      {bool indoor = false}) {
+      {bool indoor = false, int? power}) {
     container.read(runsProvider.notifier).put(
           id,
           RunDetails(
@@ -111,6 +111,7 @@ class _Rig {
             route: const [],
             kind: ActivityKind.ride,
             indoor: indoor,
+            avgPowerW: power,
           ),
         );
     container.read(workoutHistoryProvider.notifier).add(CompletedWorkout(
@@ -230,6 +231,16 @@ void main() {
               of: find.byKey(const ValueKey('cy-week-rides')),
               matching: find.text('2')),
           findsOneWidget);
+    });
+
+    testWidgets('the indoor row shows the power unit in the app language',
+        (t) async {
+      final r = await _rig(t, language: 'ru');
+      r.saveRide(
+          'c', DateTime(2026, 10, 19, 18), 0, const Duration(minutes: 45),
+          indoor: true, power: 180);
+      await r.open();
+      expect(find.textContaining('180 Вт'), findsOneWidget);
     });
 
     testWidgets('an outdoor row opens the summary', (t) async {

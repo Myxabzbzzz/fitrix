@@ -4645,7 +4645,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cyclingOutdoor => 'На улице (GPS)';
 
   @override
-  String get cyclingIndoor => 'Дома (запись)';
+  String get cyclingIndoor => 'В помещении (запись)';
 
   @override
   String get cyclingIndoorTag => 'Тренажёр';
@@ -4664,4 +4664,49 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get rideNote => 'Заметка';
+
+  @override
+  String get skiStart => 'Начать лыжный день';
+
+  @override
+  String get skiUnitDays => 'Лыжные дни';
+
+  @override
+  String get skiHistory => 'История';
+
+  @override
+  String get skiHistoryEmpty =>
+      'Лыжных дней пока нет. Записанные дни появятся здесь.';
+
+  @override
+  String get skiWorkouts => 'Тренировки';
+
+  @override
+  String get skiUnitM => 'м';
+
+  @override
+  String get rideUnfinishedTitle => 'У вас есть незавершённая поездка';
+
+  @override
+  String get skiUnfinishedTitle => 'У вас есть незавершённый лыжный день';
+
+  @override
+  String skiUnfinishedBody(String next) {
+    return 'Продолжите его или сбросьте и начните «$next».';
+  }
+
+  @override
+  String get rideDiscardTitle => 'Сбросить эту поездку?';
+
+  @override
+  String get skiDiscardTitle => 'Сбросить этот лыжный день?';
+
+  @override
+  String get rideDeleteTitle => 'Удалить эту поездку?';
+
+  @override
+  String get skiDeleteTitle => 'Удалить этот лыжный день?';
+
+  @override
+  String get skiDeleteBody => 'Он будет удалён из истории.';
 }

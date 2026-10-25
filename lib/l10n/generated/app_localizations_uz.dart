@@ -4530,4 +4530,49 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get rideNote => 'Izoh';
+
+  @override
+  String get skiStart => 'Chang‘i kunini boshlash';
+
+  @override
+  String get skiUnitDays => 'Chang‘i kunlari';
+
+  @override
+  String get skiHistory => 'Tarix';
+
+  @override
+  String get skiHistoryEmpty =>
+      'Hozircha chang‘i kunlari yo‘q. Yozib olingan kunlar shu yerda ko‘rinadi.';
+
+  @override
+  String get skiWorkouts => 'Mashg‘ulotlar';
+
+  @override
+  String get skiUnitM => 'm';
+
+  @override
+  String get rideUnfinishedTitle => 'Tugallanmagan safaringiz bor';
+
+  @override
+  String get skiUnfinishedTitle => 'Tugallanmagan chang‘i kuningiz bor';
+
+  @override
+  String skiUnfinishedBody(String next) {
+    return 'Uni davom ettiring yoki bekor qilib, «$next» ni boshlang.';
+  }
+
+  @override
+  String get rideDiscardTitle => 'Bu safar bekor qilinsinmi?';
+
+  @override
+  String get skiDiscardTitle => 'Bu chang‘i kuni bekor qilinsinmi?';
+
+  @override
+  String get rideDeleteTitle => 'Bu safar o‘chirilsinmi?';
+
+  @override
+  String get skiDeleteTitle => 'Bu chang‘i kuni o‘chirilsinmi?';
+
+  @override
+  String get skiDeleteBody => 'U tarixdan o‘chiriladi.';
 }

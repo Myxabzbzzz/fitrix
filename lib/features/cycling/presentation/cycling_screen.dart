@@ -227,7 +227,7 @@ class _RideRow extends ConsumerWidget {
             l10n.cyclingIndoorTag,
             '${d.moving.inMinutes} ${l10n.footballMinShort}',
             if (known) '${formatKm(d.meters, locale)} ${l10n.runUnitKm}',
-            if (d.avgPowerW != null) '${d.avgPowerW} W',
+            if (d.avgPowerW != null) '${d.avgPowerW} ${l10n.unitWatts}',
           ].join(' · ')
         : '${formatKm(d.meters, locale)} ${l10n.runUnitKm}'
             ' · ${formatClock(d.moving)}'

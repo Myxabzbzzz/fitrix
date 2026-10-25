@@ -82,7 +82,7 @@ class _RunResumePromptState extends ConsumerState<RunResumePrompt> {
           return;
         case _Choice.discard:
           // Cancelling the confirmation goes back to the choice.
-          final confirmed = await confirmDiscardRun(context);
+          final confirmed = await confirmDiscardRun(context, session.kind);
           if (confirmed) {
             await recorder.discard();
             return;

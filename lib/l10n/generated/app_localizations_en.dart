@@ -4580,4 +4580,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rideNote => 'Note';
+
+  @override
+  String get skiStart => 'Start ski day';
+
+  @override
+  String get skiUnitDays => 'Ski days';
+
+  @override
+  String get skiHistory => 'History';
+
+  @override
+  String get skiHistoryEmpty =>
+      'No ski days yet. Ski days you record will show up here.';
+
+  @override
+  String get skiWorkouts => 'Workouts';
+
+  @override
+  String get skiUnitM => 'm';
+
+  @override
+  String get rideUnfinishedTitle => 'You have an unfinished ride';
+
+  @override
+  String get skiUnfinishedTitle => 'You have an unfinished ski day';
+
+  @override
+  String skiUnfinishedBody(String next) {
+    return 'Resume it, or discard it and start $next.';
+  }
+
+  @override
+  String get rideDiscardTitle => 'Discard this ride?';
+
+  @override
+  String get skiDiscardTitle => 'Discard this ski day?';
+
+  @override
+  String get rideDeleteTitle => 'Delete this ride?';
+
+  @override
+  String get skiDeleteTitle => 'Delete this ski day?';
+
+  @override
+  String get skiDeleteBody => 'It will be removed from your history.';
 }

@@ -7468,6 +7468,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Note'**
   String get rideNote;
+
+  /// No description provided for @skiStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start ski day'**
+  String get skiStart;
+
+  /// No description provided for @skiUnitDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Ski days'**
+  String get skiUnitDays;
+
+  /// No description provided for @skiHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get skiHistory;
+
+  /// No description provided for @skiHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No ski days yet. Ski days you record will show up here.'**
+  String get skiHistoryEmpty;
+
+  /// No description provided for @skiWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts'**
+  String get skiWorkouts;
+
+  /// No description provided for @skiUnitM.
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get skiUnitM;
+
+  /// No description provided for @rideUnfinishedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You have an unfinished ride'**
+  String get rideUnfinishedTitle;
+
+  /// No description provided for @skiUnfinishedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You have an unfinished ski day'**
+  String get skiUnfinishedTitle;
+
+  /// No description provided for @skiUnfinishedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume it, or discard it and start {next}.'**
+  String skiUnfinishedBody(String next);
+
+  /// No description provided for @rideDiscardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this ride?'**
+  String get rideDiscardTitle;
+
+  /// No description provided for @skiDiscardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this ski day?'**
+  String get skiDiscardTitle;
+
+  /// No description provided for @rideDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this ride?'**
+  String get rideDeleteTitle;
+
+  /// No description provided for @skiDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this ski day?'**
+  String get skiDeleteTitle;
+
+  /// No description provided for @skiDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It will be removed from your history.'**
+  String get skiDeleteBody;
 }
 
 class _AppLocalizationsDelegate

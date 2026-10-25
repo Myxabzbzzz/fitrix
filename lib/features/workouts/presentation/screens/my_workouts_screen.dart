@@ -21,7 +21,12 @@ import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 class MyWorkoutsScreen extends ConsumerWidget {
   const MyWorkoutsScreen({super.key});
 
-  static const _sports = [Sport.gym, Sport.fitness, Sport.cycling];
+  static const _sports = [
+    Sport.gym,
+    Sport.fitness,
+    Sport.cycling,
+    Sport.winterSports,
+  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

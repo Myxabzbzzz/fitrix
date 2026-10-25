@@ -1292,5 +1292,20 @@
   "rideEditTitle": "Editar registro",
   "rideLogDistance": "Distancia, km (opcional)",
   "rideLogPower": "Potencia media, W (opcional)",
-  "rideNote": "Nota"
+  "rideNote": "Nota",
+  "skiStart": "Empezar día de esquí",
+  "skiUnitDays": "Días de esquí",
+  "skiHistory": "Historial",
+  "skiHistoryEmpty": "Aún no hay días de esquí. Los que registres aparecerán aquí.",
+  "skiWorkouts": "Entrenamientos",
+  "skiUnitM": "m",
+  "rideUnfinishedTitle": "Tienes una salida sin terminar",
+  "skiUnfinishedTitle": "Tienes un día de esquí sin terminar",
+  "skiUnfinishedBody": "Reanúdalo o descártalo y empieza «{next}».",
+  "@skiUnfinishedBody": {"placeholders": {"next": {"type": "String"}}},
+  "rideDiscardTitle": "¿Descartar esta salida?",
+  "skiDiscardTitle": "¿Descartar este día de esquí?",
+  "rideDeleteTitle": "¿Eliminar esta salida?",
+  "skiDeleteTitle": "¿Eliminar este día de esquí?",
+  "skiDeleteBody": "Se quitará de tu historial."
 }

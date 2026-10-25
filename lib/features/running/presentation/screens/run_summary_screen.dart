@@ -62,7 +62,10 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
   }
 
   Future<void> _delete() async {
-    if (_done || !await confirmDeleteRun(context) || !mounted || _done) return;
+    final kind = ref.read(runsProvider)[widget.id]?.kind ?? ActivityKind.run;
+    if (_done || !await confirmDeleteRun(context, kind) || !mounted || _done) {
+      return;
+    }
     _done = true;
     ref.read(workoutHistoryProvider.notifier).remove(widget.id);
     ref.read(runsProvider.notifier).remove(widget.id);

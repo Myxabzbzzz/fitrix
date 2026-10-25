@@ -22,6 +22,7 @@ import 'package:fitrix/features/running/presentation/screens/live_run_screen.dar
 /// Starts [template] and opens the live log. Every Start button uses this.
 ///
 /// A running workout opens the GPS run recorder instead (see [_startRun]),
+/// a winter sports one the same recorder as a ski day,
 /// a cycling one asks Outdoor (the GPS recorder) or Indoor (the ride log),
 /// a football one the log sheet: the game is logged after it is played.
 ///
@@ -33,6 +34,9 @@ Future<void> startWorkout(
   if (template.sport == Sport.running) return _startRun(context, ref, template);
   if (template.sport == Sport.cycling) {
     return _startRide(context, ref, template);
+  }
+  if (template.sport == Sport.winterSports) {
+    return _startRun(context, ref, template, ActivityKind.ski);
   }
   if (template.sport == Sport.football) {
     return showMatchLogSheet(context, ref, template: template);
@@ -140,10 +144,14 @@ Future<void> _startRun(
   final existing = ref.read(runRecorderProvider);
   if (existing != null) {
     if (existing.templateId != template.id) {
-      final resume = await askUnfinishedRun(context, template.name);
+      final resume =
+          await askUnfinishedRun(context, template.name, existing.kind);
       if (resume == null || !context.mounted) return;
       if (!resume) {
-        if (!await confirmDiscardRun(context) || !context.mounted) return;
+        if (!await confirmDiscardRun(context, existing.kind) ||
+            !context.mounted) {
+          return;
+        }
         await recorder.discard();
         if (!context.mounted) return;
         return _beginRun(context, router, recorder, template, kind);

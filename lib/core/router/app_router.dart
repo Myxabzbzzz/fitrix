@@ -46,6 +46,7 @@ import 'package:fitrix/features/content/presentation/discover_screen.dart';
 import 'package:fitrix/features/shop/presentation/shop_screen.dart';
 import 'package:fitrix/features/map/presentation/map_screen.dart';
 import 'package:fitrix/features/cycling/presentation/cycling_screen.dart';
+import 'package:fitrix/features/skiing/presentation/skiing_screen.dart';
 import 'package:fitrix/features/football/presentation/football_screen.dart';
 import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
 import 'package:fitrix/features/running/presentation/screens/run_summary_screen.dart';
@@ -363,6 +364,15 @@ class AppRouter {
                               context,
                               state,
                               const CyclingScreen(),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'winterSports',
+                            name: 'winterSportsWorkouts',
+                            pageBuilder: (context, state) => circleRevealPage(
+                              context,
+                              state,
+                              const SkiingScreen(),
                             ),
                           ),
                           GoRoute(
