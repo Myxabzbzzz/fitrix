@@ -30,11 +30,12 @@ void main() {
         containsAll(['location', 'audio']));
   });
 
-  test('the location usage string says it records runs', () {
+  test('the location usage string says it records runs, rides and ski days',
+      () {
     expect(
         _plistString(plist, 'NSLocationWhenInUseUsageDescription'),
-        'FITRIX uses your location to record runs and to show gyms and '
-        'parks near you.');
+        'FITRIX uses your location to record runs, rides and ski days and to '
+        'show gyms and parks near you.');
   });
 
   test('only "when in use" location is asked for on iOS', () {

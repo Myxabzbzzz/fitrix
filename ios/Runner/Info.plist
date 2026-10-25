@@ -47,7 +47,7 @@
 	<key>GIDClientID</key>
 	<string>$(GOOGLE_IOS_CLIENT_ID)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>FITRIX uses your location to record runs and to show gyms and parks near you.</string>
+	<string>FITRIX uses your location to record runs, rides and ski days and to show gyms and parks near you.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>FITRIX reads sleep, heart rate, HRV, steps, weight and workouts to fill your check-in, recovery and training load.</string>
 	<key>NSHealthUpdateUsageDescription</key>
