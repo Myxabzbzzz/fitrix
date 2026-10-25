@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:latlong2/latlong.dart';
 
 import 'run_track.dart';
@@ -447,6 +449,102 @@ double _step(RunPoint a, RunPoint b) =>
 /// order and share their boundary fix.
 List<SkiSegment> segmentSki(List<RunPoint> fixes) =>
     _segment(fixes, _smoothedAltitude(fixes));
+
+/// A stretch of time, [from] to [to].
+typedef SkiSpan = ({DateTime from, DateTime to});
+
+/// The stretches of a day that are not time on the slopes: the lifts and
+/// standing still for longer than 2 min (queues, huts, lunch), in time order
+/// (they may overlap). With [until] after the last fix, the time since it
+/// counts as standing where the last fix stood (the recorder keeps no fixes
+/// while standing), so a long stop at the end is found too. The time inside
+/// [pauses] (manual pauses, in order) is left out of the look at the fixes:
+/// the step over a pause is not standing still.
+List<SkiSpan> skiOffSlopes(List<RunPoint> fixes,
+    {DateTime? until, List<SkiSpan> pauses = const []}) {
+  if (fixes.isEmpty) return const [];
+  final last = fixes.last;
+  final real = <DateTime>[
+    for (final p in fixes) p.at,
+    if (until != null && until.isAfter(last.at)) until,
+  ];
+  // Pause time before each moment taken out, so the fixes read as if the
+  // pauses never happened.
+  var k = 0;
+  var before = Duration.zero;
+  DateTime shift(DateTime t) {
+    while (k < pauses.length && !pauses[k].to.isAfter(t)) {
+      before += pauses[k].to.difference(pauses[k].from);
+      k++;
+    }
+    var open = Duration.zero;
+    if (k < pauses.length && pauses[k].from.isBefore(t)) {
+      open = t.difference(pauses[k].from);
+    }
+    return t.subtract(before + open);
+  }
+
+  final ext = <RunPoint>[
+    for (var i = 0; i < real.length; i++)
+      // The moment [until] stands where the last fix was.
+      _at(fixes[math.min(i, fixes.length - 1)], shift(real[i])),
+  ];
+  final shifted =
+      ext.length == fixes.length ? ext : ext.sublist(0, fixes.length);
+  final still = _stationary(ext);
+  final out = <SkiSpan>[];
+  for (final s in segmentSki(shifted)) {
+    if (s.kind == SkiSegmentKind.lift) {
+      out.add((from: real[s.from], to: real[s.to]));
+    }
+  }
+  var i = 0;
+  while (i < ext.length) {
+    if (!still[i]) {
+      i++;
+      continue;
+    }
+    var j = i;
+    while (j + 1 < ext.length && still[j + 1]) {
+      j++;
+    }
+    if (j > i) out.add((from: real[i], to: real[j]));
+    i = j + 1;
+  }
+  out.sort((a, b) => a.from.compareTo(b.from));
+  return out;
+}
+
+RunPoint _at(RunPoint p, DateTime at) => identical(p.at, at) || p.at == at
+    ? p
+    : RunPoint(
+        lat: p.lat, lng: p.lng, alt: p.alt, accuracy: p.accuracy, at: at);
+
+/// How much of [from]..[to] the [spans] cover (overlaps counted once).
+Duration skiSpanTime(Iterable<SkiSpan> spans, DateTime from, DateTime to) {
+  if (!to.isAfter(from)) return Duration.zero;
+  final clipped = <SkiSpan>[
+    for (final s in spans)
+      if (s.to.isAfter(from) && s.from.isBefore(to))
+        (
+          from: s.from.isBefore(from) ? from : s.from,
+          to: s.to.isAfter(to) ? to : s.to,
+        ),
+  ]..sort((a, b) => a.from.compareTo(b.from));
+  var total = Duration.zero;
+  DateTime? a, b;
+  for (final s in clipped) {
+    if (b == null || s.from.isAfter(b)) {
+      if (a != null) total += b!.difference(a);
+      a = s.from;
+      b = s.to;
+    } else if (s.to.isAfter(b)) {
+      b = s.to;
+    }
+  }
+  if (a != null) total += b!.difference(a);
+  return total;
+}
 
 /// For each of [fixCount] fixes, the position in the simplified route (whose
 /// kept fix indexes are [kept], ascending) of the kept fix nearest to it.

@@ -41,6 +41,11 @@ const skiStopAfter = Duration(minutes: 2);
 /// (a lift or a stop followed it), so a short breather mid-run is not one.
 const skiDoneAfter = Duration(seconds: 30);
 
+/// On a ski day, no kept fix for longer than this holds the live time on
+/// slopes back (standing: the recorder keeps no fixes then) until it is
+/// known whether the stop was short (counted) or a long one (not).
+const skiQuietAfter = Duration(seconds: 5);
+
 /// No fix for longer than this means a weak signal.
 const gpsStaleAfter = Duration(seconds: 15);
 
@@ -241,27 +246,57 @@ class RunRecorder extends StateNotifier<RunSession?> {
   int _skiFrom = 0, _skiDone = 0;
 
   // Ski only, for the live screen: what the done descents add up to, the
-  // lift time already behind the scan start, and what the last scan saw in
-  // the tail (lifts after it, descents still under way).
-  double _skiVertical = 0, _skiMax = 0;
-  Duration _skiLiftBanked = Duration.zero, _skiLiftTail = Duration.zero;
+  // time off the slopes (lifts, long stops) behind the scan start, and what
+  // the last scan saw in the tail (off-slope time after it, descents still
+  // under way).
+  double _skiVertical = 0, _skiMax = 0, _skiMeters = 0;
+  List<SkiSpan> _skiOffBanked = const [], _skiOffTail = const [];
   List<SkiDescent> _skiPending = const [];
+
+  // Ski only: the kept fixes from [_skiRunFrom] on are off the slopes as far
+  // as the live state tells (on a lift, standing); [_skiRunChecked] of them
+  // are looked at. And the time on slopes shown last, which never goes back.
+  int _skiRunFrom = 0, _skiRunChecked = 0;
+  Duration _skiShown = Duration.zero;
 
   Stream<RunEvent> get events => _events.stream;
 
   /// The live numbers of a ski day, or null when no ski day is recorded.
   /// Reads the results of the throttled scan and the last few fixes.
+  ///
+  /// The time on slopes is the day minus what the last scan found off the
+  /// slopes (lifts, stops over 2 min) minus manual pauses, minus the stretch
+  /// since the live state last said skiing (on a lift, standing): that
+  /// stretch is held back until the scan tells what it was, so the clock
+  /// stands still on a lift or in a queue and never runs backwards.
   SkiLive? skiLive() {
     final s = state;
     if (s == null || s.kind != ActivityKind.ski) return null;
     final now = _now();
-    var paused = Duration.zero;
-    for (final m in s.pauses) {
-      paused += (m.resumedAt ?? now).difference(m.pausedAt);
+    final kept = s.track.kept;
+    for (var i = _skiRunChecked; i < kept.length; i++) {
+      if (!skiOffSlopesAt(kept, i)) _skiRunFrom = i + 1;
+    }
+    _skiRunChecked = kept.length;
+    final off = <SkiSpan>[
+      ..._skiOffBanked,
+      ..._skiOffTail,
+      ..._pauseSpans(s.pauses, now),
+    ];
+    if (kept.isEmpty) {
+      off.add((from: s.startedAt, to: now));
+    } else if (_skiRunFrom < kept.length) {
+      off.add((from: kept[_skiRunFrom].at, to: now));
+    } else if (now.difference(kept.last.at) > skiQuietAfter) {
+      off.add((from: kept.last.at, to: now));
     }
     var onSlopes =
-        now.difference(s.startedAt) - paused - _skiLiftBanked - _skiLiftTail;
-    if (onSlopes.isNegative) onSlopes = Duration.zero;
+        now.difference(s.startedAt) - skiSpanTime(off, s.startedAt, now);
+    if (onSlopes < _skiShown) {
+      onSlopes = _skiShown;
+    } else {
+      _skiShown = onSlopes;
+    }
     var vertical = _skiVertical;
     var top = _skiMax;
     for (final d in _skiPending) {
@@ -278,6 +313,16 @@ class RunRecorder extends StateNotifier<RunSession?> {
           : skiMotionOf(s.track.kept, now),
       onSlopes: onSlopes,
     );
+  }
+
+  /// Metres skied down so far (descents done and under way), for the bar
+  /// and the resume prompt; 0 without a ski day.
+  double get skiMeters {
+    var m = _skiMeters;
+    for (final d in _skiPending) {
+      m += d.meters;
+    }
+    return m;
   }
 
   /// Whether [state] is a run restored at launch that the user has not
@@ -357,7 +402,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
   /// Saves the recording: a workout of the kind's sport and its
   /// [RunDetails] under the same id. Clears the recording. The duration is
   /// the moving time (a run, a ride with auto-stop) or, for a ski day, the
-  /// day minus the time on lifts minus manual pauses.
+  /// day minus the time on lifts, standing still over 2 min (queues, huts,
+  /// lunch) and manual pauses.
   Future<CompletedWorkout> finish({int? rpe}) async {
     final s = state;
     if (s == null) throw StateError('No run to finish');
@@ -376,12 +422,9 @@ class RunRecorder extends StateNotifier<RunSession?> {
       route = [for (final i in idx) kept[i]];
       ski = skiDayFrom(kept, routeIndexMap(kept.length, idx));
       meters = ski.skiMeters;
-      var paused = Duration.zero;
-      for (final m in s.pauses) {
-        paused += (m.resumedAt ?? at).difference(m.pausedAt);
-      }
-      moving = at.difference(s.startedAt) - ski.liftTime - paused;
-      if (moving.isNegative) moving = Duration.zero;
+      final pauses = _pauseSpans(s.pauses, at);
+      final off = [...skiOffSlopes(kept, until: at, pauses: pauses), ...pauses];
+      moving = at.difference(s.startedAt) - skiSpanTime(off, s.startedAt, at);
     } else {
       route = simplifyRoute(kept);
       moving = s.track.movingTime(at);
@@ -466,9 +509,11 @@ class RunRecorder extends StateNotifier<RunSession?> {
     _lastSaved = null;
     _skiScanAt = null;
     _skiFrom = _skiDone = 0;
-    _skiVertical = _skiMax = 0;
-    _skiLiftBanked = _skiLiftTail = Duration.zero;
+    _skiVertical = _skiMax = _skiMeters = 0;
+    _skiOffBanked = _skiOffTail = const [];
     _skiPending = const [];
+    _skiRunFrom = _skiRunChecked = 0;
+    _skiShown = Duration.zero;
     _listeningSince = _lastRawFixAt = _lastRawAccuracy = null;
     _preciseLocationOff = false;
     _file?.delete();
@@ -576,29 +621,29 @@ class RunRecorder extends StateNotifier<RunSession?> {
       }
       _skiDone++;
       _skiVertical += d.vertical;
+      _skiMeters += d.meters;
       if (d.maxSpeed > _skiMax) _skiMax = d.maxSpeed;
       if (emit) {
         _emit(SkiDescentDone(_skiDone, d.meters, d.vertical, d.maxSpeed));
       }
       advance = tail.indexWhere((p) => !p.at.isBefore(d.end));
     }
-    // Lifts: the ones before the new scan start are banked, the rest are
-    // looked at again next time.
-    var banked = Duration.zero, open = Duration.zero;
-    for (final seg in segmentSki(tail)) {
-      if (seg.kind != SkiSegmentKind.lift) continue;
-      final len = tail[seg.to].at.difference(tail[seg.from].at);
-      if (advance >= 0 && seg.to <= advance) {
-        banked += len;
-      } else {
-        open += len;
-      }
+    // Off the slopes (lifts, long stops): what ends before the new scan
+    // start is banked, the rest is looked at again next time.
+    final cut = advance >= 0 ? tail[advance].at : null;
+    final banked = <SkiSpan>[], open = <SkiSpan>[];
+    final pauses = _pauseSpans(state?.pauses ?? const [], at);
+    for (final span in skiOffSlopes(tail, until: at, pauses: pauses)) {
+      (cut != null && !span.to.isAfter(cut) ? banked : open).add(span);
     }
-    _skiLiftBanked += banked;
-    _skiLiftTail = open;
+    if (banked.isNotEmpty) _skiOffBanked = [..._skiOffBanked, ...banked];
+    _skiOffTail = open;
     _skiPending = pending;
     if (advance >= 0) _skiFrom += advance;
   }
+
+  static List<SkiSpan> _pauseSpans(List<RunPauseMark> pauses, DateTime now) =>
+      [for (final m in pauses) (from: m.pausedAt, to: m.resumedAt ?? now)];
 
   void _emit(RunEvent e) {
     if (!_events.isClosed) _events.add(e);

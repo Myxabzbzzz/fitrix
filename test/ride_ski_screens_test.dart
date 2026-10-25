@@ -328,9 +328,9 @@ void main() {
       expect(find.text('Vertical down, m'), findsOneWidget);
       // About 6 m/s = 21.6 km/h.
       expect(r.text('ski-max-speed'), matches(RegExp(r'^2[12]\.\d$')));
-      // The day is 290 s, 100 of them on the lift.
-      expect(
-          r.text('ski-slopes-time'), matches(RegExp(r'^(2:[5-9]\d|3:\d\d)$')));
+      // The day is 290 s: 100 of them on the lift, then 130 standing (over
+      // 2 min, like a queue), so about the minute of the descent is left.
+      expect(r.text('ski-slopes-time'), matches(RegExp(r'^1:[0-4]\d$')));
       expect(find.byKey(const ValueKey('run-pace')), findsNothing);
       expectNoOverflow(t);
     });

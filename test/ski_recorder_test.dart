@@ -11,6 +11,7 @@ import 'package:fitrix/features/running/data/location_source.dart';
 import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
+import 'package:fitrix/features/workouts/domain/training_math.dart';
 
 import 'run_recorder_test.dart' show FakeLocationSource, Rig, Clock, t0;
 
@@ -53,11 +54,24 @@ class Day {
   int s = 0;
   double e = 0, n = 0, a = 2000;
 
+  /// Called every second of the day (a fix or not).
+  void Function()? onSecond;
+
   void fix() {
     final at = t0.add(Duration(seconds: s));
     r.clock.now = at;
     r.source.emit(RunPoint(
         lat: n / _mPerDeg, lng: e / _mPerDeg, alt: a, accuracy: 5, at: at));
+    onSecond?.call();
+  }
+
+  /// Standing without a fix (the distance filter keeps the phone quiet).
+  void quiet(int secs) {
+    for (var i = 0; i < secs; i++) {
+      s++;
+      r.clock.now = t0.add(Duration(seconds: s));
+      onSecond?.call();
+    }
   }
 
   void descent() {
@@ -188,5 +202,108 @@ void main() {
     d.lift(200);
     await pumpEventQueue();
     expect(events.whereType<SkiDescentDone>().map((e) => e.index), [1, 2]);
+  });
+
+  test('live time on slopes never goes back over lifts, queues and lunch',
+      () async {
+    final r = await fileRig(file: tempFile());
+    await r.recorder.start(kind: ActivityKind.ski);
+    final d = Day(r)..fix();
+    var shown = 0;
+    d.onSecond = () {
+      final v = r.recorder.skiLive()!.onSlopes.inSeconds;
+      expect(v, greaterThanOrEqualTo(shown), reason: 'at ${d.s} s');
+      shown = v;
+    };
+    // How far the clock moved over [f].
+    int over(void Function() f) {
+      final before = shown;
+      f();
+      return shown - before;
+    }
+
+    expect(over(d.descent), 60);
+    // A lift shows only once it climbed for a bit; then the clock stands.
+    expect(over(() => d.lift(420)), lessThanOrEqualTo(45));
+    expect(over(d.descent), greaterThanOrEqualTo(50));
+    expect(over(() => d.stop(600)), lessThanOrEqualTo(10)); // queue
+    expect(over(() => d.lift(480)), lessThanOrEqualTo(45));
+    expect(over(d.descent), greaterThanOrEqualTo(50));
+    expect(over(() => d.quiet(2700)), lessThanOrEqualTo(10)); // lunch
+    expect(over(d.descent), greaterThanOrEqualTo(40));
+    // A short stop is held back while it lasts, then counted.
+    final breather = over(() => d.quiet(40)) + over(d.descent);
+    expect(breather, greaterThanOrEqualTo(90));
+    expect(over(() => d.lift(360)), lessThanOrEqualTo(45));
+    expect(over(d.descent), greaterThanOrEqualTo(50));
+
+    final saved = await r.recorder.finish();
+    expect((saved.duration.inSeconds - shown).abs(),
+        lessThanOrEqualTo(skiScanEvery.inSeconds));
+  });
+
+  test('a ski day leaves a 10-minute queue and a 45-minute lunch out',
+      () async {
+    Future<(Duration, int)> day({required bool stops}) async {
+      final r = await fileRig(file: tempFile());
+      await r.recorder.start(kind: ActivityKind.ski);
+      final d = Day(r)..fix();
+      d.descent();
+      if (stops) d.stop(600); // a queue, the phone still giving fixes
+      d.lift(300);
+      d.descent();
+      if (stops) d.quiet(2700); // lunch, no fixes
+      d.descent();
+      final saved = await r.recorder.finish(rpe: 5);
+      final details = r.container.read(runStoreProvider).all()[saved.id]!;
+      // The summary, the load and the workout read the same time.
+      expect(details.moving, saved.duration);
+      expect(saved.finishedAt, saved.startedAt.add(saved.duration));
+      expect(saved.load, sessionLoad(5, saved.duration));
+      return (saved.duration, d.s);
+    }
+
+    final (plain, plainDay) = await day(stops: false);
+    final (withStops, stopsDay) = await day(stops: true);
+    expect(stopsDay - plainDay, 3300);
+    expect(plain.inSeconds, inInclusiveRange(150, 260));
+    expect((withStops - plain).inSeconds.abs(), lessThanOrEqualTo(15));
+  });
+
+  test('a stop under 2 minutes still counts on a ski day', () async {
+    final r = await fileRig(file: tempFile());
+    await r.recorder.start(kind: ActivityKind.ski);
+    final d = Day(r)..fix();
+    d.descent();
+    d.lift(300);
+    d.descent();
+    d.quiet(90);
+    d.descent();
+    final saved = await r.recorder.finish();
+    final ski = r.container.read(runStoreProvider).all()[saved.id]!.ski!;
+    expect(saved.duration + ski.liftTime, Duration(seconds: d.s));
+  });
+
+  test('a run keeps the standing time; a ride drops it by auto-stop', () async {
+    for (final kind in [ActivityKind.run, ActivityKind.ride]) {
+      final r = await fileRig(file: tempFile());
+      await r.recorder.start(kind: kind);
+      final d = Day(r)..fix();
+      for (var i = 0; i < 120; i++) {
+        d.s++;
+        d.e += 3;
+        d.fix();
+      }
+      d.quiet(600);
+      for (var i = 0; i < 120; i++) {
+        d.s++;
+        d.e += 3;
+        d.fix();
+      }
+      final saved = await r.recorder.finish();
+      expect(saved.duration.inSeconds,
+          kind == ActivityKind.run ? 840 : closeTo(240, 15),
+          reason: kind.name);
+    }
   });
 }

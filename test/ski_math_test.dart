@@ -395,6 +395,74 @@ void main() {
     });
   });
 
+  group('time off the slopes', () {
+    final t = DateTime.utc(2026, 1, 10, 9);
+    DateTime at(int s) => t.add(Duration(seconds: s));
+    SkiSpan span(int a, int b) => (from: at(a), to: at(b));
+
+    test('overlapping stretches count once, clipped to the range', () {
+      expect(
+          skiSpanTime(
+              [span(0, 100), span(50, 150), span(300, 400)], at(20), at(350)),
+          const Duration(seconds: 180));
+      expect(skiSpanTime(const [], at(0), at(10)), Duration.zero);
+      expect(skiSpanTime([span(0, 10)], at(10), at(5)), Duration.zero);
+    });
+
+    test('lifts and a 10-minute queue are off the slopes, a breather is not',
+        () {
+      final fixes = _day(const [
+        _descent,
+        _Leg(600, 0, 0), // queue
+        _lift,
+        _descent,
+        _Leg(60, 0, 0), // breather
+        _descent,
+      ]);
+      final day = skiDayFrom(fixes, const []);
+      final off = skiOffSlopes(fixes);
+      final total = skiSpanTime(off, fixes.first.at, fixes.last.at);
+      expect(total.inSeconds, closeTo(600 + day.liftTime.inSeconds, 40));
+      expect(total.inSeconds, lessThan(600 + day.liftTime.inSeconds + 60));
+    });
+
+    test('standing after the last fix counts once over 2 minutes', () {
+      final fixes = _day(const [_lift, _descent]);
+      final last = fixes.last.at;
+      final lift = skiDayFrom(fixes, const []).liftTime;
+      Duration offUntil(int secs) => skiSpanTime(
+          skiOffSlopes(fixes, until: last.add(Duration(seconds: secs))),
+          fixes.first.at,
+          last.add(Duration(seconds: secs)));
+      expect(offUntil(90), lift);
+      expect(offUntil(1800).inSeconds, closeTo(lift.inSeconds + 1800, 20));
+    });
+
+    test('the step over a manual pause is not standing still', () {
+      final fixes = _day(const [_descent, _descent]);
+      // A 10-minute pause cut into the middle: the later fixes move on.
+      final mid = fixes.length ~/ 2;
+      const gap = Duration(minutes: 10);
+      final paused = [
+        for (var i = 0; i < fixes.length; i++)
+          i < mid
+              ? fixes[i]
+              : RunPoint(
+                  lat: fixes[i].lat,
+                  lng: fixes[i].lng,
+                  alt: fixes[i].alt,
+                  accuracy: fixes[i].accuracy,
+                  at: fixes[i].at.add(gap)),
+      ];
+      final pause = (
+        from: fixes[mid - 1].at.add(const Duration(seconds: 1)),
+        to: fixes[mid - 1].at.add(const Duration(seconds: 1)).add(gap),
+      );
+      expect(skiOffSlopes(paused, pauses: [pause]), isEmpty);
+      expect(skiOffSlopes(paused), isNotEmpty);
+    });
+  });
+
   group('route indices', () {
     test('simplifyRouteIndices matches simplifyRoute', () {
       final fixes = _day([

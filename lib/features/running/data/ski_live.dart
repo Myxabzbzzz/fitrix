@@ -27,7 +27,8 @@ class SkiLive {
   final double? maxSpeed;
   final SkiMotion motion;
 
-  /// Day time without lifts and manual pauses.
+  /// Day time without lifts, stops over 2 min and manual pauses; never
+  /// goes back.
   final Duration onSlopes;
 }
 
@@ -42,28 +43,41 @@ const Duration skiMotionStale = Duration(seconds: 15);
 const double _descendRate = -0.25, _liftRate = 0.3;
 
 /// Cheap: only the last few fixes are read.
-SkiMotion skiMotionOf(List<RunPoint> kept, DateTime now) {
-  if (kept.length < 2) return SkiMotion.stopped;
-  final last = kept.last;
-  if (now.difference(last.at) > skiMotionStale) return SkiMotion.stopped;
-  var i = kept.length - 1;
+SkiMotion skiMotionOf(List<RunPoint> kept, DateTime now) =>
+    kept.isEmpty ? SkiMotion.stopped : _motion(kept, kept.length - 1, now).$1;
+
+/// Whether the live state at the kept fix [i] (from the fixes up to it) is
+/// off the slopes: on a lift or standing (under 1 m/s, or the first fix
+/// after a gap). Moving on the flat is not.
+bool skiOffSlopesAt(List<RunPoint> kept, int i) {
+  final (motion, standing) = _motion(kept, i, kept[i].at);
+  return motion == SkiMotion.lift || standing;
+}
+
+/// The motion at [now] from the fixes up to [last], and whether it is
+/// standing still.
+(SkiMotion, bool) _motion(List<RunPoint> kept, int last, DateTime now) {
+  if (last < 1) return (SkiMotion.stopped, true);
+  final end = kept[last];
+  if (now.difference(end.at) > skiMotionStale) return (SkiMotion.stopped, true);
+  var i = last;
   var meters = 0.0;
-  while (i > 0 && last.at.difference(kept[i - 1].at) <= skiMotionWindow) {
+  while (i > 0 && end.at.difference(kept[i - 1].at) <= skiMotionWindow) {
     meters += _distance(LatLng(kept[i - 1].lat, kept[i - 1].lng),
         LatLng(kept[i].lat, kept[i].lng));
     i--;
   }
   final first = kept[i];
-  final secs = last.at.difference(first.at).inMilliseconds / 1000;
-  if (i == kept.length - 1 || secs <= 0) return SkiMotion.stopped;
+  final secs = end.at.difference(first.at).inMilliseconds / 1000;
+  if (i == last || secs <= 0) return (SkiMotion.stopped, true);
   final speed = meters / secs;
-  if (speed < 1) return SkiMotion.stopped;
-  final a = first.alt, b = last.alt;
+  if (speed < 1) return (SkiMotion.stopped, true);
+  final a = first.alt, b = end.alt;
   if (a == null || b == null) {
-    return speed >= 3 ? SkiMotion.descending : SkiMotion.stopped;
+    return (speed >= 3 ? SkiMotion.descending : SkiMotion.stopped, false);
   }
   final rate = (b - a) / secs;
-  if (rate <= _descendRate) return SkiMotion.descending;
-  if (rate >= _liftRate && speed <= 12) return SkiMotion.lift;
-  return SkiMotion.stopped;
+  if (rate <= _descendRate) return (SkiMotion.descending, false);
+  if (rate >= _liftRate && speed <= 12) return (SkiMotion.lift, false);
+  return (SkiMotion.stopped, false);
 }
