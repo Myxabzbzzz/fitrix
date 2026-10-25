@@ -3917,6 +3917,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get skiDayName => 'Chang‘i kuni';
 
   @override
+  String get indoorRideName => 'Velotrenajyordagi mashq';
+
+  @override
   String get rideNotificationTitle => 'Velosiped sayri yozib olinmoqda';
 
   @override

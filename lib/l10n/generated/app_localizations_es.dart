@@ -3964,6 +3964,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get skiDayName => 'Día de esquí';
 
   @override
+  String get indoorRideName => 'Salida en interior';
+
+  @override
   String get rideNotificationTitle => 'Grabando tu salida en bici';
 
   @override

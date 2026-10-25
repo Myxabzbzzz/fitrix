@@ -4020,6 +4020,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get skiDayName => 'Лыжный день';
 
   @override
+  String get indoorRideName => 'Тренировка на велотренажёре';
+
+  @override
   String get rideNotificationTitle => 'Идёт запись поездки';
 
   @override

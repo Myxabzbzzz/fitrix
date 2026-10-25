@@ -6453,6 +6453,12 @@ abstract class AppLocalizations {
   /// **'Ski day'**
   String get skiDayName;
 
+  /// No description provided for @indoorRideName.
+  ///
+  /// In en, this message translates to:
+  /// **'Indoor ride'**
+  String get indoorRideName;
+
   /// No description provided for @rideNotificationTitle.
   ///
   /// In en, this message translates to:

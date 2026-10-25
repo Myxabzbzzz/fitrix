@@ -1111,6 +1111,7 @@
   "rideNameEvening": "Salida en bici al anochecer",
   "rideNameNight": "Salida en bici nocturna",
   "skiDayName": "Día de esquí",
+  "indoorRideName": "Salida en interior",
   "rideNotificationTitle": "Grabando tu salida en bici",
   "rideNotificationText": "FITRIX registra la distancia y el tiempo aunque la pantalla esté bloqueada.",
   "rideNotificationChannel": "Grabación de salidas en bici",

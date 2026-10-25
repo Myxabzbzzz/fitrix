@@ -3948,6 +3948,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skiDayName => 'Ski day';
 
   @override
+  String get indoorRideName => 'Indoor ride';
+
+  @override
   String get rideNotificationTitle => 'Recording your ride';
 
   @override

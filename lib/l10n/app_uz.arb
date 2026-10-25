@@ -1111,6 +1111,7 @@
   "rideNameEvening": "Kechki velosiped sayri",
   "rideNameNight": "Tungi velosiped sayri",
   "skiDayName": "Chang‘i kuni",
+  "indoorRideName": "Velotrenajyordagi mashq",
   "rideNotificationTitle": "Velosiped sayri yozib olinmoqda",
   "rideNotificationText": "FITRIX ekran qulflangan bo‘lsa ham masofa va vaqtni yozib boradi.",
   "rideNotificationChannel": "Velosiped sayrini yozish",

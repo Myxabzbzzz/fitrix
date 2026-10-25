@@ -132,7 +132,9 @@ class _IndoorRideSheetState extends ConsumerState<_IndoorRideSheet> {
   }
 
   String _name(CompletedWorkout? original) =>
-      widget.template?.name ?? original?.name ?? 'Indoor ride';
+      widget.template?.name ??
+      original?.name ??
+      AppLocalizations.of(context).indoorRideName;
 
   void _save() {
     final now = ref.read(clockProvider)();

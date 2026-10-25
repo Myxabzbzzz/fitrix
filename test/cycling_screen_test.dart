@@ -318,6 +318,21 @@ void main() {
       expect(find.byKey(ValueKey('cy-row-${w.id}')), findsOneWidget);
     });
 
+    for (final (language, name) in [
+      ('en', 'Indoor ride'),
+      ('ru', 'Тренировка на велотренажёре'),
+      ('uz', 'Velotrenajyordagi mashq'),
+      ('es', 'Salida en interior'),
+    ]) {
+      testWidgets('an indoor ride without a plan is named in $language',
+          (t) async {
+        final r = await _rig(t, language: language);
+        await openLog(r);
+        await r.tap('ride-save');
+        expect(r.history.single.name, name);
+      });
+    }
+
     testWidgets('distance and power are optional', (t) async {
       final r = await _rig(t);
       await openLog(r);

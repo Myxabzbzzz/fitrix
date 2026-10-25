@@ -3088,6 +3088,7 @@
   "rideNameEvening": "Evening ride",
   "rideNameNight": "Night ride",
   "skiDayName": "Ski day",
+  "indoorRideName": "Indoor ride",
   "rideNotificationTitle": "Recording your ride",
   "rideNotificationText": "FITRIX records distance and time while the screen is locked.",
   "rideNotificationChannel": "Ride recording",

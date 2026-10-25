@@ -1111,6 +1111,7 @@
   "rideNameEvening": "Вечерняя поездка",
   "rideNameNight": "Ночная поездка",
   "skiDayName": "Лыжный день",
+  "indoorRideName": "Тренировка на велотренажёре",
   "rideNotificationTitle": "Идёт запись поездки",
   "rideNotificationText": "FITRIX записывает дистанцию и время, даже когда экран заблокирован.",
   "rideNotificationChannel": "Запись поездки",
