@@ -83,12 +83,13 @@ class RecordingFile {
 
   /// Moves the file beside, to `<path>.broken` (replacing an older one), so
   /// the fixes of a recording that could not be restored are not lost.
+  /// Without a file, an older copy is deleted: it belongs to another
+  /// recording.
   void setAside() {
     try {
-      if (!file.existsSync()) return;
       final aside = File('${file.path}.broken');
       if (aside.existsSync()) aside.deleteSync();
-      file.renameSync(aside.path);
+      if (file.existsSync()) file.renameSync(aside.path);
     } catch (_) {}
   }
 

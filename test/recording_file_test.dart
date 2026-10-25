@@ -290,9 +290,23 @@ void _moreTests() {
     RecordingFile(file).setAside();
     expect(file.existsSync(), isFalse);
     expect(aside.readAsStringSync(), 'new');
-    // Nothing to move: nothing happens.
+    // Nothing to move: the older copy goes, it is another recording's.
     RecordingFile(file).setAside();
-    expect(aside.readAsStringSync(), 'new');
+    expect(aside.existsSync(), isFalse);
+  });
+
+  test('a broken header without a fix file leaves no older fixes beside it',
+      () async {
+    final file = tempFile();
+    final aside = File('${file.path}.broken')..writeAsStringSync('older');
+    SharedPreferences.setMockInitialValues({runInProgressKey: '{"nope":1'});
+    final r = await fileRig(file: file, fresh: false);
+    expect(r.session, isNull);
+    expect(file.existsSync(), isFalse);
+    expect(aside.existsSync(), isFalse);
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString(brokenRunKey), '{"nope":1');
+    expect(prefs.getString(runInProgressKey), isNull);
   });
 
   test('closing the app writes the fixes not written yet', () async {
