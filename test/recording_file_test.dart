@@ -10,7 +10,7 @@ import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 
 import 'ski_recorder_test.dart' show fileRig, tempFile;
-import 'run_recorder_test.dart' show Clock, FakeLocationSource, t0;
+import 'run_recorder_test.dart' show Clock, FakeLocationSource, Rig, t0;
 
 const _mPerDeg = 111319.49;
 
@@ -21,6 +21,7 @@ void _emit(FakeLocationSource src, Clock c, int secs, double east) {
 }
 
 void main() {
+  _moreTests();
   for (final kind in [ActivityKind.ride, ActivityKind.ski]) {
     test('$kind: killed mid-way, every flushed fix comes back', () async {
       final file = tempFile();
@@ -192,6 +193,83 @@ void main() {
     final r2 = await fileRig(file: file, fresh: false, source: src);
     r2.recorder.resume();
     expect(src.kinds, [ActivityKind.ski]);
+  });
+}
+
+void _recordAndPause(Rig r, {int n = 12}) {
+  for (var i = 0; i <= n; i++) {
+    _emit(r.source, r.clock, i * 2, i * 20.0);
+  }
+  r.recorder.pause();
+}
+
+void _moreTests() {
+  test('a failed rewrite keeps the restored session and the original file',
+      () async {
+    final file = tempFile();
+    final r = await fileRig(file: file);
+    await r.recorder.start();
+    _recordAndPause(r);
+    final n = r.session!.track.kept.length;
+    r.container.dispose();
+    file.writeAsStringSync('[0.0,0.00', mode: FileMode.append);
+    final before = file.readAsStringSync();
+    // The temp file cannot be made: a directory sits in its place.
+    Directory('${file.path}.tmp').createSync();
+
+    final r2 = await fileRig(file: file, fresh: false);
+    expect(r2.session!.track.kept, hasLength(n));
+    expect(file.readAsStringSync(), before);
+  });
+
+  test('a file that cannot be reset does not stop the recording', () async {
+    final dir = Directory.systemTemp.createTempSync('fitrix_rec');
+    addTearDown(() => dir.deleteSync(recursive: true));
+    final blocker = File('${dir.path}/blocker')..writeAsStringSync('x');
+    final r = await fileRig(file: File('${blocker.path}/rec.fixes'));
+    await r.recorder.start();
+    expect(r.session, isNotNull);
+    expect(r.source.listening, isTrue);
+  });
+
+  test('a fix file with no recording behind it is deleted at launch', () async {
+    final file = tempFile();
+    final r = await fileRig(file: file);
+    await r.recorder.start();
+    _recordAndPause(r);
+    r.container.dispose();
+    expect(file.existsSync(), isTrue);
+    // Signed out: the prefs are cleared, the new scope starts.
+    SharedPreferences.setMockInitialValues({});
+    final r2 = await fileRig(file: file);
+    expect(r2.session, isNull);
+    expect(file.existsSync(), isFalse);
+  });
+
+  test('closing the app writes the fixes not written yet', () async {
+    final file = tempFile();
+    final r = await fileRig(file: file);
+    await r.recorder.start();
+    for (var i = 0; i <= 3; i++) {
+      _emit(r.source, r.clock, i * 2, i * 20.0);
+    }
+    final kept = r.session!.track.kept.length;
+    expect(file.readAsLinesSync().length, lessThan(kept));
+    r.container.dispose();
+    expect(file.readAsLinesSync(), hasLength(kept));
+  });
+
+  test('closing after the entry was cleared leaves no trail', () async {
+    final file = tempFile();
+    final r = await fileRig(file: file);
+    await r.recorder.start();
+    for (var i = 0; i <= 3; i++) {
+      _emit(r.source, r.clock, i * 2, i * 20.0);
+    }
+    await (await SharedPreferences.getInstance()).remove(runInProgressKey);
+    final lines = file.readAsLinesSync().length;
+    r.container.dispose();
+    expect(file.readAsLinesSync(), hasLength(lines));
   });
 }
 

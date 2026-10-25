@@ -32,6 +32,10 @@ const _saveEvery = Duration(seconds: 10);
 /// descents that just ended.
 const skiScanEvery = Duration(seconds: 30);
 
+/// Without a kept fix after it, a descent is done only after this long (the
+/// shortest stop the segmentation splits a descent at).
+const skiStopAfter = Duration(minutes: 2);
+
 /// A descent counts as done when it ended this long before the latest fix
 /// (a lift or a stop followed it), so a short breather mid-run is not one.
 const skiDoneAfter = Duration(seconds: 30);
@@ -177,7 +181,11 @@ class RunRecorder extends StateNotifier<RunSession?> {
         _now = now,
         super(null) {
     final restored = _restore();
-    if (restored != null) {
+    if (restored == null) {
+      // No recording to come back to: a fix file left over (signed out, a
+      // different account) is a location trail nobody owns.
+      _file?.delete();
+    } else {
       _pendingFromLaunch = true;
       state = restored;
       // The descents already done are not announced again.
@@ -254,7 +262,11 @@ class RunRecorder extends StateNotifier<RunSession?> {
       kind: kind,
     );
     _flushed = 0;
-    _file?.reset();
+    try {
+      _file?.reset();
+    } catch (_) {
+      // Recording goes on; the fixes are appended to what is there.
+    }
     _listen();
     _persist();
     _emit(const RunStarted());
@@ -501,8 +513,11 @@ class RunRecorder extends StateNotifier<RunSession?> {
     final tail = _skiFrom == 0 ? kept : kept.sublist(_skiFrom);
     var advance = -1;
     for (final d in skiDayFrom(tail, const []).descents) {
-      // Too close to now: it may still be going.
-      if (at.difference(d.end) < skiDoneAfter) continue;
+      // Done when kept fixes show movement for a while after it (a lift,
+      // the next run). Standing since then is not enough: it may be a
+      // breather mid-descent, so that waits for the length of a real stop.
+      final moved = tail.last.at.difference(d.end) >= skiDoneAfter;
+      if (!moved && at.difference(d.end) < skiStopAfter) continue;
       _skiDone++;
       if (emit) {
         _emit(SkiDescentDone(_skiDone, d.meters, d.vertical, d.maxSpeed));
@@ -644,7 +659,11 @@ class RunRecorder extends StateNotifier<RunSession?> {
       final file = _file;
       if (file != null) {
         if (legacy || damaged || track.kept.length != points.length) {
-          file.rewrite(track.kept, startedAt);
+          try {
+            file.rewrite(track.kept, startedAt);
+          } catch (_) {
+            // The original file is left as it was.
+          }
         }
         _flushed = track.kept.length;
         if (legacy) {
@@ -675,7 +694,20 @@ class RunRecorder extends StateNotifier<RunSession?> {
 
   @override
   void dispose() {
-    // The app going away is not the run ending: the recording stays saved.
+    // The app going away is not the run ending: the recording stays saved,
+    // with the fixes since the last write (unless the entry was cleared, as
+    // on sign-out).
+    final s = state;
+    final file = _file;
+    if (s != null && file != null && _prefs.containsKey(runInProgressKey)) {
+      try {
+        final kept = s.track.kept;
+        if (kept.length > _flushed) {
+          file.append(kept.skip(_flushed), s.startedAt);
+          _flushed = kept.length;
+        }
+      } catch (_) {}
+    }
     _sub?.cancel();
     _sub = null;
     _source.stop();

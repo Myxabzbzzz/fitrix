@@ -28,11 +28,21 @@ class RecordingFile {
     file.writeAsStringSync(out.toString(), mode: FileMode.append, flush: true);
   }
 
-  /// Replaces the content with [fixes].
+  /// Replaces the content with [fixes]: written beside it and moved over,
+  /// so a failure leaves the original file as it was.
   void rewrite(Iterable<RunPoint> fixes, DateTime startedAt) {
-    file.createSync(recursive: true);
-    file.writeAsStringSync('', flush: true);
-    append(fixes, startedAt);
+    final tmp = File('${file.path}.tmp');
+    try {
+      RecordingFile(tmp)
+        ..reset()
+        ..append(fixes, startedAt);
+      tmp.renameSync(file.path);
+    } catch (_) {
+      try {
+        if (tmp.existsSync()) tmp.deleteSync();
+      } catch (_) {}
+      rethrow;
+    }
   }
 
   /// The fixes in the file, and whether a broken line was left out.

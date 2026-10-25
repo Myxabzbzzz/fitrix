@@ -156,4 +156,37 @@ void main() {
     expect(details.meters, lessThan(all - 200));
     expect(details.meters, greaterThan(400));
   });
+
+  for (final rest in [45, 90]) {
+    test('a $rest s breather mid-descent is one descent, live too', () async {
+      final r = await fileRig(file: tempFile());
+      final events = <RunEvent>[];
+      r.recorder.events.listen(events.add);
+      await r.recorder.start(kind: ActivityKind.ski);
+      final d = Day(r)..fix();
+      d.descent();
+      d.stop(rest);
+      d.descent();
+      d.lift(200);
+      await pumpEventQueue();
+      expect(events.whereType<SkiDescentDone>().map((e) => e.index), [1]);
+      final saved = await r.recorder.finish();
+      final ski = r.container.read(runStoreProvider).all()[saved.id]!.ski!;
+      expect(ski.descents, hasLength(1));
+    });
+  }
+
+  test('a hut stop is reported as two descents live', () async {
+    final r = await fileRig(file: tempFile());
+    final events = <RunEvent>[];
+    r.recorder.events.listen(events.add);
+    await r.recorder.start(kind: ActivityKind.ski);
+    final d = Day(r)..fix();
+    d.descent();
+    d.stop(600);
+    d.descent();
+    d.lift(200);
+    await pumpEventQueue();
+    expect(events.whereType<SkiDescentDone>().map((e) => e.index), [1, 2]);
+  });
 }
