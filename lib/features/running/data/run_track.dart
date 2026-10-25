@@ -385,9 +385,10 @@ class RunTrack {
     return (gain, loss);
   }
 
-  /// Top speed in m/s: over each stretch of at least 3 s of kept fixes, the
-  /// median of its fix-to-fix speeds (the lower middle for an even count), so
-  /// one jumpy fix doesn't count. Null when the track is shorter than that.
+  /// Top speed in m/s: displacement over stretches of at least 3 s of kept
+  /// fixes, then the highest median of neighbouring stretches, so one jumpy
+  /// fix doesn't count (see [robustMaxSpeed]). Null when the track is shorter
+  /// than 3 s.
   double? get maxSpeed => robustMaxSpeed(kept, breaks: _breaks);
 }
 
@@ -431,10 +432,14 @@ double? robustMaxSpeed(List<RunPoint> kept,
   for (var i = 1; i < w.length; i++) {
     if (w[i] == null) continue;
     final block = <double>[];
-    for (var m = i; m >= 1 && block.length < 4 * len[i] + 1; m--) {
-      final x = w[m];
-      if (x == null) break;
-      block.add(x);
+    // Centred, so the first windows of a segment borrow from the next ones.
+    final reach = 2 * len[i];
+    block.add(w[i]!);
+    for (var m = i - 1; m >= 1 && m >= i - reach && w[m] != null; m--) {
+      block.add(w[m]!);
+    }
+    for (var m = i + 1; m < w.length && m <= i + reach && w[m] != null; m++) {
+      block.add(w[m]!);
     }
     block.sort();
     final med = block[(block.length - 1) ~/ 2];

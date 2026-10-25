@@ -176,21 +176,26 @@ void main() {
 
     for (final q in [600, 1200]) {
       test('${q ~/ 60}-minute queues over 20 laps keep the lifts', () {
-        for (final walk in [4.0, 9.0]) {
-          final fixes = _day(
-            [
-              for (var i = 0; i < 20; i++) ...[_Leg(q, 0, 0), ...lap]
-            ],
-            walk: walk,
-          );
-          final day = run(fixes);
-          expect(day.lifts, greaterThanOrEqualTo(19), reason: 'walk $walk');
-          expect(day.lifts, lessThanOrEqualTo(20));
-          // No phantom descents out of the queues.
-          expect(day.descents.length, inInclusiveRange(19, 20));
-          for (final d in day.descents) {
-            expect(d.end.difference(d.start).inSeconds, lessThan(400));
-            expect(d.vertical, closeTo(300, 30));
+        for (var seed = 1; seed <= 4; seed++) {
+          for (final walk in [4.0, 9.0]) {
+            final fixes = _day(
+              [
+                for (var i = 0; i < 20; i++) ...[_Leg(q, 0, 0), ...lap]
+              ],
+              walk: walk,
+              seed: seed,
+            );
+            final day = run(fixes);
+            final why = 'walk $walk seed $seed';
+            expect(day.lifts, greaterThanOrEqualTo(19), reason: why);
+            expect(day.lifts, lessThanOrEqualTo(20), reason: why);
+            // No phantom descents out of the queues.
+            expect(day.descents.length, inInclusiveRange(19, 20), reason: why);
+            for (final d in day.descents) {
+              expect(d.end.difference(d.start).inSeconds, lessThan(400),
+                  reason: why);
+              expect(d.vertical, closeTo(300, 30), reason: why);
+            }
           }
         }
       });
@@ -314,6 +319,41 @@ void main() {
         if (!ok) bad++;
       }
       expect(bad, lessThanOrEqualTo(1));
+    });
+
+    RunPoint shifted(RunPoint p, double meters) => RunPoint(
+        lat: p.lat + meters / 111195,
+        lng: p.lng,
+        alt: p.alt,
+        accuracy: p.accuracy,
+        at: p.at);
+
+    test('one bad fix at the start, early on, or after a break is rejected',
+        () {
+      for (final (bad, breaks) in [
+        (0, <int>[]),
+        (2, <int>[]),
+        (3, <int>[]),
+        (30, [30]),
+        (32, [30]),
+      ]) {
+        for (final step in [1, 2]) {
+          final fixes = _day([const _Leg(200, 0, 10)], step: step);
+          fixes[bad] = shifted(fixes[bad], bad == 3 ? -30 : 20);
+          expect(robustMaxSpeed(fixes, breaks: breaks), closeTo(10, 1.2),
+              reason: 'fix $bad step $step');
+        }
+      }
+    });
+
+    test('3 m jitter stays near the true speed over 100 seeds', () {
+      var worst = 0.0;
+      for (var seed = 1; seed <= 100; seed++) {
+        final fixes =
+            _day([const _Leg(120, 0, 10)], step: 1, jitterM: 3, seed: seed);
+        worst = math.max(worst, robustMaxSpeed(fixes)!);
+      }
+      expect(worst, lessThan(11));
     });
 
     for (final j in [2.0, 3.0]) {
