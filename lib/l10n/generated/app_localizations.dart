@@ -7378,6 +7378,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Elevation loss'**
   String get rideElevationLoss;
+
+  /// No description provided for @cyclingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start ride'**
+  String get cyclingStart;
+
+  /// No description provided for @cyclingLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Log indoor ride'**
+  String get cyclingLog;
+
+  /// No description provided for @cyclingUnitRides.
+  ///
+  /// In en, this message translates to:
+  /// **'Rides'**
+  String get cyclingUnitRides;
+
+  /// No description provided for @cyclingHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get cyclingHistory;
+
+  /// No description provided for @cyclingHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No rides yet. Rides you record or log will show up here.'**
+  String get cyclingHistoryEmpty;
+
+  /// No description provided for @cyclingWorkouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Workouts'**
+  String get cyclingWorkouts;
+
+  /// No description provided for @cyclingChoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where are you riding?'**
+  String get cyclingChoiceTitle;
+
+  /// No description provided for @cyclingOutdoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Outdoor (GPS)'**
+  String get cyclingOutdoor;
+
+  /// No description provided for @cyclingIndoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Indoor (log)'**
+  String get cyclingIndoor;
+
+  /// No description provided for @cyclingIndoorTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Indoor'**
+  String get cyclingIndoorTag;
+
+  /// No description provided for @rideLogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log indoor ride'**
+  String get rideLogTitle;
+
+  /// No description provided for @rideEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit indoor ride'**
+  String get rideEditTitle;
+
+  /// No description provided for @rideLogDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance, km (optional)'**
+  String get rideLogDistance;
+
+  /// No description provided for @rideLogPower.
+  ///
+  /// In en, this message translates to:
+  /// **'Average power, W (optional)'**
+  String get rideLogPower;
+
+  /// No description provided for @rideNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get rideNote;
 }
 
 class _AppLocalizationsDelegate

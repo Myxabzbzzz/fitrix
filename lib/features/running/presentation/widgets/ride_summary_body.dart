@@ -63,6 +63,16 @@ class RideSummaryBody extends StatelessWidget {
                   label: l10n.rideAvgPower, value: '${details.avgPowerW}'),
           ],
         ),
+        if (details.note != null) ...[
+          const SizedBox(height: AppSpacing.md),
+          Text(l10n.rideNote,
+              style:
+                  AppText.captionStrong.copyWith(color: palette.textSecondary)),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(details.note!,
+              key: const ValueKey('ride-summary-note'),
+              style: AppText.body14.copyWith(color: palette.textPrimary)),
+        ],
         if (details.splits.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.lg),
           Text(l10n.runSplits,

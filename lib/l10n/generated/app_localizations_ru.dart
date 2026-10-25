@@ -4618,4 +4618,50 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get rideElevationLoss => 'Спуск по высоте';
+
+  @override
+  String get cyclingStart => 'Начать поездку';
+
+  @override
+  String get cyclingLog => 'Записать тренировку на тренажёре';
+
+  @override
+  String get cyclingUnitRides => 'Поездки';
+
+  @override
+  String get cyclingHistory => 'История';
+
+  @override
+  String get cyclingHistoryEmpty =>
+      'Поездок пока нет. Записанные поездки появятся здесь.';
+
+  @override
+  String get cyclingWorkouts => 'Тренировки';
+
+  @override
+  String get cyclingChoiceTitle => 'Где катаетесь?';
+
+  @override
+  String get cyclingOutdoor => 'На улице (GPS)';
+
+  @override
+  String get cyclingIndoor => 'Дома (запись)';
+
+  @override
+  String get cyclingIndoorTag => 'Тренажёр';
+
+  @override
+  String get rideLogTitle => 'Записать тренировку на тренажёре';
+
+  @override
+  String get rideEditTitle => 'Изменить запись';
+
+  @override
+  String get rideLogDistance => 'Дистанция, км (необязательно)';
+
+  @override
+  String get rideLogPower => 'Средняя мощность, Вт (необязательно)';
+
+  @override
+  String get rideNote => 'Заметка';
 }

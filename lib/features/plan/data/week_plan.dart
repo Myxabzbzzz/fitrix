@@ -79,10 +79,14 @@ class PlannedSession {
 }
 
 /// Template ids of workouts logged without a plan: a free run
-/// (`freeRunTemplateId`), a football log (`footballLogTemplateId`) and a
+/// (`freeRunTemplateId`), a free ride, an indoor ride log and a free ski day
+/// (`free_ride`, `indoor_ride`, `free_ski`), a football log (`footballLogTemplateId`) and a
 /// workout imported from Health.
 const _unplannedTemplateIds = {
   'free_run',
+  'free_ride',
+  'indoor_ride',
+  'free_ski',
   'football_log',
   healthImportTemplateId,
 };

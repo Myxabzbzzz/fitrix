@@ -4484,4 +4484,50 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get rideElevationLoss => 'Balandlikdan tushish';
+
+  @override
+  String get cyclingStart => 'Yo‘lga chiqishni boshlash';
+
+  @override
+  String get cyclingLog => 'Trenajyordagi mashqni qayd qilish';
+
+  @override
+  String get cyclingUnitRides => 'Safarlar';
+
+  @override
+  String get cyclingHistory => 'Tarix';
+
+  @override
+  String get cyclingHistoryEmpty =>
+      'Hozircha safarlar yo‘q. Yozib olingan yoki qayd qilingan safarlar shu yerda ko‘rinadi.';
+
+  @override
+  String get cyclingWorkouts => 'Mashg‘ulotlar';
+
+  @override
+  String get cyclingChoiceTitle => 'Qayerda minasiz?';
+
+  @override
+  String get cyclingOutdoor => 'Ko‘chada (GPS)';
+
+  @override
+  String get cyclingIndoor => 'Uyda (qayd)';
+
+  @override
+  String get cyclingIndoorTag => 'Trenajyor';
+
+  @override
+  String get rideLogTitle => 'Trenajyordagi mashqni qayd qilish';
+
+  @override
+  String get rideEditTitle => 'Yozuvni tahrirlash';
+
+  @override
+  String get rideLogDistance => 'Masofa, km (ixtiyoriy)';
+
+  @override
+  String get rideLogPower => 'O‘rtacha quvvat, Vt (ixtiyoriy)';
+
+  @override
+  String get rideNote => 'Izoh';
 }

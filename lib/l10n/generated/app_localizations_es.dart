@@ -4553,4 +4553,50 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get rideElevationLoss => 'Desnivel negativo';
+
+  @override
+  String get cyclingStart => 'Empezar a pedalear';
+
+  @override
+  String get cyclingLog => 'Registrar salida en interior';
+
+  @override
+  String get cyclingUnitRides => 'Salidas';
+
+  @override
+  String get cyclingHistory => 'Historial';
+
+  @override
+  String get cyclingHistoryEmpty =>
+      'Aún no hay salidas. Las que registres aparecerán aquí.';
+
+  @override
+  String get cyclingWorkouts => 'Entrenamientos';
+
+  @override
+  String get cyclingChoiceTitle => '¿Dónde pedaleas?';
+
+  @override
+  String get cyclingOutdoor => 'Al aire libre (GPS)';
+
+  @override
+  String get cyclingIndoor => 'En interior (registro)';
+
+  @override
+  String get cyclingIndoorTag => 'Interior';
+
+  @override
+  String get rideLogTitle => 'Registrar salida en interior';
+
+  @override
+  String get rideEditTitle => 'Editar registro';
+
+  @override
+  String get rideLogDistance => 'Distancia, km (opcional)';
+
+  @override
+  String get rideLogPower => 'Potencia media, W (opcional)';
+
+  @override
+  String get rideNote => 'Nota';
 }

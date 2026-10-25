@@ -3347,5 +3347,20 @@
   "@skiDescentN": {"placeholders": {"n": {"type": "int"}}},
   "skiDescentDuration": "Duration",
   "skiDescentVertical": "Vertical drop, m",
-  "rideElevationLoss": "Elevation loss"
+  "rideElevationLoss": "Elevation loss",
+  "cyclingStart": "Start ride",
+  "cyclingLog": "Log indoor ride",
+  "cyclingUnitRides": "Rides",
+  "cyclingHistory": "History",
+  "cyclingHistoryEmpty": "No rides yet. Rides you record or log will show up here.",
+  "cyclingWorkouts": "Workouts",
+  "cyclingChoiceTitle": "Where are you riding?",
+  "cyclingOutdoor": "Outdoor (GPS)",
+  "cyclingIndoor": "Indoor (log)",
+  "cyclingIndoorTag": "Indoor",
+  "rideLogTitle": "Log indoor ride",
+  "rideEditTitle": "Edit indoor ride",
+  "rideLogDistance": "Distance, km (optional)",
+  "rideLogPower": "Average power, W (optional)",
+  "rideNote": "Note"
 }

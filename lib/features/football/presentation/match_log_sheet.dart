@@ -283,7 +283,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
               Row(
                 children: [
                   Expanded(
-                    child: _Pill(
+                    child: LogPill(
                       key: const ValueKey('fb-type-match'),
                       label: l10n.footballTypeMatch,
                       selected: _isMatch,
@@ -292,7 +292,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   Expanded(
-                    child: _Pill(
+                    child: LogPill(
                       key: const ValueKey('fb-type-training'),
                       label: l10n.footballTypeTraining,
                       selected: !_isMatch,
@@ -303,7 +303,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                 ],
               ),
               label(l10n.footballDate),
-              _Pill(
+              LogPill(
                 key: const ValueKey('fb-date'),
                 label: dateText,
                 selected: false,
@@ -311,7 +311,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                 onTap: _pickDate,
               ),
               label(l10n.footballMinutes),
-              _Stepper(
+              LogStepper(
                 keyPrefix: 'fb-minutes',
                 value: _minutes,
                 step: 5,
@@ -325,7 +325,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                 runSpacing: AppSpacing.xs,
                 children: [
                   for (final p in footballPositions)
-                    _Pill(
+                    LogPill(
                       key: ValueKey('fb-position-$p'),
                       label: _positionLabel(l10n, p),
                       selected: _position == p,
@@ -341,7 +341,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                   runSpacing: AppSpacing.xs,
                   children: [
                     for (final f in footballFormats)
-                      _Pill(
+                      LogPill(
                         key: ValueKey('fb-format-$f'),
                         label: formatLabel(f),
                         selected: _format == f,
@@ -353,7 +353,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                 Row(
                   children: [
                     Expanded(
-                      child: _Stepper(
+                      child: LogStepper(
                         keyPrefix: 'fb-for',
                         caption: l10n.footballScoreFor,
                         value: _for,
@@ -366,7 +366,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
-                      child: _Stepper(
+                      child: LogStepper(
                         keyPrefix: 'fb-against',
                         caption: l10n.footballScoreAgainst,
                         value: _against,
@@ -383,7 +383,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                 Row(
                   children: [
                     Expanded(
-                      child: _Stepper(
+                      child: LogStepper(
                         keyPrefix: 'fb-goals',
                         caption: l10n.footballGoals,
                         value: _goals,
@@ -392,7 +392,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
-                      child: _Stepper(
+                      child: LogStepper(
                         keyPrefix: 'fb-assists',
                         caption: l10n.footballAssists,
                         value: _assists,
@@ -455,8 +455,8 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
   }
 }
 
-class _Pill extends StatelessWidget {
-  const _Pill({
+class LogPill extends StatelessWidget {
+  const LogPill({
     super.key,
     required this.label,
     required this.selected,
@@ -509,8 +509,9 @@ class _Pill extends StatelessWidget {
 /// A whole number with minus and plus buttons; keys `<prefix>-minus`,
 /// `<prefix>-plus` and `<prefix>-value`. While [unset] it shows a dash and
 /// either button sets it (minus to [value]).
-class _Stepper extends StatelessWidget {
-  const _Stepper({
+class LogStepper extends StatelessWidget {
+  const LogStepper({
+    super.key,
     required this.keyPrefix,
     required this.value,
     required this.onChanged,

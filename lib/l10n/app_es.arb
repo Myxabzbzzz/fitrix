@@ -1277,5 +1277,20 @@
   "@skiDescentN": {"placeholders": {"n": {"type": "int"}}},
   "skiDescentDuration": "Duración",
   "skiDescentVertical": "Desnivel, m",
-  "rideElevationLoss": "Desnivel negativo"
+  "rideElevationLoss": "Desnivel negativo",
+  "cyclingStart": "Empezar a pedalear",
+  "cyclingLog": "Registrar salida en interior",
+  "cyclingUnitRides": "Salidas",
+  "cyclingHistory": "Historial",
+  "cyclingHistoryEmpty": "Aún no hay salidas. Las que registres aparecerán aquí.",
+  "cyclingWorkouts": "Entrenamientos",
+  "cyclingChoiceTitle": "¿Dónde pedaleas?",
+  "cyclingOutdoor": "Al aire libre (GPS)",
+  "cyclingIndoor": "En interior (registro)",
+  "cyclingIndoorTag": "Interior",
+  "rideLogTitle": "Registrar salida en interior",
+  "rideEditTitle": "Editar registro",
+  "rideLogDistance": "Distancia, km (opcional)",
+  "rideLogPower": "Potencia media, W (opcional)",
+  "rideNote": "Nota"
 }

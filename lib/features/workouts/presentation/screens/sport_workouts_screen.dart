@@ -49,7 +49,9 @@ class _SportWorkoutsScreenState extends ConsumerState<SportWorkoutsScreen> {
               items: Sport.values,
               selected: _sport,
               labelOf: (s) => s.localizedLabel(l10n),
-              onSelected: (s) => s == Sport.running || s == Sport.football
+              onSelected: (s) => s == Sport.running ||
+                      s == Sport.football ||
+                      s == Sport.cycling
                   ? context.pushReplacement(AppRouter.sportWorkouts(s))
                   : setState(() => _sport = s),
             ),

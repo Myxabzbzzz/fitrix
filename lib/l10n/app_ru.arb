@@ -1277,5 +1277,20 @@
   "@skiDescentN": {"placeholders": {"n": {"type": "int"}}},
   "skiDescentDuration": "Длительность",
   "skiDescentVertical": "Перепад высоты, м",
-  "rideElevationLoss": "Спуск по высоте"
+  "rideElevationLoss": "Спуск по высоте",
+  "cyclingStart": "Начать поездку",
+  "cyclingLog": "Записать тренировку на тренажёре",
+  "cyclingUnitRides": "Поездки",
+  "cyclingHistory": "История",
+  "cyclingHistoryEmpty": "Поездок пока нет. Записанные поездки появятся здесь.",
+  "cyclingWorkouts": "Тренировки",
+  "cyclingChoiceTitle": "Где катаетесь?",
+  "cyclingOutdoor": "На улице (GPS)",
+  "cyclingIndoor": "Дома (запись)",
+  "cyclingIndoorTag": "Тренажёр",
+  "rideLogTitle": "Записать тренировку на тренажёре",
+  "rideEditTitle": "Изменить запись",
+  "rideLogDistance": "Дистанция, км (необязательно)",
+  "rideLogPower": "Средняя мощность, Вт (необязательно)",
+  "rideNote": "Заметка"
 }

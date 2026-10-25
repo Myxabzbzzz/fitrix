@@ -604,6 +604,7 @@ class RunDetails {
     this.indoor = false,
     this.avgPowerW,
     this.ski,
+    this.note,
   }) : _route = route;
 
   final DateTime startedAt;
@@ -636,6 +637,9 @@ class RunDetails {
   /// Descents and lifts of a ski day.
   final SkiDay? ski;
 
+  /// A free note (the indoor ride log's), at most 500 characters.
+  final String? note;
+
   /// The same document with a rating.
   RunDetails withRpe(int rpe) => RunDetails(
         startedAt: startedAt,
@@ -654,6 +658,7 @@ class RunDetails {
         indoor: indoor,
         avgPowerW: avgPowerW,
         ski: ski,
+        note: note,
       );
 
   Map<String, Object?> toJson() => {
@@ -676,6 +681,7 @@ class RunDetails {
         if (indoor) 'indoor': true,
         if (avgPowerW != null) 'avgPowerW': avgPowerW,
         if (ski != null) 'ski': ski!.toJson(),
+        if (note != null) 'note': note,
       };
 
   factory RunDetails.fromJson(Map<String, Object?> j) => RunDetails(
@@ -704,7 +710,13 @@ class RunDetails {
         ski: j['ski'] is Map
             ? SkiDay.fromJson((j['ski']! as Map).cast<String, Object?>())
             : null,
+        note: _noteFrom(j['note']),
       );
+}
+
+String? _noteFrom(Object? v) {
+  if (v is! String || v.isEmpty) return null;
+  return v.length > 500 ? v.substring(0, 500) : v;
 }
 
 List<List<double>> _routeFrom(Map<String, Object?> j) {

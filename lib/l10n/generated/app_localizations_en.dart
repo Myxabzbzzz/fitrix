@@ -4534,4 +4534,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rideElevationLoss => 'Elevation loss';
+
+  @override
+  String get cyclingStart => 'Start ride';
+
+  @override
+  String get cyclingLog => 'Log indoor ride';
+
+  @override
+  String get cyclingUnitRides => 'Rides';
+
+  @override
+  String get cyclingHistory => 'History';
+
+  @override
+  String get cyclingHistoryEmpty =>
+      'No rides yet. Rides you record or log will show up here.';
+
+  @override
+  String get cyclingWorkouts => 'Workouts';
+
+  @override
+  String get cyclingChoiceTitle => 'Where are you riding?';
+
+  @override
+  String get cyclingOutdoor => 'Outdoor (GPS)';
+
+  @override
+  String get cyclingIndoor => 'Indoor (log)';
+
+  @override
+  String get cyclingIndoorTag => 'Indoor';
+
+  @override
+  String get rideLogTitle => 'Log indoor ride';
+
+  @override
+  String get rideEditTitle => 'Edit indoor ride';
+
+  @override
+  String get rideLogDistance => 'Distance, km (optional)';
+
+  @override
+  String get rideLogPower => 'Average power, W (optional)';
+
+  @override
+  String get rideNote => 'Note';
 }

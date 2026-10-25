@@ -1277,5 +1277,20 @@
   "@skiDescentN": {"placeholders": {"n": {"type": "int"}}},
   "skiDescentDuration": "Davomiyligi",
   "skiDescentVertical": "Balandlik farqi, m",
-  "rideElevationLoss": "Balandlikdan tushish"
+  "rideElevationLoss": "Balandlikdan tushish",
+  "cyclingStart": "Yo‘lga chiqishni boshlash",
+  "cyclingLog": "Trenajyordagi mashqni qayd qilish",
+  "cyclingUnitRides": "Safarlar",
+  "cyclingHistory": "Tarix",
+  "cyclingHistoryEmpty": "Hozircha safarlar yo‘q. Yozib olingan yoki qayd qilingan safarlar shu yerda ko‘rinadi.",
+  "cyclingWorkouts": "Mashg‘ulotlar",
+  "cyclingChoiceTitle": "Qayerda minasiz?",
+  "cyclingOutdoor": "Ko‘chada (GPS)",
+  "cyclingIndoor": "Uyda (qayd)",
+  "cyclingIndoorTag": "Trenajyor",
+  "rideLogTitle": "Trenajyordagi mashqni qayd qilish",
+  "rideEditTitle": "Yozuvni tahrirlash",
+  "rideLogDistance": "Masofa, km (ixtiyoriy)",
+  "rideLogPower": "O‘rtacha quvvat, Vt (ixtiyoriy)",
+  "rideNote": "Izoh"
 }
