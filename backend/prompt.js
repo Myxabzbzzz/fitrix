@@ -329,6 +329,16 @@ function formatPace(secPerKm) {
   return `${m}:${s}/km`;
 }
 
+function cleanSki(value) {
+  if (!isObject(value)) return undefined;
+  return compact({
+    descents: num(value.descents, 0, 300, 0),
+    verticalM: num(value.verticalM, 0, 30000, 0),
+    distanceKm: num(value.distanceKm, 0, 500, 2),
+    maxSpeedKmh: num(value.maxSpeedKmh, 1, 200, 1),
+  }) || undefined;
+}
+
 function cleanSource(value) {
   const cleaned = cleanText(value, 41);
   return cleaned && cleaned.length <= 40 ? cleaned : undefined;
@@ -443,6 +453,12 @@ function sanitizeContext(raw) {
         match: cleanMatch(raw.lastWorkout.match),
         source: cleanSource(raw.lastWorkout.source),
         avgHr: num(raw.lastWorkout.avgHr, 30, 230, 0),
+        avgSpeedKmh: num(raw.lastWorkout.avgSpeedKmh, 1, 150, 1),
+        maxSpeedKmh: num(raw.lastWorkout.maxSpeedKmh, 1, 200, 1),
+        elevationGainM: num(raw.lastWorkout.elevationGainM, 0, 10000, 0),
+        indoor: raw.lastWorkout.indoor === true ? true : undefined,
+        avgPowerW: num(raw.lastWorkout.avgPowerW, 20, 2000, 0),
+        ski: cleanSki(raw.lastWorkout.ski),
       });
     }
   }
@@ -567,6 +583,27 @@ function describeContext(ctx) {
     if (w.distanceKm !== undefined) {
       line += `, ${w.distanceKm} km`;
       if (w.paceSecPerKm !== undefined) line += ` at ${formatPace(w.paceSecPerKm)}`;
+      else if (w.avgSpeedKmh !== undefined) {
+        line += ` at ${w.avgSpeedKmh.toFixed(1)} km/h avg`;
+        if (w.maxSpeedKmh !== undefined) line += ` (max ${w.maxSpeedKmh.toFixed(1)})`;
+      }
+    } else if (w.avgSpeedKmh !== undefined) {
+      line += `, ${w.avgSpeedKmh.toFixed(1)} km/h avg`;
+      if (w.maxSpeedKmh !== undefined) line += ` (max ${w.maxSpeedKmh.toFixed(1)})`;
+    }
+    if (w.elevationGainM !== undefined) line += `, +${w.elevationGainM} m`;
+    if (w.indoor) {
+      line += ', indoor ride';
+      if (w.avgPowerW !== undefined) line += `, ${w.avgPowerW} W avg`;
+    } else if (w.avgPowerW !== undefined) line += `, ${w.avgPowerW} W avg`;
+    if (w.ski) {
+      const k = w.ski;
+      const parts = [];
+      if (k.descents !== undefined) parts.push(`${k.descents} descents`);
+      if (k.verticalM !== undefined) parts.push(`${k.verticalM} m down`);
+      if (k.distanceKm !== undefined) parts.push(`${k.distanceKm} km`);
+      if (k.maxSpeedKmh !== undefined) parts.push(`max ${k.maxSpeedKmh.toFixed(1)} km/h`);
+      if (parts.length) line += `, ski day: ${parts.join(', ')}`;
     }
     if (w.match) {
       const m = w.match;

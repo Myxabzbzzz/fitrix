@@ -300,6 +300,44 @@ test('describeContext prints run pace and match result', () => {
   assert.ok(game.includes('football match 7x7, 50 min, RPE 8, result 3-4'));
 });
 
+test('lastWorkout keeps ride, indoor and ski fields within range', () => {
+  const ride = { date: '2026-10-20', sport: 'cycling', name: 'Morning ride', minutes: 90 };
+  const ok = sanitizeContext({ lastWorkout: {
+    ...ride, distanceKm: 42.3, avgSpeedKmh: 27.46, maxSpeedKmh: 61.2, elevationGainM: 412.4, extra: 1,
+  } }).lastWorkout;
+  assert.equal(ok.avgSpeedKmh, 27.5);
+  assert.equal(ok.maxSpeedKmh, 61.2);
+  assert.equal(ok.elevationGainM, 412);
+  assert.equal(ok.extra, undefined);
+  assert.equal(sanitizeContext({ lastWorkout: { ...ride, avgSpeedKmh: 400 } }).lastWorkout.avgSpeedKmh, undefined);
+  const indoor = sanitizeContext({ lastWorkout: { ...ride, indoor: true, avgPowerW: 185 } }).lastWorkout;
+  assert.equal(indoor.indoor, true);
+  assert.equal(indoor.avgPowerW, 185);
+  assert.equal(sanitizeContext({ lastWorkout: { ...ride, avgPowerW: 5 } }).lastWorkout.avgPowerW, undefined);
+  const skiDay = { date: '2026-10-20', sport: 'winterSports', name: 'Ski day' };
+  const ski = { descents: 14, verticalM: 3120, distanceKm: 18.436, maxSpeedKmh: 72, junk: 1 };
+  assert.deepEqual(sanitizeContext({ lastWorkout: { ...skiDay, ski } }).lastWorkout.ski,
+    { descents: 14, verticalM: 3120, distanceKm: 18.44, maxSpeedKmh: 72 });
+  assert.deepEqual(sanitizeContext({ lastWorkout: { ...skiDay, ski: { ...ski, descents: 1000 } } }).lastWorkout.ski,
+    { verticalM: 3120, distanceKm: 18.44, maxSpeedKmh: 72 });
+  assert.equal(sanitizeContext({ lastWorkout: { ...skiDay, ski: { descents: 1000 } } }).lastWorkout.ski, undefined);
+});
+
+test('describeContext prints ride, indoor ride and ski day', () => {
+  const build = (lastWorkout) => buildSystemPrompt('app', {}, 'en', sanitizeContext({ lastWorkout }));
+  assert.ok(build({
+    date: '2026-10-20', sport: 'cycling', name: 'Morning ride', minutes: 90,
+    distanceKm: 42.3, avgSpeedKmh: 27.46, maxSpeedKmh: 61.2, elevationGainM: 412,
+  }).includes('cycling "Morning ride" on 2026-10-20, 90 min, 42.3 km at 27.5 km/h avg (max 61.2), +412 m'));
+  assert.ok(build({
+    date: '2026-10-20', sport: 'cycling', name: 'Trainer', indoor: true, avgPowerW: 185,
+  }).includes('indoor ride, 185 W avg'));
+  assert.ok(build({
+    date: '2026-10-20', sport: 'winterSports', name: 'Ski day',
+    ski: { descents: 14, verticalM: 3120, distanceKm: 18.4, maxSpeedKmh: 72 },
+  }).includes('ski day: 14 descents, 3120 m down, 18.4 km, max 72.0 km/h'));
+});
+
 test('readiness keeps health values within range', () => {
   const ctx = sanitizeContext({
     readiness: {
