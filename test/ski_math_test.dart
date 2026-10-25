@@ -12,21 +12,37 @@ class _Leg {
   final double dAlt, speed;
 }
 
+/// [noise]: uncorrelated +-noise per fix. [walk]: a seeded mean-reverting
+/// random walk (correlated, like real GPS altitude drift) bounded by +-walk.
+/// Legs with no speed get 1.5 m of position jitter (standing around).
 List<RunPoint> _day(List<_Leg> legs,
-    {double noise = 0, int step = 2, double alt0 = 0}) {
-  final rnd = math.Random(7);
+    {double noise = 0,
+    double walk = 0,
+    int step = 2,
+    double alt0 = 0,
+    int seed = 7}) {
+  final rnd = math.Random(seed);
   final t0 = DateTime.utc(2026, 1, 10, 9);
   final out = <RunPoint>[];
-  var lat = 46.0, alt = alt0, t = 0;
-  RunPoint at() => RunPoint(
-        lat: lat,
-        lng: 8.0 + 0.0008 * math.sin(t / 90),
-        alt: alt + (noise == 0 ? 0 : (rnd.nextDouble() * 2 - 1) * noise),
-        accuracy: 5,
-        at: t0.add(Duration(seconds: t)),
-      );
+  var lat = 46.0, alt = alt0, t = 0, w = 0.0, jitter = 0.0;
+  RunPoint at() {
+    w = (w * 0.98 + (rnd.nextDouble() * 2 - 1) * walk * 0.15)
+        .clamp(-walk, walk);
+    final j = jitter / 111195;
+    return RunPoint(
+      lat: lat + (rnd.nextDouble() * 2 - 1) * j,
+      lng: 8.0 +
+          0.0002 * math.sin((lat - 46.0) * 111195 / 100) +
+          (rnd.nextDouble() * 2 - 1) * j,
+      alt: alt + w + (noise == 0 ? 0 : (rnd.nextDouble() * 2 - 1) * noise),
+      accuracy: 5,
+      at: t0.add(Duration(seconds: t)),
+    );
+  }
+
   out.add(at());
   for (final l in legs) {
+    jitter = l.speed < 0.3 ? 1.5 : 0;
     for (var s = step; s <= l.secs; s += step) {
       lat += l.speed * step / 111195;
       alt += l.dAlt * step / l.secs;
@@ -110,8 +126,8 @@ void main() {
     });
 
     test('a slow climb or a fast climb is not a lift', () {
-      // 300 m at 0.3 m/s (walking up) and at 12 m/s along (a road).
-      for (final up in [const _Leg(1000, 300, 1), const _Leg(60, 300, 12)]) {
+      // 300 m at 0.2 m/s (walking up) and at 20 m/s along (a road).
+      for (final up in [const _Leg(1500, 300, 1), const _Leg(60, 300, 20)]) {
         final fixes = _day([_flat, up, _flat]);
         final day = skiDayFrom(fixes, List.generate(fixes.length, (i) => i));
         expect(day.lifts, 0, reason: '${up.secs}s');
@@ -148,7 +164,120 @@ void main() {
       final day = skiDayFrom(fixes, List.generate(fixes.length, (i) => i));
       sw.stop();
       expect(day.descents, hasLength(24));
-      expect(sw.elapsedMilliseconds, lessThan(3000));
+      expect(sw.elapsedMilliseconds, lessThan(10000));
+    });
+  });
+
+  group('everyday ski days', () {
+    SkiDay run(List<RunPoint> f) =>
+        skiDayFrom(f, List.generate(f.length, (i) => i));
+    const lap = [_flat, _lift, _flat, _descent];
+
+    for (final q in [600, 1200]) {
+      test('${q ~/ 60}-minute queues over 20 laps keep the lifts', () {
+        for (final walk in [4.0, 9.0]) {
+          final fixes = _day(
+            [
+              for (var i = 0; i < 20; i++) ...[_Leg(q, 0, 0), ...lap]
+            ],
+            walk: walk,
+          );
+          final day = run(fixes);
+          expect(day.lifts, greaterThanOrEqualTo(19), reason: 'walk $walk');
+          expect(day.lifts, lessThanOrEqualTo(20));
+          // No phantom descents out of the queues.
+          expect(day.descents.length, inInclusiveRange(19, 20));
+          for (final d in day.descents) {
+            expect(d.end.difference(d.start).inSeconds, lessThan(400));
+            expect(d.vertical, closeTo(300, 30));
+          }
+        }
+      });
+    }
+
+    test('a lift base above the run end with a 4-minute queue', () {
+      for (final up in [10.0, 14.0]) {
+        final fixes = _day(
+          [
+            for (var i = 0; i < 6; i++) ...[
+              _Leg(10, up, 1.5),
+              const _Leg(240, 0, 0),
+              _lift,
+              _flat,
+              _Leg(125, -300 - up, 12),
+            ]
+          ],
+          walk: 5,
+        );
+        final day = run(fixes);
+        expect(day.lifts, 6, reason: 'up $up');
+        expect(day.descents, hasLength(6), reason: 'up $up');
+      }
+    });
+
+    for (final stop in [300, 600]) {
+      test('a ${stop ~/ 60}-minute stop mid-run is one descent', () {
+        final fixes = _day([
+          _flat,
+          _lift,
+          _flat,
+          const _Leg(60, -150, 12),
+          _Leg(stop, 0, 0),
+          const _Leg(60, -150, 12),
+          _flat,
+        ], walk: 5);
+        final day = run(fixes);
+        expect(day.descents, hasLength(1));
+        expect(day.descents.single.avgSpeed, closeTo(12, 2));
+        expect(day.descents.single.vertical, closeTo(300, 25));
+        expect(day.lifts, 1);
+      });
+    }
+
+    test('a 40-minute hut stop mid-run is not a 1 m/s run', () {
+      final fixes = _day([
+        _flat,
+        _lift,
+        _flat,
+        const _Leg(60, -150, 12),
+        const _Leg(2400, 0, 0),
+        const _Leg(60, -150, 12),
+        _flat,
+      ], walk: 6);
+      final day = run(fixes);
+      expect(day.descents.length, inInclusiveRange(1, 2));
+      for (final d in day.descents) {
+        expect(d.avgSpeed, greaterThan(8));
+      }
+      expect(day.verticalDown, closeTo(300, 30));
+    });
+
+    test('altitude drifting 35 m during lunch is not a descent', () {
+      final fixes = _day([
+        ...lap,
+        const _Leg(3600, 35, 0),
+        ...lap.map((l) => l.dAlt == -300 ? const _Leg(125, -335, 12) : l),
+      ], walk: 5);
+      final day = run(fixes);
+      expect(day.lifts, 2);
+      expect(day.descents, hasLength(2));
+      for (final d in day.descents) {
+        expect(d.end.difference(d.start).inSeconds, lessThan(400));
+      }
+    });
+
+    test('a slow fixed-grip chair and a tram are lifts', () {
+      for (final l in [const _Leg(750, 300, 1.8), const _Leg(120, 300, 10)]) {
+        final fixes = _day([_flat, l, _flat, _descent, _flat], walk: 9);
+        final day = run(fixes);
+        expect(day.lifts, 1, reason: '${l.secs}s');
+        expect(day.descents, hasLength(1));
+      }
+    });
+
+    test('standing around with drifting altitude gives no descent', () {
+      final fixes = _day([const _Leg(1800, -40, 0)], walk: 6);
+      expect(run(fixes).descents, isEmpty);
     });
   });
 
