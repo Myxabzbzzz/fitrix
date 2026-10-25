@@ -12,7 +12,10 @@ import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_dialogs.dart';
+import 'package:fitrix/features/running/presentation/widgets/ride_summary_body.dart';
+import 'package:fitrix/features/running/presentation/widgets/run_figure.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_map.dart';
+import 'package:fitrix/features/running/presentation/widgets/ski_summary_body.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/live_log_rpe_sheet.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -52,18 +55,7 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
       ref.read(workoutHistoryProvider.notifier).setRpe(widget.id, rpe);
       ref.read(runsProvider.notifier).put(
             widget.id,
-            RunDetails(
-              startedAt: details.startedAt,
-              moving: details.moving,
-              elapsed: details.elapsed,
-              pauses: details.pauses,
-              meters: details.meters,
-              elevationGain: details.elevationGain,
-              splits: details.splits,
-              route: details.route,
-              rpe: rpe,
-              templateId: details.templateId,
-            ),
+            details.withRpe(rpe),
           );
     }
     _close();
@@ -148,44 +140,57 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
                 style: AppText.body14.copyWith(color: palette.textSecondary),
               ),
             ),
-            // A run imported from Health has no route: no map at all.
-            if (details.route.isNotEmpty) ...[
-              RunMap(route: details.route),
-              const SizedBox(height: AppSpacing.md),
-            ],
-            Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.md,
-              children: [
-                _Figure(
-                    label: '${l10n.runDistance}, ${l10n.runUnitKm}',
-                    value: imported != null && imported.meters == null
-                        ? noValue
-                        : formatKm(details.meters, locale)),
-                _Figure(
-                    label: l10n.runMovingTime,
-                    value: formatClock(details.moving)),
-                _Figure(
-                    label: '${l10n.runAvgPace}, ${l10n.runUnitPerKm}',
-                    value: formatPace(avg)),
-                if (details.elevationGain != null)
-                  _Figure(
-                      label: l10n.runElevation,
-                      value: l10n.runElevationValue(
-                          formatMeters(details.elevationGain!, locale))),
-                // An imported run shows its rating on the scale below.
-                if (rated != null && !widget.justFinished && imported == null)
-                  _Figure(label: l10n.runRpeTitle, value: '$rated / 10'),
+            if (details.kind == ActivityKind.ride)
+              RideSummaryBody(details: details)
+            else if (details.kind == ActivityKind.ski)
+              SkiSummaryBody(details: details)
+            else ...[
+              // A run imported from Health has no route: no map at all.
+              if (details.route.isNotEmpty) ...[
+                RunMap(route: details.route),
+                const SizedBox(height: AppSpacing.md),
               ],
-            ),
+              Wrap(
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.md,
+                children: [
+                  RunFigure(
+                      label: '${l10n.runDistance}, ${l10n.runUnitKm}',
+                      value: imported != null && imported.meters == null
+                          ? noValue
+                          : formatKm(details.meters, locale)),
+                  RunFigure(
+                      label: l10n.runMovingTime,
+                      value: formatClock(details.moving)),
+                  RunFigure(
+                      label: '${l10n.runAvgPace}, ${l10n.runUnitPerKm}',
+                      value: formatPace(avg)),
+                  if (details.elevationGain != null)
+                    RunFigure(
+                        label: l10n.runElevation,
+                        value: l10n.runElevationValue(
+                            formatMeters(details.elevationGain!, locale))),
+                  // An imported run shows its rating on the scale below.
+                  if (rated != null && !widget.justFinished && imported == null)
+                    RunFigure(label: l10n.runRpeTitle, value: '$rated / 10'),
+                ],
+              ),
+            ],
+            if (details.kind != ActivityKind.run &&
+                rated != null &&
+                !widget.justFinished) ...[
+              const SizedBox(height: AppSpacing.sm),
+              RunFigure(label: l10n.runRpeTitle, value: '$rated / 10'),
+            ],
             const SizedBox(height: AppSpacing.sm),
-            if (imported == null)
+            if (imported == null && !details.indoor)
               Text(
                 l10n.runElapsedLine(formatClock(details.elapsed),
                     l10n.runPausesCount(details.pauses)),
                 style: AppText.body14.copyWith(color: palette.textSecondary),
               ),
-            if (details.splits.isNotEmpty) ...[
+            if (details.kind == ActivityKind.run &&
+                details.splits.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.lg),
               Text(l10n.runSplits,
                   style: AppText.headingS.copyWith(color: palette.textPrimary)),
@@ -242,31 +247,6 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _Figure extends StatelessWidget {
-  const _Figure({required this.label, required this.value});
-
-  final String label, value;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 120, maxWidth: 160),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label,
-              style: AppText.caption.copyWith(color: palette.textSecondary)),
-          Text(value,
-              style: AppText.headingM.copyWith(
-                  color: palette.textPrimary,
-                  fontFeatures: const [FontFeature.tabularFigures()])),
-        ],
       ),
     );
   }

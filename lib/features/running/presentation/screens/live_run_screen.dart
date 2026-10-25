@@ -14,6 +14,10 @@ import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
+import 'package:fitrix/features/running/presentation/widgets/activity_settings_sheet.dart';
+import 'package:fitrix/features/running/presentation/widgets/live_ride_stats.dart';
+import 'package:fitrix/features/running/presentation/widgets/live_ski_stats.dart';
+import 'package:fitrix/features/running/presentation/widgets/live_stat.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_dialogs.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -135,7 +139,9 @@ class _LiveRunScreenState extends ConsumerState<LiveRunScreen> {
     final meters = session.track.meters;
     final paused = session.phase == RunPhase.paused;
     final template = session.template;
-    final title = template?.name ?? defaultRunName(l10n, session.startedAt);
+    final kind = session.kind;
+    final title =
+        template?.name ?? defaultActivityName(l10n, kind, session.startedAt);
     final hint = template?.exercises.map((e) => e.name).join(' · ');
     final locale = l10n.localeName;
     // Read on every build: the screen rebuilds each second.
@@ -175,7 +181,16 @@ class _LiveRunScreenState extends ConsumerState<LiveRunScreen> {
                               .copyWith(color: palette.textPrimary),
                         ),
                       ),
-                      const SizedBox(width: 48),
+                      kind == ActivityKind.run
+                          ? const SizedBox(width: 48)
+                          : IconButton(
+                              key: const ValueKey('run-settings'),
+                              tooltip: l10n.activitySettingsTitle,
+                              onPressed: () =>
+                                  showActivitySettingsSheet(context, kind),
+                              icon: Icon(Icons.tune,
+                                  color: palette.textSecondary),
+                            ),
                     ],
                   ),
                   if (hint != null && hint.isNotEmpty)
@@ -208,40 +223,50 @@ class _LiveRunScreenState extends ConsumerState<LiveRunScreen> {
                       warning: true,
                     ),
                   const SizedBox(height: AppSpacing.lg),
-                  _Stat(
-                    label: paused ? l10n.runPausedLabel : l10n.runTime,
-                    value: formatClock(moving),
-                    size: 72,
-                    valueKey: const ValueKey('run-time'),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  _Stat(
-                    label: '${l10n.runDistance}, ${l10n.runUnitKm}',
-                    value: formatKm(meters, locale),
-                    size: 48,
-                    valueKey: const ValueKey('run-distance'),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _Stat(
-                          label: '${l10n.runPace}, ${l10n.runUnitPerKm}',
-                          value: formatPace(currentPaceSecPerKm(session.track)),
-                          size: 32,
-                          valueKey: const ValueKey('run-pace'),
+                  switch (kind) {
+                    ActivityKind.run => Column(children: [
+                        LiveStat(
+                          label: paused ? l10n.runPausedLabel : l10n.runTime,
+                          value: formatClock(moving),
+                          size: 72,
+                          valueKey: const ValueKey('run-time'),
                         ),
-                      ),
-                      Expanded(
-                        child: _Stat(
-                          label: '${l10n.runAvgPace}, ${l10n.runUnitPerKm}',
-                          value: formatPace(paceSecPerKm(meters, moving)),
-                          size: 32,
-                          valueKey: const ValueKey('run-avg-pace'),
+                        const SizedBox(height: AppSpacing.md),
+                        LiveStat(
+                          label: '${l10n.runDistance}, ${l10n.runUnitKm}',
+                          value: formatKm(meters, locale),
+                          size: 48,
+                          valueKey: const ValueKey('run-distance'),
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(height: AppSpacing.md),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: LiveStat(
+                                label: '${l10n.runPace}, ${l10n.runUnitPerKm}',
+                                value: formatPace(
+                                    currentPaceSecPerKm(session.track)),
+                                size: 32,
+                                valueKey: const ValueKey('run-pace'),
+                              ),
+                            ),
+                            Expanded(
+                              child: LiveStat(
+                                label:
+                                    '${l10n.runAvgPace}, ${l10n.runUnitPerKm}',
+                                value: formatPace(paceSecPerKm(meters, moving)),
+                                size: 32,
+                                valueKey: const ValueKey('run-avg-pace'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ]),
+                    ActivityKind.ride =>
+                      LiveRideStats(session: session, moving: moving, now: now),
+                    ActivityKind.ski =>
+                      LiveSkiStats(live: recorder.skiLive(), paused: paused),
+                  },
                   const SizedBox(height: AppSpacing.lg),
                   AppButton(
                     key: const ValueKey('run-pause'),
@@ -313,46 +338,6 @@ class _GpsLine extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _Stat extends StatelessWidget {
-  const _Stat({
-    required this.label,
-    required this.value,
-    required this.size,
-    required this.valueKey,
-  });
-
-  final String label, value;
-  final double size;
-  final Key valueKey;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-    return Column(
-      children: [
-        Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: AppText.caption.copyWith(color: palette.textSecondary),
-        ),
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            value,
-            key: valueKey,
-            style: AppText.displayLarge.copyWith(
-              fontSize: size,
-              color: palette.textPrimary,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

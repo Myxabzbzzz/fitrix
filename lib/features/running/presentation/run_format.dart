@@ -58,3 +58,40 @@ int? currentPaceSecPerKm(
   if (meters < window) return null;
   return paceSecPerKm(meters, pts.last.at.difference(pts[i].at));
 }
+
+/// Speed in km/h with one decimal from m/s, or [noValue].
+String formatSpeed(double? metersPerSecond, String locale) {
+  if (metersPerSecond == null || !metersPerSecond.isFinite) return noValue;
+  return NumberFormat.decimalPatternDigits(locale: locale, decimalDigits: 1)
+      .format(metersPerSecond * 3.6);
+}
+
+/// Distance over time in m/s, or null without both.
+double? averageSpeed(double meters, Duration time) {
+  final secs = time.inMilliseconds / 1000;
+  return meters > 0 && secs > 0 ? meters / secs : null;
+}
+
+/// Speed over the last [window] of the track in m/s; 0 when the last kept
+/// fix is older than [stale] (standing: a stop keeps no fixes), null before
+/// there are two fixes to compare.
+double? currentSpeed(
+  RunTrack track,
+  DateTime now, {
+  Duration window = const Duration(seconds: 8),
+  Duration stale = const Duration(seconds: 10),
+}) {
+  final pts = track.kept;
+  if (pts.length < 2) return null;
+  if (now.difference(pts.last.at) > stale) return 0;
+  var i = pts.length - 1;
+  var meters = 0.0;
+  while (i > 0 && pts.last.at.difference(pts[i].at) < window) {
+    final a = pts[i - 1], b = pts[i];
+    if (b.at.difference(a.at) > stale) break;
+    meters += _distance(LatLng(a.lat, a.lng), LatLng(b.lat, b.lng));
+    i--;
+  }
+  final secs = pts.last.at.difference(pts[i].at).inMilliseconds / 1000;
+  return secs > 0 ? meters / secs : null;
+}

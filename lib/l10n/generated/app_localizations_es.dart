@@ -4497,4 +4497,60 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get activitySettingsVoiceSki =>
       'Anuncia el inicio, cada descenso y el final.';
+
+  @override
+  String get unitKmh => 'km/h';
+
+  @override
+  String get rideSpeed => 'Velocidad';
+
+  @override
+  String get rideAvgSpeed => 'Velocidad media';
+
+  @override
+  String get rideMaxSpeed => 'Velocidad máx.';
+
+  @override
+  String get rideAvgPower => 'Potencia media, W';
+
+  @override
+  String get skiStateDescending => 'Descenso';
+
+  @override
+  String get skiStateLift => 'En remonte';
+
+  @override
+  String get skiStateStopped => 'Parado';
+
+  @override
+  String get skiDescents => 'Descensos';
+
+  @override
+  String get skiVerticalDown => 'Desnivel bajado, m';
+
+  @override
+  String get skiTimeOnSlopes => 'Tiempo en pista';
+
+  @override
+  String get skiDistance => 'Distancia esquiada, km';
+
+  @override
+  String get skiAvgDescentSpeed => 'Velocidad media de descenso';
+
+  @override
+  String get skiLifts => 'Remontes';
+
+  @override
+  String skiDescentN(int n) {
+    return 'Descenso $n';
+  }
+
+  @override
+  String get skiDescentDuration => 'Duración';
+
+  @override
+  String get skiDescentVertical => 'Desnivel, m';
+
+  @override
+  String get rideElevationLoss => 'Desnivel negativo';
 }

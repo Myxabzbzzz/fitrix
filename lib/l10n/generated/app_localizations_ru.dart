@@ -4562,4 +4562,60 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get activitySettingsVoiceSki =>
       'Говорит о старте, каждом спуске и финише.';
+
+  @override
+  String get unitKmh => 'км/ч';
+
+  @override
+  String get rideSpeed => 'Скорость';
+
+  @override
+  String get rideAvgSpeed => 'Средняя скорость';
+
+  @override
+  String get rideMaxSpeed => 'Макс. скорость';
+
+  @override
+  String get rideAvgPower => 'Средняя мощность, Вт';
+
+  @override
+  String get skiStateDescending => 'Спуск';
+
+  @override
+  String get skiStateLift => 'На подъёмнике';
+
+  @override
+  String get skiStateStopped => 'Стоите';
+
+  @override
+  String get skiDescents => 'Спуски';
+
+  @override
+  String get skiVerticalDown => 'Перепад вниз, м';
+
+  @override
+  String get skiTimeOnSlopes => 'Время на склоне';
+
+  @override
+  String get skiDistance => 'Дистанция спусков, км';
+
+  @override
+  String get skiAvgDescentSpeed => 'Средняя скорость спуска';
+
+  @override
+  String get skiLifts => 'Подъёмы';
+
+  @override
+  String skiDescentN(int n) {
+    return 'Спуск $n';
+  }
+
+  @override
+  String get skiDescentDuration => 'Длительность';
+
+  @override
+  String get skiDescentVertical => 'Перепад высоты, м';
+
+  @override
+  String get rideElevationLoss => 'Спуск по высоте';
 }

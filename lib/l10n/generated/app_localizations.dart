@@ -7270,6 +7270,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Speaks the start, each descent and the finish.'**
   String get activitySettingsVoiceSki;
+
+  /// No description provided for @unitKmh.
+  ///
+  /// In en, this message translates to:
+  /// **'km/h'**
+  String get unitKmh;
+
+  /// No description provided for @rideSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get rideSpeed;
+
+  /// No description provided for @rideAvgSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg speed'**
+  String get rideAvgSpeed;
+
+  /// No description provided for @rideMaxSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Max speed'**
+  String get rideMaxSpeed;
+
+  /// No description provided for @rideAvgPower.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg power, W'**
+  String get rideAvgPower;
+
+  /// No description provided for @skiStateDescending.
+  ///
+  /// In en, this message translates to:
+  /// **'Descending'**
+  String get skiStateDescending;
+
+  /// No description provided for @skiStateLift.
+  ///
+  /// In en, this message translates to:
+  /// **'On a lift'**
+  String get skiStateLift;
+
+  /// No description provided for @skiStateStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped'**
+  String get skiStateStopped;
+
+  /// No description provided for @skiDescents.
+  ///
+  /// In en, this message translates to:
+  /// **'Descents'**
+  String get skiDescents;
+
+  /// No description provided for @skiVerticalDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Vertical down, m'**
+  String get skiVerticalDown;
+
+  /// No description provided for @skiTimeOnSlopes.
+  ///
+  /// In en, this message translates to:
+  /// **'Time on slopes'**
+  String get skiTimeOnSlopes;
+
+  /// No description provided for @skiDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Ski distance, km'**
+  String get skiDistance;
+
+  /// No description provided for @skiAvgDescentSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg descent speed'**
+  String get skiAvgDescentSpeed;
+
+  /// No description provided for @skiLifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifts'**
+  String get skiLifts;
+
+  /// No description provided for @skiDescentN.
+  ///
+  /// In en, this message translates to:
+  /// **'Descent {n}'**
+  String skiDescentN(int n);
+
+  /// No description provided for @skiDescentDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get skiDescentDuration;
+
+  /// No description provided for @skiDescentVertical.
+  ///
+  /// In en, this message translates to:
+  /// **'Vertical drop, m'**
+  String get skiDescentVertical;
+
+  /// No description provided for @rideElevationLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Elevation loss'**
+  String get rideElevationLoss;
 }
 
 class _AppLocalizationsDelegate

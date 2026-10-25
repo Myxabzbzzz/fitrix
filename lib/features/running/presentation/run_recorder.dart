@@ -14,6 +14,7 @@ import 'package:fitrix/features/running/data/location_source.dart';
 import 'package:fitrix/features/running/data/recording_file.dart';
 import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
+import 'package:fitrix/features/running/data/ski_live.dart';
 import 'package:fitrix/features/running/data/ski_math.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -239,7 +240,45 @@ class RunRecorder extends StateNotifier<RunSession?> {
   DateTime? _skiScanAt;
   int _skiFrom = 0, _skiDone = 0;
 
+  // Ski only, for the live screen: what the done descents add up to, the
+  // lift time already behind the scan start, and what the last scan saw in
+  // the tail (lifts after it, descents still under way).
+  double _skiVertical = 0, _skiMax = 0;
+  Duration _skiLiftBanked = Duration.zero, _skiLiftTail = Duration.zero;
+  List<SkiDescent> _skiPending = const [];
+
   Stream<RunEvent> get events => _events.stream;
+
+  /// The live numbers of a ski day, or null when no ski day is recorded.
+  /// Reads the results of the throttled scan and the last few fixes.
+  SkiLive? skiLive() {
+    final s = state;
+    if (s == null || s.kind != ActivityKind.ski) return null;
+    final now = _now();
+    var paused = Duration.zero;
+    for (final m in s.pauses) {
+      paused += (m.resumedAt ?? now).difference(m.pausedAt);
+    }
+    var onSlopes =
+        now.difference(s.startedAt) - paused - _skiLiftBanked - _skiLiftTail;
+    if (onSlopes.isNegative) onSlopes = Duration.zero;
+    var vertical = _skiVertical;
+    var top = _skiMax;
+    for (final d in _skiPending) {
+      vertical += d.vertical;
+      if (d.maxSpeed > top) top = d.maxSpeed;
+    }
+    final count = _skiDone + _skiPending.length;
+    return SkiLive(
+      descents: count,
+      verticalDown: vertical,
+      maxSpeed: count == 0 ? null : top,
+      motion: s.phase == RunPhase.paused
+          ? SkiMotion.stopped
+          : skiMotionOf(s.track.kept, now),
+      onSlopes: onSlopes,
+    );
+  }
 
   /// Whether [state] is a run restored at launch that the user has not
   /// resumed, finished or discarded yet.
@@ -427,6 +466,9 @@ class RunRecorder extends StateNotifier<RunSession?> {
     _lastSaved = null;
     _skiScanAt = null;
     _skiFrom = _skiDone = 0;
+    _skiVertical = _skiMax = 0;
+    _skiLiftBanked = _skiLiftTail = Duration.zero;
+    _skiPending = const [];
     _listeningSince = _lastRawFixAt = _lastRawAccuracy = null;
     _preciseLocationOff = false;
     _file?.delete();
@@ -522,18 +564,39 @@ class RunRecorder extends StateNotifier<RunSession?> {
     if (_skiFrom >= kept.length - 1) return;
     final tail = _skiFrom == 0 ? kept : kept.sublist(_skiFrom);
     var advance = -1;
+    final pending = <SkiDescent>[];
     for (final d in skiDayFrom(tail, const []).descents) {
       // Done when kept fixes show movement for a while after it (a lift,
       // the next run). Standing since then is not enough: it may be a
       // breather mid-descent, so that waits for the length of a real stop.
       final moved = tail.last.at.difference(d.end) >= skiDoneAfter;
-      if (!moved && at.difference(d.end) < skiStopAfter) continue;
+      if (!moved && at.difference(d.end) < skiStopAfter) {
+        pending.add(d);
+        continue;
+      }
       _skiDone++;
+      _skiVertical += d.vertical;
+      if (d.maxSpeed > _skiMax) _skiMax = d.maxSpeed;
       if (emit) {
         _emit(SkiDescentDone(_skiDone, d.meters, d.vertical, d.maxSpeed));
       }
       advance = tail.indexWhere((p) => !p.at.isBefore(d.end));
     }
+    // Lifts: the ones before the new scan start are banked, the rest are
+    // looked at again next time.
+    var banked = Duration.zero, open = Duration.zero;
+    for (final seg in segmentSki(tail)) {
+      if (seg.kind != SkiSegmentKind.lift) continue;
+      final len = tail[seg.to].at.difference(tail[seg.from].at);
+      if (advance >= 0 && seg.to <= advance) {
+        banked += len;
+      } else {
+        open += len;
+      }
+    }
+    _skiLiftBanked += banked;
+    _skiLiftTail = open;
+    _skiPending = pending;
     if (advance >= 0) _skiFrom += advance;
   }
 

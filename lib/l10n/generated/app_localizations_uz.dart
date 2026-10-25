@@ -4428,4 +4428,60 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get activitySettingsVoiceSki =>
       'Boshlanish, har bir tushish va yakunni aytadi.';
+
+  @override
+  String get unitKmh => 'km/soat';
+
+  @override
+  String get rideSpeed => 'Tezlik';
+
+  @override
+  String get rideAvgSpeed => 'O‘rtacha tezlik';
+
+  @override
+  String get rideMaxSpeed => 'Maksimal tezlik';
+
+  @override
+  String get rideAvgPower => 'O‘rtacha quvvat, Vt';
+
+  @override
+  String get skiStateDescending => 'Tushish';
+
+  @override
+  String get skiStateLift => 'Ko‘targichda';
+
+  @override
+  String get skiStateStopped => 'To‘xtagan';
+
+  @override
+  String get skiDescents => 'Tushishlar';
+
+  @override
+  String get skiVerticalDown => 'Pastga balandlik, m';
+
+  @override
+  String get skiTimeOnSlopes => 'Yonbag‘irdagi vaqt';
+
+  @override
+  String get skiDistance => 'Tushishlar masofasi, km';
+
+  @override
+  String get skiAvgDescentSpeed => 'Tushishning o‘rtacha tezligi';
+
+  @override
+  String get skiLifts => 'Ko‘tarilishlar';
+
+  @override
+  String skiDescentN(int n) {
+    return '$n-tushish';
+  }
+
+  @override
+  String get skiDescentDuration => 'Davomiyligi';
+
+  @override
+  String get skiDescentVertical => 'Balandlik farqi, m';
+
+  @override
+  String get rideElevationLoss => 'Balandlikdan tushish';
 }

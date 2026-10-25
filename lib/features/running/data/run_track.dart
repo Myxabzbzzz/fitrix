@@ -636,6 +636,26 @@ class RunDetails {
   /// Descents and lifts of a ski day.
   final SkiDay? ski;
 
+  /// The same document with a rating.
+  RunDetails withRpe(int rpe) => RunDetails(
+        startedAt: startedAt,
+        moving: moving,
+        elapsed: elapsed,
+        pauses: pauses,
+        meters: meters,
+        elevationGain: elevationGain,
+        splits: splits,
+        route: _route,
+        rpe: rpe,
+        templateId: templateId,
+        kind: kind,
+        maxSpeed: maxSpeed,
+        elevationLoss: elevationLoss,
+        indoor: indoor,
+        avgPowerW: avgPowerW,
+        ski: ski,
+      );
+
   Map<String, Object?> toJson() => {
         'startedAt': startedAt.toUtc().toIso8601String(),
         'movingMs': moving.inMilliseconds,
