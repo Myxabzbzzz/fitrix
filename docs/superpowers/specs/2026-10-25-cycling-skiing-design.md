@@ -63,7 +63,7 @@ Everywhere
 
 ## Claude's calls (owner can override)
 
-- Ski segmentation: smooth altitude (median over ~30 s), split by direction with 15 m hysteresis; a descent needs ≥ 30 m drop, a lift ≥ 30 m gain with average vertical speed ≥ 0.5 m/s and horizontal speed ≤ 8 m/s; everything else is "other". Max speed from fix-to-fix speed smoothed over ≥ 3 s.
+- Ski segmentation: smooth altitude (median over ~30 s), split by direction with 15 m hysteresis; legs trimmed by the last/first crossing of the band; stationary stretches (ground speed < 0.5 m/s for > 2 min — queues, huts, lunch) are "other" and split legs. A descent needs ≥ 30 m drop and ≥ 100 m ground distance at moving ground speed ≥ 1.5 m/s; a lift ≥ 30 m gain with average climb ≥ 0.3 m/s and ground speed ≤ 12 m/s; everything else is "other". Max speed from fix-to-fix speed, robust over ≥ 3 s; descent average speed over moving time. Known limitation: riding a gondola down, or a lift with a ≥ 35 m mid-station dip, can still be read as a descent (revisit with real ski-day data).
 - Ride splits every 5 km; ride voice every 5 km.
 - Indoor ride template id `indoor_ride`; free ride `free_ride`; free ski day `free_ski`; all three added to the plan's "unplanned" ids.
 - Ride/ski duration = auto-stop moving time (ride) / day minus lifts minus pauses (ski).
