@@ -2,6 +2,10 @@ import 'dart:math' as math;
 
 import 'package:latlong2/latlong.dart';
 
+import 'activity_kind.dart';
+
+export 'activity_kind.dart';
+
 /// Fixes less accurate than this (metres) are dropped.
 const double maxFixAccuracy = 25;
 
@@ -37,7 +41,8 @@ class RunPoint {
 class RunSplit {
   const RunSplit({required this.km, required this.meters, required this.time});
 
-  /// 1-based; the last split may be partial (`meters < 1000`).
+  /// The split's end in whole km (1, 2, 3 for km splits; 5, 10 for 5 km
+  /// ones); the last split may be partial (`meters < splitMeters`).
   final int km;
   final double meters;
   final Duration time;
@@ -50,8 +55,12 @@ class RunSplit {
 /// with a wandering GPS adds no distance. Moving time excludes pauses, and
 /// the jump between the pause point and the resume point is not distance.
 class RunTrack {
-  RunTrack({DateTime? startedAt})
+  RunTrack({DateTime? startedAt, ActivityProfile profile = runProfile})
       : this._(
+          profile: profile,
+          autoMs: 0,
+          autoAt: startedAt,
+          breaks: const [],
           start: startedAt,
           notBefore: startedAt,
           points: const [],
@@ -67,6 +76,10 @@ class RunTrack {
         );
 
   const RunTrack._({
+    required this.profile,
+    required int autoMs,
+    required DateTime? autoAt,
+    required List<int> breaks,
     required DateTime? start,
     required DateTime? notBefore,
     required List<RunPoint> points,
@@ -79,7 +92,10 @@ class RunTrack {
     required bool breakNext,
     required RunPoint? pending,
     required DateTime? finishedAt,
-  })  : _start = start,
+  })  : _autoMs = autoMs,
+        _autoAt = autoAt,
+        _breaks = breaks,
+        _start = start,
         _notBefore = notBefore,
         kept = points,
         _done = splits,
@@ -90,6 +106,16 @@ class RunTrack {
         _breakNext = breakNext,
         _pending = pending,
         _finishedAt = finishedAt;
+
+  /// Speed cap, split length and auto-stop for this activity.
+  final ActivityProfile profile;
+
+  // Auto-stop only: moving ms banked up to [_autoAt] (the last kept fix, the
+  // resume, or the start). Null [_autoAt] while paused.
+  final int _autoMs;
+  final DateTime? _autoAt;
+  // Indexes into [kept] of fixes that start a new segment (after a resume).
+  final List<int> _breaks;
 
   final DateTime? _start;
   // Fixes stamped before this (the start, then the last resume) are the
@@ -119,6 +145,9 @@ class RunTrack {
   static const Object _keep = Object();
 
   RunTrack _copy({
+    int? autoMs,
+    Object? autoAt = _keep,
+    List<int>? breaks,
     DateTime? start,
     DateTime? notBefore,
     List<RunPoint>? points,
@@ -133,6 +162,10 @@ class RunTrack {
     DateTime? finishedAt,
   }) =>
       RunTrack._(
+        profile: profile,
+        autoMs: autoMs ?? _autoMs,
+        autoAt: identical(autoAt, _keep) ? _autoAt : autoAt as DateTime?,
+        breaks: breaks ?? _breaks,
         start: start ?? _start,
         notBefore: notBefore ?? _notBefore,
         points: points ?? kept,
@@ -148,8 +181,26 @@ class RunTrack {
         finishedAt: finishedAt ?? _finishedAt,
       );
 
-  int _movingMsAt(DateTime at, DateTime start) =>
-      math.max(0, at.difference(start).inMilliseconds - _pausedMs);
+  /// Auto-stop rule for the time between two kept fixes (or a fix and the
+  /// clock) [gapMs] apart that covered [meters]: it counts in full when the
+  /// average speed is at least 1 m/s, or when the gap is shorter than 10 s
+  /// (a short stop doesn't stop the clock); otherwise it is a stop and counts
+  /// for nothing.
+  static int _autoGapMs(int gapMs, double meters) {
+    if (gapMs <= 0) return 0;
+    if (meters / (gapMs / 1000) >= 1) return gapMs;
+    return gapMs < 10000 ? gapMs : 0;
+  }
+
+  int _movingMsAt(DateTime at, DateTime start) {
+    if (profile.autoStop) {
+      final a = _autoAt;
+      if (a == null || !at.isAfter(a)) return _autoMs;
+      // Time after the last kept fix: counted only while it is a short stop.
+      return _autoMs + _autoGapMs(at.difference(a).inMilliseconds, 0);
+    }
+    return math.max(0, at.difference(start).inMilliseconds - _pausedMs);
+  }
 
   /// Moving time at [now]; frozen at the pause time while paused.
   Duration movingTime(DateTime now) {
@@ -159,7 +210,16 @@ class RunTrack {
     return Duration(milliseconds: _movingMsAt(end, start));
   }
 
-  RunTrack pause(DateTime at) => paused ? this : _copy(pausedAt: at);
+  RunTrack pause(DateTime at) {
+    if (paused) return this;
+    if (!profile.autoStop) return _copy(pausedAt: at);
+    final start = _start ?? kept.firstOrNull?.at;
+    return _copy(
+      pausedAt: at,
+      autoMs: start == null ? _autoMs : _movingMsAt(at, start),
+      autoAt: null,
+    );
+  }
 
   RunTrack resume(DateTime at) {
     final since = _pausedAt;
@@ -169,6 +229,7 @@ class RunTrack {
       pausedAt: null,
       breakNext: true,
       notBefore: at,
+      autoAt: at,
     );
   }
 
@@ -178,18 +239,36 @@ class RunTrack {
     if (notBefore != null && p.at.isBefore(notBefore)) return this;
     final last = _last;
     if (last == null) {
-      return _copy(start: _start ?? p.at, points: [p]);
+      return _copy(
+        start: _start ?? p.at,
+        points: [p],
+        autoMs: _autoMs + _autoGapMs(_gapFromAnchor(p), 0),
+        autoAt: p.at,
+      );
     }
     if (p.at.isBefore(last.at)) return this;
     if (_breakNext) {
       // First fix after a resume: a new starting point, no distance.
-      return _copy(points: [...kept, p], breakNext: false, pending: null);
+      return _copy(
+        points: [...kept, p],
+        breaks: [..._breaks, kept.length],
+        breakNext: false,
+        pending: null,
+        autoMs: _autoMs + _autoGapMs(_gapFromAnchor(p), 0),
+        autoAt: p.at,
+      );
     }
     final d = _between(last, p);
     final secs = p.at.difference(last.at).inMilliseconds / 1000;
-    if (secs > 0 && d / secs > maxRunSpeed) return this;
+    if (secs > 0 && d / secs > profile.maxSpeed) return this;
     if (d <= 2 * p.accuracy) return _copy(pending: p);
     return _extend(p, d);
+  }
+
+  int _gapFromAnchor(RunPoint p) {
+    final a = _autoAt;
+    if (!profile.autoStop || a == null) return 0;
+    return p.at.difference(a).inMilliseconds;
   }
 
   RunTrack _extend(RunPoint p, double d) {
@@ -199,17 +278,24 @@ class RunTrack {
     var done = _done;
     var bMeters = _boundaryMeters;
     var bMs = _boundaryMs;
-    final t0 = _movingMsAt(last.at, start);
-    final t1 = _movingMsAt(p.at, start);
-    while (bMeters + 1000 <= total) {
-      final cross = bMeters + 1000;
+    final split = profile.splitMeters;
+    final int t0, t1;
+    if (profile.autoStop) {
+      t0 = _autoMs;
+      t1 = _autoMs + _autoGapMs(p.at.difference(last.at).inMilliseconds, d);
+    } else {
+      t0 = _movingMsAt(last.at, start);
+      t1 = _movingMsAt(p.at, start);
+    }
+    while (bMeters + split <= total) {
+      final cross = bMeters + split;
       final f = (cross - meters) / d;
       final tCross = (t0 + (t1 - t0) * f).round();
       done = [
         ...done,
         RunSplit(
-          km: done.length + 1,
-          meters: 1000,
+          km: _label(done.length + 1),
+          meters: split.toDouble(),
           time: Duration(milliseconds: tCross - bMs),
         ),
       ];
@@ -219,6 +305,8 @@ class RunTrack {
     return _copy(
       points: [...kept, p],
       meters: total,
+      autoMs: t1,
+      autoAt: p.at,
       splits: done,
       boundaryMeters: bMeters,
       boundaryMs: bMs,
@@ -236,12 +324,15 @@ class RunTrack {
     if (!paused && p != null && last != null && !p.at.isBefore(last.at)) {
       final d = _between(last, p);
       final secs = p.at.difference(last.at).inMilliseconds / 1000;
-      if (secs <= 0 || d / secs <= maxRunSpeed) track = _extend(p, d);
+      if (secs <= 0 || d / secs <= profile.maxSpeed) track = _extend(p, d);
     }
     return track._copy(pending: null, finishedAt: at);
   }
 
-  /// Full kilometres, then the partial rest (if any distance is left).
+  // The split's end in whole km: 1, 2, 3 for km splits; 5, 10 for 5 km ones.
+  int _label(int index) => index * profile.splitMeters ~/ 1000;
+
+  /// Full splits, then the partial rest (if any distance is left).
   List<RunSplit> get splits {
     final last = _last;
     final start = _start;
@@ -252,7 +343,7 @@ class RunTrack {
     return [
       ..._done,
       RunSplit(
-        km: _done.length + 1,
+        km: _label(_done.length + 1),
         meters: rest,
         time: Duration(
             milliseconds: math.max(0, _movingMsAt(end, start) - _boundaryMs)),
@@ -262,7 +353,12 @@ class RunTrack {
 
   /// Total climb in metres, or null when fewer than 80 % of the kept points
   /// have an altitude. Changes under 3 m are ignored.
-  double? get elevationGain {
+  double? get elevationGain => _elevation()?.$1;
+
+  /// Total descent in metres; same rules as [elevationGain].
+  double? get elevationLoss => _elevation()?.$2;
+
+  (double, double)? _elevation() {
     if (kept.isEmpty) return null;
     final alts = <double>[
       for (final p in kept)
@@ -270,16 +366,50 @@ class RunTrack {
     ];
     if (alts.length < kept.length * 0.8) return null;
     var ref = alts.first;
-    var gain = 0.0;
+    var gain = 0.0, loss = 0.0;
     for (final a in alts.skip(1)) {
       if (a - ref >= elevationHysteresis) {
         gain += a - ref;
         ref = a;
       } else if (ref - a >= elevationHysteresis) {
+        loss += ref - a;
         ref = a;
       }
     }
-    return gain;
+    return (gain, loss);
+  }
+
+  /// Top speed in m/s: the fastest stretch of at least 3 s of kept fixes, so
+  /// one jumpy fix doesn't count. Null when the track is shorter than that.
+  double? get maxSpeed {
+    if (kept.length < 2) return null;
+    double? best;
+    var j = 0;
+    var cum = 0.0;
+    final cums = <double>[0];
+    var segStart = 0;
+    var breakAt = 0;
+    for (var i = 1; i < kept.length; i++) {
+      if (breakAt < _breaks.length && _breaks[breakAt] == i) {
+        segStart = i;
+        breakAt++;
+        cums.add(cum);
+        continue;
+      }
+      cum += _between(kept[i - 1], kept[i]);
+      cums.add(cum);
+      if (j < segStart) j = segStart;
+      // Latest window start that is still at least 3 s back.
+      while (j + 1 < i &&
+          kept[i].at.difference(kept[j + 1].at).inMilliseconds >= 3000) {
+        j++;
+      }
+      final dt = kept[i].at.difference(kept[j].at).inMilliseconds / 1000;
+      if (dt < 3) continue;
+      final v = (cums[i] - cums[j]) / dt;
+      if (best == null || v > best) best = v;
+    }
+    return best;
   }
 }
 
@@ -400,6 +530,11 @@ class RunDetails {
     required List<List<double>> route,
     this.rpe,
     this.templateId,
+    this.kind = ActivityKind.run,
+    this.maxSpeed,
+    this.elevationLoss,
+    this.indoor = false,
+    this.avgPowerW,
   }) : _route = route;
 
   final DateTime startedAt;
@@ -417,6 +552,18 @@ class RunDetails {
   final int? rpe;
   final String? templateId;
 
+  /// What was recorded; a document without it is a run.
+  final ActivityKind kind;
+
+  /// Top speed, m/s.
+  final double? maxSpeed;
+  final double? elevationLoss;
+
+  /// A ride on a trainer: [meters] is the entered km x 1000, or 0 when
+  /// unknown.
+  final bool indoor;
+  final int? avgPowerW;
+
   Map<String, Object?> toJson() => {
         'startedAt': startedAt.toUtc().toIso8601String(),
         'movingMs': moving.inMilliseconds,
@@ -431,6 +578,11 @@ class RunDetails {
         'polyline': encodePolyline(route),
         if (rpe != null) 'rpe': rpe,
         if (templateId != null) 'templateId': templateId,
+        if (kind != ActivityKind.run) 'kind': kind.name,
+        if (maxSpeed != null) 'maxSpeed': maxSpeed,
+        if (elevationLoss != null) 'elevationLoss': elevationLoss,
+        if (indoor) 'indoor': true,
+        if (avgPowerW != null) 'avgPowerW': avgPowerW,
       };
 
   factory RunDetails.fromJson(Map<String, Object?> j) => RunDetails(
@@ -451,6 +603,11 @@ class RunDetails {
         route: _routeFrom(j),
         rpe: (j['rpe'] as num?)?.toInt(),
         templateId: j['templateId'] as String?,
+        kind: ActivityKind.values.asNameMap()[j['kind']] ?? ActivityKind.run,
+        maxSpeed: (j['maxSpeed'] as num?)?.toDouble(),
+        elevationLoss: (j['elevationLoss'] as num?)?.toDouble(),
+        indoor: j['indoor'] == true,
+        avgPowerW: (j['avgPowerW'] as num?)?.toInt(),
       );
 }
 
