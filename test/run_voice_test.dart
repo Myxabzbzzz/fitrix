@@ -355,9 +355,7 @@ void main() {
       final speaker = FakeSpeaker({'en', 'ru', 'uz', 'es'});
       final events = StreamController<RunEvent>.broadcast(sync: true);
       RunVoice(speaker, events.stream,
-          appLanguage: () => app,
-          sessionKind: () => kind,
-          voiceOn: on.contains);
+          appLanguage: () => app, voiceOn: on.contains);
       addTearDown(events.close);
       return (speaker: speaker, events: events);
     }
@@ -372,20 +370,24 @@ void main() {
 
     test('ride with voice off says nothing, not even start or finish',
         () async {
-      final r = rig(ActivityKind.ride, {ActivityKind.run});
-      await send(r.events, const RunStarted());
+      const kind = ActivityKind.ride;
+      final r = rig(kind, {ActivityKind.run});
+      await send(r.events, const RunStarted(kind: kind));
       await send(r.events, km5);
-      await send(r.events, const RunPaused());
-      await send(r.events, const RunFinished(5000, Duration(minutes: 15), 180));
+      await send(r.events, const RunPaused(kind: kind));
+      await send(r.events,
+          const RunFinished(5000, Duration(minutes: 15), 180, kind: kind));
       expect(r.speaker.spoken, isEmpty);
       expect(r.speaker.prepares, 0);
     });
 
     test('ride with voice on: own start, 5 km and finish phrases', () async {
-      final r = rig(ActivityKind.ride, {ActivityKind.ride});
-      await send(r.events, const RunStarted());
+      const kind = ActivityKind.ride;
+      final r = rig(kind, {ActivityKind.ride});
+      await send(r.events, const RunStarted(kind: kind));
       await send(r.events, km5);
-      await send(r.events, const RunFinished(5200, Duration(minutes: 16), 180));
+      await send(r.events,
+          const RunFinished(5200, Duration(minutes: 16), 180, kind: kind));
       expect(r.speaker.spoken.map((s) => s.text), [
         'Ride started.',
         '5 kilometres. Time 15 minutes. Last 5 kilometres 30.6 kilometres per '
@@ -408,9 +410,11 @@ void main() {
     });
 
     test('ski start and finish are not worded as a run', () async {
-      final r = rig(ActivityKind.ski, {ActivityKind.ski});
-      await send(r.events, const RunStarted());
-      await send(r.events, const RunFinished(9800, Duration(hours: 1), null));
+      const kind = ActivityKind.ski;
+      final r = rig(kind, {ActivityKind.ski});
+      await send(r.events, const RunStarted(kind: kind));
+      await send(r.events,
+          const RunFinished(9800, Duration(hours: 1), null, kind: kind));
       expect(r.speaker.spoken.map((s) => s.text), [
         'Ski day started.',
         'Ski day finished. 9.8 kilometres of descents in 1 hour.',
@@ -423,18 +427,36 @@ void main() {
       expect(r.speaker.spoken.single.text, startsWith('Kilometre 1.'));
     });
 
+    test(
+        'a restored ride finished with ride voice off is silent under run voice',
+        () async {
+      final r = rig(ActivityKind.ride, {ActivityKind.run});
+      await send(
+          r.events,
+          const RunFinished(5000, Duration(minutes: 20), null,
+              kind: ActivityKind.ride));
+      expect(r.speaker.spoken, isEmpty);
+      await send(
+          r.events,
+          const RunFinished(9000, Duration(minutes: 40), null,
+              kind: ActivityKind.ski));
+      expect(r.speaker.spoken, isEmpty);
+    });
+
     test('a toggle between events applies to the next phrase', () async {
       final on = <ActivityKind>{};
       final speaker = FakeSpeaker({'en'});
       final events = StreamController<RunEvent>.broadcast(sync: true);
       addTearDown(events.close);
       RunVoice(speaker, events.stream,
-          appLanguage: () => 'en',
-          sessionKind: () => ActivityKind.ride,
-          voiceOn: on.contains);
+          appLanguage: () => 'en', voiceOn: on.contains);
       await send(events, km5);
       on.add(ActivityKind.ride);
       await send(events, km5);
+      expect(speaker.spoken, hasLength(1));
+      on.remove(ActivityKind.ride);
+      await send(events, km5);
+      await send(events, const RunPaused(kind: ActivityKind.ride));
       expect(speaker.spoken, hasLength(1));
     });
 

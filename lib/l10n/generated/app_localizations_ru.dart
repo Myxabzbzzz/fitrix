@@ -4518,7 +4518,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Данных с часов пока нет — часы (Garmin, WHOOP, Mi Band) добавят сон, пульс и тренировки.';
 
   @override
-  String get rideVoiceStart => 'Поездка началась.';
+  String get rideVoiceStart => 'Заезд начался.';
 
   @override
   String rideVoiceDistance(
@@ -4528,7 +4528,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String rideVoiceFinish(String distance, String time) {
-    return 'Поездка завершена. $distance км. Время $time.';
+    return 'Заезд завершён. $distance км. Время $time.';
   }
 
   @override

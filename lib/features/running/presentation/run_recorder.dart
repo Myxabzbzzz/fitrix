@@ -102,15 +102,21 @@ sealed class RunEvent {
 }
 
 class RunStarted extends RunEvent {
-  const RunStarted();
+  const RunStarted({this.kind = ActivityKind.run});
+
+  final ActivityKind kind;
 }
 
 class RunPaused extends RunEvent {
-  const RunPaused();
+  const RunPaused({this.kind = ActivityKind.run});
+
+  final ActivityKind kind;
 }
 
 class RunResumed extends RunEvent {
-  const RunResumed();
+  const RunResumed({this.kind = ActivityKind.run});
+
+  final ActivityKind kind;
 }
 
 class KmReached extends RunEvent {
@@ -150,7 +156,10 @@ class SkiDescentDone extends RunEvent {
 }
 
 class RunFinished extends RunEvent {
-  const RunFinished(this.meters, this.moving, this.avgSecPerKm);
+  const RunFinished(this.meters, this.moving, this.avgSecPerKm,
+      {this.kind = ActivityKind.run});
+
+  final ActivityKind kind;
 
   final double meters;
   final Duration moving;
@@ -269,7 +278,7 @@ class RunRecorder extends StateNotifier<RunSession?> {
     }
     _listen();
     _persist();
-    _emit(const RunStarted());
+    _emit(RunStarted(kind: kind));
     return LocationAccess.granted;
   }
 
@@ -283,7 +292,7 @@ class RunRecorder extends StateNotifier<RunSession?> {
       pauses: [...s.pauses, (pausedAt: at, resumedAt: null)],
     );
     _persist();
-    _emit(const RunPaused());
+    _emit(RunPaused(kind: s.kind));
   }
 
   void resume() {
@@ -303,7 +312,7 @@ class RunRecorder extends StateNotifier<RunSession?> {
     // A run restored after the app was killed has no fixes coming in yet.
     if (_sub == null) _listen();
     _persist();
-    _emit(const RunResumed());
+    _emit(RunResumed(kind: s.kind));
   }
 
   /// Saves the recording: a workout of the kind's sport and its
@@ -378,7 +387,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
     );
     await _end();
     _emit(RunFinished(meters, moving,
-        s.kind == ActivityKind.run ? paceSecPerKm(meters, moving) : null));
+        s.kind == ActivityKind.run ? paceSecPerKm(meters, moving) : null,
+        kind: s.kind));
     return workout;
   }
 

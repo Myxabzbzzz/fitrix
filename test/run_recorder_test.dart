@@ -345,6 +345,21 @@ void main() {
         inInclusiveRange(200, 216));
   });
 
+  test('a restored ride saved without Resume finishes as a ride', () async {
+    final r = await rig();
+    await r.recorder.start(kind: ActivityKind.ride);
+    r.runTo(600);
+    r.container.dispose();
+
+    final r2 = await rig(
+        clock: Clock(r.clock.now.add(const Duration(hours: 1))), fresh: false);
+    final events = <RunEvent>[];
+    r2.recorder.events.listen(events.add);
+    await r2.recorder.finish();
+    await pumpEventQueue();
+    expect((events.last as RunFinished).kind, ActivityKind.ride);
+  });
+
   test('GPS status: raw fixes, a restored run before Resume, finish', () async {
     final r = await rig();
     await r.recorder.start();

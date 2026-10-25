@@ -197,8 +197,6 @@ String spokenDuration(AppLocalizations l10n, Duration d) {
 String spokenPace(AppLocalizations l10n, int secPerKm) =>
     l10n.runVoicePace(spokenDuration(l10n, Duration(seconds: secPerKm)));
 
-ActivityKind? _runKind() => ActivityKind.run;
-
 bool _alwaysOn(ActivityKind kind) => true;
 
 Duration _defaultTimeout(String text) =>
@@ -211,11 +209,9 @@ class RunVoice {
     Stream<RunEvent> events, {
     required String Function() appLanguage,
     Duration Function(String text) timeoutFor = _defaultTimeout,
-    ActivityKind? Function() sessionKind = _runKind,
     bool Function(ActivityKind kind) voiceOn = _alwaysOn,
   })  : _appLanguage = appLanguage,
         _timeoutFor = timeoutFor,
-        _sessionKind = sessionKind,
         _voiceOn = voiceOn {
     _sub = events.listen(_onEvent);
   }
@@ -223,12 +219,8 @@ class RunVoice {
   final Speaker _speaker;
   final String Function() _appLanguage;
   final Duration Function(String text) _timeoutFor;
-  final ActivityKind? Function() _sessionKind;
   final bool Function(ActivityKind kind) _voiceOn;
   late final StreamSubscription<RunEvent> _sub;
-
-  /// Kind of the latest session; a finish comes after the session is gone.
-  ActivityKind _lastKind = ActivityKind.run;
 
   /// Phrases are said one after another, never over each other.
   Future<void> _queue = Future.value();
@@ -239,9 +231,11 @@ class RunVoice {
       DistanceReached() => ActivityKind.ride,
       SkiDescentDone() => ActivityKind.ski,
       KmReached() => ActivityKind.run,
-      _ => _sessionKind() ?? _lastKind,
+      RunStarted() => e.kind,
+      RunPaused() => e.kind,
+      RunResumed() => e.kind,
+      RunFinished() => e.kind,
     };
-    _lastKind = kind;
     if (!_voiceOn(kind)) return;
     _queue = _queue.then((_) => _say(e, kind)).catchError((Object error) {
       debugPrint('Run voice: $error');
@@ -331,7 +325,6 @@ final runVoiceProvider = Provider<RunVoice>((ref) {
     ref.read(speakerProvider),
     ref.read(runRecorderProvider.notifier).events,
     appLanguage: () => ref.read(selectedLanguageProvider),
-    sessionKind: () => ref.read(runRecorderProvider)?.kind,
     voiceOn: (kind) => ref.read(activityVoiceProvider)[kind] ?? false,
   );
   ref.onDispose(voice.dispose);

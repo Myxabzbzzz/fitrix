@@ -4453,7 +4453,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Aún no hay datos de reloj: un reloj (Garmin, WHOOP, Mi Band) añade sueño, pulso y entrenamientos.';
 
   @override
-  String get rideVoiceStart => 'Salida iniciada.';
+  String get rideVoiceStart => 'Recorrido en bici iniciado.';
 
   @override
   String rideVoiceDistance(
@@ -4463,7 +4463,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String rideVoiceFinish(String distance, String time) {
-    return 'Salida terminada. $distance kilómetros en $time.';
+    return 'Recorrido en bici terminado. $distance kilómetros en $time.';
   }
 
   @override
@@ -4472,7 +4472,7 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String skiVoiceDescent(
       int index, String distance, int vertical, String topSpeed) {
-    return 'Descenso $index. Distancia $distance km, desnivel $vertical metros, máximo $topSpeed kilómetros por hora.';
+    return 'Descenso $index. Distancia $distance km, desnivel $vertical metros, velocidad máxima $topSpeed kilómetros por hora.';
   }
 
   @override

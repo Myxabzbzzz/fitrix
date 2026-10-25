@@ -4389,7 +4389,7 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String rideVoiceDistance(
       String km, String time, String lastSpeed, String avgSpeed) {
-    return '$km km. Vaqt $time. Oxirgi 5 km tezligi $lastSpeed km/soat. O‘rtacha $avgSpeed.';
+    return '$km km. Vaqt $time. Oxirgi 5 km tezligi $lastSpeed kilometr soatiga. O‘rtacha $avgSpeed.';
   }
 
   @override
@@ -4403,7 +4403,7 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String skiVoiceDescent(
       int index, String distance, int vertical, String topSpeed) {
-    return 'Tushish $index. Masofa $distance km, balandlik farqi $vertical m, eng yuqori tezlik $topSpeed km/soat.';
+    return '$index-tushish. Masofa $distance km, balandlik farqi $vertical m, eng yuqori tezlik $topSpeed kilometr soatiga.';
   }
 
   @override
