@@ -75,11 +75,60 @@ class FelixSnapshot {
 
   /// `distanceKm` and `paceSecPerKm` of a run, within what the backend takes.
   static Map<String, Object> _runJson(RunDetails run) {
+    switch (run.kind) {
+      case ActivityKind.ride:
+        return _rideJson(run);
+      case ActivityKind.ski:
+        return _skiJson(run);
+      case ActivityKind.run:
+        break;
+    }
     final km = run.meters / 1000;
     final pace = km <= 0 ? 0 : (run.moving.inMilliseconds / 1000 / km).round();
     return {
       if (run.meters > 0 && km <= 500) 'distanceKm': (km * 100).round() / 100,
       if (run.meters >= 50 && pace >= 120 && pace <= 1800) 'paceSecPerKm': pace,
+    };
+  }
+
+  /// Distance, speeds and climb of a ride (no pace), or power of an indoor one.
+  static Map<String, Object> _rideJson(RunDetails ride) {
+    final km = ride.meters / 1000;
+    final secs = ride.moving.inMilliseconds / 1000;
+    final avg = ride.meters > 0 && secs > 0 ? _round1(km / secs * 3600) : null;
+    final top = ride.maxSpeed == null ? null : _round1(ride.maxSpeed! * 3.6);
+    final gain = ride.elevationGain?.round();
+    final power = ride.avgPowerW;
+    return {
+      if (ride.indoor) ...{
+        'indoor': true,
+        if (power != null && power >= 20 && power <= 2000) 'avgPowerW': power,
+      },
+      if (ride.meters > 0 && km <= 500) 'distanceKm': (km * 100).round() / 100,
+      if (!ride.indoor) ...{
+        if (avg != null && avg >= 1 && avg <= 150) 'avgSpeedKmh': avg,
+        if (top != null && top >= 1 && top <= 200) 'maxSpeedKmh': top,
+        if (gain != null && gain >= 0 && gain <= 10000) 'elevationGainM': gain,
+      },
+    };
+  }
+
+  /// The `ski` block of a ski day: descents only, no pace.
+  static Map<String, Object> _skiJson(RunDetails day) {
+    final ski = day.ski;
+    if (ski == null) return const {};
+    final count = ski.descents.length;
+    final vertical = ski.verticalDown.round();
+    final km = ski.skiMeters / 1000;
+    final top = ski.maxSpeed == null ? null : _round1(ski.maxSpeed! * 3.6);
+    return {
+      if (count <= 300)
+        'ski': {
+          'descents': count,
+          if (vertical >= 0 && vertical <= 30000) 'verticalM': vertical,
+          if (km > 0 && km <= 500) 'distanceKm': (km * 100).round() / 100,
+          if (top != null && top >= 1 && top <= 200) 'maxSpeedKmh': top,
+        },
     };
   }
 

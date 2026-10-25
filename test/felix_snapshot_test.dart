@@ -9,6 +9,7 @@ import 'package:fitrix/features/football/data/match_log.dart';
 import 'package:fitrix/features/health/data/health_import_store.dart';
 import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/health/domain/health_math.dart';
+import 'package:fitrix/features/running/data/ski_math.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
@@ -425,6 +426,132 @@ void main() {
       })['lastWorkout'] as Map;
       expect(last['distanceKm'], 5.0);
       expect(last.containsKey('avgHr'), isFalse);
+    });
+
+    group('rides and ski days', () {
+      RunDetails ride(
+              {double meters = 30000,
+              Duration moving = const Duration(hours: 1),
+              double? maxSpeed = 12.5,
+              double? gain = 320.4,
+              bool indoor = false,
+              int? power}) =>
+          RunDetails(
+              startedAt: DateTime(2026, 10, 19, 7),
+              moving: moving,
+              elapsed: moving,
+              pauses: 0,
+              meters: meters,
+              elevationGain: gain,
+              maxSpeed: maxSpeed,
+              kind: ActivityKind.ride,
+              indoor: indoor,
+              avgPowerW: power,
+              splits: const [],
+              route: const []);
+
+      RunDetails skiDay(List<SkiDescent> d) => RunDetails(
+          startedAt: DateTime(2026, 10, 19, 7),
+          moving: const Duration(hours: 3),
+          elapsed: const Duration(hours: 5),
+          pauses: 0,
+          meters: 0,
+          kind: ActivityKind.ski,
+          ski:
+              SkiDay(descents: d, lifts: 4, liftTime: const Duration(hours: 1)),
+          splits: const [],
+          route: const []);
+
+      SkiDescent descent(double meters, double vertical, double max) =>
+          SkiDescent(
+              start: DateTime(2026, 10, 19, 9),
+              end: DateTime(2026, 10, 19, 9, 5),
+              meters: meters,
+              vertical: vertical,
+              maxSpeed: max,
+              avgSpeed: 8,
+              routeFrom: 0,
+              routeTo: 1);
+
+      Map lastOf(Sport s, AssistantTopic t, RunDetails r) {
+        final w = workout(s, DateTime(2026, 10, 19, 7), 'x', minutes: 60);
+        return json(t, history: [w], runs: {w.id: r})['lastWorkout'] as Map;
+      }
+
+      test('a ride has speeds and climb but no pace', () {
+        final last = lastOf(Sport.cycling, AssistantTopic.cycling, ride());
+        expect(last['distanceKm'], 30.0);
+        expect(last['avgSpeedKmh'], 30.0);
+        expect(last['maxSpeedKmh'], 45.0);
+        expect(last['elevationGainM'], 320);
+        expect(last.containsKey('paceSecPerKm'), isFalse);
+        expect(last.containsKey('indoor'), isFalse);
+      });
+
+      test('ride values outside the backend ranges are omitted', () {
+        final last = lastOf(
+            Sport.cycling,
+            AssistantTopic.cycling,
+            ride(
+                meters: 600000,
+                moving: const Duration(hours: 1),
+                maxSpeed: 0.1,
+                gain: 20000));
+        expect(last.containsKey('distanceKm'), isFalse);
+        expect(last.containsKey('avgSpeedKmh'), isFalse);
+        expect(last.containsKey('maxSpeedKmh'), isFalse);
+        expect(last.containsKey('elevationGainM'), isFalse);
+        final bare = lastOf(Sport.cycling, AssistantTopic.cycling,
+            ride(maxSpeed: null, gain: null));
+        expect(bare.containsKey('maxSpeedKmh'), isFalse);
+        expect(bare.containsKey('elevationGainM'), isFalse);
+      });
+
+      test('an indoor ride has power and distance only when set', () {
+        var last = lastOf(
+            Sport.cycling,
+            AssistantTopic.cycling,
+            ride(
+                indoor: true,
+                power: 180,
+                meters: 25000,
+                maxSpeed: null,
+                gain: null));
+        expect(last['indoor'], isTrue);
+        expect(last['avgPowerW'], 180);
+        expect(last['distanceKm'], 25.0);
+        last = lastOf(Sport.cycling, AssistantTopic.cycling,
+            ride(indoor: true, meters: 0, maxSpeed: null, gain: null));
+        expect(last['indoor'], isTrue);
+        expect(last.containsKey('avgPowerW'), isFalse);
+        expect(last.containsKey('distanceKm'), isFalse);
+        expect(last.containsKey('avgSpeedKmh'), isFalse);
+        last = lastOf(Sport.cycling, AssistantTopic.cycling,
+            ride(indoor: true, power: 5000, meters: 0));
+        expect(last.containsKey('avgPowerW'), isFalse);
+      });
+
+      test('a ski day has a ski block and no pace', () {
+        final last = lastOf(Sport.winterSports, AssistantTopic.winterSports,
+            skiDay([descent(1500, 300.4, 20), descent(2000.6, 410, 25)]));
+        expect(last['ski'], {
+          'descents': 2,
+          'verticalM': 710,
+          'distanceKm': 3.5,
+          'maxSpeedKmh': 90.0,
+        });
+        expect(last.containsKey('paceSecPerKm'), isFalse);
+        expect(last.containsKey('distanceKm'), isFalse);
+      });
+
+      test('ski values outside the ranges are omitted', () {
+        final last = lastOf(Sport.winterSports, AssistantTopic.winterSports,
+            skiDay([descent(600000, 40000, 100)]));
+        expect(last['ski'], {'descents': 1});
+        final none =
+            lastOf(Sport.winterSports, AssistantTopic.winterSports, skiDay([]));
+        expect(none['ski'], {'descents': 0, 'verticalM': 0});
+      });
     });
 
     test('stays under 8 KB with 60 cached days of history', () {
