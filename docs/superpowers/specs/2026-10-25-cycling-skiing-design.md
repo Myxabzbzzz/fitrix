@@ -28,7 +28,7 @@ Skiing (downhill)
 11. Ski day recording runs all day with the screen locked. The recorder splits the track into **descents** (sustained altitude loss), **lifts** (sustained altitude gain) and the rest (flat, queues, walking) automatically.
 12. Live ski screen: current state (descending / on lift / stopped), descents so far, total vertical down, max speed, time on the slopes.
 13. Ski day summary: map with all descents drawn (lifts drawn faint or hidden), day totals — descents count, ski distance (descents only), vertical down, max speed, average descent speed, time on slopes, lift count — and the list of descents. Tapping a descent shows its distance, vertical drop, duration, max and average speed, and highlights it on the map.
-14. Load for a ski day = RPE × (day time minus lift time minus manual pauses); lifts never count. The completed workout's duration uses that same time.
+14. Load for a ski day = RPE × (day time minus lift time minus manual pauses minus stationary stretches longer than 2 min — queues, huts, lunch); lifts and standing never count. The completed workout's duration and the live "time on slopes" use that same time (Claude's call after review, 2026-10-27).
 
 Everywhere
 15. Rides, indoor rides and ski days are ordinary completed workouts (sport cycling / winterSports): history, load, recovery, plan done status (free rides / ski days fill the day's open session of that sport like free runs), Progress, cloud sync (details as `run` documents — see Constraints), Health (written with distance), Felix context.
