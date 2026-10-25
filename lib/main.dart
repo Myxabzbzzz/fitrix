@@ -7,12 +7,17 @@
 /// - Go Router for navigation
 library;
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitrix/features/running/presentation/run_recorder.dart'
+    show recordingFileProvider;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fitrix/features/running/presentation/run_voice.dart';
 import 'package:fitrix/core/settings/theme_mode_provider.dart';
@@ -51,6 +56,11 @@ void main() async {
   // done and saved workouts are available on the first frame.
   final prefs = await SharedPreferences.getInstance();
   final session = AppSession(prefs);
+  File? recordingFile;
+  try {
+    recordingFile = File(
+        '${(await getApplicationSupportDirectory()).path}/run_in_progress_v1.fixes');
+  } catch (_) {}
   final supabase = await _initSupabase();
 
   // Sign-in and the account's profile; without Supabase the app runs
@@ -68,6 +78,7 @@ void main() async {
   runApp(
     FitrixRoot(
       prefs: prefs,
+      recordingFile: recordingFile,
       session: session,
       router: AppRouter.create(session, auth: auth),
       supabase: supabase,
@@ -98,6 +109,9 @@ Future<SupabaseClient?> _initSupabase() async {
 /// survives into the next account.
 class FitrixRoot extends StatelessWidget {
   final SharedPreferences prefs;
+
+  /// Where the run in progress keeps its fixes; null in tests.
+  final File? recordingFile;
   final AppSession session;
   final GoRouter router;
 
@@ -119,6 +133,7 @@ class FitrixRoot extends StatelessWidget {
   const FitrixRoot({
     super.key,
     required this.prefs,
+    this.recordingFile,
     required this.session,
     required this.router,
     this.supabase,
@@ -136,6 +151,7 @@ class FitrixRoot extends StatelessWidget {
         key: ValueKey(session.generation),
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
+          recordingFileProvider.overrideWithValue(recordingFile),
           appSessionProvider.overrideWithValue(session),
           supabaseClientProvider.overrideWithValue(supabase),
           authGatewayProvider.overrideWithValue(auth),

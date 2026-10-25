@@ -71,6 +71,7 @@ class RunTrack {
           breakNext: false,
           pending: null,
           finishedAt: null,
+          inPlace: false,
         );
 
   const RunTrack._({
@@ -90,7 +91,9 @@ class RunTrack {
     required bool breakNext,
     required RunPoint? pending,
     required DateTime? finishedAt,
-  })  : _autoMs = autoMs,
+    required bool inPlace,
+  })  : _inPlace = inPlace,
+        _autoMs = autoMs,
         _autoAt = autoAt,
         _breaks = breaks,
         _start = start,
@@ -130,6 +133,10 @@ class RunTrack {
   final RunPoint? _pending;
   final DateTime? _finishedAt;
 
+  // Only inside [addAll]: [kept] is a private list that [add] grows in place
+  // instead of copying it for every fix.
+  final bool _inPlace;
+
   /// Distance so far, metres.
   final double meters;
 
@@ -158,6 +165,7 @@ class RunTrack {
     bool? breakNext,
     Object? pending = _keep,
     DateTime? finishedAt,
+    bool? inPlace,
   }) =>
       RunTrack._(
         profile: profile,
@@ -177,6 +185,7 @@ class RunTrack {
         breakNext: breakNext ?? _breakNext,
         pending: identical(pending, _keep) ? _pending : pending as RunPoint?,
         finishedAt: finishedAt ?? _finishedAt,
+        inPlace: inPlace ?? _inPlace,
       );
 
   /// Auto-stop rule for the time between two kept fixes (or a fix and the
@@ -232,6 +241,18 @@ class RunTrack {
     );
   }
 
+  List<RunPoint> _grow(RunPoint p) => _inPlace ? (kept..add(p)) : [...kept, p];
+
+  /// [add] for each of [points], without copying the kept list per fix (a
+  /// recovered 8 h day has ~30k of them).
+  RunTrack addAll(Iterable<RunPoint> points) {
+    var t = _copy(points: List<RunPoint>.of(kept), inPlace: true);
+    for (final p in points) {
+      t = t.add(p);
+    }
+    return t._copy(inPlace: false);
+  }
+
   RunTrack add(RunPoint p) {
     if (paused || p.accuracy > maxFixAccuracy) return this;
     final notBefore = _notBefore;
@@ -249,7 +270,7 @@ class RunTrack {
     if (_breakNext) {
       // First fix after a resume: a new starting point, no distance.
       return _copy(
-        points: [...kept, p],
+        points: _grow(p),
         breaks: [..._breaks, kept.length],
         breakNext: false,
         pending: null,
@@ -302,7 +323,7 @@ class RunTrack {
       bMs = tCross;
     }
     return _copy(
-      points: [...kept, p],
+      points: _grow(p),
       meters: total,
       autoMs: t1,
       autoAt: p.at,

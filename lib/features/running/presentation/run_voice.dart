@@ -219,8 +219,6 @@ class RunVoice {
   Future<void> _queue = Future.value();
 
   void _onEvent(RunEvent e) {
-    // Ride and ski phrases come with their own voice settings.
-    if (e is DistanceReached || e is SkiDescentDone) return;
     _queue = _queue.then((_) => _say(e)).catchError((Object error) {
       debugPrint('Run voice: $error');
     });
@@ -232,6 +230,8 @@ class RunVoice {
     for (final language in voiceLanguageChain(_appLanguage(), available)) {
       final l10n = lookupAppLocalizations(Locale(language));
       final text = _phrase(l10n, language, e);
+      // Ride and ski phrases come with their own voice settings.
+      if (text.isEmpty) return;
       // A phrase the engine never reports as finished must not block the
       // ones after it.
       var timedOut = false;

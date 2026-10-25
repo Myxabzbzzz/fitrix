@@ -40,6 +40,10 @@ const double _skiTrim = 8;
 const double _stillSpeed = 0.5;
 const Duration _stillWindow = Duration(seconds: 30);
 
+/// A step between two fixes at least this far apart in time and slower than
+/// [_stillSpeed] is standing still (the recorder drops the jitter of a stop).
+const Duration _stillGap = Duration(seconds: 15);
+
 /// Standing still this long is a queue, a hut or lunch (not a pause to breathe).
 const Duration _stillMin = Duration(minutes: 2);
 
@@ -207,6 +211,18 @@ List<bool> _stationary(List<RunPoint> fixes) {
     still[i] = secs >= _stillWindow.inSeconds / 2 &&
         _step(fixes[lo], fixes[hi]) / secs < _stillSpeed;
   }
+  // The recorder keeps no fixes while standing (the step gate), so a stop is
+  // a long step between two fixes: both ends stand still, and the whole span
+  // counts toward the minimum stop time. Such a fix has no window blur to
+  // take back at its edge.
+  final gapStill = List<bool>.filled(n, false);
+  for (var i = 1; i < n; i++) {
+    final secs = fixes[i].at.difference(fixes[i - 1].at).inMilliseconds / 1000;
+    if (secs >= _stillGap.inSeconds &&
+        _step(fixes[i - 1], fixes[i]) / secs < _stillSpeed) {
+      gapStill[i - 1] = gapStill[i] = still[i - 1] = still[i] = true;
+    }
+  }
   // A short hole (a jittery fix, a step forward in the queue) does not end a
   // stop.
   var h = 0;
@@ -242,11 +258,13 @@ List<bool> _stationary(List<RunPoint> fixes) {
     if (fixes[j].at.difference(fixes[i].at) > _stillMin) {
       // The window smears the edges by half its length: take them back.
       var a = i, b = j;
-      while (a > 0 &&
+      while (!gapStill[i] &&
+          a > 0 &&
           fixes[i].at.difference(fixes[a - 1].at).inMilliseconds <= half) {
         a--;
       }
-      while (b + 1 < n &&
+      while (!gapStill[j] &&
+          b + 1 < n &&
           fixes[b + 1].at.difference(fixes[j].at).inMilliseconds <= half) {
         b++;
       }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 import 'package:fitrix/features/running/data/location_source.dart';
+import 'package:fitrix/features/running/data/recording_file.dart';
 import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
 import 'package:fitrix/features/running/data/ski_math.dart';
@@ -23,10 +25,8 @@ const runInProgressKey = 'run_in_progress_v1';
 /// Template id of a run started without a plan.
 const freeRunTemplateId = 'free_run';
 
-/// How often (at most) the recording is written while fixes come in. A ski
-/// day holds up to ~30k fixes, so it is written less often.
+/// How often (at most) the new fixes are appended to the recording file.
 const _saveEvery = Duration(seconds: 10);
-const _saveEverySki = Duration(seconds: 30);
 
 /// How often (at most, in fix time) a ski day is re-segmented to find the
 /// descents that just ended.
@@ -166,7 +166,9 @@ class RunRecorder extends StateNotifier<RunSession?> {
     required WorkoutTemplate? Function(String id) templateById,
     required AppLocalizations Function() l10n,
     DateTime Function() now = DateTime.now,
-  })  : _source = source,
+    File? recordingFile,
+  })  : _file = recordingFile == null ? null : RecordingFile(recordingFile),
+        _source = source,
         _prefs = prefs,
         _saveWorkout = saveWorkout,
         _saveDetails = saveDetails,
@@ -180,7 +182,9 @@ class RunRecorder extends StateNotifier<RunSession?> {
       state = restored;
       // The descents already done are not announced again.
       if (restored.kind == ActivityKind.ski) {
-        _scanSki(restored.track, _now(), emit: false);
+        final kept = restored.track.kept;
+        _scanSki(restored.track, kept.isEmpty ? _now() : kept.last.at,
+            emit: false);
       }
     }
   }
@@ -192,6 +196,13 @@ class RunRecorder extends StateNotifier<RunSession?> {
   final WorkoutTemplate? Function(String id) _templateById;
   final AppLocalizations Function() _l10n;
   final DateTime Function() _now;
+
+  /// Where the fixes are kept while recording. Without it (tests) the fixes
+  /// go into the prefs entry with the rest.
+  final RecordingFile? _file;
+
+  /// How many of the kept fixes are already in [_file].
+  int _flushed = 0;
 
   final _events = StreamController<RunEvent>.broadcast();
   StreamSubscription<RunPoint>? _sub;
@@ -242,6 +253,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
       template: template,
       kind: kind,
     );
+    _flushed = 0;
+    _file?.reset();
     _listen();
     _persist();
     _emit(const RunStarted());
@@ -294,12 +307,15 @@ class RunRecorder extends StateNotifier<RunSession?> {
     final kept = track.kept;
 
     SkiDay? ski;
+    // A ski day's distance is what was skied down, not the lifts.
+    var meters = track.meters;
     List<RunPoint> route;
     Duration moving;
     if (s.kind == ActivityKind.ski) {
       final idx = simplifyRouteIndices(kept);
       route = [for (final i in idx) kept[i]];
       ski = skiDayFrom(kept, routeIndexMap(kept.length, idx));
+      meters = ski.skiMeters;
       var paused = Duration.zero;
       for (final m in s.pauses) {
         paused += (m.resumedAt ?? at).difference(m.pausedAt);
@@ -333,7 +349,7 @@ class RunRecorder extends StateNotifier<RunSession?> {
         moving: moving,
         elapsed: at.difference(s.startedAt),
         pauses: s.pauses.length,
-        meters: track.meters,
+        meters: meters,
         elevationGain: track.elevationGain,
         splits: track.splits,
         route: [
@@ -349,12 +365,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
       ),
     );
     await _end();
-    _emit(RunFinished(
-        track.meters,
-        moving,
-        s.kind == ActivityKind.run
-            ? paceSecPerKm(track.meters, moving)
-            : null));
+    _emit(RunFinished(meters, moving,
+        s.kind == ActivityKind.run ? paceSecPerKm(meters, moving) : null));
     return workout;
   }
 
@@ -395,6 +407,8 @@ class RunRecorder extends StateNotifier<RunSession?> {
     _skiFrom = _skiDone = 0;
     _listeningSince = _lastRawFixAt = _lastRawAccuracy = null;
     _preciseLocationOff = false;
+    _file?.delete();
+    _flushed = 0;
     await _prefs.remove(runInProgressKey);
     await _stopSource();
   }
@@ -428,11 +442,12 @@ class RunRecorder extends StateNotifier<RunSession?> {
     final s = state;
     if (s == null || s.phase != RunPhase.running) return;
     final track = s.track.add(p);
+    // Raw fixes drive the scan too: through a stop no fix is kept.
+    if (s.kind == ActivityKind.ski) _scanSki(track, p.at);
     if (identical(track, s.track)) return;
     final before = _fullSplits(s.track);
     state = s.copyWith(track: track);
     _emitSplits(s.kind, before, track);
-    if (s.kind == ActivityKind.ski) _scanSki(track, p.at);
     _persist(throttled: true);
   }
 
@@ -484,11 +499,10 @@ class RunRecorder extends StateNotifier<RunSession?> {
     final kept = track.kept;
     if (_skiFrom >= kept.length - 1) return;
     final tail = _skiFrom == 0 ? kept : kept.sublist(_skiFrom);
-    final tailEnd = tail.last.at;
     var advance = -1;
     for (final d in skiDayFrom(tail, const []).descents) {
-      // Too close to the latest fix: it may still be going.
-      if (tailEnd.difference(d.end) < skiDoneAfter) continue;
+      // Too close to now: it may still be going.
+      if (at.difference(d.end) < skiDoneAfter) continue;
       _skiDone++;
       if (emit) {
         _emit(SkiDescentDone(_skiDone, d.meters, d.vertical, d.maxSpeed));
@@ -502,30 +516,48 @@ class RunRecorder extends StateNotifier<RunSession?> {
     if (!_events.isClosed) _events.add(e);
   }
 
+  /// Saves the recording. With a [_file] the entry in the prefs is a small
+  /// header (written when something other than fixes changes) and only the
+  /// fixes kept since the last time are appended to the file, at most every
+  /// [_saveEvery] while fixes come in.
   void _persist({bool throttled = false}) {
     final s = state;
     if (s == null) return;
     final now = _now();
     final last = _lastSaved;
-    final every = s.kind == ActivityKind.ski ? _saveEverySki : _saveEvery;
-    if (throttled && last != null && now.difference(last) < every) {
+    if (throttled && last != null && now.difference(last) < _saveEvery) {
       return;
     }
     _lastSaved = now;
-    _prefs.setString(runInProgressKey, jsonEncode(_toJson(s)));
+    final file = _file;
+    if (file == null) {
+      _prefs.setString(runInProgressKey, jsonEncode(_toJson(s)));
+      return;
+    }
+    try {
+      final kept = s.track.kept;
+      if (kept.length > _flushed) {
+        file.append(kept.skip(_flushed), s.startedAt);
+        _flushed = kept.length;
+      }
+    } catch (_) {
+      // Disk full or gone: the header still says there was a recording.
+    }
+    if (!throttled) _prefs.setString(runInProgressKey, jsonEncode(_toJson(s)));
   }
 
-  static Map<String, Object?> _toJson(RunSession s) => {
+  Map<String, Object?> _toJson(RunSession s) => {
         'startedAt': s.startedAt.toUtc().toIso8601String(),
         'templateId': s.templateId,
         // A run has no kind, as before this was added.
         if (s.kind != ActivityKind.run) 'kind': s.kind.name,
         'phase': s.phase.name,
-        // [lat, lng, alt, accuracy, ms since epoch]
-        'points': [
-          for (final p in s.track.kept)
-            [p.lat, p.lng, p.alt, p.accuracy, p.at.millisecondsSinceEpoch],
-        ],
+        if (_file == null)
+          // [lat, lng, alt, accuracy, ms since epoch]
+          'points': [
+            for (final p in s.track.kept)
+              [p.lat, p.lng, p.alt, p.accuracy, p.at.millisecondsSinceEpoch],
+          ],
         'pauses': [
           for (final m in s.pauses)
             [
@@ -544,16 +576,30 @@ class RunRecorder extends StateNotifier<RunSession?> {
     try {
       final j = jsonDecode(raw) as Map<String, dynamic>;
       final startedAt = DateTime.parse(j['startedAt'] as String).toLocal();
-      final points = [
-        for (final p in j['points'] as List)
-          RunPoint(
-            lat: ((p as List)[0] as num).toDouble(),
-            lng: (p[1] as num).toDouble(),
-            alt: (p[2] as num?)?.toDouble(),
-            accuracy: (p[3] as num).toDouble(),
-            at: DateTime.fromMillisecondsSinceEpoch((p[4] as num).toInt()),
-          ),
-      ];
+      final kind =
+          ActivityKind.values.asNameMap()[j['kind']] ?? ActivityKind.run;
+      // A header has its fixes in the file; a payload with 'points' is the
+      // old format (or no file is set up) and carries them itself.
+      final legacy = j['points'] is List;
+      final List<RunPoint> points;
+      var damaged = false;
+      if (legacy) {
+        points = [
+          for (final p in j['points'] as List)
+            RunPoint(
+              lat: ((p as List)[0] as num).toDouble(),
+              lng: (p[1] as num).toDouble(),
+              alt: (p[2] as num?)?.toDouble(),
+              accuracy: (p[3] as num).toDouble(),
+              at: DateTime.fromMillisecondsSinceEpoch((p[4] as num).toInt()),
+            ),
+        ];
+      } else {
+        final read = _file?.read(startedAt);
+        if (read == null) return null;
+        points = read.fixes;
+        damaged = read.damaged;
+      }
       final pauses = <RunPauseMark>[
         for (final m in j['pauses'] as List)
           (
@@ -565,21 +611,19 @@ class RunRecorder extends StateNotifier<RunSession?> {
 
       // A fix stamped after a pause was added after the resume (fixes are
       // stamped before they are delivered), so this order is the original.
-      final kind =
-          ActivityKind.values.asNameMap()[j['kind']] ?? ActivityKind.run;
       var track = RunTrack(startedAt: startedAt, profile: profileFor(kind));
       var i = 0;
       for (final m in pauses) {
-        while (i < points.length && !points[i].at.isAfter(m.pausedAt)) {
-          track = track.add(points[i++]);
+        var to = i;
+        while (to < points.length && !points[to].at.isAfter(m.pausedAt)) {
+          to++;
         }
-        track = track.pause(m.pausedAt);
+        track = track.addAll(points.getRange(i, to)).pause(m.pausedAt);
+        i = to;
         if (m.resumedAt == null) break;
         track = track.resume(m.resumedAt!);
       }
-      while (i < points.length) {
-        track = track.add(points[i++]);
-      }
+      track = track.addAll(points.skip(i));
 
       if (!track.paused) {
         var lastAlive = startedAt;
@@ -595,6 +639,26 @@ class RunRecorder extends StateNotifier<RunSession?> {
       }
 
       final templateId = j['templateId'] as String?;
+      // Bring the file in line with what was restored (a cut-off line, or
+      // the old format moving over) so new fixes append to it cleanly.
+      final file = _file;
+      if (file != null) {
+        if (legacy || damaged || track.kept.length != points.length) {
+          file.rewrite(track.kept, startedAt);
+        }
+        _flushed = track.kept.length;
+        if (legacy) {
+          final header = RunSession(
+            phase: RunPhase.paused,
+            track: track,
+            startedAt: startedAt,
+            templateId: templateId,
+            pauses: pauses,
+            kind: kind,
+          );
+          _prefs.setString(runInProgressKey, jsonEncode(_toJson(header)));
+        }
+      }
       return RunSession(
         phase: RunPhase.paused,
         track: track,
@@ -658,8 +722,13 @@ final runRecorderProvider =
     l10n: () =>
         lookupAppLocalizations(Locale(ref.read(selectedLanguageProvider))),
     now: ref.read(clockProvider),
+    recordingFile: ref.read(recordingFileProvider),
   );
 });
+
+/// Where the fixes of the recording in progress are kept; null (tests) keeps
+/// them in the prefs entry.
+final recordingFileProvider = Provider<File?>((ref) => null);
 
 /// A run found in [runInProgressKey] at launch (restored, paused) until the
 /// user resumes, finishes or discards it.
