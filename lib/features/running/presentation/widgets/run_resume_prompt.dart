@@ -53,7 +53,12 @@ class _RunResumePromptState extends ConsumerState<RunResumePrompt> {
           final l10n = AppLocalizations.of(context);
           return AlertDialog(
             title: Text(() {
-              final km = formatKm(session.track.meters, l10n.localeName);
+              // A ski day names what was skied down, as its summary does.
+              final km = formatKm(
+                  session.kind == ActivityKind.ski
+                      ? recorder.skiMeters
+                      : session.track.meters,
+                  l10n.localeName);
               return switch (session.kind) {
                 ActivityKind.run => l10n.runUnfinishedLaunchTitle(km),
                 ActivityKind.ride => l10n.rideUnfinishedLaunchTitle(km),

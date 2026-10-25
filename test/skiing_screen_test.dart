@@ -18,6 +18,7 @@ import 'package:fitrix/features/running/data/location_source.dart';
 import 'package:fitrix/features/running/data/run_store.dart';
 import 'package:fitrix/features/running/data/ski_math.dart';
 import 'package:fitrix/features/running/data/run_track.dart';
+import 'package:fitrix/features/running/presentation/run_format.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/presentation/run_voice.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -401,6 +402,26 @@ void main() {
     await t.pumpAndSettle();
     expect(find.text('Ski day in progress'), findsOneWidget);
     expect(find.text('Run in progress'), findsNothing);
+    expect(find.text(' · 0.00 km'), findsOneWidget);
+    // Up a lift, then down: only the way down counts, as in the summary.
+    var alt = 2000.0, north = 0.0;
+    for (var i = 1; i <= 360; i++) {
+      final up = i <= 240;
+      alt += up ? 0.5 : -100 / 120;
+      north += up ? 2 : 6;
+      r.source.emit(RunPoint(
+          lat: 41 + north / 111319.49,
+          lng: 69,
+          alt: alt,
+          accuracy: 5,
+          at: _now.add(Duration(seconds: i))));
+    }
+    await t.pumpAndSettle();
+    final skied = rec.skiMeters;
+    expect(skied, greaterThan(300));
+    expect(skied,
+        lessThan(r.container.read(runRecorderProvider)!.track.meters - 300));
+    expect(find.text(' · ${formatKm(skied, 'en')} km'), findsOneWidget);
     await t.runAsync(rec.discard);
   });
 
@@ -450,7 +471,7 @@ void main() {
 
   testWidgets('the launch prompt names a restored ski day at 1.3x', (t) async {
     final start = _now.subtract(const Duration(hours: 1));
-    await _rig(t, size: iPhoneSeSize, textScale: 1.3, prefsValues: {
+    final r = await _rig(t, size: iPhoneSeSize, textScale: 1.3, prefsValues: {
       runInProgressKey: jsonEncode({
         'startedAt': start.toUtc().toIso8601String(),
         'templateId': null,
@@ -461,7 +482,7 @@ void main() {
             [
               41.0 + i * 0.0009,
               69.0,
-              null,
+              2000.0 + (i <= 6 ? i : 12 - i) * 30,
               5.0,
               start.add(Duration(seconds: 30 * i)).millisecondsSinceEpoch,
             ],
@@ -469,7 +490,12 @@ void main() {
         'pauses': <Object>[],
       }),
     });
-    expect(find.text('Unfinished ski day · 1.20 km'), findsOneWidget);
+    // Up 6 fixes, down 6: the prompt names only the km skied down.
+    final day = r.container.read(runRecorderProvider)!;
+    final skied = skiDayFrom(day.track.kept, const []).skiMeters;
+    expect(skied, inInclusiveRange(300, 700));
+    expect(find.text('Unfinished ski day · ${formatKm(skied, 'en')} km'),
+        findsOneWidget);
     expectNoOverflow(t);
     await t.tap(find.text('Discard'));
     await t.pumpAndSettle();

@@ -10,9 +10,10 @@ import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
 
-/// "Run in progress · 2.30 km · Return": shown above the tab bar while a run
-/// exists (recording, paused, or restored after a crash). Tap opens the live
-/// run; it is the way back after leaving that screen with its arrow.
+/// "Run in progress · 2.30 km · Return" (a ski day: the km skied down):
+/// shown above the tab bar while a run exists (recording, paused, or
+/// restored after a crash). Tap opens the live run; it is the way back after
+/// leaving that screen with its arrow.
 class RunInProgressBar extends ConsumerWidget {
   const RunInProgressBar({super.key});
 
@@ -20,8 +21,14 @@ class RunInProgressBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // A ski day shows what was skied down, as its summary does.
+    final recorder = ref.read(runRecorderProvider.notifier);
     final meters = ref.watch(
-      runRecorderProvider.select((s) => s?.track.meters),
+      runRecorderProvider.select((s) => s == null
+          ? null
+          : s.kind == ActivityKind.ski
+              ? recorder.skiMeters
+              : s.track.meters),
     );
     final kind = ref.watch(runRecorderProvider.select((s) => s?.kind));
     if (meters == null || kind == null) return const SizedBox.shrink();
