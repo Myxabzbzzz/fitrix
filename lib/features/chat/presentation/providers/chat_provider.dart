@@ -121,9 +121,13 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
         if (m.failure != null) m.id: m.failure!,
     };
     final streaming = current.where((m) => m.isStreaming).toList();
+    // A failed mark only stays while its question is still the last message;
+    // once another device's reply follows it, the question was answered.
     final merged = [
       for (final m in stored)
-        failures.containsKey(m.id) ? m.copyWith(failure: failures[m.id]) : m,
+        failures.containsKey(m.id) && identical(m, stored.last)
+            ? m.copyWith(failure: failures[m.id])
+            : m,
     ];
     state = AsyncValue.data(
       streaming.isEmpty
@@ -196,10 +200,11 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
     final messages = state.valueOrNull;
     if (messages == null || _isReplying) return;
 
-    final failed = messages.lastIndexWhere((m) => m.isFailed);
-    if (failed == -1) return;
+    // Only the last message can be retried; never cut off what follows it.
+    final failed = messages.length - 1;
+    if (failed < 0 || !messages[failed].isFailed) return;
     final history = [
-      for (final m in messages.take(failed + 1)) m.copyWith(clearFailure: true),
+      for (final m in messages) m.copyWith(clearFailure: true),
     ];
     await _reply(history, failed);
   }

@@ -291,6 +291,50 @@ void main() {
       expect(prefs.getString('chat_history'), contains('Easy pace.'));
     });
 
+    test('a synced reply clears the failed mark and Retry does nothing',
+        () async {
+      backend.handler = FakeBackend.error(503, 'down');
+      final notifier = notifierFor(backend);
+      final greeting = await loaded(notifier);
+      await notifier.sendMessage('Plan my week');
+      final question = notifier.state.requireValue.last;
+      expect(question.isFailed, isTrue);
+      final requests = backend.requests;
+
+      final reply = ChatMessage(
+          id: 'r',
+          content: 'Mon: legs',
+          sender: MessageSender.assistant,
+          timestamp: DateTime(2030));
+      notifier.applySynced(
+          [...greeting, question.copyWith(clearFailure: true), reply]);
+
+      final shown = notifier.state.requireValue;
+      expect(shown.map((m) => m.content),
+          ['Hi, I am Felix', 'Plan my week', 'Mon: legs']);
+      expect(shown.any((m) => m.isFailed), isFalse);
+
+      await notifier.retry();
+      expect(notifier.state.requireValue.map((m) => m.content),
+          ['Hi, I am Felix', 'Plan my week', 'Mon: legs']);
+      expect(backend.requests, requests, reason: 'nothing was sent');
+    });
+
+    test('a failed question that is still last stays failed after a sync',
+        () async {
+      backend.handler = FakeBackend.error(503, 'down');
+      final notifier = notifierFor(backend);
+      final greeting = await loaded(notifier);
+      await notifier.sendMessage('Plan my week');
+      final question = notifier.state.requireValue.last;
+
+      notifier
+          .applySynced([...greeting, question.copyWith(clearFailure: true)]);
+
+      expect(notifier.state.requireValue.last.id, question.id);
+      expect(notifier.state.requireValue.last.isFailed, isTrue);
+    });
+
     test('a new message after a failed one keeps the earlier question',
         () async {
       backend.handler = FakeBackend.error(503, 'down');
