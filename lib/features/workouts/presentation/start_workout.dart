@@ -9,6 +9,7 @@ import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/cycling/presentation/indoor_ride_sheet.dart';
 import 'package:fitrix/features/football/presentation/match_log_sheet.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/running/data/activity_kind.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/presentation/start_activity.dart';
@@ -76,14 +77,61 @@ Future<void> startWorkout(
   ref.read(activeWorkoutExpandedProvider.notifier).state = true;
 }
 
+/// Id of the empty workout a planned gym or fitness session without a plan
+/// starts (see [startPlannedSession]).
+String plannedSessionTemplateId(PlannedSession session) =>
+    'session_${session.id}';
+
+/// Starts today's planned [session]. With its own plan ([template]) that is
+/// [startWorkout]; without one it opens what its sport records with: a run
+/// or ski day on the GPS recorder, a ride after the Outdoor / Indoor choice,
+/// a football game in the match log, a gym or fitness session as an empty
+/// live log to add exercises to. Whatever is saved that day in the
+/// session's sport marks it done.
+Future<void> startPlannedSession(
+    BuildContext context, WidgetRef ref, PlannedSession session,
+    {WorkoutTemplate? template}) {
+  if (template != null) return startWorkout(context, ref, template);
+  switch (session.sport) {
+    case Sport.running:
+      return startFreeActivity(context, ref, ActivityKind.run);
+    case Sport.winterSports:
+      return startFreeActivity(context, ref, ActivityKind.ski);
+    case Sport.cycling:
+      return _startRide(context, ref, null);
+    case Sport.football:
+      return showMatchLogSheet(context, ref);
+    case Sport.gym:
+    case Sport.fitness:
+      return startWorkout(
+        context,
+        ref,
+        WorkoutTemplate(
+          id: plannedSessionTemplateId(session),
+          sport: session.sport,
+          name: session.title,
+          focus: '',
+          estimatedDuration: Duration(minutes: session.minutes),
+          exercises: const [],
+        ),
+      );
+  }
+}
+
 /// A planned ride: Outdoor records it with GPS, Indoor opens the log. Both
-/// save under the template, so the plan marks the session done.
+/// save under the template (or as a free ride without one), so the plan
+/// marks the session done.
 Future<void> _startRide(
-    BuildContext context, WidgetRef ref, WorkoutTemplate template) async {
+    BuildContext context, WidgetRef ref, WorkoutTemplate? template) async {
   // A ride that is already recording just reopens, as for a run.
   final existing = ref.read(runRecorderProvider);
-  if (existing != null && existing.templateId == template.id) {
+  if (template != null &&
+      existing != null &&
+      existing.templateId == template.id) {
     return _startRun(context, ref, template, ActivityKind.ride);
+  }
+  if (template == null && existing != null) {
+    return startFreeActivity(context, ref, ActivityKind.ride);
   }
   final outdoor = await showModalBottomSheet<bool>(
     useRootNavigator: true,
@@ -126,7 +174,11 @@ Future<void> _startRide(
     },
   );
   if (outdoor == null || !context.mounted) return;
-  if (outdoor) return _startRun(context, ref, template, ActivityKind.ride);
+  if (outdoor) {
+    return template == null
+        ? startFreeActivity(context, ref, ActivityKind.ride)
+        : _startRun(context, ref, template, ActivityKind.ride);
+  }
   return showIndoorRideSheet(context, ref, template: template);
 }
 

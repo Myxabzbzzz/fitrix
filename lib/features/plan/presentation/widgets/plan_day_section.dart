@@ -160,12 +160,13 @@ class _SessionRow extends ConsumerWidget {
           background: palette.danger.withValues(alpha: 0.12),
           foreground: palette.danger,
         );
-      case SessionStatus.today when template != null:
+      case SessionStatus.today:
         trailing = AppButton(
           key: Key('plan-start-${s.id}'),
-          label: template.sport.actionLabel(l10n),
+          label: s.sport.actionLabel(l10n),
           size: AppButtonSize.small,
-          onPressed: () => startWorkout(context, ref, template),
+          onPressed: () =>
+              startPlannedSession(context, ref, s, template: template),
         );
       default:
         trailing = PlanChip.intensity(context, s.intensity);

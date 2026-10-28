@@ -287,6 +287,8 @@ class _TodayCard extends ConsumerWidget {
     final String title;
     final String meta;
     WorkoutTemplate? template;
+    // Today's session without a plan still starts, in its sport's way.
+    PlannedSession? planless;
     switch (plan.kind) {
       case TodayKind.unplanned:
         if (templates.isEmpty) return const SizedBox.shrink();
@@ -298,6 +300,7 @@ class _TodayCard extends ConsumerWidget {
         final session = plan.session!;
         template =
             templates.where((t) => t.id == session.templateId).firstOrNull;
+        if (template == null) planless = session;
         title = session.title;
         meta = template != null
             ? l10n.homeTodayMeta(
@@ -361,6 +364,19 @@ class _TodayCard extends ConsumerWidget {
                           : l10n.homeStart,
                   size: AppButtonSize.small,
                   onPressed: () => startWorkout(context, ref, start),
+                ),
+              ] else if (planless != null) ...[
+                const SizedBox(width: AppSpacing.sm),
+                AppButton(
+                  key: const Key('home-today-start'),
+                  label:
+                      active?.template.id == plannedSessionTemplateId(planless)
+                          ? l10n.homeContinue
+                          : planless.sport == Sport.football
+                              ? l10n.footballLog
+                              : l10n.homeStart,
+                  size: AppButtonSize.small,
+                  onPressed: () => startPlannedSession(context, ref, planless!),
                 ),
               ],
             ],
