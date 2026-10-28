@@ -120,11 +120,15 @@ void main() {
         await idle(t, const Duration(seconds: 15));
         await t.drag(mainScrollable(), const Offset(0, -3000));
         await idle(t, const Duration(seconds: 1));
+        // The question is marked, nothing was made up in Felix's place.
+        if (find.text(L.chatFailedUnavailable).evaluate().isEmpty) {
+          throw StateError('no "Felix is unavailable" mark');
+        }
       });
       await backend('start');
       await step(t, 'felix5_retry_after_backend_back', () async {
         await idle(t, const Duration(seconds: 3));
-        await send(t, 'Теперь работает?');
+        await tapKey(t, 'chat-retry');
         final s = await waitReply(t, maxSeconds: 120);
         await Host.log('retry reply took ${s}s');
       });
