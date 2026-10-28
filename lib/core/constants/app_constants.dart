@@ -178,7 +178,7 @@ class AppConstants {
   static const Map<String, String> languages = {
     'ru': 'Русский', // Russian
     'en': 'English', // English
-    'uz': 'O\'zbekcha', // Uzbek
+    'uz': 'O‘zbekcha', // Uzbek
     'es': 'Español', // Spanish
   };
 }
