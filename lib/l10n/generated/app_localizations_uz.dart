@@ -4843,4 +4843,7 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get coachFirstSkiingNoPlan =>
       'Birinchi chang‘i kunini yozib oling, keyin Felix tushishlar va balandlikni kuzatadi.';
+
+  @override
+  String get skiStateMoving => 'Harakatda';
 }

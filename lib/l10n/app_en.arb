@@ -3467,5 +3467,7 @@
   "coachFirstFootballNoPlan": "Log your first game or practice, and Felix will plan your recovery around it.",
   "coachFirstSkiing": "Start with {workout}. Felix then follows your descents and vertical from the days you record.",
   "@coachFirstSkiing": {"description": "First-run coach card on Winter sports", "placeholders": {"workout": {"type": "String"}}},
-  "coachFirstSkiingNoPlan": "Record your first ski day, and Felix will follow your descents and vertical."
+  "coachFirstSkiingNoPlan": "Record your first ski day, and Felix will follow your descents and vertical.",
+  "skiStateMoving": "Moving",
+  "@skiStateMoving": {"description": "Ski day live state: moving without losing height (flat, or no altitude from GPS)"}
 }

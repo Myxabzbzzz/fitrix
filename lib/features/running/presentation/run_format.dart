@@ -38,12 +38,18 @@ String formatMeters(double meters, String locale) =>
         .format(meters);
 
 /// Pace over the last [window] metres of the track, in seconds per
-/// kilometre, or null while there is less than that since the start or the
-/// last gap in fixes (a pause, or the signal lost for [maxGap]).
+/// kilometre. Since the start or the last gap in fixes (a pause, or the
+/// signal lost for [maxGap]) there may be less: then it is the pace over
+/// what there is once that is [minMeters], or [minTime] covering at least
+/// [minTimeMeters] (so the start of a run shows a pace within seconds);
+/// null before.
 int? currentPaceSecPerKm(
   RunTrack track, {
   double window = 200,
   Duration maxGap = const Duration(seconds: 20),
+  double minMeters = 100,
+  Duration minTime = const Duration(seconds: 20),
+  double minTimeMeters = 30,
 }) {
   final pts = track.kept;
   if (pts.length < 2) return null;
@@ -51,12 +57,16 @@ int? currentPaceSecPerKm(
   var i = pts.length - 1;
   while (i > 0 && meters < window) {
     final a = pts[i - 1], b = pts[i];
-    if (b.at.difference(a.at) > maxGap) return null;
+    if (b.at.difference(a.at) > maxGap) break;
     meters += _distance(LatLng(a.lat, a.lng), LatLng(b.lat, b.lng));
     i--;
   }
-  if (meters < window) return null;
-  return paceSecPerKm(meters, pts.last.at.difference(pts[i].at));
+  final time = pts.last.at.difference(pts[i].at);
+  final enough = meters >= window ||
+      meters >= minMeters ||
+      (time >= minTime && meters >= minTimeMeters);
+  if (!enough) return null;
+  return paceSecPerKm(meters, time);
 }
 
 /// Speed in km/h with one decimal from m/s, or [noValue].

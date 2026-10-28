@@ -311,6 +311,28 @@ void main() {
   });
 
   group('live ski', () {
+    testWidgets('moving on the flat is "Moving", not "Descending"', (t) async {
+      final r = await _rig(t);
+      await r.start(ActivityKind.ski);
+      // 5 m/s on the flat at 2000 m.
+      for (var i = 0; i <= 20; i++) {
+        r.fix(i, i * 5.0, 0, 2000);
+      }
+      await r.tick();
+      expect(r.text('ski-state'), 'Moving');
+      expect(r.text('ski-descents'), '0');
+    });
+
+    testWidgets('without altitude a fast skier is "Moving" too', (t) async {
+      final r = await _rig(t);
+      await r.start(ActivityKind.ski);
+      for (var i = 0; i <= 20; i++) {
+        r.fix(i, i * 5.0, 0);
+      }
+      await r.tick();
+      expect(r.text('ski-state'), 'Moving');
+    });
+
     testWidgets('shows state, descents, vertical, top speed, slope time',
         (t) async {
       final r = await _rig(t);

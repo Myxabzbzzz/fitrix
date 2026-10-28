@@ -1374,5 +1374,6 @@
   "coachFirstFootball": "Bugun {workout} bilan boshlang. Har bir yozilgan o‘yindan keyin Felix tiklanishni maslahat beradi.",
   "coachFirstFootballNoPlan": "Birinchi o‘yin yoki mashg‘ulotni yozib oling, keyin Felix tiklanishni maslahat beradi.",
   "coachFirstSkiing": "Bugun {workout} bilan boshlang. Keyin Felix yozganlaringiz bo‘yicha tushishlar va balandlikni kuzatadi.",
-  "coachFirstSkiingNoPlan": "Birinchi chang‘i kunini yozib oling, keyin Felix tushishlar va balandlikni kuzatadi."
+  "coachFirstSkiingNoPlan": "Birinchi chang‘i kunini yozib oling, keyin Felix tushishlar va balandlikni kuzatadi.",
+  "skiStateMoving": "Harakatda"
 }

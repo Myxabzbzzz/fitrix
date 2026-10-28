@@ -7942,6 +7942,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Record your first ski day, and Felix will follow your descents and vertical.'**
   String get coachFirstSkiingNoPlan;
+
+  /// Ski day live state: moving without losing height (flat, or no altitude from GPS)
+  ///
+  /// In en, this message translates to:
+  /// **'Moving'**
+  String get skiStateMoving;
 }
 
 class _AppLocalizationsDelegate

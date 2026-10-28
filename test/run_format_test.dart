@@ -39,11 +39,33 @@ void main() {
     expect(currentPaceSecPerKm(t), closeTo(360, 3));
   });
 
-  test('no current pace before 200 m or across a gap', () {
+  test('at the start the pace shows after about 100 m or 20 s', () {
+    var t = RunTrack(startedAt: DateTime(2026, 10, 1, 7));
+    // 4.5 m/s: 3:42/km.
+    t = t.add(_p(0, 0)).add(_p(22.5, 5));
+    expect(currentPaceSecPerKm(t), isNull, reason: '5 s, 22 m');
+    t = t.add(_p(45, 10)).add(_p(67.5, 15));
+    expect(currentPaceSecPerKm(t), isNull, reason: '15 s, 67 m');
+    t = t.add(_p(90, 20));
+    expect(currentPaceSecPerKm(t), closeTo(222, 2), reason: '20 s');
+
+    var walk = RunTrack(startedAt: DateTime(2026, 10, 1, 7));
+    walk = walk.add(_p(0, 0)).add(_p(105, 13));
+    expect(currentPaceSecPerKm(walk), closeTo(124, 2), reason: '105 m');
+  });
+
+  test('standing about for 20 s is not a pace', () {
+    var t = RunTrack(startedAt: DateTime(2026, 10, 1, 7));
+    t = t.add(_p(0, 0)).add(_p(5, 10)).add(_p(10, 25));
+    expect(currentPaceSecPerKm(t), isNull);
+  });
+
+  test('after a gap the pace starts again from the fixes after it', () {
     var t = RunTrack(startedAt: DateTime(2026, 10, 1, 7));
     t = t.add(_p(0, 0)).add(_p(100, 36));
-    expect(currentPaceSecPerKm(t), isNull);
     t = t.add(_p(300, 36 + 120));
-    expect(currentPaceSecPerKm(t), isNull);
+    expect(currentPaceSecPerKm(t), isNull, reason: 'one fix after the gap');
+    t = t.add(_p(350, 36 + 120 + 15)).add(_p(400, 36 + 120 + 30));
+    expect(currentPaceSecPerKm(t), closeTo(300, 2));
   });
 }

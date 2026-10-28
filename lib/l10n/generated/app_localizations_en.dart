@@ -4903,4 +4903,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get coachFirstSkiingNoPlan =>
       'Record your first ski day, and Felix will follow your descents and vertical.';
+
+  @override
+  String get skiStateMoving => 'Moving';
 }

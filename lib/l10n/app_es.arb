@@ -1374,5 +1374,6 @@
   "coachFirstFootball": "Empieza con {workout}. Tras cada partido que registres, Felix te dirá cómo recuperarte.",
   "coachFirstFootballNoPlan": "Registra tu primer partido o entrenamiento y Felix te dirá cómo recuperarte.",
   "coachFirstSkiing": "Empieza con {workout}. Después, Felix seguirá tus descensos y desnivel según lo que registres.",
-  "coachFirstSkiingNoPlan": "Registra tu primer día de esquí y Felix seguirá tus descensos y desnivel."
+  "coachFirstSkiingNoPlan": "Registra tu primer día de esquí y Felix seguirá tus descensos y desnivel.",
+  "skiStateMoving": "En movimiento"
 }

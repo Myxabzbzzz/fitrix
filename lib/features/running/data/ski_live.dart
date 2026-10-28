@@ -4,8 +4,9 @@ import 'run_track.dart';
 
 const _distance = Distance(roundResult: false);
 
-/// What the skier is doing right now.
-enum SkiMotion { descending, lift, stopped }
+/// What the skier is doing right now. [descending] needs height being
+/// lost; moving on the flat (or without altitude from the GPS) is [moving].
+enum SkiMotion { descending, lift, moving, stopped }
 
 /// The numbers of a ski day in progress, for the live screen.
 class SkiLive {
@@ -73,11 +74,10 @@ bool skiOffSlopesAt(List<RunPoint> kept, int i) {
   final speed = meters / secs;
   if (speed < 1) return (SkiMotion.stopped, true);
   final a = first.alt, b = end.alt;
-  if (a == null || b == null) {
-    return (speed >= 3 ? SkiMotion.descending : SkiMotion.stopped, false);
-  }
+  // Without altitude nothing says the skier is going down.
+  if (a == null || b == null) return (SkiMotion.moving, false);
   final rate = (b - a) / secs;
   if (rate <= _descendRate) return (SkiMotion.descending, false);
   if (rate >= _liftRate && speed <= 12) return (SkiMotion.lift, false);
-  return (SkiMotion.stopped, false);
+  return (SkiMotion.moving, false);
 }

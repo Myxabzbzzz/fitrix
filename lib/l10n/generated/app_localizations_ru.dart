@@ -4993,4 +4993,7 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get coachFirstSkiingNoPlan =>
       'Запишите первый лыжный день, и Felix будет следить за спусками и перепадом высот.';
+
+  @override
+  String get skiStateMoving => 'В движении';
 }

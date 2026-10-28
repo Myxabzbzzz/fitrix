@@ -27,6 +27,7 @@ class LiveSkiStats extends StatelessWidget {
         : switch (live?.motion ?? SkiMotion.stopped) {
             SkiMotion.descending => l10n.skiStateDescending,
             SkiMotion.lift => l10n.skiStateLift,
+            SkiMotion.moving => l10n.skiStateMoving,
             SkiMotion.stopped => l10n.skiStateStopped,
           };
     return Column(
