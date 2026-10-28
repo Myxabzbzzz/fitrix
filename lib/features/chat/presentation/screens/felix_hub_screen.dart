@@ -162,10 +162,26 @@ class _SectionHeader extends StatelessWidget {
           Text(trailing!,
               style: AppText.caption.copyWith(color: palette.textSecondary)),
         if (action != null)
-          TextButton(
-            onPressed: onAction,
-            child: Text(action!,
-                style: AppText.body14.copyWith(color: palette.textPrimary)),
+          // Flush with the right edge like the trailing caption; the tap
+          // target stays 44 pt tall.
+          Semantics(
+            button: true,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onAction,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 44),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: AppSpacing.md),
+                  child: Align(
+                    widthFactor: 1,
+                    child: Text(action!,
+                        style: AppText.body14
+                            .copyWith(color: palette.textPrimary)),
+                  ),
+                ),
+              ),
+            ),
           ),
       ],
     );
