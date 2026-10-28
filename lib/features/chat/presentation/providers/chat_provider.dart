@@ -109,8 +109,9 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   /// as this chat's history. Shows it, keeping a reply that is still
   /// streaming at the end and the failed mark of a question; an empty
   /// history reloads the greeting.
-  void applySynced(List<ChatMessage> stored) {
+  void applySynced(List<ChatMessage> synced) {
     if (!mounted) return;
+    final stored = ChatMessage.withoutLegacyMockReplies(synced);
     if (stored.isEmpty) {
       _loadMessages();
       return;

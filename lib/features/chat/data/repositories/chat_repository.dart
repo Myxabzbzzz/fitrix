@@ -83,7 +83,8 @@ class ChatRepository {
     }
 
     try {
-      return ChatMessage.decodeMessages(messagesJson);
+      return ChatMessage.withoutLegacyMockReplies(
+          ChatMessage.decodeMessages(messagesJson));
     } catch (e) {
       return _getInitialMessages();
     }

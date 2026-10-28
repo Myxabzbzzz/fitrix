@@ -177,6 +177,29 @@ class ChatMessage {
     ];
   }
 
+  /// Canned offline replies that earlier builds made up (removed after 5e08cc9)
+  /// and saved as real Felix turns; they are dropped when a chat is shown.
+  static const legacyMockReplies = <String>{
+    'Nice choice! I like that.\n\nWhich sports or activities do you enjoy (or plan to do)?\nYou can pick more than one 👇',
+    'Great goal! Building endurance is key to overall fitness.\n\nWhich sports or activities do you enjoy (or plan to do)?',
+    'Excellent! Let\'s work on getting you toned.\n\nWhich sports or activities do you enjoy (or plan to do)?',
+    'I see you\'ve chosen Gym, Running, and Skiing — nice combo! Let\'s fine-tune your plan a bit.\n\nHow often do you usually hit the gym?',
+    'Nice! And how would you describe your experience level?',
+    'Got it. Are you focusing more on strength, muscle growth, fat loss, or just general fitness?',
+    'Thanks for sharing! I\'ll help you create a personalized plan based on your goals.',
+  };
+
+  /// [messages] without the old canned replies (local only, nothing is
+  /// deleted from the cloud).
+  static List<ChatMessage> withoutLegacyMockReplies(
+          List<ChatMessage> messages) =>
+      [
+        for (final m in messages)
+          if (m.sender != MessageSender.assistant ||
+              !legacyMockReplies.contains(m.content))
+            m,
+      ];
+
   /// Matches the backend's cap on history turns.
   static const maxApiHistory = 20;
 

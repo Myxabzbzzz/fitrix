@@ -335,6 +335,34 @@ void main() {
       expect(notifier.state.requireValue.last.isFailed, isTrue);
     });
 
+    test('old canned offline replies are dropped from stored and synced chats',
+        () async {
+      const canned =
+          'Thanks for sharing! I\'ll help you create a personalized plan based on your goals.';
+      ChatMessage msg(String id, String text, MessageSender who, int min) =>
+          ChatMessage(
+              id: id,
+              content: text,
+              sender: who,
+              timestamp: DateTime(2026, 1, 1, 0, min));
+      final history = [
+        msg('g', 'Hi, I am Felix', MessageSender.assistant, 0),
+        msg('q', 'hello', MessageSender.user, 1),
+        msg('m', canned, MessageSender.assistant, 2),
+        msg('u', canned, MessageSender.user, 3),
+      ];
+      SharedPreferences.setMockInitialValues(
+          {'chat_history': ChatMessage.encodeMessages(history)});
+      final notifier = notifierFor(backend);
+
+      final messages = await loaded(notifier);
+      expect(messages.map((m) => m.id), ['g', 'q', 'u'],
+          reason: 'only Felix\'s canned turn goes; the user\'s own text stays');
+
+      notifier.applySynced(history);
+      expect(notifier.state.requireValue.map((m) => m.id), ['g', 'q', 'u']);
+    });
+
     test('a new message after a failed one keeps the earlier question',
         () async {
       backend.handler = FakeBackend.error(503, 'down');
