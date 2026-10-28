@@ -191,41 +191,29 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                         .copyWith(color: palette.textSecondary),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Row(
-                    children: [
-                      _StatTile(l10n.workoutTileDuration, duration),
-                      const SizedBox(width: AppSpacing.xs),
-                      _StatTile(
-                        l10n.workoutTileVolume,
-                        '${formatTonnes(context, volumeKg(workout.exercises))} '
-                        '${l10n.unitTonnes}',
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      _StatTile(l10n.workoutTileSets, '${workout.setCount}'),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Row(
-                    children: [
+                  _StatRows([
+                    _StatTile(l10n.workoutTileDuration, duration),
+                    _StatTile(
+                      l10n.workoutTileVolume,
+                      '${formatTonnes(context, volumeKg(workout.exercises))} '
+                      '${l10n.unitTonnes}',
+                    ),
+                    _StatTile(l10n.workoutTileSets, '${workout.setCount}'),
+                    // "No new records" is already in the subtitle.
+                    if (records.isNotEmpty)
                       _StatTile(
                         l10n.workoutTileRecords,
                         '${records.length}',
                         accent: true,
                       ),
-                      const SizedBox(width: AppSpacing.xs),
-                      if (_rpe != null)
-                        _StatTile(
-                          l10n.workoutTileLoad,
-                          NumberFormat.decimalPattern(
-                                  Localizations.localeOf(context).toString())
-                              .format(workout.load),
-                        )
-                      else
-                        const Expanded(child: SizedBox.shrink()),
-                      const SizedBox(width: AppSpacing.xs),
-                      const Expanded(child: SizedBox.shrink()),
-                    ],
-                  ),
+                    if (_rpe != null)
+                      _StatTile(
+                        l10n.workoutTileLoad,
+                        NumberFormat.decimalPattern(
+                                Localizations.localeOf(context).toString())
+                            .format(workout.load),
+                      ),
+                  ]),
                   const SizedBox(height: AppSpacing.sm),
                   _RpeCard(
                     rpe: _rpe,
@@ -305,6 +293,33 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Stat tiles in balanced rows: 3, 2 + 2 or 3 + 2, never a lone tile.
+class _StatRows extends StatelessWidget {
+  final List<_StatTile> tiles;
+
+  const _StatRows(this.tiles);
+
+  @override
+  Widget build(BuildContext context) {
+    final perRow = tiles.length == 4 ? 2 : 3;
+    return Column(
+      children: [
+        for (var i = 0; i < tiles.length; i += perRow) ...[
+          if (i > 0) const SizedBox(height: AppSpacing.xs),
+          Row(
+            children: [
+              for (var j = i; j < i + perRow && j < tiles.length; j++) ...[
+                if (j > i) const SizedBox(width: AppSpacing.xs),
+                tiles[j],
+              ],
+            ],
+          ),
+        ],
+      ],
     );
   }
 }
