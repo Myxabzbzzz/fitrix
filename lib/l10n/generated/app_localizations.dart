@@ -1377,7 +1377,7 @@ abstract class AppLocalizations {
   /// No description provided for @signInCodePrompt.
   ///
   /// In en, this message translates to:
-  /// **'Enter the {length}-digit code we sent to\n{email}'**
+  /// **'Enter the {length}-digit code we sent to\n{email}'**
   String signInCodePrompt(String length, String email);
 
   /// No description provided for @signInResend.
@@ -7092,7 +7092,7 @@ abstract class AppLocalizations {
   /// No description provided for @healthStepsTodayAvg.
   ///
   /// In en, this message translates to:
-  /// **'Steps today: {steps} · 7-day avg {avg}'**
+  /// **'Steps today: {steps}\n7-day average: {avg}'**
   String healthStepsTodayAvg(int steps, int avg);
 
   /// No description provided for @factorRestingHrHigh.
@@ -7400,8 +7400,8 @@ abstract class AppLocalizations {
   /// No description provided for @cyclingUnitRides.
   ///
   /// In en, this message translates to:
-  /// **'Rides'**
-  String get cyclingUnitRides;
+  /// **'{count, plural, =1{ride} other{rides}}'**
+  String cyclingUnitRides(int count);
 
   /// No description provided for @cyclingHistory.
   ///
@@ -7484,8 +7484,14 @@ abstract class AppLocalizations {
   /// No description provided for @skiUnitDays.
   ///
   /// In en, this message translates to:
-  /// **'Ski days'**
-  String get skiUnitDays;
+  /// **'{count, plural, =1{ski day} other{ski days}}'**
+  String skiUnitDays(int count);
+
+  /// No description provided for @skiUnitDescents.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{descent} other{descents}}'**
+  String skiUnitDescents(int count);
 
   /// No description provided for @skiHistory.
   ///

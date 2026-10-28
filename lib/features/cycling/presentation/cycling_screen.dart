@@ -133,7 +133,7 @@ class CyclingScreen extends ConsumerWidget {
                           child: _Figure(
                             key: const ValueKey('cy-week-rides'),
                             value: '${thisWeek.length}',
-                            unit: l10n.cyclingUnitRides,
+                            unit: l10n.cyclingUnitRides(thisWeek.length),
                           ),
                         ),
                       ],

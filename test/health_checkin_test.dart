@@ -287,7 +287,7 @@ void main() {
           scrollable: find.byType(Scrollable).first);
       expect(find.text('60 bpm · your normal 54'), findsOneWidget);
       expect(find.text('41 ms SDNN · your normal 48'), findsOneWidget);
-      expect(find.text('Steps today: 8,123 · 7-day avg 9,400'), findsOneWidget);
+      expect(find.text('Steps today: 8,123\n7-day average: 9,400'), findsOneWidget);
       expect(find.text('Resting heart rate above normal'), findsOneWidget);
       expect(find.text('HRV below normal'), findsOneWidget);
     });
@@ -397,7 +397,7 @@ void main() {
           days: withToday(const HealthDay(steps: 8123)));
       expect(find.byKey(const Key('home-steps-tile')), findsOneWidget);
       // Same average as the check-in card: the 7 earlier days, not today.
-      expect(find.text('Steps today: 8,123 · 7-day avg 9,400'), findsOneWidget);
+      expect(find.text('Steps today: 8,123\n7-day average: 9,400'), findsOneWidget);
     });
 
     testWidgets('steps tile without any plan or templates', (tester) async {
@@ -430,7 +430,7 @@ void main() {
           textScale: 1.3,
           days: withToday(const HealthDay(steps: 8123)));
       expect(find.byKey(const Key('home-steps-tile')), findsOneWidget);
-      expect(find.text('Steps today: 8,123 · 7-day avg 9,400'), findsOneWidget);
+      expect(find.text('Steps today: 8,123\n7-day average: 9,400'), findsOneWidget);
       expectNoOverflow(tester);
     });
 
@@ -522,13 +522,13 @@ void main() {
         lookupAppLocalizations(Locale(lang)).healthStepsTodayAvg(n, a);
     expect(steps('ru', 1), 'Шаги сегодня: 1');
     expect(steps('ru', 3), 'Шаги сегодня: 3');
-    expect(avg('ru', 2, 5), 'Шаги сегодня: 2 · в среднем за 7 дней 5');
+    expect(avg('ru', 2, 5), 'Шаги сегодня: 2\nВ среднем за 7 дней: 5');
     expect(steps('en', 1), 'Steps today: 1');
-    expect(avg('en', 1, 7), 'Steps today: 1 · 7-day avg 7');
+    expect(avg('en', 1, 7), 'Steps today: 1\n7-day average: 7');
     expect(steps('es', 1), 'Pasos hoy: 1');
-    expect(avg('es', 1, 7), 'Pasos hoy: 1 · media de 7 días 7');
+    expect(avg('es', 1, 7), 'Pasos hoy: 1\nMedia de 7 días: 7');
     expect(steps('uz', 1), 'Bugungi qadamlar: 1');
-    expect(avg('uz', 1, 7), 'Bugungi qadamlar: 1 · 7 kunlik o‘rtacha 7');
+    expect(avg('uz', 1, 7), 'Bugungi qadamlar: 1\n7 kunlik o‘rtacha: 7');
     expect(
         lookupAppLocalizations(const Locale('uz'))
             .healthRestingHrNormal(58, 54),

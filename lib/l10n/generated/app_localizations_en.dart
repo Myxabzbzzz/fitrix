@@ -769,7 +769,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String signInCodePrompt(String length, String email) {
-    return 'Enter the $length-digit code we sent to\n$email';
+    return 'Enter the $length-digit code we sent to\n$email';
   }
 
   @override
@@ -4362,7 +4362,7 @@ class AppLocalizationsEn extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return 'Steps today: $stepsString · 7-day avg $avgString';
+    return 'Steps today: $stepsString\n7-day average: $avgString';
   }
 
   @override
@@ -4545,7 +4545,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cyclingLog => 'Log indoor ride';
 
   @override
-  String get cyclingUnitRides => 'Rides';
+  String cyclingUnitRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'rides',
+      one: 'ride',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get cyclingHistory => 'History';
@@ -4588,7 +4596,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skiStart => 'Start ski day';
 
   @override
-  String get skiUnitDays => 'Ski days';
+  String skiUnitDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ski days',
+      one: 'ski day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skiUnitDescents(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'descents',
+      one: 'descent',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get skiHistory => 'History';

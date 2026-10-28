@@ -787,7 +787,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String signInCodePrompt(String length, String email) {
-    return 'Введите $length-значный код, который мы отправили на\n$email';
+    return 'Введите $length-значный код, который мы отправили на\n$email';
   }
 
   @override
@@ -1456,7 +1456,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String recoveryHintReadySore(String areas) {
-    return 'Тяжёлая тренировка подойдёт. $areas: сегодня полегче.';
+    return 'Тяжёлая тренировка подойдёт. Сегодня полегче: $areas.';
   }
 
   @override
@@ -4446,7 +4446,7 @@ class AppLocalizationsRu extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return 'Шаги сегодня: $stepsString · в среднем за 7 дней $avgString';
+    return 'Шаги сегодня: $stepsString\nВ среднем за 7 дней: $avgString';
   }
 
   @override
@@ -4629,7 +4629,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cyclingLog => 'Записать тренировку на тренажёре';
 
   @override
-  String get cyclingUnitRides => 'Поездки';
+  String cyclingUnitRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'поездки',
+      many: 'поездок',
+      few: 'поездки',
+      one: 'поездка',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get cyclingHistory => 'История';
@@ -4672,7 +4682,30 @@ class AppLocalizationsRu extends AppLocalizations {
   String get skiStart => 'Начать лыжный день';
 
   @override
-  String get skiUnitDays => 'Лыжные дни';
+  String skiUnitDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'лыжного дня',
+      many: 'лыжных дней',
+      few: 'лыжных дня',
+      one: 'лыжный день',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skiUnitDescents(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'спуска',
+      many: 'спусков',
+      few: 'спуска',
+      one: 'спуск',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get skiHistory => 'История';

@@ -1412,7 +1412,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String recoveryHintReadySore(String areas) {
-    return 'Og‘ir mashq mumkin. ${areas}ni bugun yengil saqlang.';
+    return 'Og‘ir mashq mumkin. Bugun yengilroq: $areas.';
   }
 
   @override
@@ -4312,7 +4312,7 @@ class AppLocalizationsUz extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return 'Bugungi qadamlar: $stepsString · 7 kunlik o‘rtacha $avgString';
+    return 'Bugungi qadamlar: $stepsString\n7 kunlik o‘rtacha: $avgString';
   }
 
   @override
@@ -4495,7 +4495,14 @@ class AppLocalizationsUz extends AppLocalizations {
   String get cyclingLog => 'Trenajyordagi mashqni qayd qilish';
 
   @override
-  String get cyclingUnitRides => 'Safarlar';
+  String cyclingUnitRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ta safar',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get cyclingHistory => 'Tarix';
@@ -4538,7 +4545,24 @@ class AppLocalizationsUz extends AppLocalizations {
   String get skiStart => 'Chang‘i kunini boshlash';
 
   @override
-  String get skiUnitDays => 'Chang‘i kunlari';
+  String skiUnitDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'chang‘i kuni',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skiUnitDescents(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ta tushish',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get skiHistory => 'Tarix';
