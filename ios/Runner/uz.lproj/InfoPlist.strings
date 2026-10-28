@@ -1,0 +1,9 @@
+/* iOS permission prompts in this language (keys of Info.plist). */
+"NSLocationWhenInUseUsageDescription" = "FITRIX yugurish, velosiped va chang‘i kunlarini yozib olish hamda yaqin atrofdagi sport zallari va bog‘larni ko‘rsatish uchun joylashuvingizdan foydalanadi.";
+"NSHealthShareUsageDescription" = "FITRIX chek-in, tiklanish va mashg‘ulot yuklamasini to‘ldirish uchun uyqu, yurak urishi, HRV, qadamlar, vazn va mashg‘ulotlarni o‘qiydi.";
+"NSHealthUpdateUsageDescription" = "FITRIX siz yozib olgan mashg‘ulotlarni Apple Health va Fitness’da hisobga olinishi uchun saqlaydi.";
+"NSLocalNetworkUsageDescription" = "FITRIX ishlab chiqish vaqtida mahalliy tarmog‘ingizdagi FITRIX serveriga ulanadi.";
+"NSMicrophoneUsageDescription" = "FITRIX Felixga xabarlarni ovoz bilan yozdirishingiz uchun mikrofondan foydalanadi.";
+"NSSpeechRecognitionUsageDescription" = "FITRIX ovozingizni Felix uchun matnga aylantiradi.";
+"NSCameraUsageDescription" = "FITRIX taomingizni yoki mashq texnikangizni Felixga ko‘rsatishingiz uchun kameradan foydalanadi.";
+"NSPhotoLibraryUsageDescription" = "FITRIX Felixga ko‘rsatish uchun rasmlarni tanlash imkonini beradi.";

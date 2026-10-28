@@ -38,6 +38,76 @@ void main() {
         'show gyms and parks near you.');
   });
 
+  group('iOS permission prompts are translated', () {
+    final keys = [
+      for (final m
+          in RegExp(r'<key>(NS\w+UsageDescription)</key>').allMatches(plist))
+        m.group(1)!,
+    ];
+    final project =
+        File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
+
+    Map<String, String> strings(String lang) {
+      final text =
+          File('ios/Runner/$lang.lproj/InfoPlist.strings').readAsStringSync();
+      return {
+        for (final m in RegExp(r'^"(\w+)" = "((?:[^"\\]|\\.)*)";$',
+                multiLine: true)
+            .allMatches(text))
+          m.group(1)!: m.group(2)!,
+      };
+    }
+
+    test('Info.plist asks for location, Health, mic, speech, camera, photos '
+        'and the local network', () {
+      expect(
+          keys,
+          containsAll([
+            'NSLocationWhenInUseUsageDescription',
+            'NSHealthShareUsageDescription',
+            'NSHealthUpdateUsageDescription',
+            'NSMicrophoneUsageDescription',
+            'NSSpeechRecognitionUsageDescription',
+            'NSCameraUsageDescription',
+            'NSPhotoLibraryUsageDescription',
+            'NSLocalNetworkUsageDescription',
+          ]));
+    });
+
+    for (final lang in ['en', 'ru', 'uz', 'es']) {
+      test('$lang.lproj has every prompt and is bundled', () {
+        final s = strings(lang);
+        expect(s.keys, unorderedEquals(keys));
+        for (final k in keys) {
+          expect(s[k], isNotEmpty, reason: k);
+          if (lang == 'en') {
+            expect(s[k], _plistString(plist, k), reason: k);
+          } else {
+            expect(s[k], isNot(_plistString(plist, k)), reason: '$lang $k');
+            expect(s[k], contains('FITRIX'), reason: '$lang $k');
+          }
+        }
+        expect(project, contains('path = $lang.lproj/InfoPlist.strings;'));
+        expect(
+            RegExp(r'knownRegions = \(([^)]*)\)')
+                .firstMatch(project)!
+                .group(1),
+            contains('$lang,'));
+      });
+    }
+
+    test('the strings are in the app\'s Resources build phase', () {
+      expect(project, contains('/* InfoPlist.strings in Resources */,'));
+    });
+
+    test('Uzbek o‘ and g‘ use U+2018', () {
+      final text =
+          File('ios/Runner/uz.lproj/InfoPlist.strings').readAsStringSync();
+      expect(text, isNot(matches(RegExp("[oOgG]['`ʻ’]"))));
+      expect(text, contains('o‘'));
+    });
+  });
+
   test('only "when in use" location is asked for on iOS', () {
     expect(plist, isNot(contains('NSLocationAlwaysUsageDescription')));
     expect(

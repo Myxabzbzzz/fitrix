@@ -1,0 +1,9 @@
+/* iOS permission prompts in this language (keys of Info.plist). */
+"NSLocationWhenInUseUsageDescription" = "FITRIX usa tu ubicación para registrar carreras, salidas en bici y días de esquí, y para mostrarte gimnasios y parques cercanos.";
+"NSHealthShareUsageDescription" = "FITRIX lee el sueño, la frecuencia cardiaca, la VFC, los pasos, el peso y los entrenamientos para completar tu check-in, tu recuperación y tu carga de entrenamiento.";
+"NSHealthUpdateUsageDescription" = "FITRIX guarda los entrenamientos que registras para que cuenten en Salud y Fitness.";
+"NSLocalNetworkUsageDescription" = "FITRIX se conecta al servidor de FITRIX en tu red local durante el desarrollo.";
+"NSMicrophoneUsageDescription" = "FITRIX usa el micrófono para que puedas dictarle mensajes a Felix.";
+"NSSpeechRecognitionUsageDescription" = "FITRIX convierte tu voz en texto para Felix.";
+"NSCameraUsageDescription" = "FITRIX usa la cámara para que puedas enseñarle a Felix tu comida o tu técnica.";
+"NSPhotoLibraryUsageDescription" = "FITRIX te permite elegir fotos para enseñárselas a Felix.";

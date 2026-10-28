@@ -1,0 +1,9 @@
+/* iOS permission prompts in this language (keys of Info.plist). */
+"NSLocationWhenInUseUsageDescription" = "FITRIX использует вашу геопозицию, чтобы записывать пробежки, велотренировки и лыжные дни и показывать спортзалы и парки рядом с вами.";
+"NSHealthShareUsageDescription" = "FITRIX читает сон, пульс, ВСР, шаги, вес и тренировки, чтобы заполнить чек-ин, восстановление и тренировочную нагрузку.";
+"NSHealthUpdateUsageDescription" = "FITRIX сохраняет записанные вами тренировки, чтобы они учитывались в «Здоровье» и «Фитнесе».";
+"NSLocalNetworkUsageDescription" = "FITRIX подключается к серверу FITRIX в вашей локальной сети во время разработки.";
+"NSMicrophoneUsageDescription" = "FITRIX использует микрофон, чтобы вы могли диктовать сообщения Felix.";
+"NSSpeechRecognitionUsageDescription" = "FITRIX превращает ваш голос в текст для Felix.";
+"NSCameraUsageDescription" = "FITRIX использует камеру, чтобы вы могли показать Felix свою еду или технику.";
+"NSPhotoLibraryUsageDescription" = "FITRIX позволяет выбрать фото, чтобы показать их Felix.";
