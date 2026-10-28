@@ -333,4 +333,21 @@ void main() {
     expect(
         save.bottom, lessThanOrEqualTo(proRuLight.size.height - bottomInset));
   });
+
+  group('Home tile labels', () {
+    for (final cfg in [proRuLight, seRuScaled]) {
+      testWidgets('share one size per row (${cfg.id})', (t) async {
+        final r = await pumpTour(t, cfg);
+        await r.go(AppRouter.home);
+        double size(String label) => t
+            .renderObject<RenderParagraph>(find.text(label))
+            .text
+            .style!
+            .fontSize!;
+        expect(size('МОЙ\nПРОГРЕСС'), size('МОЁ\nПИТАНИЕ'));
+        expect(size('МАГАЗИН'), size('КАРТА\nFITRIX'));
+        expectNoOverflow(t);
+      });
+    }
+  });
 }

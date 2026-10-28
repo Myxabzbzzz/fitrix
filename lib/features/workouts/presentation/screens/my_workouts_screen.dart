@@ -21,6 +21,8 @@ import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 class MyWorkoutsScreen extends ConsumerWidget {
   const MyWorkoutsScreen({super.key});
 
+  static const double _tileHeight = 120, _imageFactor = 0.45;
+
   static const _sports = [
     Sport.gym,
     Sport.fitness,
@@ -50,6 +52,20 @@ class MyWorkoutsScreen extends ConsumerWidget {
                   (w) => w.sport == sport && !w.finishedAt.isBefore(weekStart))
               .length,
         );
+
+    // One label size for all sport tiles: the size at which every label
+    // clears its illustration.
+    final tileWidth = MediaQuery.sizeOf(context).width - 2 * AppSpacing.md;
+    final tileLabelSize = FeatureTile.rowLabelSize(context, [
+      for (final sport in _sports)
+        (
+          label: sport.localizedTileLabel(l10n),
+          size: AppText.headingL.fontSize!,
+          area: FeatureTile.labelArea(Size(tileWidth, _tileHeight),
+              imageWidthFactor: _imageFactor,
+              hasImage: sport.imageAsset != null),
+        ),
+    ]);
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -123,14 +139,14 @@ class MyWorkoutsScreen extends ConsumerWidget {
                   ],
                   for (final sport in _sports) ...[
                     SizedBox(
-                      height: 120,
+                      height: _tileHeight,
                       child: Builder(
                         // The tile's own context, so the reveal starts there.
                         builder: (tileContext) => FeatureTile(
                           label: sport.localizedTileLabel(l10n),
-                          labelSize: 24,
+                          labelSize: tileLabelSize,
                           imageAsset: sport.imageAsset,
-                          imageWidthFactor: 0.45,
+                          imageWidthFactor: _imageFactor,
                           labelAlignment: Alignment.topLeft,
                           imageAlignment: Alignment.centerRight,
                           onTap: () => openWithReveal(
