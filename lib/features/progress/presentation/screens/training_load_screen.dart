@@ -48,7 +48,10 @@ class _TrainingLoadScreenState extends ConsumerState<TrainingLoadScreen> {
       fatigue.add(Offset(x, s.fatigue));
     }
     final hasLoad = days.isNotEmpty;
-    final (minY, maxY) = hasLoad
+    // Until there is enough history the curves would show fatigue far above
+    // fitness; the numbers below say "collecting", so the chart is bare too.
+    final showLines = hasLoad && summary.hasForm;
+    final (minY, maxY) = showLines
         ? MultiLineChart.niceRange([...fitness, ...fatigue].map((o) => o.dy))
         : (0.0, 3.0);
     final dateFmt = DateFormat('d MMM', locale);
@@ -135,10 +138,12 @@ class _TrainingLoadScreenState extends ConsumerState<TrainingLoadScreen> {
                           maxY: maxY,
                           xLabels: xLabels,
                           height: 150,
-                          series: [
-                            ChartSeries(fatigue, p.warning, dashed: true),
-                            ChartSeries(fitness, p.accent, endDot: true),
-                          ],
+                          series: showLines
+                              ? [
+                                  ChartSeries(fatigue, p.warning, dashed: true),
+                                  ChartSeries(fitness, p.accent, endDot: true),
+                                ]
+                              : const [],
                         ),
                         const SizedBox(height: AppSpacing.xs),
                         if (!hasLoad)

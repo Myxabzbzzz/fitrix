@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitrix/features/progress/presentation/widgets/multi_line_chart.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
@@ -373,6 +374,27 @@ void main() {
         }
       });
     }
+
+    testWidgets('training load draws no curves until there is a form',
+        (t) async {
+      _se(t);
+      // Three days of history: not enough for fitness and fatigue.
+      final fresh = [
+        for (var i = 0; i < 3; i++)
+          _workout(DateTime(2026, 10, 18 - i), kg: 80),
+      ];
+      await t
+          .pumpWidget(await _host(const TrainingLoadScreen(), history: fresh));
+      await t.pumpAndSettle();
+      expect(t.widget<MultiLineChart>(find.byType(MultiLineChart)).series,
+          isEmpty);
+
+      await t.pumpWidget(
+          await _host(const TrainingLoadScreen(), history: _sixWeeks()));
+      await t.pumpAndSettle();
+      expect(t.widget<MultiLineChart>(find.byType(MultiLineChart)).series,
+          hasLength(2));
+    });
 
     testWidgets('logging weight stores a weigh-in and updates the profile',
         (t) async {
