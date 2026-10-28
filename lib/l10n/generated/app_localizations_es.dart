@@ -4709,4 +4709,15 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get skiUnfinishedLaunchBody =>
       'Continúa donde lo dejaste, guarda lo registrado o descártalo.';
+
+  @override
+  String get addExerciseNoWorkoutTitle =>
+      'No hay ningún entrenamiento en curso';
+
+  @override
+  String get addExerciseNoWorkoutBody =>
+      'Empieza un entrenamiento para añadirle ejercicios. Mientras tanto puedes ver la biblioteca de ejercicios.';
+
+  @override
+  String get addExerciseOpenLibrary => 'Biblioteca de ejercicios';
 }

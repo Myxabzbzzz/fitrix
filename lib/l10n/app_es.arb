@@ -1327,5 +1327,8 @@
   "skiFinishFailed": "No se pudo terminar el día de esquí. Inténtalo de nuevo.",
   "rideNotFound": "Esta salida ya no está aquí.",
   "skiNotFound": "Este día de esquí ya no está aquí.",
-  "skiUnfinishedLaunchBody": "Continúa donde lo dejaste, guarda lo registrado o descártalo."
+  "skiUnfinishedLaunchBody": "Continúa donde lo dejaste, guarda lo registrado o descártalo.",
+  "addExerciseNoWorkoutTitle": "No hay ningún entrenamiento en curso",
+  "addExerciseNoWorkoutBody": "Empieza un entrenamiento para añadirle ejercicios. Mientras tanto puedes ver la biblioteca de ejercicios.",
+  "addExerciseOpenLibrary": "Biblioteca de ejercicios"
 }

@@ -3397,5 +3397,9 @@
   "skiFinishFailed": "Couldn’t finish the ski day. Try again.",
   "rideNotFound": "This ride is no longer here.",
   "skiNotFound": "This ski day is no longer here.",
-  "skiUnfinishedLaunchBody": "Pick it up where you left off, save what was recorded, or discard it."
+  "skiUnfinishedLaunchBody": "Pick it up where you left off, save what was recorded, or discard it.",
+  "addExerciseNoWorkoutTitle": "No workout in progress",
+  "addExerciseNoWorkoutBody": "Start a workout to add exercises to it. Meanwhile you can browse the exercise library.",
+  "addExerciseOpenLibrary": "Exercise library",
+  "@addExerciseNoWorkoutTitle": {"description": "Add-exercise page opened without an active workout"}
 }

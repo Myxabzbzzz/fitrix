@@ -4774,4 +4774,14 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get skiUnfinishedLaunchBody =>
       'Продолжите с того места, где остановились, сохраните записанное или сбросьте.';
+
+  @override
+  String get addExerciseNoWorkoutTitle => 'Тренировка не идёт';
+
+  @override
+  String get addExerciseNoWorkoutBody =>
+      'Начните тренировку, чтобы добавлять в неё упражнения. А пока можно посмотреть библиотеку упражнений.';
+
+  @override
+  String get addExerciseOpenLibrary => 'Библиотека упражнений';
 }

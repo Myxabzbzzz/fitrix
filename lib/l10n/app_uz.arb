@@ -1327,5 +1327,8 @@
   "skiFinishFailed": "Chang‘i kunini tugatib bo‘lmadi. Qayta urinib ko‘ring.",
   "rideNotFound": "Bu safar endi yo‘q.",
   "skiNotFound": "Bu chang‘i kuni endi yo‘q.",
-  "skiUnfinishedLaunchBody": "Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling."
+  "skiUnfinishedLaunchBody": "Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling.",
+  "addExerciseNoWorkoutTitle": "Mashg‘ulot boshlanmagan",
+  "addExerciseNoWorkoutBody": "Mashq qo‘shish uchun mashg‘ulotni boshlang. Hozircha mashqlar kutubxonasini ko‘rib chiqishingiz mumkin.",
+  "addExerciseOpenLibrary": "Mashqlar kutubxonasi"
 }

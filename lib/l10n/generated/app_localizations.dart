@@ -7660,6 +7660,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pick it up where you left off, save what was recorded, or discard it.'**
   String get skiUnfinishedLaunchBody;
+
+  /// Add-exercise page opened without an active workout
+  ///
+  /// In en, this message translates to:
+  /// **'No workout in progress'**
+  String get addExerciseNoWorkoutTitle;
+
+  /// No description provided for @addExerciseNoWorkoutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a workout to add exercises to it. Meanwhile you can browse the exercise library.'**
+  String get addExerciseNoWorkoutBody;
+
+  /// No description provided for @addExerciseOpenLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise library'**
+  String get addExerciseOpenLibrary;
 }
 
 class _AppLocalizationsDelegate

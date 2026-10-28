@@ -4688,4 +4688,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get skiUnfinishedLaunchBody =>
       'Pick it up where you left off, save what was recorded, or discard it.';
+
+  @override
+  String get addExerciseNoWorkoutTitle => 'No workout in progress';
+
+  @override
+  String get addExerciseNoWorkoutBody =>
+      'Start a workout to add exercises to it. Meanwhile you can browse the exercise library.';
+
+  @override
+  String get addExerciseOpenLibrary => 'Exercise library';
 }

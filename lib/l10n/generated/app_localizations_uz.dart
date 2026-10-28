@@ -4640,4 +4640,14 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get skiUnfinishedLaunchBody =>
       'Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling.';
+
+  @override
+  String get addExerciseNoWorkoutTitle => 'Mashg‘ulot boshlanmagan';
+
+  @override
+  String get addExerciseNoWorkoutBody =>
+      'Mashq qo‘shish uchun mashg‘ulotni boshlang. Hozircha mashqlar kutubxonasini ko‘rib chiqishingiz mumkin.';
+
+  @override
+  String get addExerciseOpenLibrary => 'Mashqlar kutubxonasi';
 }

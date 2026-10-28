@@ -123,7 +123,19 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
     if (workout == null || catalog == null) {
       return Scaffold(
         backgroundColor: palette.background,
-        body: SafeArea(child: Column(children: [bar])),
+        body: SafeArea(
+          child: Column(
+            children: [
+              bar,
+              Expanded(
+                child: workout == null
+                    ? _NoWorkout(
+                        onLibrary: () => context.go(AppRouter.exerciseLibrary))
+                    : const Center(child: CircularProgressIndicator()),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -310,4 +322,44 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
               style: AppText.caption.copyWith(color: palette.textSecondary)),
         ],
       );
+}
+
+/// Shown when the page is opened without a workout in progress (a stale
+/// link): says so instead of a blank page and offers the library.
+class _NoWorkout extends StatelessWidget {
+  final VoidCallback onLibrary;
+
+  const _NoWorkout({required this.onLibrary});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.fitness_center, size: 48, color: palette.textSecondary),
+            const SizedBox(height: AppSpacing.md),
+            Text(l10n.addExerciseNoWorkoutTitle,
+                textAlign: TextAlign.center,
+                style: AppText.headingM.copyWith(color: palette.textPrimary)),
+            const SizedBox(height: AppSpacing.xs),
+            Text(l10n.addExerciseNoWorkoutBody,
+                textAlign: TextAlign.center,
+                style: AppText.body14.copyWith(color: palette.textSecondary)),
+            const SizedBox(height: AppSpacing.lg),
+            AppButton(
+              key: const ValueKey('add-exercise-open-library'),
+              label: l10n.addExerciseOpenLibrary,
+              size: AppButtonSize.large,
+              onPressed: onLibrary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
