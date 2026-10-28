@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_in_progress_bar.dart';
 import 'package:fitrix/features/running/presentation/widgets/run_resume_prompt.dart';
@@ -37,7 +38,14 @@ class MainShell extends ConsumerWidget {
     final gymHeight =
         hasActiveWorkout ? ActiveWorkoutSheet.collapsedHeight : 0.0;
 
+    // Home's menu lives here so it slides over the tab bar.
+    final onHome = navigationShell.currentIndex == 2;
+
     return Scaffold(
+      drawer: onHome ? const HomeDrawer() : null,
+      // Opened from Home's menu button only: an edge swipe on Home's
+      // sections is the swipe back.
+      drawerEnableOpenDragGesture: false,
       body: RunResumePrompt(
         child: Stack(
           children: [

@@ -85,9 +85,9 @@ Future<void> _startRide(
     return _startRun(context, ref, template, ActivityKind.ride);
   }
   final outdoor = await showModalBottomSheet<bool>(
+    useRootNavigator: true,
     context: context,
     useSafeArea: true,
-    backgroundColor: AppPalette.of(context).background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
     ),

@@ -27,6 +27,16 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: p.sheetSurface,
+        modalBackgroundColor: p.sheetSurface,
+        shape: const RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(AppRadius.lg))),
+        dragHandleColor: p.buttonMuted,
+        dragHandleSize: const Size(36, 4),
+      ),
+      drawerTheme: DrawerThemeData(backgroundColor: p.sheetSurface),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: p.textPrimary,
@@ -113,6 +123,16 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: p.sheetSurface,
+        modalBackgroundColor: p.sheetSurface,
+        shape: const RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(AppRadius.lg))),
+        dragHandleColor: p.buttonMuted,
+        dragHandleSize: const Size(36, 4),
+      ),
+      drawerTheme: DrawerThemeData(backgroundColor: p.sheetSurface),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: p.textPrimary,

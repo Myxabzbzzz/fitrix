@@ -11,10 +11,10 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 Future<void> showActivitySettingsSheet(
     BuildContext context, ActivityKind kind) {
   return showModalBottomSheet<void>(
+    useRootNavigator: true,
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: AppPalette.of(context).background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
     ),

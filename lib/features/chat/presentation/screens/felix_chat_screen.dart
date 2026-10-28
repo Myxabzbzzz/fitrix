@@ -148,8 +148,8 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
   Future<void> _addPhoto() async {
     final l10n = AppLocalizations.of(context);
     final source = await showModalBottomSheet<PhotoSource>(
+      useRootNavigator: true,
       context: context,
-      backgroundColor: AppPalette.of(context).sheet,
       builder: (context) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,

@@ -32,9 +32,13 @@ class HomeScreen extends StatelessWidget {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
 
+    // Inside the app shell the menu belongs to the shell's Scaffold, so it
+    // slides over the tab bar; on its own (tests) Home keeps one itself.
+    final inShell = context.findAncestorStateOfType<ScaffoldState>() != null;
+
     return Scaffold(
       backgroundColor: palette.background,
-      drawer: const _HomeDrawer(),
+      drawer: inShell ? null : const HomeDrawer(),
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -52,7 +56,9 @@ class HomeScreen extends StatelessWidget {
                       builder: (context) => IconButton(
                         icon: const Icon(Icons.menu),
                         color: palette.textPrimary,
-                        onPressed: () => Scaffold.of(context).openDrawer(),
+                        onPressed: () => context
+                            .findRootAncestorStateOfType<ScaffoldState>()
+                            ?.openDrawer(),
                       ),
                     ),
                   ),
@@ -336,8 +342,9 @@ class _SectionTile extends StatelessWidget {
   }
 }
 
-class _HomeDrawer extends StatelessWidget {
-  const _HomeDrawer();
+/// Home's side menu.
+class HomeDrawer extends StatelessWidget {
+  const HomeDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -355,7 +362,7 @@ class _HomeDrawer extends StatelessWidget {
             ),
           ),
           onTap: () {
-            Navigator.of(context).pop();
+            Scaffold.of(context).closeDrawer();
             // Not opened from a tile: no circle origin, plain fade instead.
             RevealOrigins.clear(location);
             context.go(location);
@@ -363,7 +370,6 @@ class _HomeDrawer extends StatelessWidget {
         );
 
     return Drawer(
-      backgroundColor: palette.background,
       child: SafeArea(
         child: ListView(
           children: [

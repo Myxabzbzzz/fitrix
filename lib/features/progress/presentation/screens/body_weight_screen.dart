@@ -40,6 +40,7 @@ class _BodyWeightScreenState extends ConsumerState<BodyWeightScreen> {
 
   void _openSheet() {
     showModalBottomSheet<void>(
+      useRootNavigator: true,
       context: context,
       isScrollControlled: true,
       useSafeArea: true,

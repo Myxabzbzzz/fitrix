@@ -26,12 +26,11 @@ const _sports = [
 ];
 
 Future<void> showAddSessionSheet(BuildContext context) {
-  final palette = AppPalette.of(context);
   return showModalBottomSheet<void>(
+    useRootNavigator: true,
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: palette.background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
     ),

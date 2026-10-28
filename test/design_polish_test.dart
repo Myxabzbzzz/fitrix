@@ -11,7 +11,9 @@ import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/checkin/presentation/widgets/checkin_sheet.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
+import 'package:fitrix/features/plan/presentation/widgets/add_session_sheet.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -92,8 +94,7 @@ void main() {
       expect(find.text('Продолжить').hitTestable(), findsOneWidget);
     });
 
-    testWidgets('language buttons are tall enough for their label',
-        (t) async {
+    testWidgets('language buttons are tall enough for their label', (t) async {
       await setScreen(t, proSize);
       SharedPreferences.setMockInitialValues({'language': 'ru'});
       final prefs = await SharedPreferences.getInstance();
@@ -162,6 +163,36 @@ void main() {
       await r.go(AppRouter.felixChat(AssistantTopic.gym));
       expectFullLabel(t, 'Добавить план');
       expectNoOverflow(t);
+    });
+  });
+
+  group('sheets and the menu cover the tab bar', () {
+    testWidgets('check-in sheet opens on the root navigator', (t) async {
+      final r = await pumpTour(t, proRuLight, seed: const Seed(checkIn: false));
+      await r.go(AppRouter.home);
+      showCheckInSheet(r.context);
+      await r.settle();
+      final inSheet = t.element(find.byType(BottomSheet));
+      expect(Navigator.of(inSheet),
+          same(Navigator.of(inSheet, rootNavigator: true)));
+    });
+
+    testWidgets('week plan sheet opens on the root navigator', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      await r.go(AppRouter.weekPlan);
+      showAddSessionSheet(r.context);
+      await r.settle();
+      final inSheet = t.element(find.byType(BottomSheet));
+      expect(Navigator.of(inSheet),
+          same(Navigator.of(inSheet, rootNavigator: true)));
+    });
+
+    testWidgets('Home menu runs the full height of the screen', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      await r.go(AppRouter.home);
+      await t.tap(find.byIcon(Icons.menu).first);
+      await r.settle();
+      expect(t.getRect(find.byType(Drawer)).bottom, proRuLight.size.height);
     });
   });
 }

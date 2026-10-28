@@ -16,11 +16,11 @@ Future<void> showCartSheet(
   required Future<void> Function() onPlaceOrder,
 }) =>
     showModalBottomSheet<void>(
+      useRootNavigator: true,
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
       enableDrag: false, // a drag-down would bypass the in-flight guard
-      backgroundColor: AppPalette.of(context).sheet,
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.8,
       ),

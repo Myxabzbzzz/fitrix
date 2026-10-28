@@ -111,8 +111,8 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     final l10n = AppLocalizations.of(context);
     final palette = AppPalette.of(context);
     showModalBottomSheet<void>(
+      useRootNavigator: true,
       context: context,
-      backgroundColor: palette.sheet,
       showDragHandle: true,
       builder: (ctx) => Padding(
         padding: const EdgeInsets.fromLTRB(

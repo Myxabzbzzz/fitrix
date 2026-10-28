@@ -123,10 +123,10 @@ String healthName(WidgetRef ref) =>
 
 Future<void> showImportedWorkoutSheet(BuildContext context, String id) {
   return showModalBottomSheet<void>(
+    useRootNavigator: true,
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: AppPalette.of(context).background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
     ),

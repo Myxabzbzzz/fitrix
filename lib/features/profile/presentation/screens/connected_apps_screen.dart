@@ -60,12 +60,11 @@ class ConnectedAppsScreen extends ConsumerWidget {
   const ConnectedAppsScreen({super.key});
 
   void _openSheet(BuildContext context, ConnectableApp app, String health) {
-    final palette = AppPalette.of(context);
     showModalBottomSheet<void>(
+      useRootNavigator: true,
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: palette.sheet,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
       ),

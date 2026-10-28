@@ -18,12 +18,11 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 /// Shows the start sheet. Completes with true once the program started.
 Future<bool?> showStartProgramSheet(
     BuildContext context, TrainingProgram program, List<int> weekdays) {
-  final palette = AppPalette.of(context);
   return showModalBottomSheet<bool>(
+    useRootNavigator: true,
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: palette.sheet,
     shape: const RoundedRectangleBorder(
         borderRadius:
             BorderRadius.vertical(top: Radius.circular(AppRadius.lg))),

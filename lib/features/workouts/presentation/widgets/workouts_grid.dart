@@ -69,6 +69,7 @@ class WorkoutsGrid extends ConsumerWidget {
 
   void _edit(BuildContext context, WorkoutTemplate template) {
     showModalBottomSheet<void>(
+      useRootNavigator: true,
       context: context,
       isScrollControlled: true,
       useSafeArea: true,

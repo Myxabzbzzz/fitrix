@@ -19,12 +19,11 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Opens the morning check-in. Completes with true when it was saved.
 Future<bool> showCheckInSheet(BuildContext context) async {
-  final palette = AppPalette.of(context);
   final saved = await showModalBottomSheet<bool>(
+    useRootNavigator: true,
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: palette.background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
     ),
