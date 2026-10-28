@@ -94,7 +94,9 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
 
-    testWidgets('check still toggles while a field is focused', (tester) async {
+    testWidgets(
+        'check toggles while a field is focused and closes the keyboard',
+        (tester) async {
       await pumpSheet(tester);
       final c = ProviderScope.containerOf(
           tester.element(find.byType(ActiveWorkoutSheet)));
@@ -104,8 +106,11 @@ void main() {
       expect(_fieldFocused(), isTrue);
 
       await tester.tap(find.byIcon(Icons.check).first);
-      await tester.pumpAndSettle();
+      // The rest bar (now shown) ticks, so no pumpAndSettle.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
       expect(c.read(activeWorkoutProvider)!.completedSets, 1);
+      expect(_fieldFocused(), isFalse);
       await tester.pumpWidget(const SizedBox());
     });
 

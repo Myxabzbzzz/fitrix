@@ -225,7 +225,7 @@
   "signInTermsSuffix": "ga rozilik bildirasiz.",
   "signInContinueWith": "{provider} orqali davom etish",
   "signInCheckEmailTitle": "Emailingizni tekshiring",
-  "signInCodePrompt": "Biz yuborgan {length} xonali kodni kiriting:\n{email}",
+  "signInCodePrompt": "Biz yuborgan {length} xonali kodni kiriting: {email}",
   "signInResend": "Kodni qayta yuborish",
   "signInResendIn": "Kodni qayta yuborish: {time}",
   "signInSpamNote": "Topolmadingizmi? Spam jildini tekshiring.",

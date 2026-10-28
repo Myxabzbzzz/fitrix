@@ -805,7 +805,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String signInCodePrompt(String length, String email) {
-    return 'Introduce el código de $length dígitos que enviamos a\n$email';
+    return 'Introduce el código de $length dígitos que enviamos a $email';
   }
 
   @override

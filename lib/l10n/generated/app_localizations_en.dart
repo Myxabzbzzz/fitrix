@@ -803,7 +803,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String signInCodePrompt(String length, String email) {
-    return 'Enter the $length-digit code we sent to\n$email';
+    return 'Enter the $length-digit code we sent to $email';
   }
 
   @override

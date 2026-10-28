@@ -225,7 +225,7 @@
   "signInTermsSuffix": ".",
   "signInContinueWith": "Continuar con {provider}",
   "signInCheckEmailTitle": "Revisa tu correo",
-  "signInCodePrompt": "Introduce el código de {length} dígitos que enviamos a\n{email}",
+  "signInCodePrompt": "Introduce el código de {length} dígitos que enviamos a {email}",
   "signInResend": "Reenviar código",
   "signInResendIn": "Reenviar código en {time}",
   "signInSpamNote": "¿No lo encuentras? Revisa la carpeta de spam.",

@@ -49,6 +49,10 @@ class _LiveLogState extends ConsumerState<LiveLog> {
   }
 
   void _toggle(int e, int s) {
+    // A tick ends typing: the keyboard goes, and the focused field can no
+    // longer pull the list along when the row changes (set 1 used to end
+    // up under the header).
+    FocusManager.instance.primaryFocus?.unfocus();
     final workout = widget.workout;
     final exercise = workout.exercises[e];
     final set = exercise.sets[s];

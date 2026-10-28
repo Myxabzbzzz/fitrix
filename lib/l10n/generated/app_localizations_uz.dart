@@ -787,7 +787,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String signInCodePrompt(String length, String email) {
-    return 'Biz yuborgan $length xonali kodni kiriting:\n$email';
+    return 'Biz yuborgan $length xonali kodni kiriting: $email';
   }
 
   @override

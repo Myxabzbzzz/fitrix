@@ -225,7 +225,7 @@
   "signInTermsSuffix": ".",
   "signInContinueWith": "Продолжить через {provider}",
   "signInCheckEmailTitle": "Проверьте почту",
-  "signInCodePrompt": "Введите {length}-значный код, который мы отправили на\n{email}",
+  "signInCodePrompt": "Введите {length}-значный код, который мы отправили на {email}",
   "signInResend": "Отправить код ещё раз",
   "signInResendIn": "Отправить код ещё раз через {time}",
   "signInSpamNote": "Не нашли письмо? Проверьте папку «Спам».",

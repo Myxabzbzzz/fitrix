@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -432,6 +433,45 @@ void main() {
       expect(find.text(formatClock(rest.remaining)), findsOneWidget);
       await _leave(tester);
     });
+  });
+
+  testWidgets(
+      'ticking a set with the keyboard up closes it and keeps set 1 in view',
+      (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+    final c = await _container();
+    await _open(tester, c);
+    final reps = find
+        .descendant(
+            of: find.byKey(const ValueKey('set-0-0')),
+            matching: find.byType(EditableText))
+        .last;
+    await tester.tap(reps);
+    await tester.pump();
+    expect(tester.widget<EditableText>(reps).focusNode.hasFocus, isTrue);
+    // The number keyboard covers the lower 300 pt.
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300 * 3);
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pumpAndSettle();
+    final before = tester.getTopLeft(find.byKey(const ValueKey('set-0-0'))).dy;
+
+    await tester.tap(_check(0, 0));
+    await tester.pump();
+    tester.view.resetViewInsets();
+    await tester.pumpAndSettle();
+
+    expect(tester.widget<EditableText>(reps).focusNode.hasFocus, isFalse,
+        reason: 'the keyboard closes on tick');
+    final after = tester.getTopLeft(find.byKey(const ValueKey('set-0-0'))).dy;
+    expect(after, greaterThanOrEqualTo(before - 1),
+        reason: 'set 1 must not scroll up under the header');
+    await tester.tap(_check(0, 1));
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(find.byKey(const ValueKey('set-0-0'))).dy,
+        greaterThanOrEqualTo(before - 1));
+    await _leave(tester);
+    debugDefaultTargetPlatformOverride = null;
   });
 
   group('set fields follow the model', () {

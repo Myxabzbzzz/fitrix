@@ -16,4 +16,13 @@ void main() {
     final en = lookupAppLocalizations(const Locale('en'));
     expect(en.durationSeconds(40), '40 s');
   });
+
+  for (final lang in ['en', 'ru', 'uz', 'es']) {
+    test('the code step keeps the email with its lead-in in $lang', () {
+      final l10n = lookupAppLocalizations(Locale(lang));
+      final text = l10n.signInCodePrompt('6', 'eli.e2e@fitrix.test');
+      expect(text, isNot(contains('\n')));
+      expect(text, endsWith('\u00a0eli.e2e@fitrix.test'));
+    });
+  }
 }

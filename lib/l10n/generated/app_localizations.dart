@@ -1407,7 +1407,7 @@ abstract class AppLocalizations {
   /// No description provided for @signInCodePrompt.
   ///
   /// In en, this message translates to:
-  /// **'Enter the {length}-digit code we sent to\n{email}'**
+  /// **'Enter the {length}-digit code we sent to {email}'**
   String signInCodePrompt(String length, String email);
 
   /// No description provided for @signInResend.
