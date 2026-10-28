@@ -118,8 +118,7 @@ void main() {
       expect(find.text('≈ dragonfruit smoothie'), findsOneWidget);
       // 330 + 195 + 180 from catalog: 330, 195, and Felix's 180.
       final total = (165 * 2).round() + (130 * 1.5).round() + 180;
-      expect(find.textContaining('Add · $total kcal'),
-          findsOneWidget);
+      expect(find.textContaining('Add · $total kcal'), findsOneWidget);
 
       await tester.tap(find.textContaining('Add · '));
       await tester.pumpAndSettle();

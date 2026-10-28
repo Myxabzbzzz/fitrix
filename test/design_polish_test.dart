@@ -319,4 +319,18 @@ void main() {
       expectButtonLabelUnclipped(t, 'Сохранить');
     });
   });
+
+  testWidgets('weight sheet button sits above the home indicator', (t) async {
+    final r = await pumpTour(t, proRuLight);
+    await r.go(AppRouter.progressWeight);
+    final add = find.byIcon(Icons.add);
+    await t.ensureVisible(add.last);
+    await t.tap(add.last);
+    await r.settle();
+    final save = t.getRect(find.byKey(const ValueKey('weight-save')));
+    final bottomInset = t.view.viewPadding.bottom / t.view.devicePixelRatio;
+    expect(bottomInset, greaterThan(0));
+    expect(
+        save.bottom, lessThanOrEqualTo(proRuLight.size.height - bottomInset));
+  });
 }

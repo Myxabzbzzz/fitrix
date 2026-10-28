@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/widgets/sheet_safe_area.dart';
 import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
@@ -114,7 +115,8 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
       useRootNavigator: true,
       context: context,
       showDragHandle: true,
-      builder: (ctx) => Padding(
+      builder: (ctx) => SheetSafeArea(
+          child: Padding(
         padding: const EdgeInsets.fromLTRB(
             AppSpacing.md, 0, AppSpacing.md, AppSpacing.lg),
         child: Column(
@@ -136,7 +138,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 

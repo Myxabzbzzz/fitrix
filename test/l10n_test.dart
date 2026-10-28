@@ -29,11 +29,11 @@ Map<String, dynamic> _arb(String language) =>
 
 /// `{name}` and `{name, plural, ...}` placeholders; the bodies of plural
 /// branches (`=1{ride}`, `few{поездки}`) are text, not placeholders.
-Set<String> _placeholders(String text) => RegExp(
-        r'(?<!(?:=\d+|\b(?:zero|one|two|few|many|other)))\{(\w+)(?=[,}])')
-    .allMatches(text)
-    .map((m) => m.group(1)!)
-    .toSet();
+Set<String> _placeholders(String text) =>
+    RegExp(r'(?<!(?:=\d+|\b(?:zero|one|two|few|many|other)))\{(\w+)(?=[,}])')
+        .allMatches(text)
+        .map((m) => m.group(1)!)
+        .toSet();
 
 Future<SharedPreferences> _pumpApp(
   WidgetTester tester,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/widgets/sheet_safe_area.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -372,9 +373,9 @@ class _WeightSheetState extends ConsumerState<_WeightSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final p = AppPalette.of(context);
-    return Padding(
-      padding: EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md,
-          AppSpacing.md + MediaQuery.viewInsetsOf(context).bottom),
+    return SheetSafeArea(
+        child: Padding(
+      padding: const EdgeInsets.all(AppSpacing.md),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -410,6 +411,6 @@ class _WeightSheetState extends ConsumerState<_WeightSheet> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

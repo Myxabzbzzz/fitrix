@@ -53,7 +53,8 @@ Future<void> _page(TourRig r, String location, String name) async {
   await shotPages(r, name);
 }
 
-Scene _simple(String id, String location, {Seed seed = const Seed(), bool en = false}) =>
+Scene _simple(String id, String location,
+        {Seed seed = const Seed(), bool en = false}) =>
     Scene(id, (r) => _page(r, location, id), seed: seed, en: en);
 
 /// Starts a live activity and feeds [secs] seconds of fixes.
@@ -91,8 +92,7 @@ CompletedWorkout _finished() {
     exercises: [
       for (final e in t.exercises.take(5))
         Exercise(name: e.name, sets: [
-          for (final s in e.sets)
-            s.copyWith(kg: s.kg + 2.5, done: true),
+          for (final s in e.sets) s.copyWith(kg: s.kg + 2.5, done: true),
         ]),
     ],
   );
@@ -115,7 +115,8 @@ final tourScenes = <Scene>[
     await r.t.testTextInput.receiveAction(TextInputAction.go);
     await r.settle();
     await shot(r, 'onb3_sign_in_email_error');
-    await r.t.enterText(find.byKey(const Key('email-input')), 'alex@example.com');
+    await r.t
+        .enterText(find.byKey(const Key('email-input')), 'alex@example.com');
     await r.t.testTextInput.receiveAction(TextInputAction.go);
     await r.settle();
     FocusManager.instance.primaryFocus?.unfocus();

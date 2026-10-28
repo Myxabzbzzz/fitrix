@@ -287,7 +287,8 @@ void main() {
           scrollable: find.byType(Scrollable).first);
       expect(find.text('60 bpm · your normal 54'), findsOneWidget);
       expect(find.text('41 ms SDNN · your normal 48'), findsOneWidget);
-      expect(find.text('Steps today: 8,123\n7-day average: 9,400'), findsOneWidget);
+      expect(find.text('Steps today: 8,123\n7-day average: 9,400'),
+          findsOneWidget);
       expect(find.text('Resting heart rate above normal'), findsOneWidget);
       expect(find.text('HRV below normal'), findsOneWidget);
     });
@@ -397,7 +398,8 @@ void main() {
           days: withToday(const HealthDay(steps: 8123)));
       expect(find.byKey(const Key('home-steps-tile')), findsOneWidget);
       // Same average as the check-in card: the 7 earlier days, not today.
-      expect(find.text('Steps today: 8,123\n7-day average: 9,400'), findsOneWidget);
+      expect(find.text('Steps today: 8,123\n7-day average: 9,400'),
+          findsOneWidget);
     });
 
     testWidgets('steps tile without any plan or templates', (tester) async {
@@ -430,7 +432,8 @@ void main() {
           textScale: 1.3,
           days: withToday(const HealthDay(steps: 8123)));
       expect(find.byKey(const Key('home-steps-tile')), findsOneWidget);
-      expect(find.text('Steps today: 8,123\n7-day average: 9,400'), findsOneWidget);
+      expect(find.text('Steps today: 8,123\n7-day average: 9,400'),
+          findsOneWidget);
       expectNoOverflow(tester);
     });
 

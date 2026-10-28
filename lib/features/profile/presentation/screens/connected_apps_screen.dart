@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/widgets/sheet_safe_area.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
@@ -478,7 +479,8 @@ class _ConnectSheet extends StatelessWidget {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return SingleChildScrollView(
+    return SheetSafeArea(
+        child: SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
           AppSpacing.md, AppSpacing.md, AppSpacing.md, AppSpacing.lg),
       child: Column(
@@ -552,6 +554,6 @@ class _ConnectSheet extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
