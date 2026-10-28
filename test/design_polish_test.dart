@@ -195,4 +195,26 @@ void main() {
       expect(t.getRect(find.byType(Drawer)).bottom, proRuLight.size.height);
     });
   });
+
+  testWidgets('add exercise without a workout explains and offers the library',
+      (t) async {
+    final r = await pumpTour(t, proRuLight);
+    await r.go(AppRouter.addExerciseTo());
+    expect(find.text('Тренировка не идёт'), findsOneWidget);
+    await r.tapKey('add-exercise-open-library');
+    expect(r.router.routerDelegate.currentConfiguration.uri.path,
+        AppRouter.exerciseLibrary);
+  });
+
+  testWidgets('live gym timer counts from the app clock', (t) async {
+    final r = await pumpTour(t, proRuLight);
+    r.container
+        .read(activeWorkoutProvider.notifier)
+        .start(WorkoutCatalog.defaults.first);
+    r.container.read(activeWorkoutExpandedProvider.notifier).state = true;
+    r.now = tourNow.add(const Duration(minutes: 12, seconds: 5));
+    await r.go(AppRouter.home);
+    await t.pump(const Duration(seconds: 1));
+    expect(find.text('12:05'), findsOneWidget);
+  });
 }

@@ -1,19 +1,24 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/running/presentation/run_format.dart';
 
-/// Live "1h 43m 22s" counter since [startedAt].
-class ElapsedTimeText extends StatefulWidget {
+/// Live "1:43:22" counter since [startedAt], read from the app clock.
+///
+/// A clock reads the same in every language (no "h m s" units), and it
+/// shrinks rather than touching the screen edges at large text sizes.
+class ElapsedTimeText extends ConsumerStatefulWidget {
   final DateTime startedAt;
   final TextStyle? style;
 
   const ElapsedTimeText({super.key, required this.startedAt, this.style});
 
   @override
-  State<ElapsedTimeText> createState() => _ElapsedTimeTextState();
+  ConsumerState<ElapsedTimeText> createState() => _ElapsedTimeTextState();
 }
 
-class _ElapsedTimeTextState extends State<ElapsedTimeText> {
+class _ElapsedTimeTextState extends ConsumerState<ElapsedTimeText> {
   late final Timer _timer;
 
   @override
@@ -32,9 +37,14 @@ class _ElapsedTimeTextState extends State<ElapsedTimeText> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      formatDuration(DateTime.now().difference(widget.startedAt)),
-      style: widget.style,
+    final now = ref.watch(clockProvider)();
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Text(
+        formatClock(now.difference(widget.startedAt)),
+        maxLines: 1,
+        style: widget.style,
+      ),
     );
   }
 }
