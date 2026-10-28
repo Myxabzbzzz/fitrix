@@ -420,7 +420,6 @@ class _HoldToFinishState extends State<HoldToFinish>
             child: Container(
               // At least 56 tall; a label wrapped to two lines grows it.
               constraints: const BoxConstraints(minHeight: 56),
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
               color: palette.buttonMuted,
               child: Stack(
                 alignment: Alignment.center,
@@ -438,9 +437,11 @@ class _HoldToFinishState extends State<HoldToFinish>
                       ),
                     ),
                   ),
+                  // Padding on the label only: the hold fill covers the
+                  // whole button.
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                     child: ShrinkToFitText(
                       widget.label,
                       textAlign: TextAlign.center,
