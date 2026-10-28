@@ -258,6 +258,23 @@ void main() {
       expect(fake.readCalls, greaterThan(before));
     });
 
+    testWidgets(
+        'the sheet slides up like other sheets; Health is read once it is up',
+        (tester) async {
+      await pump(tester, home: const HomeScreen(), throttled: false);
+      final before = fake.readCalls;
+      await tester.tap(find.text('Check in'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 80));
+      final sheet = find.byType(BottomSheet);
+      final mid = tester.getTopLeft(sheet).dy;
+      expect(fake.readCalls, before, reason: 'nothing read while sliding');
+      await tester.pumpAndSettle();
+      expect(tester.getTopLeft(sheet).dy, lessThan(mid),
+          reason: 'it was still on its way up');
+      expect(fake.readCalls, greaterThan(before));
+    });
+
     testWidgets('sleep arriving after the sheet opened fills it in',
         (tester) async {
       fake.sleepSegments = [

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fitrix/core/time/greeting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -65,8 +66,28 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
     } else {
       _prefillSleep(ref.read(healthTodayDayProvider));
     }
-    // Fire and forget: the sheet follows the cache when the read lands.
-    unawaited(ref.read(healthSyncProvider).refresh().catchError((Object _) {}));
+  }
+
+  /// Cancels the Health read queued for after the sheet has slid up.
+  VoidCallback? _cancelRefresh;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The Health read (and the rebuild when it lands) waits until the sheet
+    // has slid up, so its opening frames stay smooth like any other sheet.
+    _cancelRefresh ??= afterRouteEntrance(context, () {
+      if (!mounted) return;
+      // Fire and forget: the sheet follows the cache when the read lands.
+      unawaited(
+          ref.read(healthSyncProvider).refresh().catchError((Object _) {}));
+    });
+  }
+
+  @override
+  void dispose() {
+    _cancelRefresh?.call();
+    super.dispose();
   }
 
   /// Health's last night, rounded to the slider's 15-minute step.
