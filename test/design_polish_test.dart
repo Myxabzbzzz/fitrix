@@ -228,4 +228,44 @@ void main() {
     expect(find.textContaining('36,5'), findsWidgets);
     expect(find.textContaining('36.5'), findsNothing);
   });
+
+  group('no overflow on an iPhone SE at text scale 1.3', () {
+    for (final (name, location) in [
+      ('home', AppRouter.home),
+      ('my workouts', AppRouter.workouts),
+      ('gym', AppRouter.sportWorkouts(Sport.gym)),
+      ('program', AppRouter.program('upper-lower-4')),
+      ('progress', AppRouter.progress),
+      ('training load', AppRouter.progressLoad),
+      ('nutrition', AppRouter.nutrition),
+      ('micronutrients', AppRouter.nutritionMicros),
+      ('targets', AppRouter.nutritionTargets),
+      ('recovery', AppRouter.recovery),
+      ('ski summary', AppRouter.runSummary('ski-1')),
+      ('ride summary', AppRouter.runSummary('ride-1')),
+      ('profile', AppRouter.me),
+    ]) {
+      testWidgets(name, (t) async {
+        final r = await pumpTour(t, seRuScaled);
+        await r.go(location);
+        expectNoOverflow(t, reason: name);
+      });
+    }
+
+    testWidgets('home before the check-in', (t) async {
+      final r = await pumpTour(t, seRuScaled, seed: Seed.empty);
+      await r.go(AppRouter.home);
+      expectNoOverflow(t);
+    });
+
+    testWidgets('live gym', (t) async {
+      final r = await pumpTour(t, seRuScaled);
+      r.container
+          .read(activeWorkoutProvider.notifier)
+          .start(WorkoutCatalog.defaults.first);
+      r.container.read(activeWorkoutExpandedProvider.notifier).state = true;
+      await r.go(AppRouter.home);
+      expectNoOverflow(t);
+    });
+  });
 }
