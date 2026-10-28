@@ -153,10 +153,14 @@ class SocialSignInButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     return SizedBox(
-      height: 54,
+      width: double.infinity,
       child: OutlinedButton.icon(
         onPressed: busy || !enabled ? null : onPressed,
         style: OutlinedButton.styleFrom(
+          // At least 54 tall, growing when the label wraps (large text).
+          minimumSize: const Size.fromHeight(54),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm),
           side: BorderSide(color: palette.border),
           // Matches the themed button radius, like the controls above.
           shape: RoundedRectangleBorder(
@@ -172,6 +176,7 @@ class SocialSignInButton extends StatelessWidget {
             : Icon(icon, size: 24, color: palette.textPrimary),
         label: Text(
           AppLocalizations.of(context).signInContinueWith(provider.label),
+          textAlign: TextAlign.center,
           style: AppText.headingS.copyWith(
             color: palette.textPrimary,
             fontWeight: FontWeight.w500,
