@@ -28,21 +28,51 @@ class GeolocatorLocationSource implements LocationSource {
           permission == LocationPermission.deniedForever) {
         return null;
       }
-      try {
-        final p = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.medium,
-            timeLimit: Duration(seconds: 8),
-          ),
-        );
-        return LatLng(p.latitude, p.longitude);
-      } on TimeoutException {
-        final last = await Geolocator.getLastKnownPosition();
-        return last == null ? null : LatLng(last.latitude, last.longitude);
-      }
+      return await quickFix(
+        lastKnown: () async {
+          final p = await Geolocator.getLastKnownPosition();
+          return p == null
+              ? null
+              : (at: LatLng(p.latitude, p.longitude), time: p.timestamp);
+        },
+        fresh: (limit) async {
+          final p = await Geolocator.getCurrentPosition(
+            locationSettings: LocationSettings(
+              accuracy: LocationAccuracy.medium,
+              timeLimit: limit,
+            ),
+          );
+          return LatLng(p.latitude, p.longitude);
+        },
+      );
     } catch (_) {
       return null;
     }
+  }
+}
+
+/// A position fix and when it was taken.
+typedef Fix = ({LatLng at, DateTime time});
+
+/// Where the user is, without keeping the map waiting on the GPS: a last
+/// known fix younger than [maxAge] at once, otherwise a fresh one within
+/// [timeLimit], otherwise any last known one (null without).
+Future<LatLng?> quickFix({
+  required Future<Fix?> Function() lastKnown,
+  required Future<LatLng> Function(Duration timeLimit) fresh,
+  DateTime Function() now = DateTime.now,
+  Duration maxAge = const Duration(minutes: 10),
+  Duration timeLimit = const Duration(seconds: 5),
+}) async {
+  Fix? last;
+  try {
+    last = await lastKnown();
+  } catch (_) {}
+  if (last != null && now().difference(last.time) <= maxAge) return last.at;
+  try {
+    return await fresh(timeLimit);
+  } catch (_) {
+    return last?.at;
   }
 }
 
