@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/sync/sync_providers.dart';
+import 'package:fitrix/core/widgets/workout_card.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_screen.dart';
@@ -102,7 +103,7 @@ void main() {
       final container = await _pumpGym(tester, remote: remote);
       final requests = remote.requests;
 
-      await tester.fling(find.byType(GridView), const Offset(0, 400), 1000);
+      await tester.fling(find.byType(WorkoutCard).first, const Offset(0, 400), 1000);
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
@@ -116,7 +117,7 @@ void main() {
       final remote = InMemoryRemoteStore()..online = false;
       final container = await _pumpGym(tester, remote: remote);
 
-      await tester.fling(find.byType(GridView), const Offset(0, 400), 1000);
+      await tester.fling(find.byType(WorkoutCard).first, const Offset(0, 400), 1000);
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));
