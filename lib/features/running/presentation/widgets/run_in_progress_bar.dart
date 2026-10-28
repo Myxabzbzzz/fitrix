@@ -14,13 +14,22 @@ import 'package:fitrix/features/running/presentation/screens/live_run_screen.dar
 /// shown above the tab bar while a run exists (recording, paused, or
 /// restored after a crash). Tap opens the live run; it is the way back after
 /// leaving that screen with its arrow.
-class RunInProgressBar extends ConsumerWidget {
+class RunInProgressBar extends ConsumerStatefulWidget {
   const RunInProgressBar({super.key});
 
   static const double height = 48;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RunInProgressBar> createState() => _RunInProgressBarState();
+}
+
+class _RunInProgressBarState extends ConsumerState<RunInProgressBar> {
+  /// What the bar last showed: it keeps showing it while it slides away
+  /// after the run ended.
+  ({double meters, ActivityKind kind})? _last;
+
+  @override
+  Widget build(BuildContext context) {
     // A ski day shows what was skied down, as its summary does.
     final recorder = ref.read(runRecorderProvider.notifier);
     final meters = ref.watch(
@@ -30,12 +39,15 @@ class RunInProgressBar extends ConsumerWidget {
               ? recorder.skiMeters
               : s.track.meters),
     );
-    final kind = ref.watch(runRecorderProvider.select((s) => s?.kind));
-    if (meters == null || kind == null) return const SizedBox.shrink();
+    final live = ref.watch(runRecorderProvider.select((s) => s?.kind));
+    if (meters != null && live != null) _last = (meters: meters, kind: live);
+    final last = _last;
+    if (last == null) return const SizedBox.shrink();
+    final kind = last.kind;
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     return SizedBox(
-      height: height,
+      height: RunInProgressBar.height,
       child: Material(
         key: const ValueKey('run-bar'),
         color: palette.accent,
@@ -63,7 +75,7 @@ class RunInProgressBar extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        ' · ${formatKm(meters, l10n.localeName)} ${l10n.runUnitKm}',
+                        ' · ${formatKm(last.meters, l10n.localeName)} ${l10n.runUnitKm}',
                         key: const ValueKey('run-bar-distance'),
                         maxLines: 1,
                         softWrap: false,

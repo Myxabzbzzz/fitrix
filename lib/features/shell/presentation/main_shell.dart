@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
@@ -51,18 +52,29 @@ class MainShell extends ConsumerWidget {
       body: RunResumePrompt(
         child: Stack(
           children: [
-            Positioned.fill(
+            // The page makes room for the bars as they slide in and out.
+            AnimatedPositioned(
+              duration: Motion.of(context, Motion.medium),
+              curve: Motion.curve,
+              left: 0,
+              top: 0,
+              right: 0,
               bottom: gymHeight + (hasRun ? RunInProgressBar.height : 0),
               child: navigationShell,
             ),
             // Above the gym mini bar; the expanded gym sheet covers it.
-            if (hasRun)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: gymHeight,
+            AnimatedPositioned(
+              duration: Motion.of(context, Motion.medium),
+              curve: Motion.curve,
+              left: 0,
+              right: 0,
+              bottom: gymHeight,
+              height: RunInProgressBar.height,
+              child: BarSlot(
+                visible: hasRun,
                 child: const RunInProgressBar(),
               ),
+            ),
             const Positioned.fill(child: ActiveWorkoutSheet()),
           ],
         ),
@@ -156,6 +168,64 @@ class _TabBar extends StatelessWidget {
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A bar above the tab bar that slides up and fades in when [visible]
+/// turns on, and slides down and fades out when it turns off; [child] is
+/// built only while it shows or animates.
+class BarSlot extends StatefulWidget {
+  const BarSlot({super.key, required this.visible, required this.child});
+
+  final bool visible;
+  final Widget child;
+
+  @override
+  State<BarSlot> createState() => _BarSlotState();
+}
+
+class _BarSlotState extends State<BarSlot> with SingleTickerProviderStateMixin {
+  late final AnimationController _show = AnimationController(
+    vsync: this,
+    duration: Motion.medium,
+    value: widget.visible ? 1 : 0,
+  )..addStatusListener((_) => setState(() {}));
+
+  late final Animation<double> _curve =
+      CurvedAnimation(parent: _show, curve: Motion.curve);
+
+  @override
+  void didUpdateWidget(BarSlot old) {
+    super.didUpdateWidget(old);
+    if (old.visible == widget.visible) return;
+    if (Motion.reduced(context)) {
+      _show.value = widget.visible ? 1 : 0;
+    } else if (widget.visible) {
+      _show.forward();
+    } else {
+      _show.reverse();
+    }
+  }
+
+  @override
+  void dispose() {
+    _show.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_show.isDismissed) return const SizedBox.shrink();
+    return ClipRect(
+      child: IgnorePointer(
+        ignoring: !widget.visible,
+        child: SlideTransition(
+          position: Tween(begin: const Offset(0, 1), end: Offset.zero)
+              .animate(_curve),
+          child: FadeTransition(opacity: _curve, child: widget.child),
         ),
       ),
     );

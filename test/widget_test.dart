@@ -183,6 +183,8 @@ void main() {
 
     await tester.tap(find.text('Start').first);
     await tester.pump(const Duration(milliseconds: 400));
+    // The sheet slides up (its animation starts on this frame).
+    await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('Biceps curl'), findsOneWidget);
     expect(find.text('PREVIOUS'), findsWidgets);
 

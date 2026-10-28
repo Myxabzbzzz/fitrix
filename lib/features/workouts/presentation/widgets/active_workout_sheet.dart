@@ -45,7 +45,7 @@ class ActiveWorkoutSheet extends ConsumerStatefulWidget {
 }
 
 class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   /// 0 = collapsed mini bar, 1 = fully expanded.
   late final AnimationController _position;
 
@@ -57,9 +57,29 @@ class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
   /// just appearing (workout started) jumps straight to its rest position.
   bool _visible = false;
 
+  /// 0 = off screen below, 1 = in place: the sheet slides up and fades in
+  /// when a workout starts and slides away when it ends.
+  late final AnimationController _appear;
+
+  /// The workout last shown, kept for the slide away after it ended.
+  ActiveWorkout? _shown;
+
+  /// What [_appear] is heading for.
+  bool _appearing = false;
+
   @override
   void initState() {
     super.initState();
+    final showing = ref.read(activeWorkoutProvider) != null &&
+        ref.read(pendingCompletedWorkoutProvider) == null;
+    _appearing = showing;
+    _appear = AnimationController(
+      vsync: this,
+      duration: Motion.medium,
+      value: showing ? 1 : 0,
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.dismissed && mounted) setState(() {});
+      });
     _position = AnimationController(
       vsync: this,
       duration: Motion.medium,
@@ -72,6 +92,7 @@ class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
   void dispose() {
     FocusManager.instance.removeListener(_onFocusChange);
     _position.dispose();
+    _appear.dispose();
     super.dispose();
   }
 
@@ -128,19 +149,71 @@ class _ActiveWorkoutSheetState extends ConsumerState<ActiveWorkoutSheet>
     }
   }
 
+  bool _showingNow() =>
+      ref.read(activeWorkoutProvider) != null &&
+      ref.read(pendingCompletedWorkoutProvider) == null;
+
+  /// Slides the sheet in or out as a workout starts or ends.
+  void _syncAppear(bool showing) {
+    if (showing == _appearing) return;
+    _appearing = showing;
+    if (Motion.reduced(context)) {
+      _appear.value = showing ? 1 : 0;
+    } else if (showing) {
+      _appear.forward();
+    } else {
+      _appear.reverse();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen(activeWorkoutExpandedProvider, (_, expanded) {
       _settle(expanded);
     });
+    ref.listen(activeWorkoutProvider, (_, __) => _syncAppear(_showingNow()));
+    ref.listen(
+        pendingCompletedWorkoutProvider, (_, __) => _syncAppear(_showingNow()));
 
     final workout = ref.watch(activeWorkoutProvider);
     // A finished workout waiting on "Workout complete" is not editable.
     final awaitingSave =
         ref.watch(pendingCompletedWorkoutProvider.select((w) => w != null));
-    _visible = workout != null && !awaitingSave;
-    if (workout == null || awaitingSave) return const SizedBox.shrink();
+    final showing = workout != null && !awaitingSave;
+    if (showing) _shown = workout;
+    // A change seen here before the listeners ran (first build after a
+    // restore) still animates.
+    if (showing != _appearing) _syncAppear(showing);
+    _visible = showing && _appear.value > 0;
+    final shown = _shown;
+    if (shown == null || (!showing && _appear.isDismissed)) {
+      if (!showing) _shown = null;
+      return const SizedBox.shrink();
+    }
+    return IgnorePointer(
+      ignoring: !showing,
+      child: AnimatedBuilder(
+        animation: _appear,
+        builder: (context, child) {
+          final a = Curves.easeOutCubic.transform(_appear.value);
+          if (a == 1) return child!;
+          // Travels its own height: the mini bar a short way, the open
+          // sheet the whole screen.
+          final travel = ui.lerpDouble(
+              ActiveWorkoutSheet.collapsedHeight + AppSpacing.md,
+              MediaQuery.sizeOf(context).height,
+              _position.value.clamp(0.0, 1.0))!;
+          return Transform.translate(
+            offset: Offset(0, (1 - a) * travel),
+            child: Opacity(opacity: a, child: child),
+          );
+        },
+        child: _sheet(context, shown),
+      ),
+    );
+  }
 
+  Widget _sheet(BuildContext context, ActiveWorkout workout) {
     final palette = AppPalette.of(context);
     final topInset = MediaQuery.of(context).padding.top;
     // Built once per data change and reused on every animation frame.
