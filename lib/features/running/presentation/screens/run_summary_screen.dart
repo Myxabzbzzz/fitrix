@@ -59,15 +59,18 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
     super.dispose();
   }
 
+  static String _sportScreen(ActivityKind kind) =>
+      AppRouter.sportWorkouts(switch (kind) {
+        ActivityKind.run => Sport.running,
+        ActivityKind.ride => Sport.cycling,
+        ActivityKind.ski => Sport.winterSports,
+      });
+
   void _close() {
     final router = GoRouter.of(context);
     final saved = _savedKind;
     if (saved != null) {
-      router.go(AppRouter.sportWorkouts(switch (saved) {
-        ActivityKind.run => Sport.running,
-        ActivityKind.ride => Sport.cycling,
-        ActivityKind.ski => Sport.winterSports,
-      }));
+      router.go(_sportScreen(saved));
       return;
     }
     router.canPop() ? router.pop() : router.go(AppRouter.home);
@@ -145,10 +148,17 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
     final rated = _fresh ? _rpe : workout.sessionRpe ?? details.rpe;
 
     return PopScope(
-      // A saved activity goes back to its sport's screen (see _close).
-      canPop: _savedKind == null,
+      // Always poppable, so the iOS back-swipe works (a blocked PopScope
+      // disables it). Once saved, the pop is followed by a jump to the
+      // sport's screen (see _close).
+      canPop: true,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _close();
+        if (_savedKind == null) return;
+        final router = GoRouter.of(context);
+        final saved = _savedKind!;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          router.go(_sportScreen(saved));
+        });
       },
       child: Scaffold(
         backgroundColor: palette.background,

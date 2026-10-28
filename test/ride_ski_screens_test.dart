@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fitrix/features/running/presentation/screens/run_summary_screen.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/app_session.dart';
@@ -477,6 +478,31 @@ void main() {
       expect(find.byKey(const ValueKey('run-save')), findsNothing);
       await t.tap(find.byKey(const ValueKey('run-close')));
       await t.pumpAndSettle();
+      expect(r.router.routerDelegate.currentConfiguration.uri.path,
+          AppRouter.sportWorkouts(Sport.cycling));
+    });
+  });
+
+  group('back gesture after Save', () {
+    testWidgets('a back pop from the saved summary lands on the sport screen',
+        (t) async {
+      final r = await _rig(t);
+      _saveSummary(r, 'r5', Sport.cycling, _rideDetails());
+      r.router.go(AppRouter.home);
+      await t.pumpAndSettle();
+      r.router.push(AppRouter.runSummary('r5', justFinished: true));
+      await t.pumpAndSettle();
+      await t.tap(find.byKey(const ValueKey('run-save')));
+      await t.pumpAndSettle();
+
+      // The iOS edge-swipe is only live while the route can be popped.
+      final route = ModalRoute.of(t.element(find.byType(RunSummaryScreen)))!;
+      expect(route.popGestureEnabled, isTrue);
+
+      // What the iOS edge-swipe and Android back do.
+      await Navigator.of(t.element(find.byType(RunSummaryScreen))).maybePop();
+      await t.pumpAndSettle();
+
       expect(r.router.routerDelegate.currentConfiguration.uri.path,
           AppRouter.sportWorkouts(Sport.cycling));
     });
