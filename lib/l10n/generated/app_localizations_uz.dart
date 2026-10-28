@@ -33,6 +33,15 @@ class AppLocalizationsUz extends AppLocalizations {
   String get unitKg => 'kg';
 
   @override
+  String get unitMcg => 'mkg';
+
+  @override
+  String get unitMg => 'mg';
+
+  @override
+  String get unitGrams => 'g';
+
+  @override
   String get signOut => 'Chiqish';
 
   @override
@@ -551,7 +560,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get workoutAddSet => 'Yondashuv qo‘shish';
 
   @override
-  String get workoutFinishButton => 'Mashg‘ulotni yakunlash';
+  String get workoutFinishButton => 'Yakunlash';
 
   @override
   String get workoutColSet => '#';
@@ -572,6 +581,15 @@ class AppLocalizationsUz extends AppLocalizations {
   String gymCoachFirstMessage(String workout) {
     return 'Bugun $workout bilan boshlang. Keyingi safar Felix yozganlaringiz asosida vazn taklif qiladi.';
   }
+
+  @override
+  String coachFirstMessageSport(String workout) {
+    return 'Bugun $workout bilan boshlang. Keyin Felix yozganlaringiz asosida maslahat beradi.';
+  }
+
+  @override
+  String get coachFirstMessageNoPlan =>
+      'Birinchi mashg‘ulotni yozib oling, keyin Felix shunga qarab maslahat beradi.';
 
   @override
   String get gymCoachBackTitle => 'Qaytganingiz bilan';
@@ -862,7 +880,7 @@ class AppLocalizationsUz extends AppLocalizations {
       'Hisoblar hozir mavjud emas. Keyinroq urinib ko‘ring.';
 
   @override
-  String get programLevelBeginner => 'Boshlang‘ich';
+  String get programLevelBeginner => 'Boshlovchi';
 
   @override
   String get programLevelMedium => 'O‘rta';
@@ -1175,7 +1193,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get workoutTileDuration => 'Davomiyligi';
+  String get workoutTileDuration => 'Vaqt';
 
   @override
   String get workoutTileVolume => 'Hajm';
@@ -1239,7 +1257,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get workoutSave => 'Mashg‘ulotni saqlash';
+  String get workoutSave => 'Saqlash';
 
   @override
   String get workoutDiscard => 'Saqlamaslik';
@@ -1412,7 +1430,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String recoveryHintReadySore(String areas) {
-    return 'Og‘ir mashq mumkin. ${areas}ni bugun yengil saqlang.';
+    return 'Og‘ir mashq mumkin. Bugun yengilroq: $areas.';
   }
 
   @override
@@ -1801,7 +1819,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get exerciseAddToWorkout => 'Mashg‘ulotga qo‘shish';
+  String get exerciseAddToWorkout => 'Qo‘shish';
 
   @override
   String get exerciseAdded => 'Mashg‘ulotga qo‘shildi';
@@ -1933,7 +1951,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get hrZonesColBpm => 'URISH/DAQ';
 
   @override
-  String get hrZonesColHrr => '50–100% zaxira';
+  String get hrZonesColHrr => '50–100%';
 
   @override
   String get hrZonesColLthr => 'LTHR %';
@@ -3266,7 +3284,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get programNotFound => 'Bu dastur mavjud emas.';
 
   @override
-  String get programLength => 'Davomiyligi';
+  String get programLength => 'Muddat';
 
   @override
   String get programPerWeekLabel => 'Haftada';
@@ -3332,7 +3350,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get programStart => 'Dasturni boshlash';
+  String get programStart => 'Boshlash';
 
   @override
   String programStartTitle(String name) {
@@ -3357,7 +3375,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get programToday => 'Bugun';
 
   @override
-  String get programPickDate => 'Sanani tanlash';
+  String get programPickDate => 'Boshqa sana';
 
   @override
   String get programTrainingDays => 'Mashg‘ulot kunlari';
@@ -3602,7 +3620,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String chatFoodAdd(String kcal) {
-    return 'Mening ovqatlanishimga qo‘shish · $kcal kkal';
+    return 'Qo‘shish · $kcal kkal';
   }
 
   @override
@@ -3638,10 +3656,10 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get felixPlanAddToWorkouts => 'Mening mashg‘ulotlarimga qo‘shish';
+  String get felixPlanAddToWorkouts => 'Mashg‘ulotlarimga';
 
   @override
-  String get felixPlanAddToToday => 'Bugungi rejaga qo‘shish';
+  String get felixPlanAddToToday => 'Bugunga qo‘shish';
 
   @override
   String get felixPlansSection => 'Felixdan';
@@ -4312,7 +4330,7 @@ class AppLocalizationsUz extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return 'Bugungi qadamlar: $stepsString · 7 kunlik o‘rtacha $avgString';
+    return 'Bugungi qadamlar: $stepsString\n7 kunlik o‘rtacha: $avgString';
   }
 
   @override
@@ -4495,7 +4513,14 @@ class AppLocalizationsUz extends AppLocalizations {
   String get cyclingLog => 'Trenajyordagi mashqni qayd qilish';
 
   @override
-  String get cyclingUnitRides => 'Safarlar';
+  String cyclingUnitRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ta safar',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get cyclingHistory => 'Tarix';
@@ -4538,7 +4563,24 @@ class AppLocalizationsUz extends AppLocalizations {
   String get skiStart => 'Chang‘i kunini boshlash';
 
   @override
-  String get skiUnitDays => 'Chang‘i kunlari';
+  String skiUnitDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ta chang‘i kuni',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skiUnitDescents(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ta tushish',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get skiHistory => 'Tarix';
@@ -4640,4 +4682,28 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get skiUnfinishedLaunchBody =>
       'Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling.';
+
+  @override
+  String get addExerciseNoWorkoutTitle => 'Faol mashg‘ulot yo‘q';
+
+  @override
+  String get addExerciseNoWorkoutBody =>
+      'Mashq qo‘shish uchun mashg‘ulotni boshlang. Hozircha mashqlar kutubxonasini ko‘rib chiqishingiz mumkin.';
+
+  @override
+  String get addExerciseOpenLibrary => 'Mashqlar kutubxonasi';
+
+  @override
+  String get assistantSubtitle => 'Shaxsiy yordamchingiz';
+
+  @override
+  String get assistantGreeting =>
+      'Salom!\nMen Felix, FITRIXdagi shaxsiy AI murabbiyingizman.';
+
+  @override
+  String get assistantIntro =>
+      'Aqlliroq mashq qilish, natijalarni kuzatish va motivatsiyani yo‘qotmaslikka yordam beraman.';
+
+  @override
+  String get assistantQuestion => 'Ayting-chi, hozir asosiy maqsadingiz nima?';
 }

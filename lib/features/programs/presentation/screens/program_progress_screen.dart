@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -212,7 +213,7 @@ class ProgramProgressScreen extends ConsumerWidget {
                         eyebrow: l10n.programNextIncrease,
                         title: '',
                         message: l10n.programNextIncreaseText(inc.sets,
-                            inc.reps, inc.exercise, kgText(inc.nextKg)),
+                            inc.reps, inc.exercise, formatKg(inc.nextKg)),
                         imageAsset: 'assets/images/felix_robot.png',
                         imageWidth: 56,
                         imageHeight: 80,
@@ -385,7 +386,7 @@ class _LiftsTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
-    String n(double? v) => v == null ? '—' : kgText(v);
+    String n(double? v) => v == null ? '—' : formatKg(v);
     Widget cell(String text, TextStyle style) => SizedBox(
         width: _col,
         child: Text(text,

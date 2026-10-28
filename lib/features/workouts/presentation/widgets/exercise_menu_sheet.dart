@@ -15,10 +15,10 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 /// workout: swap, warm-ups, rest timer, note, reorder, remove.
 Future<void> showExerciseMenuSheet(BuildContext context, int exerciseIndex) {
   return showModalBottomSheet<void>(
+    useRootNavigator: true,
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: AppPalette.of(context).background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
     ),
@@ -273,7 +273,7 @@ class _RoundButton extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: palette.tile,
+          color: palette.sheetTile,
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -321,7 +321,7 @@ class _MenuRow extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: palette.tile,
+                color: palette.sheetTile,
                 borderRadius: AppRadius.smAll,
               ),
               child: Icon(icon, size: 20, color: color),

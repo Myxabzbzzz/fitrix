@@ -180,7 +180,7 @@ class _SessionRow extends ConsumerWidget {
             height: 40,
             decoration: BoxDecoration(
                 color: palette.accentSoft, borderRadius: AppRadius.smAll),
-            child: Icon(_icon(s.sport), size: 20, color: palette.accent),
+            child: Icon(sportIcon(s.sport), size: 20, color: palette.accent),
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
@@ -206,13 +206,14 @@ class _SessionRow extends ConsumerWidget {
       ),
     );
   }
-
-  IconData _icon(Sport sport) => switch (sport) {
-        Sport.gym => Icons.fitness_center,
-        Sport.fitness => Icons.self_improvement,
-        Sport.cycling => Icons.directions_bike,
-        Sport.running => Icons.directions_run,
-        Sport.football => Icons.sports_soccer,
-        Sport.winterSports => Icons.downhill_skiing,
-      };
 }
+
+/// The icon a planned session of [sport] is shown with.
+IconData sportIcon(Sport sport) => switch (sport) {
+      Sport.gym => Icons.fitness_center,
+      Sport.fitness => Icons.self_improvement,
+      Sport.cycling => Icons.directions_bike,
+      Sport.running => Icons.directions_run,
+      Sport.football => Icons.sports_soccer,
+      Sport.winterSports => Icons.downhill_skiing,
+    };

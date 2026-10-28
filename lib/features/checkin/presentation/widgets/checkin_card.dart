@@ -99,19 +99,21 @@ class CheckInCard extends ConsumerWidget {
                 Text(l10n.checkinCardPrompt,
                     style:
                         AppText.caption.copyWith(color: palette.textSecondary)),
+                // Under the text rather than beside it, so the prompt gets
+                // the card's full width on small phones and large text.
+                const SizedBox(height: AppSpacing.xs),
+                AppButton(
+                  label: l10n.checkinCardAction,
+                  size: AppButtonSize.small,
+                  onPressed: () async {
+                    final saved = await showCheckInSheet(context);
+                    if (saved && context.mounted) {
+                      openWithReveal(context, AppRouter.recovery);
+                    }
+                  },
+                ),
               ],
             ),
-          ),
-          const SizedBox(width: AppSpacing.xs),
-          AppButton(
-            label: l10n.checkinCardAction,
-            size: AppButtonSize.small,
-            onPressed: () async {
-              final saved = await showCheckInSheet(context);
-              if (saved && context.mounted) {
-                openWithReveal(context, AppRouter.recovery);
-              }
-            },
           ),
         ],
       ),

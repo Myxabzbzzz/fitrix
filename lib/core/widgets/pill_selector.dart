@@ -4,6 +4,10 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 
 /// Horizontally scrolling row of pills (Gym / Fitness / Cycling / ...).
+///
+/// The first pill sits on the page's 16 pt content edge and the row scrolls
+/// out to the screen edge, so it must be placed full width: in a list with
+/// a side margin use [withPageGutter] instead of the list's own padding.
 class PillSelector<T> extends StatelessWidget {
   final List<T> items;
   final T selected;
@@ -22,11 +26,11 @@ class PillSelector<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
 
-    return SizedBox(
+    final list = SizedBox(
       height: 32,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
         itemCount: items.length,
         separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.xs),
         itemBuilder: (context, index) {
@@ -55,5 +59,18 @@ class PillSelector<T> extends StatelessWidget {
         },
       ),
     );
+    return list;
   }
 }
+
+/// Children of a list whose rows sit on the 16 pt page margin while its
+/// pill rows run edge to edge: pads every child except the [PillSelector]s.
+/// Use with a list that has no horizontal padding of its own.
+List<Widget> withPageGutter(List<Widget> children) => [
+      for (final c in children)
+        c is PillSelector
+            ? c
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: c),
+    ];

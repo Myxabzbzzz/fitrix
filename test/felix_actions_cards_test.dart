@@ -244,7 +244,7 @@ void main() {
         (tester) async {
       await seed(action: workoutPlanAction);
       await pumpFelix(tester, locale: const Locale('ru'));
-      expect(find.text('Добавить в мои тренировки'), findsOneWidget);
+      expect(find.text('В мои тренировки'), findsOneWidget);
       expect(find.text('2 тренировки'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

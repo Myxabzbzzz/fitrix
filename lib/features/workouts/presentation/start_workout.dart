@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/widgets/sheet_safe_area.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -85,15 +86,16 @@ Future<void> _startRide(
     return _startRun(context, ref, template, ActivityKind.ride);
   }
   final outdoor = await showModalBottomSheet<bool>(
+    useRootNavigator: true,
     context: context,
     useSafeArea: true,
-    backgroundColor: AppPalette.of(context).background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
     ),
     builder: (context) {
       final l10n = AppLocalizations.of(context);
-      return SingleChildScrollView(
+      return SheetSafeArea(
+          child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -120,7 +122,7 @@ Future<void> _startRide(
             ),
           ],
         ),
-      );
+      ));
     },
   );
   if (outdoor == null || !context.mounted) return;

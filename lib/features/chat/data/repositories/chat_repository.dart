@@ -1,6 +1,8 @@
+import 'dart:ui' show Locale;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_action.dart';
@@ -36,11 +38,17 @@ class ChatRepository {
   /// Localized "photo is missing or too large" text for the failed bubble.
   final String Function()? _photoUnavailable;
 
-  static List<String> _appGreeting() => const [
-        AppConstants.assistantGreeting,
-        AppConstants.assistantIntro,
-        AppConstants.assistantQuestion,
-      ];
+  /// The app clock, for message timestamps.
+  final DateTime Function() now;
+
+  static List<String> _appGreeting() {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    return [
+      l10n.assistantGreeting,
+      l10n.assistantIntro,
+      l10n.assistantQuestion
+    ];
+  }
 
   ChatRepository(
     this._apiService, {
@@ -54,6 +62,7 @@ class ChatRepository {
     String Function()? language,
     String Function()? photoUnavailable,
     Map<String, Object> Function()? context,
+    this.now = DateTime.now,
   })  : _profileRepository = profileRepository,
         _language = language,
         _photoUnavailable = photoUnavailable,
@@ -199,7 +208,7 @@ class ChatRepository {
   }
 
   List<ChatMessage> _getInitialMessages() {
-    final now = DateTime.now();
+    final now = this.now();
     final greeting = this.greeting();
     return [
       // In order and all in the past, so a reply sent right away sorts

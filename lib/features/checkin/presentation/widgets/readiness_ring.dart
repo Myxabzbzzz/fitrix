@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 
 /// Circular progress ring for a readiness score (0-100). Without a [score]
@@ -25,14 +26,21 @@ class ReadinessRing extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: CustomPaint(
-        painter: _RingPainter(
-          fraction: (score ?? 0) / 100,
-          track: palette.buttonMuted,
-          fill: palette.accent,
-          strokeWidth: strokeWidth,
-        ),
+      // The fill sweeps in from zero, and to a new score when it changes.
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: (score ?? 0) / 100),
+        duration: Motion.of(context, Motion.slow),
+        curve: Motion.curve,
         child: Center(child: child),
+        builder: (context, fraction, child) => CustomPaint(
+          painter: _RingPainter(
+            fraction: fraction,
+            track: palette.buttonMuted,
+            fill: palette.accent,
+            strokeWidth: strokeWidth,
+          ),
+          child: child,
+        ),
       ),
     );
   }

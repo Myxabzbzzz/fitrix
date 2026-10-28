@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/app_session.dart';
@@ -328,11 +329,24 @@ Map<String, Object> _chatPrefs(TourConfig c) {
   final ru = c.lang == 'ru';
   const a = MessageSender.assistant, u = MessageSender.user;
   final gym = [
-    _m(0, ru ? 'Привет! Я Феликс, твой тренер по залу. Чем помочь?' : 'Hi! I am Felix, your gym coach. How can I help?', a),
-    _m(1, ru ? 'Составь мне программу на 3 дня в неделю, хочу набрать массу' : 'Make me a 3-day plan, I want to build muscle', u),
-    _m(2, ru
-        ? 'Отличная цель. Вот сплит верх/низ: два дня на верх тела и один на ноги. Начни с умеренных весов и добавляй 2,5 кг, когда все подходы выполнены.'
-        : 'Great goal. Here is an upper/lower split: two upper-body days and one leg day. Start moderate and add 2.5 kg once all sets are done.', a,
+    _m(
+        0,
+        ru
+            ? 'Привет! Я Феликс, твой тренер по залу. Чем помочь?'
+            : 'Hi! I am Felix, your gym coach. How can I help?',
+        a),
+    _m(
+        1,
+        ru
+            ? 'Составь мне программу на 3 дня в неделю, хочу набрать массу'
+            : 'Make me a 3-day plan, I want to build muscle',
+        u),
+    _m(
+        2,
+        ru
+            ? 'Отличная цель. Вот сплит верх/низ: два дня на верх тела и один на ноги. Начни с умеренных весов и добавляй 2,5 кг, когда все подходы выполнены.'
+            : 'Great goal. Here is an upper/lower split: two upper-body days and one leg day. Start moderate and add 2.5 kg once all sets are done.',
+        a,
         action: {
           'type': 'workout_plan',
           'sport': 'gym',
@@ -359,33 +373,81 @@ Map<String, Object> _chatPrefs(TourConfig c) {
         action: {'type': 'weight', 'mode': 'delta', 'kg': -1.5}, applied: true),
   ];
   final food = [
-    _m(0, ru ? 'Привет! Я помогу с питанием.' : 'Hi! I can help with nutrition.', a),
-    _m(1, ru ? 'На обед съел куриную грудку 200 г и рис 150 г' : 'Lunch: chicken breast 200 g and rice 150 g', u),
-    _m(2, ru ? 'Записал примерно так:' : 'Logged roughly like this:', a, action: {
-      'type': 'food_log',
-      'slot': 'lunch',
-      'items': [
-        {'name': ru ? 'куриная грудка' : 'chicken breast', 'grams': 200, 'kcal': 330, 'protein': 62, 'carbs': 0, 'fat': 7.2},
-        {'name': ru ? 'рис отварной' : 'boiled rice', 'grams': 150, 'kcal': 195, 'protein': 4, 'carbs': 42, 'fat': 0.5},
-      ],
-    }),
+    _m(
+        0,
+        ru ? 'Привет! Я помогу с питанием.' : 'Hi! I can help with nutrition.',
+        a),
+    _m(
+        1,
+        ru
+            ? 'На обед съел куриную грудку 200 г и рис 150 г'
+            : 'Lunch: chicken breast 200 g and rice 150 g',
+        u),
+    _m(2, ru ? 'Записал примерно так:' : 'Logged roughly like this:', a,
+        action: {
+          'type': 'food_log',
+          'slot': 'lunch',
+          'items': [
+            {
+              'name': ru ? 'куриная грудка' : 'chicken breast',
+              'grams': 200,
+              'kcal': 330,
+              'protein': 62,
+              'carbs': 0,
+              'fat': 7.2
+            },
+            {
+              'name': ru ? 'рис отварной' : 'boiled rice',
+              'grams': 150,
+              'kcal': 195,
+              'protein': 4,
+              'carbs': 42,
+              'fat': 0.5
+            },
+          ],
+        }),
     _m(3, ru ? 'А что на ужин?' : 'And for dinner?', u),
-    _m(4, ru ? 'Вот вариант на остаток дня:' : 'Here is an idea for the rest of the day:', a, action: {
-      'type': 'meal_plan',
-      'meals': [
-        {'name': ru ? 'Ужин' : 'Dinner', 'items': ru ? 'Лосось, киноа, овощи на пару' : 'Salmon, quinoa, steamed vegetables', 'kcal': 640},
-        {'name': ru ? 'Перекус' : 'Snack', 'items': ru ? 'Творог 5%, ягоды' : 'Cottage cheese, berries', 'kcal': 240},
-      ],
-    }),
+    _m(
+        4,
+        ru
+            ? 'Вот вариант на остаток дня:'
+            : 'Here is an idea for the rest of the day:',
+        a,
+        action: {
+          'type': 'meal_plan',
+          'meals': [
+            {
+              'name': ru ? 'Ужин' : 'Dinner',
+              'items': ru
+                  ? 'Лосось, киноа, овощи на пару'
+                  : 'Salmon, quinoa, steamed vegetables',
+              'kcal': 640
+            },
+            {
+              'name': ru ? 'Перекус' : 'Snack',
+              'items': ru ? 'Творог 5%, ягоды' : 'Cottage cheese, berries',
+              'kcal': 240
+            },
+          ],
+        }),
   ];
   final app = [
-    _m(0, AppConstants.assistantGreeting, a),
-    _m(1, ru ? 'Как подключить Apple Health?' : 'How do I connect Apple Health?', u),
-    _m(2, ru ? 'Открой Профиль → Подключённые приложения и нажми «Подключить».' : 'Open Profile → Connected apps and tap Connect.', a),
+    _m(0, lookupAppLocalizations(Locale(c.lang)).assistantGreeting, a),
+    _m(
+        1,
+        ru ? 'Как подключить Apple Health?' : 'How do I connect Apple Health?',
+        u),
+    _m(
+        2,
+        ru
+            ? 'Открой Профиль → Подключённые приложения и нажми «Подключить».'
+            : 'Open Profile → Connected apps and tap Connect.',
+        a),
   ];
   return {
     '${AppConstants.keyChatHistory}_gym': ChatMessage.encodeMessages(gym),
-    '${AppConstants.keyChatHistory}_nutrition': ChatMessage.encodeMessages(food),
+    '${AppConstants.keyChatHistory}_nutrition':
+        ChatMessage.encodeMessages(food),
     AppConstants.keyChatHistory: ChatMessage.encodeMessages(app),
   };
 }
@@ -444,8 +506,8 @@ RunDetails tourRun(DateTime at, double meters, Duration moving) => RunDetails(
               km: meters ~/ 1000,
               meters: meters % 1000,
               time: Duration(
-                  seconds: (moving.inSeconds * (meters % 1000) / meters)
-                      .round())),
+                  seconds:
+                      (moving.inSeconds * (meters % 1000) / meters).round())),
       ],
       route: tourRoute(40),
       kind: ActivityKind.run,
@@ -475,8 +537,8 @@ RunDetails tourRide(DateTime at, {bool indoor = false}) => RunDetails(
       rpe: 7,
     );
 
-SkiDescent _descent(DateTime t0, int n, double meters, double vertical,
-        int from, int to) =>
+SkiDescent _descent(
+        DateTime t0, int n, double meters, double vertical, int from, int to) =>
     SkiDescent(
       start: t0.add(Duration(minutes: n * 14)),
       end: t0.add(Duration(minutes: n * 14, seconds: 140 + n * 25)),
@@ -520,12 +582,12 @@ Future<void> applySeed(ProviderContainer c, SharedPreferences prefs,
     var bump = 0.0;
     for (final back in [26, 23, 21, 19, 16, 14, 12, 9, 7, 5, 3, 1]) {
       final t = defaults[back % 3];
-      history.add(_gym(t, _day(back).add(const Duration(hours: 18)), bump: bump),
+      history.add(
+          _gym(t, _day(back).add(const Duration(hours: 18)), bump: bump),
           toHealth: false);
       bump += 1.25;
     }
-    history.add(
-        _gym(defaults[3], _day(4).add(const Duration(hours: 8))),
+    history.add(_gym(defaults[3], _day(4).add(const Duration(hours: 8))),
         toHealth: false);
   }
   if (s.sportHistory) {
@@ -548,19 +610,27 @@ Future<void> applySeed(ProviderContainer c, SharedPreferences prefs,
     }
 
     final ru = cfg.lang == 'ru';
-    save('run-1', Sport.running, ru ? 'Утренняя пробежка' : 'Morning run',
+    save(
+        'run-1',
+        Sport.running,
+        ru ? 'Утренняя пробежка' : 'Morning run',
         tourRun(_day(0).add(const Duration(hours: 7)), 6420,
             const Duration(minutes: 33, seconds: 18)));
-    save('run-2', Sport.running, ru ? 'Пробежка' : 'Run',
+    save(
+        'run-2',
+        Sport.running,
+        ru ? 'Пробежка' : 'Run',
         tourRun(_day(2).add(const Duration(hours: 7)), 10050,
             const Duration(minutes: 54, seconds: 41)));
-    save('run-3', Sport.running, ru ? 'Лёгкий бег' : 'Easy run',
+    save(
+        'run-3',
+        Sport.running,
+        ru ? 'Лёгкий бег' : 'Easy run',
         tourRun(_day(6).add(const Duration(hours: 19)), 4200,
             const Duration(minutes: 25, seconds: 3)));
     save('ride-1', Sport.cycling, ru ? 'Вечерний заезд' : 'Evening ride',
         tourRide(_day(1).add(const Duration(hours: 18))));
-    save('ride-2', Sport.cycling,
-        ru ? 'Велотренажёр' : 'Indoor ride',
+    save('ride-2', Sport.cycling, ru ? 'Велотренажёр' : 'Indoor ride',
         tourRide(_day(5).add(const Duration(hours: 19)), indoor: true));
     save('ski-1', Sport.winterSports, ru ? 'Чимган' : 'Chimgan',
         tourSki(DateTime(2026, 2, 14, 10)));
@@ -885,7 +955,8 @@ Future<void> shotPages(TourRig r, String name, {int maxPages = 5}) async {
   final pos = s.position;
   for (var p = 2; p <= maxPages; p++) {
     if (pos.pixels >= pos.maxScrollExtent - 1) break;
-    pos.jumpTo(min(pos.maxScrollExtent, pos.pixels + pos.viewportDimension * 0.8));
+    pos.jumpTo(
+        min(pos.maxScrollExtent, pos.pixels + pos.viewportDimension * 0.8));
     await r.settle();
     await shot(r, '${name}_$p');
   }

@@ -1,3 +1,6 @@
+import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/core/widgets/equal_height_row.dart';
+import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,12 +21,11 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 /// Shows the start sheet. Completes with true once the program started.
 Future<bool?> showStartProgramSheet(
     BuildContext context, TrainingProgram program, List<int> weekdays) {
-  final palette = AppPalette.of(context);
   return showModalBottomSheet<bool>(
+    useRootNavigator: true,
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: palette.sheet,
     shape: const RoundedRectangleBorder(
         borderRadius:
             BorderRadius.vertical(top: Radius.circular(AppRadius.lg))),
@@ -102,13 +104,10 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
     final ok = _days.length == p.perWeek;
     final dateText = dayAndMonth(context, start);
 
-    Widget choice(_DateChoice c, String label, {VoidCallback? onTap}) =>
-        Expanded(
-          child: _Chip(
-            label: label,
-            selected: _choice == c,
-            onTap: onTap ?? () => setState(() => _choice = c),
-          ),
+    Widget choice(_DateChoice c, String label, {VoidCallback? onTap}) => _Chip(
+          label: label,
+          selected: _choice == c,
+          onTap: onTap ?? () => setState(() => _choice = c),
         );
 
     return SafeArea(
@@ -141,13 +140,12 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
             Text(l10n.programStartDate,
                 style: AppText.headingS.copyWith(color: palette.textPrimary)),
             const SizedBox(height: AppSpacing.xs),
-            Row(
+            EqualHeightRow(
+              spacing: AppSpacing.xs,
               children: [
                 choice(_DateChoice.today, l10n.programToday),
-                const SizedBox(width: AppSpacing.xs),
                 choice(_DateChoice.nextMonday,
                     dayAndMonth(context, addDays(today, 8 - today.weekday))),
-                const SizedBox(width: AppSpacing.xs),
                 choice(
                     _DateChoice.custom,
                     _custom == null
@@ -222,7 +220,7 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
                 decoration: BoxDecoration(
-                    color: palette.tile, borderRadius: AppRadius.mdAll),
+                    color: palette.sheetTile, borderRadius: AppRadius.mdAll),
                 child: Column(
                   children: [
                     for (var i = 0; i < weights.length; i++) ...[
@@ -240,7 +238,7 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
                             const SizedBox(width: AppSpacing.xs),
                             Text(
                                 l10n.programKgReps(
-                                    kgText(weights[i].kg), weights[i].reps),
+                                    formatKg(weights[i].kg), weights[i].reps),
                                 style: AppText.bodyStrong
                                     .copyWith(color: palette.textPrimary)),
                           ],
@@ -318,7 +316,7 @@ class _Chip extends StatelessWidget {
         ? palette.pillSelected
         : danger
             ? palette.danger.withValues(alpha: 0.12)
-            : palette.tile;
+            : palette.sheetTile;
     final fg = selected
         ? palette.onPillSelected
         : danger
@@ -337,9 +335,7 @@ class _Chip extends StatelessWidget {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
           decoration: BoxDecoration(color: bg, borderRadius: AppRadius.smAll),
-          child: Text(label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+          child: ShrinkToFitText(label,
               textAlign: TextAlign.center,
               style: (compact ? AppText.bodyStrong : AppText.headingS)
                   .copyWith(color: fg)),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
+import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -176,29 +178,25 @@ class ExerciseDetailScreen extends ConsumerWidget {
                   AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
               child: SafeArea(
                 top: false,
-                child: Row(
+                child: EqualHeightRow(
+                  spacing: AppSpacing.sm,
                   children: [
-                    Expanded(
-                      child: AppButton(
-                        label: l10n.exerciseAskFelix,
-                        style: AppButtonStyle.secondary,
-                        size: AppButtonSize.large,
-                        icon: Icons.chat_bubble_outline,
-                        expand: true,
-                        onPressed: () => askFelix(context, ref,
-                            topic: AssistantTopic.forSport(Sport.gym),
-                            draft: l10n.exerciseAskFelixDraft(info.name)),
-                      ),
+                    AppButton(
+                      label: l10n.exerciseAskFelix,
+                      style: AppButtonStyle.secondary,
+                      size: AppButtonSize.large,
+                      icon: Icons.chat_bubble_outline,
+                      expand: true,
+                      onPressed: () => askFelix(context, ref,
+                          topic: AssistantTopic.forSport(Sport.gym),
+                          draft: l10n.exerciseAskFelixDraft(info.name)),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: AppButton(
-                        label: l10n.exerciseAddToWorkout,
-                        size: AppButtonSize.large,
-                        icon: Icons.add,
-                        expand: true,
-                        onPressed: () => _addToWorkout(context, ref, info),
-                      ),
+                    AppButton(
+                      label: l10n.exerciseAddToWorkout,
+                      size: AppButtonSize.large,
+                      icon: Icons.add,
+                      expand: true,
+                      onPressed: () => _addToWorkout(context, ref, info),
                     ),
                   ],
                 ),
@@ -283,18 +281,18 @@ class _Numbers extends StatelessWidget {
         sessions.length >= 2 && first > 0 ? (last - first) / first * 100 : null;
     final decimal = NumberFormat('#,##0.0', locale);
 
-    Widget stat(String label, String value, {Key? key}) => Expanded(
-          child: Column(
-            key: key,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label,
-                  style:
-                      AppText.caption.copyWith(color: palette.textSecondary)),
-              Text(value,
-                  style: AppText.headingM.copyWith(color: palette.textPrimary)),
-            ],
-          ),
+    // Each figure keeps to its column: it shrinks a little, then wraps,
+    // instead of running into the next one at large text sizes.
+    Widget stat(String label, String value, {Key? key}) => Column(
+          key: key,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ShrinkToFitText(label,
+                style: AppText.caption.copyWith(color: palette.textSecondary)),
+            ShrinkToFitText(value,
+                style: AppText.headingM.copyWith(color: palette.textPrimary)),
+          ],
         );
 
     return Container(
@@ -315,8 +313,8 @@ class _Numbers extends StatelessWidget {
                 style: AppText.captionStrong.copyWith(color: palette.accent),
               ),
             ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          EqualHeightRow(
+            spacing: AppSpacing.sm,
             children: [
               stat(l10n.exerciseBestSet, formatSetLoad(context, best)),
               if (best.kg > 0)

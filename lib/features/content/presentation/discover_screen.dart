@@ -5,6 +5,7 @@ import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/features/programs/presentation/widgets/program_widgets.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/day_badge.dart';
@@ -115,14 +116,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: PillSelector<_Cat>(
-                items: _Cat.values,
-                selected: _cat,
-                labelOf: (c) => labels[c]!,
-                onSelected: (c) => setState(() => _cat = c),
-              ),
+            PillSelector<_Cat>(
+              items: _Cat.values,
+              selected: _cat,
+              labelOf: (c) => labels[c]!,
+              onSelected: (c) => setState(() => _cat = c),
             ),
             Expanded(
               child: RefreshIndicator(
@@ -226,9 +224,8 @@ class _ChallengeHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final palette = AppPalette.of(context);
-    // Monday-first single-letter weekdays (the list starts on Sunday).
-    final narrow = MaterialLocalizations.of(context).narrowWeekdays;
-    final days = [for (var i = 1; i <= 7; i++) narrow[i % 7]];
+    // Monday-first short weekdays ("пн"): single letters are ambiguous.
+    final days = [for (var i = 1; i <= 7; i++) weekdayName(context, i)];
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -257,9 +254,13 @@ class _ChallengeHero extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: palette.buttonMuted,
                         borderRadius: AppRadius.smAll),
-                    child: Text(days[i],
-                        style: AppText.microStrong
-                            .copyWith(color: palette.textSecondary)),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(days[i],
+                          maxLines: 1,
+                          style: AppText.microStrong
+                              .copyWith(color: palette.textSecondary)),
+                    ),
                   ),
                 ),
               ],

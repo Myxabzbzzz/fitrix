@@ -42,21 +42,6 @@ void _phoneSize(WidgetTester tester) {
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  group('formatDuration', () {
-    test('matches the design format', () {
-      expect(
-        formatDuration(const Duration(hours: 1, minutes: 43, seconds: 22)),
-        '1h 43m 22s',
-      );
-      expect(
-        formatDuration(const Duration(hours: 1, minutes: 43),
-            withSeconds: false),
-        '1h 43m',
-      );
-      expect(formatDuration(const Duration(seconds: 5)), '5s');
-    });
-  });
-
   group('workouts', () {
     test('active workout tracks completed sets and added sets', () async {
       final container = await _restart();

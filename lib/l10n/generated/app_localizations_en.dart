@@ -33,6 +33,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unitKg => 'kg';
 
   @override
+  String get unitMcg => 'mcg';
+
+  @override
+  String get unitMg => 'mg';
+
+  @override
+  String get unitGrams => 'g';
+
+  @override
   String get signOut => 'Sign out';
 
   @override
@@ -583,6 +592,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String coachFirstMessageSport(String workout) {
+    return 'Start with $workout. After that, Felix tailors his advice to what you log.';
+  }
+
+  @override
+  String get coachFirstMessageNoPlan =>
+      'Log your first workout, and Felix will tailor his advice to it.';
+
+  @override
   String get gymCoachBackTitle => 'Welcome back';
 
   @override
@@ -769,7 +787,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String signInCodePrompt(String length, String email) {
-    return 'Enter the $length-digit code we sent to\n$email';
+    return 'Enter the $length-digit code we sent to\n$email';
   }
 
   @override
@@ -3646,7 +3664,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String chatFoodAdd(String kcal) {
-    return 'Add to My nutrition · $kcal kcal';
+    return 'Add · $kcal kcal';
   }
 
   @override
@@ -4362,7 +4380,7 @@ class AppLocalizationsEn extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return 'Steps today: $stepsString · 7-day avg $avgString';
+    return 'Steps today: $stepsString\n7-day average: $avgString';
   }
 
   @override
@@ -4545,7 +4563,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cyclingLog => 'Log indoor ride';
 
   @override
-  String get cyclingUnitRides => 'Rides';
+  String cyclingUnitRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'rides',
+      one: 'ride',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get cyclingHistory => 'History';
@@ -4588,7 +4614,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skiStart => 'Start ski day';
 
   @override
-  String get skiUnitDays => 'Ski days';
+  String skiUnitDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ski days',
+      one: 'ski day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skiUnitDescents(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'descents',
+      one: 'descent',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get skiHistory => 'History';
@@ -4688,4 +4733,29 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get skiUnfinishedLaunchBody =>
       'Pick it up where you left off, save what was recorded, or discard it.';
+
+  @override
+  String get addExerciseNoWorkoutTitle => 'No active workout';
+
+  @override
+  String get addExerciseNoWorkoutBody =>
+      'Start a workout to add exercises to it. Meanwhile you can browse the exercise library.';
+
+  @override
+  String get addExerciseOpenLibrary => 'Exercise library';
+
+  @override
+  String get assistantSubtitle => 'Your personal assistant';
+
+  @override
+  String get assistantGreeting =>
+      'Hey there!\nI\'m Felix, your personal AI coach here in Fitrix.';
+
+  @override
+  String get assistantIntro =>
+      'I\'ll help you train smarter, track your progress and stay motivated.';
+
+  @override
+  String get assistantQuestion =>
+      'So, tell me — what\'s your main goal right now?';
 }

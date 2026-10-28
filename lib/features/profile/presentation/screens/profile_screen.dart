@@ -156,14 +156,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
 
-              const SizedBox(height: AppSpacing.md),
-
-              // Username
-              Text(
-                '@theboss',
-                style: AppText.headingM.copyWith(color: palette.textPrimary),
-              ),
-
               const SizedBox(height: AppSpacing.xl),
 
               // Name Input
@@ -219,8 +211,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // Continue Button
               SizedBox(
                 width: double.infinity,
-                height: 54,
                 child: ElevatedButton(
+                  style: const ButtonStyle(
+                      minimumSize: WidgetStatePropertyAll(Size.fromHeight(54))),
                   onPressed: _continue,
                   child: Text(l10n.continueButton),
                 ),

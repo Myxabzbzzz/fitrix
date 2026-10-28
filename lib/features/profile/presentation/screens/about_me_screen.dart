@@ -305,14 +305,17 @@ class _AboutMeScreenState extends ConsumerState<AboutMeScreen> {
                               size: 40, color: palette.textSecondary),
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Center(
-                        child: Text(
-                          fullName.isEmpty ? '@theboss' : fullName,
-                          style: AppText.headingM
-                              .copyWith(color: palette.textPrimary),
+                      // No placeholder handle: the name shows once typed.
+                      if (fullName.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.sm),
+                        Center(
+                          child: Text(
+                            fullName,
+                            style: AppText.headingM
+                                .copyWith(color: palette.textPrimary),
+                          ),
                         ),
-                      ),
+                      ],
                       const SizedBox(height: AppSpacing.md),
                       aboutMeList(palette, [
                         field(

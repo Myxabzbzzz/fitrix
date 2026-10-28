@@ -150,6 +150,24 @@ abstract class AppLocalizations {
   /// **'kg'**
   String get unitKg;
 
+  /// No description provided for @unitMcg.
+  ///
+  /// In en, this message translates to:
+  /// **'mcg'**
+  String get unitMcg;
+
+  /// No description provided for @unitMg.
+  ///
+  /// In en, this message translates to:
+  /// **'mg'**
+  String get unitMg;
+
+  /// No description provided for @unitGrams.
+  ///
+  /// In en, this message translates to:
+  /// **'g'**
+  String get unitGrams;
+
   /// No description provided for @signOut.
   ///
   /// In en, this message translates to:
@@ -1038,6 +1056,18 @@ abstract class AppLocalizations {
   /// **'Start with {workout}. Next time Felix suggests weights from what you log.'**
   String gymCoachFirstMessage(String workout);
 
+  /// No description provided for @coachFirstMessageSport.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with {workout}. After that, Felix tailors his advice to what you log.'**
+  String coachFirstMessageSport(String workout);
+
+  /// No description provided for @coachFirstMessageNoPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Log your first workout, and Felix will tailor his advice to it.'**
+  String get coachFirstMessageNoPlan;
+
   /// No description provided for @gymCoachBackTitle.
   ///
   /// In en, this message translates to:
@@ -1377,7 +1407,7 @@ abstract class AppLocalizations {
   /// No description provided for @signInCodePrompt.
   ///
   /// In en, this message translates to:
-  /// **'Enter the {length}-digit code we sent to\n{email}'**
+  /// **'Enter the {length}-digit code we sent to\n{email}'**
   String signInCodePrompt(String length, String email);
 
   /// No description provided for @signInResend.
@@ -5940,7 +5970,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatFoodAdd.
   ///
   /// In en, this message translates to:
-  /// **'Add to My nutrition · {kcal} kcal'**
+  /// **'Add · {kcal} kcal'**
   String chatFoodAdd(String kcal);
 
   /// No description provided for @chatFoodAdded.
@@ -7092,7 +7122,7 @@ abstract class AppLocalizations {
   /// No description provided for @healthStepsTodayAvg.
   ///
   /// In en, this message translates to:
-  /// **'Steps today: {steps} · 7-day avg {avg}'**
+  /// **'Steps today: {steps}\n7-day average: {avg}'**
   String healthStepsTodayAvg(int steps, int avg);
 
   /// No description provided for @factorRestingHrHigh.
@@ -7400,8 +7430,8 @@ abstract class AppLocalizations {
   /// No description provided for @cyclingUnitRides.
   ///
   /// In en, this message translates to:
-  /// **'Rides'**
-  String get cyclingUnitRides;
+  /// **'{count, plural, =1{ride} other{rides}}'**
+  String cyclingUnitRides(int count);
 
   /// No description provided for @cyclingHistory.
   ///
@@ -7484,8 +7514,14 @@ abstract class AppLocalizations {
   /// No description provided for @skiUnitDays.
   ///
   /// In en, this message translates to:
-  /// **'Ski days'**
-  String get skiUnitDays;
+  /// **'{count, plural, =1{ski day} other{ski days}}'**
+  String skiUnitDays(int count);
+
+  /// No description provided for @skiUnitDescents.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{descent} other{descents}}'**
+  String skiUnitDescents(int count);
 
   /// No description provided for @skiHistory.
   ///
@@ -7660,6 +7696,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pick it up where you left off, save what was recorded, or discard it.'**
   String get skiUnfinishedLaunchBody;
+
+  /// Add-exercise page opened without an active workout
+  ///
+  /// In en, this message translates to:
+  /// **'No active workout'**
+  String get addExerciseNoWorkoutTitle;
+
+  /// No description provided for @addExerciseNoWorkoutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a workout to add exercises to it. Meanwhile you can browse the exercise library.'**
+  String get addExerciseNoWorkoutBody;
+
+  /// No description provided for @addExerciseOpenLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise library'**
+  String get addExerciseOpenLibrary;
+
+  /// No description provided for @assistantSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your personal assistant'**
+  String get assistantSubtitle;
+
+  /// No description provided for @assistantGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hey there!\nI\'m Felix, your personal AI coach here in Fitrix.'**
+  String get assistantGreeting;
+
+  /// No description provided for @assistantIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ll help you train smarter, track your progress and stay motivated.'**
+  String get assistantIntro;
+
+  /// No description provided for @assistantQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'So, tell me — what\'s your main goal right now?'**
+  String get assistantQuestion;
 }
 
 class _AppLocalizationsDelegate

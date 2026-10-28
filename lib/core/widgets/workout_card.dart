@@ -43,7 +43,10 @@ class WorkoutCard extends StatelessWidget {
     final palette = AppPalette.of(context);
     return Opacity(
       opacity: done ? 0.55 : 1,
+      // Passthrough: in a grid cell the card fills the cell, so cards in a
+      // row (and the "+" card) share one height.
       child: Stack(
+        fit: StackFit.passthrough,
         children: [
           Container(
             constraints: const BoxConstraints(minHeight: 104),
@@ -59,10 +62,16 @@ class WorkoutCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (dayLabel != null) ...[
-                      DayBadge(label: dayLabel!, today: today),
-                      const SizedBox(height: AppSpacing.xxs),
-                    ],
+                    // Without a day the badge's room is kept, so titles in
+                    // a row start on one line and clear the edit icon.
+                    Visibility(
+                      visible: dayLabel != null,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      child: DayBadge(label: dayLabel ?? ' ', today: today),
+                    ),
+                    const SizedBox(height: AppSpacing.xxs),
                     if (badge != null) ...[
                       Align(alignment: Alignment.centerLeft, child: badge),
                       const SizedBox(height: AppSpacing.xxs),

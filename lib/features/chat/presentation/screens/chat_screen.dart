@@ -229,7 +229,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   style: AppText.headingS.copyWith(color: palette.textPrimary),
                 ),
                 Text(
-                  AppConstants.assistantSubtitle,
+                  AppLocalizations.of(context).assistantSubtitle,
                   style: AppText.caption.copyWith(color: palette.textSecondary),
                 ),
               ],
@@ -273,7 +273,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                                   padding: const EdgeInsets.symmetric(
                                       vertical: AppSpacing.sm),
                                   child: Text(
-                                    DateFormat('MMM dd, yyyy, h:mm a')
+                                    DateFormat.yMMMd()
+                                        .add_Hm()
                                         .format(message.timestamp),
                                     style: AppText.caption
                                         .copyWith(color: palette.textSecondary),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/title_row.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
@@ -173,21 +174,15 @@ class _TrainingLoadScreenState extends ConsumerState<TrainingLoadScreen> {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(l10n.loadByWeek,
-                            style: AppText.headingS
-                                .copyWith(color: p.textPrimary)),
-                      ),
-                      if (avg != null)
-                        Flexible(
-                          child: Text(l10n.loadAvg(fmt.format(avg.round())),
-                              overflow: TextOverflow.ellipsis,
-                              style: AppText.caption
-                                  .copyWith(color: p.textSecondary)),
-                        ),
-                    ],
+                  TitleRow(
+                    title: Text(l10n.loadByWeek,
+                        style: AppText.headingS.copyWith(color: p.textPrimary)),
+                    trailing: avg == null
+                        ? null
+                        : Text(l10n.loadAvg(fmt.format(avg.round())),
+                            overflow: TextOverflow.ellipsis,
+                            style: AppText.caption
+                                .copyWith(color: p.textSecondary)),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   ProgressCard(

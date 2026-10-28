@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
+import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -12,6 +14,7 @@ import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
+import 'package:fitrix/features/plan/presentation/widgets/plan_day_section.dart';
 import 'package:fitrix/features/plan/presentation/widgets/plan_format.dart';
 import 'package:fitrix/features/programs/domain/program_catalog.dart';
 import 'package:fitrix/features/programs/presentation/screens/start_program_sheet.dart';
@@ -66,11 +69,11 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
     final hardDays = hardNonGymWeekdays(nonGym).toList()..sort();
     final session = p.sessions[_session.clamp(0, p.sessions.length - 1)];
 
-    String otherTitle(int weekday) {
+    PlannedSession? other(int weekday) {
       for (final s in nonGym) {
-        if (s.day.weekday == weekday) return s.title;
+        if (s.day.weekday == weekday) return s;
       }
-      return l10n.programRest;
+      return null;
     }
 
     return Scaffold(
@@ -83,9 +86,8 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
             ScreenTitle(l10n.programTitle),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md, 0, AppSpacing.md, AppSpacing.lg),
-                children: [
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, AppSpacing.lg),
+                children: withPageGutter([
                   Text(p.name,
                       style: AppText.displayLarge
                           .copyWith(color: palette.textPrimary)),
@@ -104,13 +106,12 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  Row(
+                  EqualHeightRow(
+                    spacing: AppSpacing.xs,
                     children: [
                       _Fact(
                           l10n.programLength, l10n.programWeeksShort(p.weeks)),
-                      const SizedBox(width: AppSpacing.xs),
                       _Fact(l10n.programPerWeekLabel, '${p.perWeek}×'),
-                      const SizedBox(width: AppSpacing.xs),
                       _Fact(l10n.programSessionLabel,
                           planDuration(l10n, p.sessionMinutes)),
                     ],
@@ -135,22 +136,33 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  Row(
-                    children: [
-                      for (var d = 1; d <= 7; d++) ...[
-                        if (d > 1) const SizedBox(width: AppSpacing.xxs),
-                        Expanded(
-                          child: _DayTile(
-                            day: weekdayName(context, d),
-                            label: weekdays.contains(d)
-                                ? p.sessionAt(weekdays.indexOf(d)).name
-                                : otherTitle(d),
-                            training: weekdays.contains(d),
-                            clash: hardDays.contains(d),
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (var d = 1; d <= 7; d++) ...[
+                          if (d > 1) const SizedBox(width: AppSpacing.xxs),
+                          Expanded(
+                            child: _DayTile(
+                              day: weekdayName(context, d),
+                              label: weekdays.contains(d)
+                                  ? p.sessionAt(weekdays.indexOf(d)).name
+                                  : other(d)?.title ?? l10n.programRest,
+                              // Other sports show as their icon: their
+                              // titles don't fit a seventh of the width.
+                              icon: weekdays.contains(d)
+                                  ? null
+                                  : switch (other(d)) {
+                                      final s? => sportIcon(s.sport),
+                                      null => null,
+                                    },
+                              training: weekdays.contains(d),
+                              clash: hardDays.contains(d),
+                            ),
                           ),
-                        ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Row(
@@ -233,7 +245,7 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                       ),
                     ),
                   ],
-                ],
+                ]),
               ),
             ),
             Container(
@@ -245,36 +257,31 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
               ),
               child: SafeArea(
                 top: false,
-                child: Row(
+                child: EqualHeightRow(
+                  spacing: AppSpacing.xs,
                   children: [
-                    Expanded(
-                      child: AppButton(
-                        label: l10n.programAskFelix,
-                        style: AppButtonStyle.secondary,
-                        size: AppButtonSize.large,
-                        icon: Icons.chat_bubble_outline,
-                        expand: true,
-                        onPressed: () => askFelix(context, ref,
-                            topic: AssistantTopic.forSport(Sport.gym),
-                            draft: l10n.programAskFelixDraft(p.name)),
-                      ),
+                    AppButton(
+                      label: l10n.programAskFelix,
+                      style: AppButtonStyle.secondary,
+                      size: AppButtonSize.large,
+                      icon: Icons.chat_bubble_outline,
+                      expand: true,
+                      onPressed: () => askFelix(context, ref,
+                          topic: AssistantTopic.forSport(Sport.gym),
+                          draft: l10n.programAskFelixDraft(p.name)),
                     ),
-                    const SizedBox(width: AppSpacing.xs),
-                    Expanded(
-                      flex: 2,
-                      child: AppButton(
-                        key: const Key('program-start'),
-                        label: l10n.programStart,
-                        size: AppButtonSize.large,
-                        expand: true,
-                        onPressed: () async {
-                          final started =
-                              await showStartProgramSheet(context, p, weekdays);
-                          if (started == true && context.mounted) {
-                            context.go(AppRouter.programsActive);
-                          }
-                        },
-                      ),
+                    AppButton(
+                      key: const Key('program-start'),
+                      label: l10n.programStart,
+                      size: AppButtonSize.large,
+                      expand: true,
+                      onPressed: () async {
+                        final started =
+                            await showStartProgramSheet(context, p, weekdays);
+                        if (started == true && context.mounted) {
+                          context.go(AppRouter.programsActive);
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -295,24 +302,21 @@ class _Fact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        decoration:
-            BoxDecoration(color: palette.tile, borderRadius: AppRadius.mdAll),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppText.caption.copyWith(color: palette.textSecondary)),
-            Text(value,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppText.headingM.copyWith(color: palette.textPrimary)),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration:
+          BoxDecoration(color: palette.tile, borderRadius: AppRadius.mdAll),
+      child: Column(
+        // Values sit on the tile's bottom edge, so they line up across a
+        // row even when one label wraps.
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ShrinkToFitText(label,
+              style: AppText.caption.copyWith(color: palette.textSecondary)),
+          ShrinkToFitText(value,
+              style: AppText.headingM.copyWith(color: palette.textPrimary)),
+        ],
       ),
     );
   }
@@ -321,11 +325,15 @@ class _Fact extends StatelessWidget {
 class _DayTile extends StatelessWidget {
   final String day;
   final String label;
+
+  /// Shown instead of [label] (which becomes its semantics label).
+  final IconData? icon;
   final bool training;
   final bool clash;
   const _DayTile(
       {required this.day,
       required this.label,
+      this.icon,
       required this.training,
       required this.clash});
 
@@ -342,22 +350,37 @@ class _DayTile extends StatelessWidget {
         : clash
             ? palette.danger
             : palette.textPrimary;
+    final icon = this.icon;
     return Container(
       padding: const EdgeInsets.symmetric(
           vertical: AppSpacing.xs, horizontal: AppSpacing.xxs),
       decoration: BoxDecoration(color: bg, borderRadius: AppRadius.smAll),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(day.toUpperCase(),
-              maxLines: 1,
-              overflow: TextOverflow.clip,
-              style: AppText.microStrong.copyWith(color: fg)),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(day.toUpperCase(),
+                maxLines: 1, style: AppText.microStrong.copyWith(color: fg)),
+          ),
           const SizedBox(height: AppSpacing.xxs),
-          Text(label,
-              maxLines: 2,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: AppText.micro.copyWith(color: fg)),
+          if (icon != null)
+            Tooltip(
+              message: label,
+              child: Icon(icon,
+                  size: AppText.headingS.fontSize,
+                  color: fg,
+                  semanticLabel: label),
+            )
+          else
+            // One line, shrunk to fit: "Upper 1" never splits mid-word.
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(label,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: AppText.micro.copyWith(color: fg)),
+            ),
         ],
       ),
     );

@@ -80,13 +80,16 @@ class _Empty extends ConsumerWidget {
     final palette = AppPalette.of(context);
     return LayoutBuilder(
       builder: (context, box) => SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        // The page's 16 pt side margin; content starts under the title
+        // instead of floating in the middle of the screen.
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.lg),
         child: ConstrainedBox(
           constraints: BoxConstraints(
               minHeight: (box.maxHeight - 2 * AppSpacing.lg)
                   .clamp(0, double.infinity)),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _HealthRows(
@@ -101,11 +104,11 @@ class _Empty extends ConsumerWidget {
                   style: AppText.bodyRegular
                       .copyWith(color: palette.textSecondary)),
               const SizedBox(height: AppSpacing.md),
-              Center(
-                child: AppButton(
-                  label: l10n.checkinCardAction,
-                  onPressed: () => showCheckInSheet(context),
-                ),
+              AppButton(
+                label: l10n.checkinCardAction,
+                size: AppButtonSize.large,
+                expand: true,
+                onPressed: () => showCheckInSheet(context),
               ),
             ],
           ),

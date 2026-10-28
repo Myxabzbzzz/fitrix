@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/title_row.dart';
 import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -129,14 +130,13 @@ class LinkRow extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
-              child: Text(title,
-                  style: AppText.headingS.copyWith(color: p.textPrimary)),
-            ),
-            const SizedBox(width: AppSpacing.xs),
-            Flexible(
-              child: Text(value,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppText.body14.copyWith(color: p.textSecondary)),
+              child: TitleRow(
+                title: Text(title,
+                    style: AppText.headingS.copyWith(color: p.textPrimary)),
+                trailing: Text(value,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppText.body14.copyWith(color: p.textSecondary)),
+              ),
             ),
             Icon(Icons.chevron_right, size: 20, color: p.textSecondary),
           ],

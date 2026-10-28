@@ -8,6 +8,7 @@ import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/title_row.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
@@ -123,24 +124,18 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(l10n.nutritionMacros,
-                                    style: AppText.headingS
-                                        .copyWith(color: palette.textPrimary)),
-                              ),
-                              Flexible(
-                                child: Text(
-                                  l10n.nutritionProteinPerKg(
-                                      NumberFormat('0.0', locale).format(ref
-                                          .watch(nutritionSettingsProvider)
-                                          .proteinPerKg)),
-                                  style: AppText.caption
-                                      .copyWith(color: palette.textSecondary),
-                                ),
-                              ),
-                            ],
+                          TitleRow(
+                            title: Text(l10n.nutritionMacros,
+                                style: AppText.headingS
+                                    .copyWith(color: palette.textPrimary)),
+                            trailing: Text(
+                              l10n.nutritionProteinPerKg(
+                                  NumberFormat('0.0', locale).format(ref
+                                      .watch(nutritionSettingsProvider)
+                                      .proteinPerKg)),
+                              style: AppText.caption
+                                  .copyWith(color: palette.textSecondary),
+                            ),
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           Row(

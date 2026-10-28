@@ -26,12 +26,11 @@ const _sports = [
 ];
 
 Future<void> showAddSessionSheet(BuildContext context) {
-  final palette = AppPalette.of(context);
   return showModalBottomSheet<void>(
+    useRootNavigator: true,
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: palette.background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
     ),
@@ -353,7 +352,7 @@ class _Pill extends StatelessWidget {
               horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? palette.pillSelected : palette.background,
+            color: selected ? palette.pillSelected : palette.sheetSurface,
             borderRadius: AppRadius.fullAll,
             border: selected ? null : Border.all(color: palette.border),
           ),
@@ -393,7 +392,7 @@ class _ChoiceRow extends StatelessWidget {
           duration: Motion.of(context, Motion.fast),
           padding: const EdgeInsets.all(AppSpacing.sm),
           decoration: BoxDecoration(
-            color: selected ? palette.pillSelected : palette.tile,
+            color: selected ? palette.pillSelected : palette.sheetTile,
             borderRadius: AppRadius.mdAll,
           ),
           child: Row(

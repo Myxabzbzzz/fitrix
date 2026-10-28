@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/widgets/sheet_safe_area.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
@@ -40,6 +42,7 @@ class _BodyWeightScreenState extends ConsumerState<BodyWeightScreen> {
 
   void _openSheet() {
     showModalBottomSheet<void>(
+      useRootNavigator: true,
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -341,7 +344,8 @@ class _WeightSheetState extends ConsumerState<_WeightSheet> {
     super.initState();
     final all = ref.read(bodyWeightProvider);
     _controller = TextEditingController(
-        text: all.isEmpty ? '' : NumberFormat('0.#', 'en').format(all.last.kg));
+        // The app language's decimal mark; _save reads either mark.
+        text: all.isEmpty ? '' : formatKg(all.last.kg));
   }
 
   @override
@@ -371,9 +375,9 @@ class _WeightSheetState extends ConsumerState<_WeightSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final p = AppPalette.of(context);
-    return Padding(
-      padding: EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md,
-          AppSpacing.md + MediaQuery.viewInsetsOf(context).bottom),
+    return SheetSafeArea(
+        child: Padding(
+      padding: const EdgeInsets.all(AppSpacing.md),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -409,6 +413,6 @@ class _WeightSheetState extends ConsumerState<_WeightSheet> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

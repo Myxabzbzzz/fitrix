@@ -120,14 +120,14 @@ class SkiingScreen extends ConsumerWidget {
                           child: _Figure(
                             key: const ValueKey('ski-week-days'),
                             value: '${thisWeek.length}',
-                            unit: l10n.skiUnitDays,
+                            unit: l10n.skiUnitDays(thisWeek.length),
                           ),
                         ),
                         Expanded(
                           child: _Figure(
                             key: const ValueKey('ski-week-descents'),
                             value: '$weekDescents',
-                            unit: l10n.skiDescents,
+                            unit: l10n.skiUnitDescents(weekDescents),
                           ),
                         ),
                         Expanded(

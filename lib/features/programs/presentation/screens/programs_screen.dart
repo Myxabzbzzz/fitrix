@@ -91,8 +91,8 @@ class _ProgramsScreenState extends ConsumerState<ProgramsScreen> {
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.lg),
-                children: [
+                    0, AppSpacing.xs, 0, AppSpacing.lg),
+                children: withPageGutter([
                   if (info != null) ...[
                     _ActiveCard(
                         key: const Key('programs-active-card'),
@@ -178,7 +178,7 @@ class _ProgramsScreenState extends ConsumerState<ProgramsScreen> {
                             p.id == picked?.id && fit != ProgramFit.none),
                     const SizedBox(height: AppSpacing.sm),
                   ],
-                ],
+                ]),
               ),
             ),
           ],

@@ -537,7 +537,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Football').last);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Tue'));
+      // The sheet's day chip; the week strip behind it says "Tue" too.
+      await tester.tap(find.text('Tue').last);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Add Football 7×7 · Tuesday'));
       await tester.pumpAndSettle();

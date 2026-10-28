@@ -179,8 +179,10 @@ Future<void> _tapStart(_Rig r, String name) async {
   final card = find
       .ancestor(of: find.text(name), matching: find.byType(Dismissible))
       .first;
-  await r.tester
-      .tap(find.descendant(of: card, matching: find.text('Start')).first);
+  final start = find.descendant(of: card, matching: find.text('Start')).first;
+  await r.tester.ensureVisible(start);
+  await r.tester.pumpAndSettle();
+  await r.tester.tap(start);
   await r.tester.pumpAndSettle();
 }
 

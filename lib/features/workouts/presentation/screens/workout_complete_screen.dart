@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
+import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -191,41 +193,29 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                         .copyWith(color: palette.textSecondary),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Row(
-                    children: [
-                      _StatTile(l10n.workoutTileDuration, duration),
-                      const SizedBox(width: AppSpacing.xs),
-                      _StatTile(
-                        l10n.workoutTileVolume,
-                        '${formatTonnes(context, volumeKg(workout.exercises))} '
-                        '${l10n.unitTonnes}',
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      _StatTile(l10n.workoutTileSets, '${workout.setCount}'),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Row(
-                    children: [
+                  _StatRows([
+                    _StatTile(l10n.workoutTileDuration, duration),
+                    _StatTile(
+                      l10n.workoutTileVolume,
+                      '${formatTonnes(context, volumeKg(workout.exercises))} '
+                      '${l10n.unitTonnes}',
+                    ),
+                    _StatTile(l10n.workoutTileSets, '${workout.setCount}'),
+                    // "No new records" is already in the subtitle.
+                    if (records.isNotEmpty)
                       _StatTile(
                         l10n.workoutTileRecords,
                         '${records.length}',
                         accent: true,
                       ),
-                      const SizedBox(width: AppSpacing.xs),
-                      if (_rpe != null)
-                        _StatTile(
-                          l10n.workoutTileLoad,
-                          NumberFormat.decimalPattern(
-                                  Localizations.localeOf(context).toString())
-                              .format(workout.load),
-                        )
-                      else
-                        const Expanded(child: SizedBox.shrink()),
-                      const SizedBox(width: AppSpacing.xs),
-                      const Expanded(child: SizedBox.shrink()),
-                    ],
-                  ),
+                    if (_rpe != null)
+                      _StatTile(
+                        l10n.workoutTileLoad,
+                        NumberFormat.decimalPattern(
+                                Localizations.localeOf(context).toString())
+                            .format(workout.load),
+                      ),
+                  ]),
                   const SizedBox(height: AppSpacing.sm),
                   _RpeCard(
                     rpe: _rpe,
@@ -279,26 +269,21 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(
                   AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.md),
-              child: Row(
+              child: EqualHeightRow(
+                spacing: AppSpacing.sm,
                 children: [
-                  Expanded(
-                    child: AppButton(
-                      label: l10n.workoutDiscard,
-                      style: AppButtonStyle.secondary,
-                      size: AppButtonSize.large,
-                      expand: true,
-                      onPressed: _discard,
-                    ),
+                  AppButton(
+                    label: l10n.workoutDiscard,
+                    style: AppButtonStyle.secondary,
+                    size: AppButtonSize.large,
+                    expand: true,
+                    onPressed: _discard,
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    flex: 2,
-                    child: AppButton(
-                      label: l10n.workoutSave,
-                      size: AppButtonSize.large,
-                      expand: true,
-                      onPressed: () => _save(pending),
-                    ),
+                  AppButton(
+                    label: l10n.workoutSave,
+                    size: AppButtonSize.large,
+                    expand: true,
+                    onPressed: () => _save(pending),
                   ),
                 ],
               ),
@@ -306,6 +291,31 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Stat tiles in balanced rows: 3, 2 + 2 or 3 + 2, never a lone tile.
+class _StatRows extends StatelessWidget {
+  final List<_StatTile> tiles;
+
+  const _StatRows(this.tiles);
+
+  @override
+  Widget build(BuildContext context) {
+    final perRow = tiles.length == 4 ? 2 : 3;
+    return Column(
+      children: [
+        for (var i = 0; i < tiles.length; i += perRow) ...[
+          if (i > 0) const SizedBox(height: AppSpacing.xs),
+          EqualHeightRow(
+            spacing: AppSpacing.xs,
+            children: [
+              for (var j = i; j < i + perRow && j < tiles.length; j++) tiles[j],
+            ],
+          ),
+        ],
+      ],
     );
   }
 }
@@ -320,35 +330,30 @@ class _StatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        decoration: BoxDecoration(
-          color: palette.tile,
-          borderRadius: AppRadius.mdAll,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                label,
-                style: AppText.body14.copyWith(color: palette.textSecondary),
-              ),
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: palette.tile,
+        borderRadius: AppRadius.mdAll,
+      ),
+      child: Column(
+        // Values sit on the tile's bottom edge, so they line up across a
+        // row even when one label wraps.
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ShrinkToFitText(
+            label,
+            style: AppText.body14.copyWith(color: palette.textSecondary),
+          ),
+          ShrinkToFitText(
+            value,
+            style: AppText.headingL.copyWith(
+              color: accent ? palette.accent : palette.textPrimary,
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                value,
-                style: AppText.headingL.copyWith(
-                  color: accent ? palette.accent : palette.textPrimary,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -456,7 +461,7 @@ class _ExerciseRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                estimate == null ? '—' : estimate.toStringAsFixed(1),
+                estimate == null ? '—' : formatOneDecimal(estimate),
                 style: AppText.headingS.copyWith(
                   color: palette.textPrimary,
                   fontFeatures: const [FontFeature.tabularFigures()],

@@ -45,9 +45,7 @@ class _SkiSummaryBodyState extends State<SkiSummaryBody> {
           ),
           const SizedBox(height: AppSpacing.md),
         ],
-        Wrap(
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.md,
+        RunFigureGrid(
           children: [
             RunFigure(label: l10n.skiDescents, value: '${descents.length}'),
             RunFigure(
@@ -138,8 +136,7 @@ class _DescentRow extends StatelessWidget {
                 ),
                 if (selected) ...[
                   const SizedBox(height: AppSpacing.xs),
-                  Wrap(
-                    spacing: AppSpacing.md,
+                  RunFigureGrid(
                     runSpacing: AppSpacing.xs,
                     children: [
                       RunFigure(

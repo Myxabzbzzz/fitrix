@@ -181,9 +181,8 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
       children: [
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
-            children: [
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, AppSpacing.md),
+            children: withPageGutter([
               Text(food.name,
                   style: AppText.headingL.copyWith(color: palette.textPrimary)),
               if (food.localName != null)
@@ -292,7 +291,7 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
                                   ),
                                   Text(
                                     '${microAmount(r.key, r.amount, locale)} '
-                                    '${microUnitLabel(r.key)} · ${r.pct.round()}%',
+                                    '${microUnitLabel(l10n, r.key)} · ${r.pct.round()}%',
                                     style: AppText.caption
                                         .copyWith(color: palette.textSecondary),
                                   ),
@@ -315,7 +314,7 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
                   ),
                 ),
               ],
-            ],
+            ]),
           ),
         ),
         Padding(

@@ -33,6 +33,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get unitKg => 'кг';
 
   @override
+  String get unitMcg => 'мкг';
+
+  @override
+  String get unitMg => 'мг';
+
+  @override
+  String get unitGrams => 'г';
+
+  @override
   String get signOut => 'Выйти';
 
   @override
@@ -575,7 +584,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get workoutAddSet => 'Добавить подход';
 
   @override
-  String get workoutFinishButton => 'Завершить тренировку';
+  String get workoutFinishButton => 'Завершить';
 
   @override
   String get workoutColSet => '#';
@@ -596,6 +605,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String gymCoachFirstMessage(String workout) {
     return 'Начните сегодня ($workout). В следующий раз Felix подскажет веса по вашим записям.';
   }
+
+  @override
+  String coachFirstMessageSport(String workout) {
+    return 'Начните сегодня: $workout. Дальше Felix будет советовать по вашим записям.';
+  }
+
+  @override
+  String get coachFirstMessageNoPlan =>
+      'Запишите первую тренировку, и дальше Felix будет советовать по вашим записям.';
 
   @override
   String get gymCoachBackTitle => 'С возвращением';
@@ -787,7 +805,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String signInCodePrompt(String length, String email) {
-    return 'Введите $length-значный код, который мы отправили на\n$email';
+    return 'Введите $length-значный код, который мы отправили на\n$email';
   }
 
   @override
@@ -894,7 +912,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Аккаунты сейчас недоступны. Попробуйте позже.';
 
   @override
-  String get programLevelBeginner => 'Начинающий';
+  String get programLevelBeginner => 'Новичок';
 
   @override
   String get programLevelMedium => 'Средний';
@@ -1219,7 +1237,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get workoutTileDuration => 'Длительность';
+  String get workoutTileDuration => 'Время';
 
   @override
   String get workoutTileVolume => 'Объём';
@@ -1283,7 +1301,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get workoutSave => 'Сохранить тренировку';
+  String get workoutSave => 'Сохранить';
 
   @override
   String get workoutDiscard => 'Не сохранять';
@@ -1456,7 +1474,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String recoveryHintReadySore(String areas) {
-    return 'Тяжёлая тренировка подойдёт. $areas: сегодня полегче.';
+    return 'Тяжёлая тренировка подойдёт. Сегодня полегче: $areas.';
   }
 
   @override
@@ -1859,7 +1877,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get exerciseSimilar => 'Похожие';
 
   @override
-  String get exerciseAskFelix => 'Спросить Феликса';
+  String get exerciseAskFelix => 'Спросить Felix';
 
   @override
   String exerciseAskFelixDraft(String name) {
@@ -1867,7 +1885,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get exerciseAddToWorkout => 'Добавить в тренировку';
+  String get exerciseAddToWorkout => 'Добавить';
 
   @override
   String get exerciseAdded => 'Добавлено в тренировку';
@@ -2007,7 +2025,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hrZonesColBpm => 'УД/МИН';
 
   @override
-  String get hrZonesColHrr => '50–100% резерва';
+  String get hrZonesColHrr => '50–100%';
 
   @override
   String get hrZonesColLthr => '% ОТ ПАНО';
@@ -3361,7 +3379,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get programNotFound => 'Эта программа недоступна.';
 
   @override
-  String get programLength => 'Длительность';
+  String get programLength => 'Срок';
 
   @override
   String get programPerWeekLabel => 'В неделю';
@@ -3431,7 +3449,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get programStart => 'Начать программу';
+  String get programStart => 'Начать';
 
   @override
   String programStartTitle(String name) {
@@ -3458,7 +3476,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get programToday => 'Сегодня';
 
   @override
-  String get programPickDate => 'Выбрать дату';
+  String get programPickDate => 'Другая дата';
 
   @override
   String get programTrainingDays => 'Дни тренировок';
@@ -3710,7 +3728,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String chatFoodAdd(String kcal) {
-    return 'Добавить в Моё питание · $kcal ккал';
+    return 'Добавить · $kcal ккал';
   }
 
   @override
@@ -3749,10 +3767,10 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get felixPlanAddToWorkouts => 'Добавить в мои тренировки';
+  String get felixPlanAddToWorkouts => 'В мои тренировки';
 
   @override
-  String get felixPlanAddToToday => 'Добавить в план на сегодня';
+  String get felixPlanAddToToday => 'Добавить на сегодня';
 
   @override
   String get felixPlansSection => 'От Феликса';
@@ -4446,7 +4464,7 @@ class AppLocalizationsRu extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return 'Шаги сегодня: $stepsString · в среднем за 7 дней $avgString';
+    return 'Шаги сегодня: $stepsString\nВ среднем за 7 дней: $avgString';
   }
 
   @override
@@ -4629,7 +4647,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cyclingLog => 'Записать тренировку на тренажёре';
 
   @override
-  String get cyclingUnitRides => 'Поездки';
+  String cyclingUnitRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'поездки',
+      many: 'поездок',
+      few: 'поездки',
+      one: 'поездка',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get cyclingHistory => 'История';
@@ -4672,7 +4700,30 @@ class AppLocalizationsRu extends AppLocalizations {
   String get skiStart => 'Начать лыжный день';
 
   @override
-  String get skiUnitDays => 'Лыжные дни';
+  String skiUnitDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'лыжного дня',
+      many: 'лыжных дней',
+      few: 'лыжных дня',
+      one: 'лыжный день',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skiUnitDescents(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'спуска',
+      many: 'спусков',
+      few: 'спуска',
+      one: 'спуск',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get skiHistory => 'История';
@@ -4774,4 +4825,29 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get skiUnfinishedLaunchBody =>
       'Продолжите с того места, где остановились, сохраните записанное или сбросьте.';
+
+  @override
+  String get addExerciseNoWorkoutTitle => 'Нет активной тренировки';
+
+  @override
+  String get addExerciseNoWorkoutBody =>
+      'Начните тренировку, чтобы добавлять в неё упражнения. А пока можно посмотреть библиотеку упражнений.';
+
+  @override
+  String get addExerciseOpenLibrary => 'Библиотека упражнений';
+
+  @override
+  String get assistantSubtitle => 'Ваш личный ассистент';
+
+  @override
+  String get assistantGreeting =>
+      'Привет!\nЯ Felix, ваш персональный ИИ-тренер в FITRIX.';
+
+  @override
+  String get assistantIntro =>
+      'Помогу тренироваться с умом, следить за прогрессом и не терять мотивацию.';
+
+  @override
+  String get assistantQuestion =>
+      'Расскажите, какая у вас сейчас главная цель?';
 }

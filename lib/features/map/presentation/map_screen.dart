@@ -194,8 +194,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
           children: [
             ScreenTitle(l10n.mapTitle),
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.sm, 0, AppSpacing.sm, AppSpacing.sm),
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: PillSelector<String>(
                 items: _filters,
                 selected: _filter,

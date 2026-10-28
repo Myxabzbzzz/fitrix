@@ -148,8 +148,8 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
   Future<void> _addPhoto() async {
     final l10n = AppLocalizations.of(context);
     final source = await showModalBottomSheet<PhotoSource>(
+      useRootNavigator: true,
       context: context,
-      backgroundColor: AppPalette.of(context).sheet,
       builder: (context) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -337,7 +337,7 @@ class _Header extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
             color: palette.textPrimary,
             tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             onPressed: () =>

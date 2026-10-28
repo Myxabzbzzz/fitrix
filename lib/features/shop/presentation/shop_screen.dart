@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/widgets/sheet_safe_area.dart';
 import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
@@ -111,10 +112,11 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     final l10n = AppLocalizations.of(context);
     final palette = AppPalette.of(context);
     showModalBottomSheet<void>(
+      useRootNavigator: true,
       context: context,
-      backgroundColor: palette.sheet,
       showDragHandle: true,
-      builder: (ctx) => Padding(
+      builder: (ctx) => SheetSafeArea(
+          child: Padding(
         padding: const EdgeInsets.fromLTRB(
             AppSpacing.md, 0, AppSpacing.md, AppSpacing.lg),
         child: Column(
@@ -136,7 +138,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 
@@ -206,14 +208,11 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: PillSelector<String>(
-                items: categories,
-                selected: category,
-                labelOf: (c) => _categoryLabel(l10n, c),
-                onSelected: (c) => setState(() => _category = c),
-              ),
+            PillSelector<String>(
+              items: categories,
+              selected: category,
+              labelOf: (c) => _categoryLabel(l10n, c),
+              onSelected: (c) => setState(() => _category = c),
             ),
             Expanded(
               child: RefreshIndicator(

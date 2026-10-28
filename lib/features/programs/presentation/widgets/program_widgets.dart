@@ -42,10 +42,6 @@ String setsReps(ProgramExercise e) => e.repsLow == e.repsHigh
     ? '${e.sets} × ${e.repsHigh}'
     : '${e.sets} × ${e.repsLow}–${e.repsHigh}';
 
-/// kg without a trailing ".0".
-String kgText(double kg) =>
-    kg == kg.roundToDouble() ? kg.toStringAsFixed(0) : kg.toStringAsFixed(1);
-
 /// A small uppercase label with a dot ("4× / WEEK").
 class ProgramTag extends StatelessWidget {
   final String label;

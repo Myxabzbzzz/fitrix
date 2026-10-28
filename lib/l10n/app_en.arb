@@ -8,6 +8,9 @@
   "weight": "Weight",
   "height": "Height",
   "unitKg": "kg",
+  "unitMcg": "mcg",
+  "unitMg": "mg",
+  "unitGrams": "g",
   "signOut": "Sign out",
   "signOutTitle": "Sign out?",
   "signOutLocalBody": "Everything you logged is stored only on this device and will be deleted: profile, workouts, chats, check-ins, plans, food and body weight.",
@@ -379,6 +382,9 @@
       }
     }
   },
+  "coachFirstMessageSport": "Start with {workout}. After that, Felix tailors his advice to what you log.",
+  "@coachFirstMessageSport": {"placeholders": {"workout": {"type": "String"}}},
+  "coachFirstMessageNoPlan": "Log your first workout, and Felix will tailor his advice to it.",
   "gymCoachBackTitle": "Welcome back",
   "gymCoachBackMessage": "Your last workout was {days, plural, one{{days} day} other{{days} days}} ago. A lighter session today gets you back on track.",
   "@gymCoachBackMessage": {
@@ -479,7 +485,7 @@
     }
   },
   "signInCheckEmailTitle": "Check your email",
-  "signInCodePrompt": "Enter the {length}-digit code we sent to\n{email}",
+  "signInCodePrompt": "Enter the {length}-digit code we sent to\n{email}",
   "@signInCodePrompt": {
     "placeholders": {
       "length": {
@@ -2930,7 +2936,7 @@
       }
     }
   },
-  "chatFoodAdd": "Add to My nutrition · {kcal} kcal",
+  "chatFoodAdd": "Add · {kcal} kcal",
   "@chatFoodAdd": {
     "placeholders": {
       "kcal": {
@@ -3277,7 +3283,7 @@
       }
     }
   },
-  "healthStepsTodayAvg": "Steps today: {steps} · 7-day avg {avg}",
+  "healthStepsTodayAvg": "Steps today: {steps}\n7-day average: {avg}",
   "@healthStepsTodayAvg": {
     "placeholders": {
       "steps": {
@@ -3351,7 +3357,8 @@
   "rideElevationLoss": "Elevation loss",
   "cyclingStart": "Start ride",
   "cyclingLog": "Log indoor ride",
-  "cyclingUnitRides": "Rides",
+  "cyclingUnitRides": "{count, plural, =1{ride} other{rides}}",
+  "@cyclingUnitRides": {"placeholders": {"count": {"type": "int"}}},
   "cyclingHistory": "History",
   "cyclingHistoryEmpty": "No rides yet. Rides you record or log will show up here.",
   "cyclingWorkouts": "Workouts",
@@ -3365,7 +3372,10 @@
   "rideLogPower": "Average power, W (optional)",
   "rideNote": "Note",
   "skiStart": "Start ski day",
-  "skiUnitDays": "Ski days",
+  "skiUnitDays": "{count, plural, =1{ski day} other{ski days}}",
+  "@skiUnitDays": {"placeholders": {"count": {"type": "int"}}},
+  "skiUnitDescents": "{count, plural, =1{descent} other{descents}}",
+  "@skiUnitDescents": {"placeholders": {"count": {"type": "int"}}},
   "skiHistory": "History",
   "skiHistoryEmpty": "No ski days yet. Ski days you record will show up here.",
   "skiWorkouts": "Workouts",
@@ -3397,5 +3407,13 @@
   "skiFinishFailed": "Couldn’t finish the ski day. Try again.",
   "rideNotFound": "This ride is no longer here.",
   "skiNotFound": "This ski day is no longer here.",
-  "skiUnfinishedLaunchBody": "Pick it up where you left off, save what was recorded, or discard it."
+  "skiUnfinishedLaunchBody": "Pick it up where you left off, save what was recorded, or discard it.",
+  "addExerciseNoWorkoutTitle": "No active workout",
+  "addExerciseNoWorkoutBody": "Start a workout to add exercises to it. Meanwhile you can browse the exercise library.",
+  "addExerciseOpenLibrary": "Exercise library",
+  "@addExerciseNoWorkoutTitle": {"description": "Add-exercise page opened without an active workout"},
+  "assistantSubtitle": "Your personal assistant",
+  "assistantGreeting": "Hey there!\nI'm Felix, your personal AI coach here in Fitrix.",
+  "assistantIntro": "I'll help you train smarter, track your progress and stay motivated.",
+  "assistantQuestion": "So, tell me — what's your main goal right now?"
 }

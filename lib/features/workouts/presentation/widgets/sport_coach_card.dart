@@ -65,8 +65,13 @@ class SportCoachCard extends ConsumerWidget {
           CoachMessageKind.welcomeBack => l10n.gymCoachBackTitle,
         },
         message: switch (coach.kind) {
-          CoachMessageKind.firstWorkout =>
-            l10n.gymCoachFirstMessage(coach.today),
+          // Weights are a gym thing; without a plan there is no workout
+          // to name (the slot would get a weekday).
+          CoachMessageKind.firstWorkout => suggested == null
+              ? l10n.coachFirstMessageNoPlan
+              : sport == Sport.gym
+                  ? l10n.gymCoachFirstMessage(coach.today)
+                  : l10n.coachFirstMessageSport(coach.today),
           CoachMessageKind.welcomeBack => l10n.gymCoachBackMessage(coach.days),
         },
         imageAsset: 'assets/images/felix_avatar.png',

@@ -80,24 +80,20 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
-        _pillRow(
-          PillSelector<MuscleGroup?>(
-            items: const [null, ...MuscleGroup.values],
-            selected: _group,
-            labelOf: (g) =>
-                g == null ? l10n.exercisesAll : l10n.muscleGroupName(g),
-            onSelected: (g) => setState(() => _group = g),
-          ),
+        PillSelector<MuscleGroup?>(
+          items: const [null, ...MuscleGroup.values],
+          selected: _group,
+          labelOf: (g) =>
+              g == null ? l10n.exercisesAll : l10n.muscleGroupName(g),
+          onSelected: (g) => setState(() => _group = g),
         ),
         const SizedBox(height: AppSpacing.xs),
-        _pillRow(
-          PillSelector<Equipment?>(
-            items: const [null, ...Equipment.values],
-            selected: _equipment,
-            labelOf: (e) =>
-                e == null ? l10n.exercisesAnyEquipment : l10n.equipmentName(e),
-            onSelected: (e) => setState(() => _equipment = e),
-          ),
+        PillSelector<Equipment?>(
+          items: const [null, ...Equipment.values],
+          selected: _equipment,
+          labelOf: (e) =>
+              e == null ? l10n.exercisesAnyEquipment : l10n.equipmentName(e),
+          onSelected: (e) => setState(() => _equipment = e),
         ),
         const SizedBox(height: AppSpacing.md),
         if (recent.isNotEmpty) ...[
@@ -161,11 +157,6 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
       ],
     );
   }
-
-  Widget _pillRow(Widget child) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-        child: child,
-      );
 
   Widget _header(String title, String trailing) {
     final palette = AppPalette.of(context);

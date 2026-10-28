@@ -38,10 +38,10 @@ Future<void> showIndoorRideSheet(
   String? editId,
 }) {
   return showModalBottomSheet<void>(
+    useRootNavigator: true,
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: AppPalette.of(context).background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
     ),
@@ -237,7 +237,7 @@ class _IndoorRideSheetState extends ConsumerState<_IndoorRideSheet> {
   InputDecoration _decoration(AppPalette palette) => InputDecoration(
         counterText: '',
         filled: true,
-        fillColor: palette.tile,
+        fillColor: palette.sheetTile,
         border: OutlineInputBorder(
           borderRadius: AppRadius.smAll,
           borderSide: BorderSide.none,

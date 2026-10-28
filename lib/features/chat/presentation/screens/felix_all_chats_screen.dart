@@ -32,7 +32,7 @@ class FelixAllChatsScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.arrow_back_ios_new, size: 20),
                     color: palette.textPrimary,
                     tooltip:
                         MaterialLocalizations.of(context).backButtonTooltip,

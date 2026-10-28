@@ -250,10 +250,16 @@ class _DayStrip extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      weekdayShort(context, d).characters.first.toUpperCase(),
-                      style: AppText.micro.copyWith(
-                          color: isToday ? fg : palette.textSecondary),
+                    // "пн", not "П": one letter is ambiguous in Russian
+                    // (Mon/Fri, Tue/Sun, Wed/Sat).
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        weekdayShort(context, d),
+                        maxLines: 1,
+                        style: AppText.micro.copyWith(
+                            color: isToday ? fg : palette.textSecondary),
+                      ),
                     ),
                     Text('${d.day}',
                         style: AppText.bodyStrong.copyWith(color: fg)),

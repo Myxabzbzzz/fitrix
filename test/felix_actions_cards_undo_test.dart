@@ -118,10 +118,9 @@ void main() {
       expect(find.text('≈ dragonfruit smoothie'), findsOneWidget);
       // 330 + 195 + 180 from catalog: 330, 195, and Felix's 180.
       final total = (165 * 2).round() + (130 * 1.5).round() + 180;
-      expect(find.textContaining('Add to My nutrition · $total kcal'),
-          findsOneWidget);
+      expect(find.textContaining('Add · $total kcal'), findsOneWidget);
 
-      await tester.tap(find.textContaining('Add to My nutrition'));
+      await tester.tap(find.textContaining('Add · '));
       await tester.pumpAndSettle();
       final entries = container.read(foodLogStoreProvider).day(today);
       expect(entries, hasLength(3));
@@ -135,9 +134,9 @@ void main() {
       await tester.tap(find.text('Undo'));
       await tester.pumpAndSettle();
       expect(container.read(foodLogStoreProvider).day(today), isEmpty);
-      expect(find.textContaining('Add to My nutrition'), findsOneWidget);
+      expect(find.textContaining('Add · '), findsOneWidget);
 
-      await tester.tap(find.textContaining('Add to My nutrition'));
+      await tester.tap(find.textContaining('Add · '));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -153,7 +152,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Dinner').last);
       await tester.pumpAndSettle();
-      await tester.tap(find.textContaining('Add to My nutrition'));
+      await tester.tap(find.textContaining('Add · '));
       await tester.pumpAndSettle();
       final entries = container.read(foodLogStoreProvider).day(today);
       expect(entries.map((e) => e.slot).toSet(), {MealSlot.dinner});

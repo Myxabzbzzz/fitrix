@@ -1,0 +1,583 @@
+// Layout checks for the fixes from the screenshot tour: nothing overflows on
+// an iPhone SE at text scale 1.3, key buttons keep their full Russian label
+// on a 393 pt iPhone, and sheets cover the tab bar.
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/core/session/session_providers.dart';
+import 'package:fitrix/core/theme/app_theme.dart';
+import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/core/widgets/equal_height_row.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/pill_selector.dart';
+import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/core/widgets/title_row.dart';
+import 'package:fitrix/core/widgets/word_fit_text.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
+import 'package:fitrix/features/checkin/presentation/widgets/checkin_sheet.dart';
+import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
+import 'package:fitrix/features/plan/presentation/widgets/add_session_sheet.dart';
+import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/features/workouts/data/workout_catalog.dart';
+import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
+
+import 'support/overflow.dart';
+import 'tour/tour_harness.dart';
+
+/// iPhone 15/16 logical size.
+const proSize = Size(393, 852);
+
+Future<void> setScreen(WidgetTester t, Size size) async {
+  t.view.physicalSize = size * 3;
+  t.view.devicePixelRatio = 3;
+  addTearDown(t.view.reset);
+}
+
+/// [child] inside a localized MaterialApp at [scale].
+Widget localized(Widget child,
+        {String lang = 'ru',
+        double scale = 1,
+        List<Override> overrides = const [],
+        SharedPreferences? prefs}) =>
+    ProviderScope(
+      overrides: [
+        if (prefs != null) sharedPreferencesProvider.overrideWithValue(prefs),
+        ...overrides,
+      ],
+      child: MaterialApp(
+        theme: AppTheme.lightTheme,
+        locale: Locale(lang),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, c) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(scale)),
+          child: c!,
+        ),
+        home: child,
+      ),
+    );
+
+/// Expects the [Text] showing [label] to be drawn whole, on one line and at
+/// full size (16 pt: the large button / chip label), not shrunk or wrapped.
+void expectFullLabel(WidgetTester t, String label, {double size = 16}) {
+  final f = find.text(label);
+  expect(f, findsWidgets, reason: label);
+  final para = t.renderObject<RenderParagraph>(f.first);
+  expect(para.didExceedMaxLines, isFalse, reason: '$label is cut short');
+  expect(para.text.style!.fontSize, size, reason: '$label is shrunk');
+  final line = para.textScaler.scale(size) * para.text.style!.height!;
+  expect(para.size.height, lessThan(line * 1.5), reason: '$label wraps');
+}
+
+/// Expects the label [text] of an ElevatedButton to be laid out at its
+/// full line height and drawn inside the button: a fixed button height
+/// clips descenders without reporting an overflow.
+void expectButtonLabelUnclipped(WidgetTester t, String text) {
+  final label = find.text(text).first;
+  final para = t.renderObject<RenderParagraph>(label);
+  final style = para.text.style!;
+  final lineHeight = para.textScaler.scale(style.fontSize!) * style.height!;
+  expect(para.size.height, greaterThanOrEqualTo(lineHeight - 1),
+      reason: '"$text" squeezed by its button');
+  final button = t.getRect(
+      find.ancestor(of: label, matching: find.byType(ElevatedButton)).first);
+  final rect = t.getRect(label);
+  expect(button.top <= rect.top && rect.bottom <= button.bottom, isTrue,
+      reason: '"$text" drawn outside its button');
+}
+
+void main() {
+  group('language screen', () {
+    testWidgets('scrolls instead of overflowing on SE at text scale 1.3',
+        (t) async {
+      await setScreen(t, iPhoneSeSize);
+      SharedPreferences.setMockInitialValues({'language': 'ru'});
+      final prefs = await SharedPreferences.getInstance();
+      await t.pumpWidget(
+          localized(const LanguageScreen(), scale: 1.3, prefs: prefs));
+      await t.pumpAndSettle();
+      expectNoOverflow(t);
+      await t.scrollUntilVisible(find.text('Продолжить'), 100,
+          scrollable: find.byType(Scrollable).first);
+      expect(find.text('Продолжить').hitTestable(), findsOneWidget);
+    });
+
+    testWidgets('language buttons are tall enough for their label', (t) async {
+      await setScreen(t, proSize);
+      SharedPreferences.setMockInitialValues({'language': 'ru'});
+      final prefs = await SharedPreferences.getInstance();
+      await t.pumpWidget(localized(const LanguageScreen(), prefs: prefs));
+      await t.pumpAndSettle();
+      for (final label in ['Русский', 'English', 'Español']) {
+        final para = t.renderObject<RenderParagraph>(find.text(label));
+        // One line of headingS (16 × 1.4): any less and descenders are cut.
+        expect(para.size.height, greaterThanOrEqualTo(22),
+            reason: '$label is squeezed by its button');
+      }
+    });
+  });
+
+  group('key buttons keep their full Russian label at 393 pt', () {
+    testWidgets('live gym', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      r.container
+          .read(activeWorkoutProvider.notifier)
+          .start(WorkoutCatalog.defaults.first);
+      r.container.read(activeWorkoutExpandedProvider.notifier).state = true;
+      await r.go(AppRouter.home);
+      expectFullLabel(t, 'Упражнение');
+      expectFullLabel(t, 'Завершить');
+      expectNoOverflow(t);
+    });
+
+    testWidgets('workout complete', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      final w = WorkoutCatalog.defaults.first;
+      r.container.read(pendingCompletedWorkoutProvider.notifier).state =
+          CompletedWorkout(
+        templateId: w.id,
+        name: w.name,
+        sport: w.sport,
+        startedAt: tourNow.subtract(const Duration(minutes: 70)),
+        finishedAt: tourNow,
+        exercises: w.exercises,
+      );
+      await r.go(AppRouter.workoutComplete);
+      expectFullLabel(t, 'Не сохранять');
+      expectFullLabel(t, 'Сохранить');
+      expectNoOverflow(t);
+    });
+
+    testWidgets('program detail and its start sheet', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      await r.go(AppRouter.program('upper-lower-4'));
+      expectFullLabel(t, 'Спросить Felix');
+      expectFullLabel(t, 'Начать');
+      await r.tapKey('program-start');
+      expectFullLabel(t, 'Другая дата');
+      expectNoOverflow(t);
+    });
+
+    testWidgets('exercise detail', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      await r.go(AppRouter.exercise('bench-press'));
+      expectFullLabel(t, 'Спросить Felix');
+      expectFullLabel(t, 'Добавить');
+      expectNoOverflow(t);
+    });
+
+    testWidgets('Felix plan card', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      await r.go(AppRouter.felixChat(AssistantTopic.gym));
+      expectFullLabel(t, 'В мои тренировки');
+      expectNoOverflow(t);
+    });
+  });
+
+  group('sheets and the menu cover the tab bar', () {
+    testWidgets('check-in sheet opens on the root navigator', (t) async {
+      final r = await pumpTour(t, proRuLight, seed: const Seed(checkIn: false));
+      await r.go(AppRouter.home);
+      showCheckInSheet(r.context);
+      await r.settle();
+      final inSheet = t.element(find.byType(BottomSheet));
+      expect(Navigator.of(inSheet),
+          same(Navigator.of(inSheet, rootNavigator: true)));
+    });
+
+    testWidgets('week plan sheet opens on the root navigator', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      await r.go(AppRouter.weekPlan);
+      showAddSessionSheet(r.context);
+      await r.settle();
+      final inSheet = t.element(find.byType(BottomSheet));
+      expect(Navigator.of(inSheet),
+          same(Navigator.of(inSheet, rootNavigator: true)));
+    });
+
+    testWidgets('Home menu runs the full height of the screen', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      await r.go(AppRouter.home);
+      await t.tap(find.byIcon(Icons.menu).first);
+      await r.settle();
+      expect(t.getRect(find.byType(Drawer)).bottom, proRuLight.size.height);
+    });
+  });
+
+  testWidgets('add exercise without a workout explains and offers the library',
+      (t) async {
+    final r = await pumpTour(t, proRuLight);
+    await r.go(AppRouter.addExerciseTo());
+    expect(find.text('Нет активной тренировки'), findsOneWidget);
+    await r.tapKey('add-exercise-open-library');
+    expect(r.router.routerDelegate.currentConfiguration.uri.path,
+        AppRouter.exerciseLibrary);
+  });
+
+  testWidgets('live gym timer counts from the app clock', (t) async {
+    final r = await pumpTour(t, proRuLight);
+    r.container
+        .read(activeWorkoutProvider.notifier)
+        .start(WorkoutCatalog.defaults.first);
+    r.container.read(activeWorkoutExpandedProvider.notifier).state = true;
+    r.now = tourNow.add(const Duration(minutes: 12, seconds: 5));
+    await r.go(AppRouter.home);
+    await t.pump(const Duration(seconds: 1));
+    expect(find.text('12:05'), findsOneWidget);
+  });
+
+  testWidgets('live gym weights use the Russian decimal comma', (t) async {
+    final r = await pumpTour(t, proRuLight);
+    r.container
+        .read(activeWorkoutProvider.notifier)
+        .start(WorkoutCatalog.defaults.first);
+    r.container.read(activeWorkoutExpandedProvider.notifier).state = true;
+    await r.go(AppRouter.home);
+    expect(find.textContaining('36,5'), findsWidgets);
+    expect(find.textContaining('36.5'), findsNothing);
+  });
+
+  group('no overflow on an iPhone SE at text scale 1.3', () {
+    for (final (name, location) in [
+      ('home', AppRouter.home),
+      ('my workouts', AppRouter.workouts),
+      ('gym', AppRouter.sportWorkouts(Sport.gym)),
+      ('program', AppRouter.program('upper-lower-4')),
+      ('progress', AppRouter.progress),
+      ('training load', AppRouter.progressLoad),
+      ('nutrition', AppRouter.nutrition),
+      ('micronutrients', AppRouter.nutritionMicros),
+      ('targets', AppRouter.nutritionTargets),
+      ('recovery', AppRouter.recovery),
+      ('ski summary', AppRouter.runSummary('ski-1')),
+      ('ride summary', AppRouter.runSummary('ride-1')),
+      ('profile', AppRouter.me),
+    ]) {
+      testWidgets(name, (t) async {
+        final r = await pumpTour(t, seRuScaled);
+        await r.go(location);
+        expectNoOverflow(t, reason: name);
+      });
+    }
+
+    testWidgets('home before the check-in', (t) async {
+      final r = await pumpTour(t, seRuScaled, seed: Seed.empty);
+      await r.go(AppRouter.home);
+      expectNoOverflow(t);
+    });
+
+    testWidgets('live gym', (t) async {
+      final r = await pumpTour(t, seRuScaled);
+      r.container
+          .read(activeWorkoutProvider.notifier)
+          .start(WorkoutCatalog.defaults.first);
+      r.container.read(activeWorkoutExpandedProvider.notifier).state = true;
+      await r.go(AppRouter.home);
+      expectNoOverflow(t);
+    });
+  });
+
+  group('elevated button labels are not clipped at SE ×1.3', () {
+    testWidgets('intro', (t) async {
+      final r = await pumpTour(t, seRuScaled,
+          seed: const Seed(onboarded: false, profile: false));
+      await r.go(AppRouter.intro);
+      expectButtonLabelUnclipped(t, 'Начать путь');
+    });
+
+    testWidgets('onboarding profile', (t) async {
+      final r =
+          await pumpTour(t, seRuScaled, seed: const Seed(onboarded: false));
+      await r.go(AppRouter.profile);
+      await t.scrollUntilVisible(find.text('Продолжить'), 200,
+          scrollable: find.byType(Scrollable).first);
+      await r.settle();
+      expectButtonLabelUnclipped(t, 'Продолжить');
+    });
+
+    testWidgets('sign in', (t) async {
+      final r = await pumpTour(t, seRuScaled,
+          seed: const Seed(onboarded: false, profile: false), auth: true);
+      await r.go(AppRouter.signIn);
+      expectButtonLabelUnclipped(t, 'Получить код');
+      final google = find.text('Продолжить через Google');
+      await t.ensureVisible(google);
+      await r.settle();
+      final label = t.getRect(google);
+      final button = t.getRect(find
+          .ancestor(of: google, matching: find.byType(OutlinedButton))
+          .first);
+      expect(button.top <= label.top && label.bottom <= button.bottom, isTrue,
+          reason: 'Google label clipped');
+    });
+
+    testWidgets('edit workout sheet', (t) async {
+      final r = await pumpTour(t, seRuScaled);
+      await r.go(AppRouter.sportWorkouts(Sport.gym));
+      await t.longPress(find.text('Legs').first);
+      await r.settle();
+      expectButtonLabelUnclipped(t, 'Сохранить');
+    });
+  });
+
+  testWidgets('weight sheet button sits above the home indicator', (t) async {
+    final r = await pumpTour(t, proRuLight);
+    await r.go(AppRouter.progressWeight);
+    final add = find.byIcon(Icons.add);
+    await t.ensureVisible(add.last);
+    await t.tap(add.last);
+    await r.settle();
+    final save = t.getRect(find.byKey(const ValueKey('weight-save')));
+    final bottomInset = t.view.viewPadding.bottom / t.view.devicePixelRatio;
+    expect(bottomInset, greaterThan(0));
+    expect(
+        save.bottom, lessThanOrEqualTo(proRuLight.size.height - bottomInset));
+  });
+
+  group('Home tile labels', () {
+    for (final cfg in [proRuLight, seRuScaled]) {
+      testWidgets('share one size per row (${cfg.id})', (t) async {
+        final r = await pumpTour(t, cfg);
+        await r.go(AppRouter.home);
+        double size(String label) => t
+            .renderObject<RenderParagraph>(find.text(label))
+            .text
+            .style!
+            .fontSize!;
+        expect(size('МОЙ\nПРОГРЕСС'), size('МОЁ\nПИТАНИЕ'));
+        expect(size('МАГАЗИН'), size('КАРТА\nFITRIX'));
+        expectNoOverflow(t);
+      });
+    }
+  });
+
+  group('a label that cannot fit', () {
+    Widget pair(String a, String b, {double width = 400}) => MaterialApp(
+          theme: AppTheme.lightTheme,
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: width,
+                child: EqualHeightRow(spacing: 8, children: [
+                  AppButton(
+                      label: a, size: AppButtonSize.large, onPressed: () {}),
+                  AppButton(
+                      label: b, size: AppButtonSize.large, onPressed: () {}),
+                ]),
+              ),
+            ),
+          ),
+        );
+
+    testWidgets('shrinks no further than 80 %, then wraps', (t) async {
+      await t.pumpWidget(pair('Go', 'Save this plan now'));
+      final para =
+          t.renderObject<RenderParagraph>(find.text('Save this plan now'));
+      expect(para.text.style!.fontSize, greaterThanOrEqualTo(16 * 0.8));
+      expect(para.didExceedMaxLines, isFalse);
+      expectNoOverflow(t);
+    });
+
+    testWidgets('makes its neighbour just as tall', (t) async {
+      await t.pumpWidget(MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: MediaQuery(
+          data: const MediaQueryData(textScaler: TextScaler.linear(1.3)),
+          child: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 240,
+                child: EqualHeightRow(spacing: 8, children: [
+                  AppButton(
+                      label: 'Go', size: AppButtonSize.large, onPressed: () {}),
+                  AppButton(
+                      label: 'Save this plan',
+                      size: AppButtonSize.large,
+                      onPressed: () {}),
+                ]),
+              ),
+            ),
+          ),
+        ),
+      ));
+      final a = t.getSize(find.byType(AppButton).first);
+      final b = t.getSize(find.byType(AppButton).last);
+      expect(b.height, greaterThan(48));
+      expect(a.height, b.height);
+    });
+  });
+
+  testWidgets('pill rows inside a padded page span the full screen width',
+      (t) async {
+    final r = await pumpTour(t, proRuLight);
+    for (final location in [
+      AppRouter.nutritionMicros,
+      AppRouter.programs,
+      AppRouter.nutritionTargets,
+    ]) {
+      await r.go(location);
+      final row =
+          t.getRect(find.byWidgetPredicate((w) => w is PillSelector).first);
+      expect(row.left, 0, reason: location);
+      expect(row.width, proRuLight.size.width, reason: location);
+    }
+  });
+
+  testWidgets('Home menu opens with an edge swipe on Home only', (t) async {
+    final r = await pumpTour(t, proRuLight);
+    await r.go(AppRouter.home);
+    await t.dragFrom(const Offset(2, 400), const Offset(300, 0));
+    await r.settle();
+    expect(find.byType(Drawer), findsOneWidget);
+  });
+
+  testWidgets('root tab title is level with its trailing action', (t) async {
+    final r = await pumpTour(t, proRuLight);
+    await r.go(AppRouter.shop);
+    final title = t.getRect(find.byType(WordFitText).first);
+    final trailing = t.getRect(find
+        .descendant(of: find.byType(ScreenTitle), matching: find.byType(Center))
+        .last);
+    final line =
+        title.top + AppText.headingXL.fontSize! * AppText.headingXL.height! / 2;
+    expect((trailing.center.dy - line).abs(), lessThan(1));
+  });
+
+  testWidgets('TitleRow hugs the right edge and works in IntrinsicHeight',
+      (t) async {
+    await t.pumpWidget(const MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: SizedBox(
+            width: 300,
+            child: IntrinsicHeight(
+              child: TitleRow(
+                title: Text('Title'),
+                trailing: Text('39', key: ValueKey('value')),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ));
+    expectNoOverflow(t);
+    final row = t.getRect(find.byType(TitleRow));
+    expect(t.getRect(find.byKey(const ValueKey('value'))).right, row.right);
+    expect(t.getRect(find.text('Title')).left, row.left);
+  });
+
+  testWidgets('hold-to-finish fill covers the whole button mid-hold',
+      (t) async {
+    await t.pumpWidget(MaterialApp(
+      theme: AppTheme.lightTheme,
+      home: Scaffold(
+        body: Center(
+          child: SizedBox(
+            width: 300,
+            child: HoldToFinish(label: 'Hold to finish', onDone: () {}),
+          ),
+        ),
+      ),
+    ));
+    final button = t.getRect(find.byType(HoldToFinish));
+    final gesture = await t.startGesture(button.center);
+    await t.pump();
+    await t.pump(holdToFinish ~/ 2);
+    final fill = t.getRect(find.descendant(
+        of: find.byType(FractionallySizedBox),
+        matching: find.byType(ColoredBox)));
+    expect(fill.height, button.height);
+    expect(fill.top, button.top);
+    expect(fill.width, greaterThan(0));
+    await gesture.cancel();
+    await t.pumpAndSettle();
+  });
+
+  testWidgets('onboarding chat greets in Russian, stamped by the app clock',
+      (t) async {
+    final r = await pumpTour(t, proRuLight,
+        seed: const Seed(onboarded: false, chats: false));
+    await r.go(AppRouter.chat);
+    expect(find.textContaining('Я Felix'), findsOneWidget);
+    expect(find.textContaining('Hey there'), findsNothing);
+    expect(find.text('Ваш личный ассистент'), findsOneWidget);
+    expect(find.textContaining('20 окт. 2026'), findsOneWidget);
+  });
+
+  group('tile labels at SE ×1.3 keep the 80 % floor and aligned values', () {
+    void expectFloor(WidgetTester t, String label, double base) {
+      final para = t.renderObject<RenderParagraph>(find.text(label).first);
+      expect(para.text.style!.fontSize, greaterThanOrEqualTo(base * 0.8 - 0.01),
+          reason: label);
+    }
+
+    testWidgets('workout summary', (t) async {
+      final r = await pumpTour(t, seRuScaled);
+      final w = WorkoutCatalog.defaults.first;
+      r.container.read(pendingCompletedWorkoutProvider.notifier).state =
+          CompletedWorkout(
+        templateId: w.id,
+        name: w.name,
+        sport: w.sport,
+        startedAt: tourNow.subtract(const Duration(minutes: 70)),
+        finishedAt: tourNow,
+        exercises: w.exercises,
+      );
+      await r.go(AppRouter.workoutComplete);
+      for (final l in ['Время', 'Объём', 'Подходы']) {
+        expectFloor(t, l, 14);
+      }
+      // The last text of each tile in the first row is its value.
+      final row = find.byType(EqualHeightRow).first;
+      final tiles = find.descendant(
+          of: row, matching: find.byType(Container), skipOffstage: false);
+      final tops = <double>{
+        for (final tile in tiles.evaluate())
+          t
+              .getRect(find
+                  .descendant(
+                      of: find.byElementPredicate((e) => e == tile),
+                      matching: find.byType(Text))
+                  .last)
+              .bottom
+              .roundToDouble(),
+      };
+      expect(tops, hasLength(1), reason: 'values on one line');
+      expectNoOverflow(t);
+    });
+
+    testWidgets('program facts', (t) async {
+      final r = await pumpTour(t, seRuScaled);
+      await r.go(AppRouter.program('upper-lower-4'));
+      for (final l in ['Срок', 'В неделю', 'Занятие']) {
+        expectFloor(t, l, 12);
+      }
+      expectNoOverflow(t);
+    });
+
+    testWidgets('exercise numbers keep to their columns', (t) async {
+      final r = await pumpTour(t, seRuScaled);
+      await r.go(AppRouter.exercise('bench-press'));
+      final e1rm = t.getRect(find.byKey(const ValueKey('e1rm-stat')));
+      final value = t.getRect(find
+          .descendant(
+              of: find.byKey(const ValueKey('e1rm-stat')),
+              matching: find.byType(Text))
+          .last);
+      expect(value.right, lessThanOrEqualTo(e1rm.right + 0.5));
+      expectNoOverflow(t);
+    });
+  });
+}

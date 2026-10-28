@@ -33,6 +33,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get unitKg => 'kg';
 
   @override
+  String get unitMcg => 'µg';
+
+  @override
+  String get unitMg => 'mg';
+
+  @override
+  String get unitGrams => 'g';
+
+  @override
   String get signOut => 'Cerrar sesión';
 
   @override
@@ -561,7 +570,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get workoutAddSet => 'Añadir serie';
 
   @override
-  String get workoutFinishButton => 'Terminar entrenamiento';
+  String get workoutFinishButton => 'Terminar';
 
   @override
   String get workoutColSet => '#';
@@ -582,6 +591,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String gymCoachFirstMessage(String workout) {
     return 'Empieza con $workout. La próxima vez Felix te sugerirá pesos según lo que registres.';
   }
+
+  @override
+  String coachFirstMessageSport(String workout) {
+    return 'Empieza con $workout. Después, Felix te aconsejará según lo que registres.';
+  }
+
+  @override
+  String get coachFirstMessageNoPlan =>
+      'Registra tu primer entrenamiento y Felix te aconsejará a partir de él.';
 
   @override
   String get gymCoachBackTitle => '¡Hola de nuevo!';
@@ -771,7 +789,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String signInCodePrompt(String length, String email) {
-    return 'Introduce el código de $length dígitos que enviamos a\n$email';
+    return 'Introduce el código de $length dígitos que enviamos a\n$email';
   }
 
   @override
@@ -1262,7 +1280,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get workoutSave => 'Guardar entrenamiento';
+  String get workoutSave => 'Guardar';
 
   @override
   String get workoutDiscard => 'Descartar';
@@ -1834,7 +1852,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get exerciseAddToWorkout => 'Añadir al entrenamiento';
+  String get exerciseAddToWorkout => 'Añadir';
 
   @override
   String get exerciseAdded => 'Añadido al entrenamiento';
@@ -1972,7 +1990,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get hrZonesColBpm => 'LPM';
 
   @override
-  String get hrZonesColHrr => '50–100% reserva';
+  String get hrZonesColHrr => '50–100%';
 
   @override
   String get hrZonesColLthr => '% DE LTHR';
@@ -3378,7 +3396,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get programStart => 'Empezar programa';
+  String get programStart => 'Empezar';
 
   @override
   String programStartTitle(String name) {
@@ -3403,7 +3421,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get programToday => 'Hoy';
 
   @override
-  String get programPickDate => 'Elegir fecha';
+  String get programPickDate => 'Otra fecha';
 
   @override
   String get programTrainingDays => 'Días de entreno';
@@ -3655,7 +3673,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String chatFoodAdd(String kcal) {
-    return 'Añadir a Mi nutrición · $kcal kcal';
+    return 'Añadir · $kcal kcal';
   }
 
   @override
@@ -3692,10 +3710,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get felixPlanAddToWorkouts => 'Añadir a Mis entrenamientos';
+  String get felixPlanAddToWorkouts => 'A mis entrenamientos';
 
   @override
-  String get felixPlanAddToToday => 'Añadir al plan de hoy';
+  String get felixPlanAddToToday => 'Añadir para hoy';
 
   @override
   String get felixPlansSection => 'De Felix';
@@ -4380,7 +4398,7 @@ class AppLocalizationsEs extends AppLocalizations {
         intl.NumberFormat.decimalPattern(localeName);
     final String avgString = avgNumberFormat.format(avg);
 
-    return 'Pasos hoy: $stepsString · media de 7 días $avgString';
+    return 'Pasos hoy: $stepsString\nMedia de 7 días: $avgString';
   }
 
   @override
@@ -4564,7 +4582,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cyclingLog => 'Registrar ciclismo en interior';
 
   @override
-  String get cyclingUnitRides => 'Salidas';
+  String cyclingUnitRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'salidas',
+      one: 'salida',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get cyclingHistory => 'Historial';
@@ -4607,7 +4633,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get skiStart => 'Empezar día de esquí';
 
   @override
-  String get skiUnitDays => 'Días de esquí';
+  String skiUnitDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'días de esquí',
+      one: 'día de esquí',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String skiUnitDescents(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'descensos',
+      one: 'descenso',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get skiHistory => 'Historial';
@@ -4709,4 +4754,29 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get skiUnfinishedLaunchBody =>
       'Continúa donde lo dejaste, guarda lo registrado o descártalo.';
+
+  @override
+  String get addExerciseNoWorkoutTitle => 'No hay ningún entrenamiento activo';
+
+  @override
+  String get addExerciseNoWorkoutBody =>
+      'Empieza un entrenamiento para añadirle ejercicios. Mientras tanto puedes ver la biblioteca de ejercicios.';
+
+  @override
+  String get addExerciseOpenLibrary => 'Biblioteca de ejercicios';
+
+  @override
+  String get assistantSubtitle => 'Tu asistente personal';
+
+  @override
+  String get assistantGreeting =>
+      '¡Hola!\nSoy Felix, tu entrenador personal con IA en FITRIX.';
+
+  @override
+  String get assistantIntro =>
+      'Te ayudaré a entrenar mejor, seguir tu progreso y mantener la motivación.';
+
+  @override
+  String get assistantQuestion =>
+      'Cuéntame: ¿cuál es tu objetivo principal ahora?';
 }

@@ -23,85 +23,98 @@ class LanguageScreen extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            children: [
-              if (onContinue != null)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    key: const Key('language-back'),
-                    icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-                    color: palette.textPrimary,
-                    onPressed: onContinue,
-                  ),
-                ),
-              SizedBox(height: onContinue != null ? 0 : AppSpacing.xl),
-
-              // FITRIX Logo
-              const FitrixLogo(fontSize: 36),
-
-              const SizedBox(height: AppSpacing.xl),
-
-              // Globe Icon
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: palette.textPrimary,
-                  borderRadius: AppRadius.fullAll,
-                ),
-                child: Icon(
-                  Icons.language,
-                  size: 50,
-                  color: palette.background,
-                ),
-              ),
-
-              const SizedBox(height: AppSpacing.xl),
-
-              // Language Selection Card
-              Container(
+        // Scrolls on short screens (SE, large text) instead of overflowing;
+        // on tall ones the Spacer still pins Continue to the bottom.
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.lg),
-                decoration: BoxDecoration(
-                  color: palette.background,
-                  borderRadius: AppRadius.mdAll,
-                  border: Border.all(color: palette.border),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                child: Column(
+                  children: [
+                    if (onContinue != null)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          key: const Key('language-back'),
+                          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                          color: palette.textPrimary,
+                          onPressed: onContinue,
+                        ),
+                      ),
+                    SizedBox(height: onContinue != null ? 0 : AppSpacing.xl),
+
+                    // FITRIX Logo
+                    const FitrixLogo(fontSize: 36),
+
+                    const SizedBox(height: AppSpacing.xl),
+
+                    // Globe Icon
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: palette.textPrimary,
+                        borderRadius: AppRadius.fullAll,
+                      ),
+                      child: Icon(
+                        Icons.language,
+                        size: 50,
+                        color: palette.background,
+                      ),
                     ),
+
+                    const SizedBox(height: AppSpacing.xl),
+
+                    // Language Selection Card
+                    Container(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      decoration: BoxDecoration(
+                        color: palette.background,
+                        borderRadius: AppRadius.mdAll,
+                        border: Border.all(color: palette.border),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: AppConstants.languages.entries.map((entry) {
+                          final isSelected = selectedLanguage == entry.key;
+                          return Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: AppSpacing.sm),
+                            child: _buildLanguageButton(
+                              context,
+                              ref,
+                              entry.key,
+                              entry.value,
+                              isSelected,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+
+                    // At least a section's gap above Continue on short
+                    // screens, where the Spacer collapses.
+                    const SizedBox(height: AppSpacing.lg),
+                    const Spacer(),
+
+                    // Continue Button: keeps the highlighted language even if
+                    // it's the device default nobody tapped.
+                    _buildContinueButton(context, ref, selectedLanguage),
+
+                    const SizedBox(height: AppSpacing.xl),
                   ],
                 ),
-                child: Column(
-                  children: AppConstants.languages.entries.map((entry) {
-                    final isSelected = selectedLanguage == entry.key;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                      child: _buildLanguageButton(
-                        context,
-                        ref,
-                        entry.key,
-                        entry.value,
-                        isSelected,
-                      ),
-                    );
-                  }).toList(),
-                ),
               ),
-
-              const Spacer(),
-
-              // Continue Button: keeps the highlighted language even if
-              // it's the device default nobody tapped.
-              _buildContinueButton(context, ref, selectedLanguage),
-
-              const SizedBox(height: AppSpacing.xl),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -118,7 +131,6 @@ class LanguageScreen extends ConsumerWidget {
 
     return SizedBox(
       width: double.infinity,
-      height: 50,
       child: ElevatedButton(
         onPressed: () {
           ref.read(selectedLanguageProvider.notifier).setLanguage(code);
@@ -127,6 +139,11 @@ class LanguageScreen extends ConsumerWidget {
           backgroundColor: isSelected ? palette.accent : palette.tile,
           foregroundColor: isSelected ? palette.onAccent : palette.textPrimary,
           elevation: 0,
+          // At least 50 tall, growing with the text so descenders
+          // (у, g, ñ) are never clipped.
+          minimumSize: const Size.fromHeight(50),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
           shape: RoundedRectangleBorder(
             borderRadius: AppRadius.lgAll,
           ),
@@ -148,8 +165,12 @@ class LanguageScreen extends ConsumerWidget {
   ) {
     return SizedBox(
       width: double.infinity,
-      height: 54,
       child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size.fromHeight(54),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+        ),
         onPressed: () async {
           final router = GoRouter.of(context);
           await ref
