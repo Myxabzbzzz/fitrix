@@ -3455,5 +3455,17 @@
   "planDurationUnderMinute": "<1 min",
   "@planDurationUnderMinute": {"description": "A finished session shorter than a minute"},
   "durationSeconds": "{s} s",
-  "@durationSeconds": {"description": "A workout shorter than a minute, in seconds", "placeholders": {"s": {"type": "int"}}}
+  "@durationSeconds": {"description": "A workout shorter than a minute, in seconds", "placeholders": {"s": {"type": "int"}}},
+  "coachFirstRunning": "Start with {workout}. Next time Felix suggests your paces from the runs you record.",
+  "@coachFirstRunning": {"description": "First-run coach card on Running", "placeholders": {"workout": {"type": "String"}}},
+  "coachFirstRunningNoPlan": "Record your first run, and Felix will suggest paces from it.",
+  "coachFirstCycling": "Start with {workout}. Next time Felix suggests how hard to ride from what you record.",
+  "@coachFirstCycling": {"description": "First-run coach card on Cycling", "placeholders": {"workout": {"type": "String"}}},
+  "coachFirstCyclingNoPlan": "Record your first ride, and Felix will suggest how hard to ride next.",
+  "coachFirstFootball": "Start with {workout}. After each game you log, Felix plans your recovery around it.",
+  "@coachFirstFootball": {"description": "First-run coach card on Football", "placeholders": {"workout": {"type": "String"}}},
+  "coachFirstFootballNoPlan": "Log your first game or practice, and Felix will plan your recovery around it.",
+  "coachFirstSkiing": "Start with {workout}. Felix then follows your descents and vertical from the days you record.",
+  "@coachFirstSkiing": {"description": "First-run coach card on Winter sports", "placeholders": {"workout": {"type": "String"}}},
+  "coachFirstSkiingNoPlan": "Record your first ski day, and Felix will follow your descents and vertical."
 }

@@ -1366,5 +1366,13 @@
   "checkinTitleAfternoon": "Chequeo de la tarde",
   "checkinTitleEvening": "Chequeo de la noche",
   "planDurationUnderMinute": "<1 min",
-  "durationSeconds": "{s} s"
+  "durationSeconds": "{s} s",
+  "coachFirstRunning": "Empieza con {workout}. Después, Felix te sugerirá ritmos según tus carreras.",
+  "coachFirstRunningNoPlan": "Registra tu primera carrera y Felix te sugerirá ritmos a partir de ella.",
+  "coachFirstCycling": "Empieza con {workout}. Después, Felix te dirá a qué intensidad rodar según tus salidas.",
+  "coachFirstCyclingNoPlan": "Registra tu primera salida y Felix te dirá a qué intensidad rodar después.",
+  "coachFirstFootball": "Empieza con {workout}. Tras cada partido que registres, Felix te dirá cómo recuperarte.",
+  "coachFirstFootballNoPlan": "Registra tu primer partido o entrenamiento y Felix te dirá cómo recuperarte.",
+  "coachFirstSkiing": "Empieza con {workout}. Después, Felix seguirá tus descensos y desnivel según lo que registres.",
+  "coachFirstSkiingNoPlan": "Registra tu primer día de esquí y Felix seguirá tus descensos y desnivel."
 }

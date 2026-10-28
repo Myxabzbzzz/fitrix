@@ -4957,4 +4957,40 @@ class AppLocalizationsRu extends AppLocalizations {
   String durationSeconds(int s) {
     return '$s с';
   }
+
+  @override
+  String coachFirstRunning(String workout) {
+    return 'Начните сегодня: $workout. Дальше Felix подскажет темп по вашим пробежкам.';
+  }
+
+  @override
+  String get coachFirstRunningNoPlan =>
+      'Запишите первую пробежку, и Felix подскажет темп по ней.';
+
+  @override
+  String coachFirstCycling(String workout) {
+    return 'Начните сегодня: $workout. Дальше Felix подскажет нагрузку по вашим поездкам.';
+  }
+
+  @override
+  String get coachFirstCyclingNoPlan =>
+      'Запишите первую поездку, и Felix подскажет, с какой нагрузкой ехать дальше.';
+
+  @override
+  String coachFirstFootball(String workout) {
+    return 'Начните сегодня: $workout. После каждой записанной игры Felix подскажет, как восстановиться.';
+  }
+
+  @override
+  String get coachFirstFootballNoPlan =>
+      'Запишите первую игру или тренировку, и Felix подскажет, как восстановиться.';
+
+  @override
+  String coachFirstSkiing(String workout) {
+    return 'Начните сегодня: $workout. Дальше Felix будет следить за спусками и перепадом высот по вашим записям.';
+  }
+
+  @override
+  String get coachFirstSkiingNoPlan =>
+      'Запишите первый лыжный день, и Felix будет следить за спусками и перепадом высот.';
 }

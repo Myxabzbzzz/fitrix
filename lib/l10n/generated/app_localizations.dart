@@ -7894,6 +7894,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{s} s'**
   String durationSeconds(int s);
+
+  /// First-run coach card on Running
+  ///
+  /// In en, this message translates to:
+  /// **'Start with {workout}. Next time Felix suggests your paces from the runs you record.'**
+  String coachFirstRunning(String workout);
+
+  /// No description provided for @coachFirstRunningNoPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your first run, and Felix will suggest paces from it.'**
+  String get coachFirstRunningNoPlan;
+
+  /// First-run coach card on Cycling
+  ///
+  /// In en, this message translates to:
+  /// **'Start with {workout}. Next time Felix suggests how hard to ride from what you record.'**
+  String coachFirstCycling(String workout);
+
+  /// No description provided for @coachFirstCyclingNoPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your first ride, and Felix will suggest how hard to ride next.'**
+  String get coachFirstCyclingNoPlan;
+
+  /// First-run coach card on Football
+  ///
+  /// In en, this message translates to:
+  /// **'Start with {workout}. After each game you log, Felix plans your recovery around it.'**
+  String coachFirstFootball(String workout);
+
+  /// No description provided for @coachFirstFootballNoPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Log your first game or practice, and Felix will plan your recovery around it.'**
+  String get coachFirstFootballNoPlan;
+
+  /// First-run coach card on Winter sports
+  ///
+  /// In en, this message translates to:
+  /// **'Start with {workout}. Felix then follows your descents and vertical from the days you record.'**
+  String coachFirstSkiing(String workout);
+
+  /// No description provided for @coachFirstSkiingNoPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your first ski day, and Felix will follow your descents and vertical.'**
+  String get coachFirstSkiingNoPlan;
 }
 
 class _AppLocalizationsDelegate

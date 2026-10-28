@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fitrix/features/workouts/presentation/widgets/sport_coach_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fitrix/core/session/session_providers.dart';
@@ -233,6 +234,23 @@ void main() {
       expect(find.text('Готовы к первой тренировке?'), findsOneWidget);
       expect(find.text('Ready for your first workout?'), findsNothing);
     });
+
+    for (final (sport, word) in [
+      (Sport.running, 'темп'),
+      (Sport.cycling, 'нагрузк'),
+      (Sport.football, 'восстановиться'),
+      (Sport.winterSports, 'спуск'),
+    ]) {
+      testWidgets('first-run coach card talks about ${sport.name}, not weights',
+          (tester) async {
+        await pumpRu(tester,
+            Scaffold(body: SportCoachCard(sport: sport, onStart: (_) {})));
+        await tester.pumpAndSettle();
+        final card = tester.widget<CoachCard>(find.byType(CoachCard));
+        expect(card.message, contains(word));
+        expect(card.message, isNot(contains('веса')));
+      });
+    }
   });
 
   group('home tiles', () {

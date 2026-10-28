@@ -1366,5 +1366,13 @@
   "checkinTitleAfternoon": "Дневной чек-ин",
   "checkinTitleEvening": "Вечерний чек-ин",
   "planDurationUnderMinute": "<1 мин",
-  "durationSeconds": "{s} с"
+  "durationSeconds": "{s} с",
+  "coachFirstRunning": "Начните сегодня: {workout}. Дальше Felix подскажет темп по вашим пробежкам.",
+  "coachFirstRunningNoPlan": "Запишите первую пробежку, и Felix подскажет темп по ней.",
+  "coachFirstCycling": "Начните сегодня: {workout}. Дальше Felix подскажет нагрузку по вашим поездкам.",
+  "coachFirstCyclingNoPlan": "Запишите первую поездку, и Felix подскажет, с какой нагрузкой ехать дальше.",
+  "coachFirstFootball": "Начните сегодня: {workout}. После каждой записанной игры Felix подскажет, как восстановиться.",
+  "coachFirstFootballNoPlan": "Запишите первую игру или тренировку, и Felix подскажет, как восстановиться.",
+  "coachFirstSkiing": "Начните сегодня: {workout}. Дальше Felix будет следить за спусками и перепадом высот по вашим записям.",
+  "coachFirstSkiingNoPlan": "Запишите первый лыжный день, и Felix будет следить за спусками и перепадом высот."
 }

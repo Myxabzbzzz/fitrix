@@ -65,13 +65,10 @@ class SportCoachCard extends ConsumerWidget {
           CoachMessageKind.welcomeBack => l10n.gymCoachBackTitle,
         },
         message: switch (coach.kind) {
-          // Weights are a gym thing; without a plan there is no workout
-          // to name (the slot would get a weekday).
-          CoachMessageKind.firstWorkout => suggested == null
-              ? l10n.coachFirstMessageNoPlan
-              : sport == Sport.gym
-                  ? l10n.gymCoachFirstMessage(coach.today)
-                  : l10n.coachFirstMessageSport(coach.today),
+          // Without a plan there is no workout to name (the slot would
+          // get a weekday).
+          CoachMessageKind.firstWorkout =>
+            _firstMessage(l10n, sport, suggested == null ? null : coach.today),
           CoachMessageKind.welcomeBack => l10n.gymCoachBackMessage(coach.days),
         },
         imageAsset: 'assets/images/felix_avatar.png',
@@ -92,3 +89,27 @@ class SportCoachCard extends ConsumerWidget {
     );
   }
 }
+
+/// The first-run message: what Felix does with this sport's records. With
+/// [workout], it starts with that plan.
+String _firstMessage(AppLocalizations l10n, Sport sport, String? workout) =>
+    switch (sport) {
+      Sport.gym => workout == null
+          ? l10n.coachFirstMessageNoPlan
+          : l10n.gymCoachFirstMessage(workout),
+      Sport.running => workout == null
+          ? l10n.coachFirstRunningNoPlan
+          : l10n.coachFirstRunning(workout),
+      Sport.cycling => workout == null
+          ? l10n.coachFirstCyclingNoPlan
+          : l10n.coachFirstCycling(workout),
+      Sport.football => workout == null
+          ? l10n.coachFirstFootballNoPlan
+          : l10n.coachFirstFootball(workout),
+      Sport.winterSports => workout == null
+          ? l10n.coachFirstSkiingNoPlan
+          : l10n.coachFirstSkiing(workout),
+      Sport.fitness => workout == null
+          ? l10n.coachFirstMessageNoPlan
+          : l10n.coachFirstMessageSport(workout),
+    };

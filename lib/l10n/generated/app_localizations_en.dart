@@ -4867,4 +4867,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String durationSeconds(int s) {
     return '$s s';
   }
+
+  @override
+  String coachFirstRunning(String workout) {
+    return 'Start with $workout. Next time Felix suggests your paces from the runs you record.';
+  }
+
+  @override
+  String get coachFirstRunningNoPlan =>
+      'Record your first run, and Felix will suggest paces from it.';
+
+  @override
+  String coachFirstCycling(String workout) {
+    return 'Start with $workout. Next time Felix suggests how hard to ride from what you record.';
+  }
+
+  @override
+  String get coachFirstCyclingNoPlan =>
+      'Record your first ride, and Felix will suggest how hard to ride next.';
+
+  @override
+  String coachFirstFootball(String workout) {
+    return 'Start with $workout. After each game you log, Felix plans your recovery around it.';
+  }
+
+  @override
+  String get coachFirstFootballNoPlan =>
+      'Log your first game or practice, and Felix will plan your recovery around it.';
+
+  @override
+  String coachFirstSkiing(String workout) {
+    return 'Start with $workout. Felix then follows your descents and vertical from the days you record.';
+  }
+
+  @override
+  String get coachFirstSkiingNoPlan =>
+      'Record your first ski day, and Felix will follow your descents and vertical.';
 }
