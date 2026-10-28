@@ -551,7 +551,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get workoutAddSet => 'Yondashuv qo‘shish';
 
   @override
-  String get workoutFinishButton => 'Mashg‘ulotni yakunlash';
+  String get workoutFinishButton => 'Yakunlash';
 
   @override
   String get workoutColSet => '#';
@@ -1239,7 +1239,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get workoutSave => 'Mashg‘ulotni saqlash';
+  String get workoutSave => 'Saqlash';
 
   @override
   String get workoutDiscard => 'Saqlamaslik';
@@ -1793,7 +1793,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get exerciseSimilar => 'O‘xshash';
 
   @override
-  String get exerciseAskFelix => 'Felixdan so‘rash';
+  String get exerciseAskFelix => 'So‘rash';
 
   @override
   String exerciseAskFelixDraft(String name) {
@@ -1801,7 +1801,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get exerciseAddToWorkout => 'Mashg‘ulotga qo‘shish';
+  String get exerciseAddToWorkout => 'Qo‘shish';
 
   @override
   String get exerciseAdded => 'Mashg‘ulotga qo‘shildi';
@@ -1933,7 +1933,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get hrZonesColBpm => 'URISH/DAQ';
 
   @override
-  String get hrZonesColHrr => '50–100% zaxira';
+  String get hrZonesColHrr => '50–100%';
 
   @override
   String get hrZonesColLthr => 'LTHR %';
@@ -3332,7 +3332,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get programStart => 'Dasturni boshlash';
+  String get programStart => 'Boshlash';
 
   @override
   String programStartTitle(String name) {
@@ -3357,7 +3357,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get programToday => 'Bugun';
 
   @override
-  String get programPickDate => 'Sanani tanlash';
+  String get programPickDate => 'Boshqa sana';
 
   @override
   String get programTrainingDays => 'Mashg‘ulot kunlari';
@@ -3602,7 +3602,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String chatFoodAdd(String kcal) {
-    return 'Mening ovqatlanishimga qo‘shish · $kcal kkal';
+    return 'Qo‘shish · $kcal kkal';
   }
 
   @override
@@ -3638,10 +3638,10 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get felixPlanAddToWorkouts => 'Mening mashg‘ulotlarimga qo‘shish';
+  String get felixPlanAddToWorkouts => 'Rejani qo‘shish';
 
   @override
-  String get felixPlanAddToToday => 'Bugungi rejaga qo‘shish';
+  String get felixPlanAddToToday => 'Bugunga qo‘shish';
 
   @override
   String get felixPlansSection => 'Felixdan';

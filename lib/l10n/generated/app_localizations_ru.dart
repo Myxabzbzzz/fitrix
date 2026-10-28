@@ -575,7 +575,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get workoutAddSet => 'Добавить подход';
 
   @override
-  String get workoutFinishButton => 'Завершить тренировку';
+  String get workoutFinishButton => 'Завершить';
 
   @override
   String get workoutColSet => '#';
@@ -1283,7 +1283,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get workoutSave => 'Сохранить тренировку';
+  String get workoutSave => 'Сохранить';
 
   @override
   String get workoutDiscard => 'Не сохранять';
@@ -1859,7 +1859,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get exerciseSimilar => 'Похожие';
 
   @override
-  String get exerciseAskFelix => 'Спросить Феликса';
+  String get exerciseAskFelix => 'Спросить';
 
   @override
   String exerciseAskFelixDraft(String name) {
@@ -1867,7 +1867,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get exerciseAddToWorkout => 'Добавить в тренировку';
+  String get exerciseAddToWorkout => 'Добавить';
 
   @override
   String get exerciseAdded => 'Добавлено в тренировку';
@@ -2007,7 +2007,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hrZonesColBpm => 'УД/МИН';
 
   @override
-  String get hrZonesColHrr => '50–100% резерва';
+  String get hrZonesColHrr => '50–100%';
 
   @override
   String get hrZonesColLthr => '% ОТ ПАНО';
@@ -3431,7 +3431,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get programStart => 'Начать программу';
+  String get programStart => 'Начать';
 
   @override
   String programStartTitle(String name) {
@@ -3458,7 +3458,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get programToday => 'Сегодня';
 
   @override
-  String get programPickDate => 'Выбрать дату';
+  String get programPickDate => 'Другая дата';
 
   @override
   String get programTrainingDays => 'Дни тренировок';
@@ -3710,7 +3710,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String chatFoodAdd(String kcal) {
-    return 'Добавить в Моё питание · $kcal ккал';
+    return 'Добавить · $kcal ккал';
   }
 
   @override
@@ -3749,10 +3749,10 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get felixPlanAddToWorkouts => 'Добавить в мои тренировки';
+  String get felixPlanAddToWorkouts => 'Добавить план';
 
   @override
-  String get felixPlanAddToToday => 'Добавить в план на сегодня';
+  String get felixPlanAddToToday => 'Добавить на сегодня';
 
   @override
   String get felixPlansSection => 'От Феликса';

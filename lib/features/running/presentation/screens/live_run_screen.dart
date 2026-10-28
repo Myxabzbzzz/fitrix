@@ -438,12 +438,14 @@ class _HoldToFinishState extends State<HoldToFinish>
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                    child: Text(
-                      widget.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style:
-                          AppText.headingS.copyWith(color: palette.textPrimary),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        widget.label,
+                        maxLines: 1,
+                        style: AppText.headingS
+                            .copyWith(color: palette.textPrimary),
+                      ),
                     ),
                   ),
                 ],

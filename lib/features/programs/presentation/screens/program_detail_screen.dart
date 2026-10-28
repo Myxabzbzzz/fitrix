@@ -261,7 +261,6 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     Expanded(
-                      flex: 2,
                       child: AppButton(
                         key: const Key('program-start'),
                         label: l10n.programStart,

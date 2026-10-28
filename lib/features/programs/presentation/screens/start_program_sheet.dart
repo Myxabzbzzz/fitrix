@@ -337,12 +337,14 @@ class _Chip extends StatelessWidget {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
           decoration: BoxDecoration(color: bg, borderRadius: AppRadius.smAll),
-          child: Text(label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: (compact ? AppText.bodyStrong : AppText.headingS)
-                  .copyWith(color: fg)),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(label,
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                style: (compact ? AppText.bodyStrong : AppText.headingS)
+                    .copyWith(color: fg)),
+          ),
         ),
       ),
     );

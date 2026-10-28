@@ -251,7 +251,6 @@ class _LiveLogState extends ConsumerState<LiveLog> {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
-                  flex: 2,
                   child: AppButton(
                     label: l10n.workoutFinishButton,
                     size: AppButtonSize.large,

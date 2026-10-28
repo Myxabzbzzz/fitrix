@@ -5940,7 +5940,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatFoodAdd.
   ///
   /// In en, this message translates to:
-  /// **'Add to My nutrition · {kcal} kcal'**
+  /// **'Add · {kcal} kcal'**
   String chatFoodAdd(String kcal);
 
   /// No description provided for @chatFoodAdded.

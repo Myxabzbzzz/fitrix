@@ -3646,7 +3646,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String chatFoodAdd(String kcal) {
-    return 'Add to My nutrition · $kcal kcal';
+    return 'Add · $kcal kcal';
   }
 
   @override

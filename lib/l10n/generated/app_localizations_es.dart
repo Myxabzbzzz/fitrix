@@ -561,7 +561,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get workoutAddSet => 'Añadir serie';
 
   @override
-  String get workoutFinishButton => 'Terminar entrenamiento';
+  String get workoutFinishButton => 'Terminar';
 
   @override
   String get workoutColSet => '#';
@@ -1262,7 +1262,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get workoutSave => 'Guardar entrenamiento';
+  String get workoutSave => 'Guardar';
 
   @override
   String get workoutDiscard => 'Descartar';
@@ -1826,7 +1826,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get exerciseSimilar => 'Similares';
 
   @override
-  String get exerciseAskFelix => 'Preguntar a Felix';
+  String get exerciseAskFelix => 'Preguntar';
 
   @override
   String exerciseAskFelixDraft(String name) {
@@ -1834,7 +1834,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get exerciseAddToWorkout => 'Añadir al entrenamiento';
+  String get exerciseAddToWorkout => 'Añadir';
 
   @override
   String get exerciseAdded => 'Añadido al entrenamiento';
@@ -1972,7 +1972,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get hrZonesColBpm => 'LPM';
 
   @override
-  String get hrZonesColHrr => '50–100% reserva';
+  String get hrZonesColHrr => '50–100%';
 
   @override
   String get hrZonesColLthr => '% DE LTHR';
@@ -3378,7 +3378,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get programStart => 'Empezar programa';
+  String get programStart => 'Empezar';
 
   @override
   String programStartTitle(String name) {
@@ -3403,7 +3403,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get programToday => 'Hoy';
 
   @override
-  String get programPickDate => 'Elegir fecha';
+  String get programPickDate => 'Otra fecha';
 
   @override
   String get programTrainingDays => 'Días de entreno';
@@ -3655,7 +3655,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String chatFoodAdd(String kcal) {
-    return 'Añadir a Mi nutrición · $kcal kcal';
+    return 'Añadir · $kcal kcal';
   }
 
   @override
@@ -3692,10 +3692,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get felixPlanAddToWorkouts => 'Añadir a Mis entrenamientos';
+  String get felixPlanAddToWorkouts => 'Añadir el plan';
 
   @override
-  String get felixPlanAddToToday => 'Añadir al plan de hoy';
+  String get felixPlanAddToToday => 'Añadir a hoy';
 
   @override
   String get felixPlansSection => 'De Felix';

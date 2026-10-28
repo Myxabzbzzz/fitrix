@@ -292,7 +292,6 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
-                    flex: 2,
                     child: AppButton(
                       label: l10n.workoutSave,
                       size: AppButtonSize.large,

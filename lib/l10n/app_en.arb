@@ -2930,7 +2930,7 @@
       }
     }
   },
-  "chatFoodAdd": "Add to My nutrition · {kcal} kcal",
+  "chatFoodAdd": "Add · {kcal} kcal",
   "@chatFoodAdd": {
     "placeholders": {
       "kcal": {

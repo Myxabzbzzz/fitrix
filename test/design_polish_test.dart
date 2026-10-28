@@ -7,12 +7,18 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
+import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
+import 'package:fitrix/features/workouts/data/workout_catalog.dart';
+import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 import 'support/overflow.dart';
+import 'tour/tour_harness.dart';
 
 /// iPhone 15/16 logical size.
 const proSize = Size(393, 852);
@@ -53,10 +59,21 @@ Widget localized(Widget child,
       ),
     );
 
-/// Whether the [Text] showing [text] is drawn without being cut short.
-bool fitsOnOneLine(WidgetTester t, String text) {
-  final para = t.renderObject<RenderParagraph>(find.text(text).first);
-  return !para.didExceedMaxLines;
+/// Expects the [Text] showing [label] to be drawn whole and at full size:
+/// no ellipsis, and not shrunk by a scale-down FittedBox.
+void expectFullLabel(WidgetTester t, String label) {
+  final f = find.text(label);
+  expect(f, findsWidgets, reason: label);
+  final para = t.renderObject<RenderParagraph>(f.first);
+  expect(para.didExceedMaxLines, isFalse, reason: '$label is cut short');
+  RenderObject? o = para.parent;
+  while (o != null && o is! RenderFittedBox) {
+    o = o.parent;
+  }
+  if (o is RenderFittedBox) {
+    expect(o.size.width, greaterThanOrEqualTo(para.size.width - 0.5),
+        reason: '$label is shrunk to fit');
+  }
 }
 
 void main() {
@@ -88,6 +105,63 @@ void main() {
         expect(para.size.height, greaterThanOrEqualTo(22),
             reason: '$label is squeezed by its button');
       }
+    });
+  });
+
+  group('key buttons keep their full Russian label at 393 pt', () {
+    testWidgets('live gym', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      r.container
+          .read(activeWorkoutProvider.notifier)
+          .start(WorkoutCatalog.defaults.first);
+      r.container.read(activeWorkoutExpandedProvider.notifier).state = true;
+      await r.go(AppRouter.home);
+      expectFullLabel(t, 'Упражнение');
+      expectFullLabel(t, 'Завершить');
+      expectNoOverflow(t);
+    });
+
+    testWidgets('workout complete', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      final w = WorkoutCatalog.defaults.first;
+      r.container.read(pendingCompletedWorkoutProvider.notifier).state =
+          CompletedWorkout(
+        templateId: w.id,
+        name: w.name,
+        sport: w.sport,
+        startedAt: tourNow.subtract(const Duration(minutes: 70)),
+        finishedAt: tourNow,
+        exercises: w.exercises,
+      );
+      await r.go(AppRouter.workoutComplete);
+      expectFullLabel(t, 'Не сохранять');
+      expectFullLabel(t, 'Сохранить');
+      expectNoOverflow(t);
+    });
+
+    testWidgets('program detail and its start sheet', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      await r.go(AppRouter.program('upper-lower-4'));
+      expectFullLabel(t, 'Спросить Felix');
+      expectFullLabel(t, 'Начать');
+      await r.tapKey('program-start');
+      expectFullLabel(t, 'Другая дата');
+      expectNoOverflow(t);
+    });
+
+    testWidgets('exercise detail', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      await r.go(AppRouter.exercise('bench-press'));
+      expectFullLabel(t, 'Спросить');
+      expectFullLabel(t, 'Добавить');
+      expectNoOverflow(t);
+    });
+
+    testWidgets('Felix plan card', (t) async {
+      final r = await pumpTour(t, proRuLight);
+      await r.go(AppRouter.felixChat(AssistantTopic.gym));
+      expectFullLabel(t, 'Добавить план');
+      expectNoOverflow(t);
     });
   });
 }

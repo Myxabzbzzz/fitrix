@@ -76,12 +76,16 @@ class _AppButtonState extends State<AppButton> {
           Icon(widget.icon, size: base.fontSize, color: fg),
           const SizedBox(width: AppSpacing.xxs),
         ],
+        // A label that doesn't fit shrinks a little instead of losing its
+        // end to an ellipsis ("Завершить трениро…").
         Flexible(
-          child: Text(
-            widget.label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: base.copyWith(color: fg),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              widget.label,
+              maxLines: 1,
+              style: base.copyWith(color: fg),
+            ),
           ),
         ),
       ],
