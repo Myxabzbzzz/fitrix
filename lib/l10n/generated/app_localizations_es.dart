@@ -4835,4 +4835,28 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get profileErrSexRequired =>
+      'Elige una opción: tus calorías dependen de ello';
+
+  @override
+  String nutritionMissingBody(String fields) {
+    return 'Añade $fields para ver tus objetivos diarios.';
+  }
+
+  @override
+  String get nutritionMissingSex => 'tu sexo';
+
+  @override
+  String get nutritionMissingAge => 'tu edad';
+
+  @override
+  String get nutritionMissingWeight => 'tu peso';
+
+  @override
+  String get nutritionMissingHeight => 'tu altura';
+
+  @override
+  String get nutritionMissingAnd => ' y ';
 }

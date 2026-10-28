@@ -4899,4 +4899,28 @@ class AppLocalizationsRu extends AppLocalizations {
   String progressCollecting(int days) {
     return 'Собираем данные — ещё $days дн.';
   }
+
+  @override
+  String get profileErrSexRequired =>
+      'Выберите: от этого зависят нормы калорий';
+
+  @override
+  String nutritionMissingBody(String fields) {
+    return 'Укажите $fields, чтобы получить дневные нормы.';
+  }
+
+  @override
+  String get nutritionMissingSex => 'пол';
+
+  @override
+  String get nutritionMissingAge => 'возраст';
+
+  @override
+  String get nutritionMissingWeight => 'вес';
+
+  @override
+  String get nutritionMissingHeight => 'рост';
+
+  @override
+  String get nutritionMissingAnd => ' и ';
 }

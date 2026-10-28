@@ -74,6 +74,7 @@ void main() {
       await enter(t, find.byKey(const Key('profile-height')), '181');
       FocusManager.instance.primaryFocus?.unfocus();
       await idle(t);
+      await tapKey(t, 'profile-sex-male');
     });
     await step(t, 'chat_open', () async {
       await tapText(t, L.continueButton);

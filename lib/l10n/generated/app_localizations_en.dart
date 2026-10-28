@@ -4813,4 +4813,28 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get profileErrSexRequired =>
+      'Choose one: your calorie targets depend on it';
+
+  @override
+  String nutritionMissingBody(String fields) {
+    return 'Add your $fields to get daily targets.';
+  }
+
+  @override
+  String get nutritionMissingSex => 'sex';
+
+  @override
+  String get nutritionMissingAge => 'age';
+
+  @override
+  String get nutritionMissingWeight => 'weight';
+
+  @override
+  String get nutritionMissingHeight => 'height';
+
+  @override
+  String get nutritionMissingAnd => ' and ';
 }

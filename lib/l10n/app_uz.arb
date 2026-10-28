@@ -1355,5 +1355,12 @@
   "onbFreqStarting": "Endigina boshlayapman",
   "transitionReady": "Felix tayyor.\nSiz-chi?",
   "transitionGo": "Men tayyorman",
-  "progressCollecting": "Ma’lumot yig‘ilmoqda — yana {days} kun"
+  "progressCollecting": "Ma’lumot yig‘ilmoqda — yana {days} kun",
+  "profileErrSexRequired": "Tanlang: kaloriya me’yorlari shunga bog‘liq",
+  "nutritionMissingBody": "Kunlik me’yorlarni olish uchun {fields}ni kiriting.",
+  "nutritionMissingSex": "jinsingiz",
+  "nutritionMissingAge": "yoshingiz",
+  "nutritionMissingWeight": "vazningiz",
+  "nutritionMissingHeight": "bo‘yingiz",
+  "nutritionMissingAnd": " va "
 }

@@ -1355,5 +1355,12 @@
   "onbFreqStarting": "Estoy empezando",
   "transitionReady": "Felix está listo.\n¿Y tú?",
   "transitionGo": "¡Vamos!",
-  "progressCollecting": "{days, plural, =1{Recopilando datos: falta 1 día} other{Recopilando datos: faltan {days} días}}"
+  "progressCollecting": "{days, plural, =1{Recopilando datos: falta 1 día} other{Recopilando datos: faltan {days} días}}",
+  "profileErrSexRequired": "Elige una opción: tus calorías dependen de ello",
+  "nutritionMissingBody": "Añade {fields} para ver tus objetivos diarios.",
+  "nutritionMissingSex": "tu sexo",
+  "nutritionMissingAge": "tu edad",
+  "nutritionMissingWeight": "tu peso",
+  "nutritionMissingHeight": "tu altura",
+  "nutritionMissingAnd": " y "
 }

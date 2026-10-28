@@ -99,6 +99,7 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
                   const SizedBox(height: AppSpacing.sm),
                   if (targets == null)
                     _CompleteProfileCard(
+                        missing: ref.watch(missingTargetInputsProvider),
                         onTap: () => context.push(AppRouter.editProfile))
                   else ...[
                     NutritionTile(
@@ -461,8 +462,28 @@ class _RingSide extends StatelessWidget {
 }
 
 class _CompleteProfileCard extends StatelessWidget {
+  /// The profile values still missing; named in the card.
+  final List<TargetInput> missing;
   final VoidCallback onTap;
-  const _CompleteProfileCard({required this.onTap});
+  const _CompleteProfileCard({required this.missing, required this.onTap});
+
+  static String _body(AppLocalizations l10n, List<TargetInput> missing) {
+    if (missing.isEmpty) return l10n.nutritionCompleteBody;
+    final names = [
+      for (final m in missing)
+        switch (m) {
+          TargetInput.sex => l10n.nutritionMissingSex,
+          TargetInput.age => l10n.nutritionMissingAge,
+          TargetInput.weight => l10n.nutritionMissingWeight,
+          TargetInput.height => l10n.nutritionMissingHeight,
+        },
+    ];
+    final fields = names.length == 1
+        ? names.single
+        : '${names.take(names.length - 1).join(', ')}'
+            '${l10n.nutritionMissingAnd}${names.last}';
+    return l10n.nutritionMissingBody(fields);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -483,7 +504,7 @@ class _CompleteProfileCard extends StatelessWidget {
                       style: AppText.headingS
                           .copyWith(color: palette.textPrimary)),
                   const SizedBox(height: AppSpacing.xxs),
-                  Text(l10n.nutritionCompleteBody,
+                  Text(_body(l10n, missing),
                       style: AppText.caption
                           .copyWith(color: palette.textSecondary)),
                 ],

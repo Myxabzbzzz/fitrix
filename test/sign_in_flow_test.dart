@@ -481,8 +481,13 @@ void main() {
       expect(find.text('Введите вес числом'), findsOneWidget);
       expect(h.remote.upserts, 0);
 
+      expect(find.text('Выберите: от этого зависят нормы калорий'),
+          findsOneWidget);
+
       await fill('age', '30');
       await fill('weight', '72,5');
+      await tester.tap(find.byKey(const Key('profile-sex-male')));
+      await tester.pump();
       await tester.tap(find.widgetWithText(ElevatedButton, 'Продолжить'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));

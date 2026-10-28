@@ -7828,6 +7828,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{days, plural, =1{Collecting data — 1 more day} other{Collecting data — {days} more days}}'**
   String progressCollecting(int days);
+
+  /// Onboarding profile form: sex was not picked
+  ///
+  /// In en, this message translates to:
+  /// **'Choose one: your calorie targets depend on it'**
+  String get profileErrSexRequired;
+
+  /// Nutrition card while targets can't be computed; fields = the missing ones, joined with nutritionMissingAnd
+  ///
+  /// In en, this message translates to:
+  /// **'Add your {fields} to get daily targets.'**
+  String nutritionMissingBody(String fields);
+
+  /// No description provided for @nutritionMissingSex.
+  ///
+  /// In en, this message translates to:
+  /// **'sex'**
+  String get nutritionMissingSex;
+
+  /// No description provided for @nutritionMissingAge.
+  ///
+  /// In en, this message translates to:
+  /// **'age'**
+  String get nutritionMissingAge;
+
+  /// No description provided for @nutritionMissingWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'weight'**
+  String get nutritionMissingWeight;
+
+  /// No description provided for @nutritionMissingHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'height'**
+  String get nutritionMissingHeight;
+
+  /// No description provided for @nutritionMissingAnd.
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get nutritionMissingAnd;
 }
 
 class _AppLocalizationsDelegate

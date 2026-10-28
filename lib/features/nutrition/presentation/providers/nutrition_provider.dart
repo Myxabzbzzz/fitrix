@@ -180,6 +180,22 @@ final burnedKcalProvider = Provider<int>((ref) {
   return (load * 0.9).round();
 });
 
+/// A profile value the targets need.
+enum TargetInput { sex, age, weight, height }
+
+/// What the targets still need, in profile order; empty when nothing is
+/// missing.
+final missingTargetInputsProvider = Provider<List<TargetInput>>((ref) {
+  final body = ref.watch(bodyStatsProvider);
+  bool missing(num? v) => v == null || v <= 0;
+  return [
+    if (ref.watch(performanceProfileProvider).sex == null) TargetInput.sex,
+    if (missing(body.age)) TargetInput.age,
+    if (missing(body.weightKg)) TargetInput.weight,
+    if (missing(body.heightCm)) TargetInput.height,
+  ];
+});
+
 /// Today's targets, or null while sex, age, weight or height is missing.
 final targetsProvider = Provider<Targets?>((ref) {
   final body = ref.watch(bodyStatsProvider);

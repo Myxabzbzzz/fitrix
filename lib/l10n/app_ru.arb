@@ -1355,5 +1355,12 @@
   "onbFreqStarting": "Только начинаю",
   "transitionReady": "Felix готов.\nА вы?",
   "transitionGo": "Начинаем",
-  "progressCollecting": "Собираем данные — ещё {days} дн."
+  "progressCollecting": "Собираем данные — ещё {days} дн.",
+  "profileErrSexRequired": "Выберите: от этого зависят нормы калорий",
+  "nutritionMissingBody": "Укажите {fields}, чтобы получить дневные нормы.",
+  "nutritionMissingSex": "пол",
+  "nutritionMissingAge": "возраст",
+  "nutritionMissingWeight": "вес",
+  "nutritionMissingHeight": "рост",
+  "nutritionMissingAnd": " и "
 }

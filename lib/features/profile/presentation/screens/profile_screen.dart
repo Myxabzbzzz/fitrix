@@ -3,7 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/time/today_provider.dart';
+import 'package:fitrix/features/profile/data/performance_store.dart';
+import 'package:fitrix/features/progress/data/body_weight_store.dart';
+import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/fitrix_logo.dart';
 import 'package:fitrix/core/router/app_router.dart';
@@ -31,6 +36,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Map<String, ProfileError> _errors = const {};
   bool _submitted = false;
 
+  /// Asked here so Nutrition can work out daily targets right away.
+  Sex? _sex;
+
   List<TextEditingController> get _controllers => [
         _nameController,
         _surnameController,
@@ -42,6 +50,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _sex = ref.read(performanceProfileProvider).sex;
     _prefill();
   }
 
@@ -80,13 +89,37 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       _submitted = true;
       _errors = errors;
     });
-    if (errors.isNotEmpty) return;
+    if (errors.isNotEmpty || _sex == null) return;
 
     final profile = ProfileValidator.normalize(_currentProfile());
     await ref.read(profileProvider.notifier).saveProfile(profile);
     // Uploaded in the background; retried later if offline.
     unawaited(ref.read(accountServiceProvider)?.profileChanged());
+    final perf = ref.read(performanceProfileProvider);
+    if (perf.sex != _sex) {
+      await ref.read(performanceProfileProvider.notifier).save(
+            PerformanceProfile(
+              sex: _sex,
+              restingHr: perf.restingHr,
+              maxHr: perf.maxHr,
+              lthr: perf.lthr,
+              ftpW: perf.ftpW,
+              fiveK: perf.fiveK,
+            ),
+          );
+    }
+    await _firstWeighIn(profile);
     if (mounted) context.go(AppRouter.chat);
+  }
+
+  /// The weight typed here starts the body-weight chart (only while it has
+  /// no entry yet, e.g. not for a profile restored from the account).
+  Future<void> _firstWeighIn(UserProfile profile) async {
+    final kg = parseProfileNumber(profile.weight);
+    if (kg == null || ref.read(bodyWeightProvider).isNotEmpty) return;
+    await ref
+        .read(bodyWeightProvider.notifier)
+        .record(WeighIn(at: ref.read(clockProvider)(), kg: kg.toDouble()));
   }
 
   void _revalidate() {
@@ -206,6 +239,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     const TextInputType.numberWithOptions(decimal: true),
               ),
 
+              const SizedBox(height: AppSpacing.md),
+
+              _buildSexChoice(),
+
               const SizedBox(height: AppSpacing.xl),
 
               // Continue Button
@@ -224,6 +261,71 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  /// Male / Female, like the pills on Edit profile.
+  Widget _buildSexChoice() {
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    final missing = _submitted && _sex == null;
+
+    Widget pill(String label, Sex value) {
+      final selected = _sex == value;
+      return Expanded(
+        child: Semantics(
+          button: true,
+          selected: selected,
+          label: label,
+          excludeSemantics: true,
+          child: GestureDetector(
+            key: Key('profile-sex-${value.name}'),
+            behavior: HitTestBehavior.opaque,
+            onTap: () => setState(() => _sex = value),
+            child: AnimatedContainer(
+              duration: Motion.of(context, Motion.fast),
+              curve: Motion.curve,
+              constraints: const BoxConstraints(minHeight: 48),
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+              decoration: BoxDecoration(
+                color: selected ? palette.pillSelected : palette.buttonMuted,
+                borderRadius: AppRadius.smAll,
+              ),
+              child: Text(label,
+                  textAlign: TextAlign.center,
+                  style: AppText.headingS.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: selected
+                          ? palette.onPillSelected
+                          : palette.textPrimary)),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      key: const Key('profile-sex'),
+      children: [
+        Text(l10n.editProfileSex,
+            style: AppText.headingS.copyWith(
+                fontWeight: FontWeight.w400, color: palette.textSecondary)),
+        const SizedBox(height: AppSpacing.xs),
+        Row(children: [
+          pill(l10n.sexMale, Sex.male),
+          const SizedBox(width: AppSpacing.xs),
+          pill(l10n.sexFemale, Sex.female),
+        ]),
+        if (missing)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xxs),
+            child: Text(l10n.profileErrSexRequired,
+                textAlign: TextAlign.center,
+                style: AppText.caption.copyWith(color: palette.danger)),
+          ),
+      ],
     );
   }
 

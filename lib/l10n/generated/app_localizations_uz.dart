@@ -4755,4 +4755,28 @@ class AppLocalizationsUz extends AppLocalizations {
   String progressCollecting(int days) {
     return 'Ma’lumot yig‘ilmoqda — yana $days kun';
   }
+
+  @override
+  String get profileErrSexRequired =>
+      'Tanlang: kaloriya me’yorlari shunga bog‘liq';
+
+  @override
+  String nutritionMissingBody(String fields) {
+    return 'Kunlik me’yorlarni olish uchun ${fields}ni kiriting.';
+  }
+
+  @override
+  String get nutritionMissingSex => 'jinsingiz';
+
+  @override
+  String get nutritionMissingAge => 'yoshingiz';
+
+  @override
+  String get nutritionMissingWeight => 'vazningiz';
+
+  @override
+  String get nutritionMissingHeight => 'bo‘yingiz';
+
+  @override
+  String get nutritionMissingAnd => ' va ';
 }

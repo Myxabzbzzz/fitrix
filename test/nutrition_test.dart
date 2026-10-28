@@ -603,6 +603,26 @@ void main() {
       expect(find.text('route edit'), findsOneWidget);
     });
 
+    testWidgets('the card names exactly what is missing', (t) async {
+      await pump(t, const NutritionScreen(), values: {'user_name': 'Alex'});
+      expect(
+          find.text('Add your sex, age, weight and height to get daily '
+              'targets.'),
+          findsOneWidget);
+      await t.pumpWidget(const SizedBox());
+
+      // Onboarding asked everything but sex (as it used to).
+      final noSex = {..._profile}..remove(performanceProfileKey);
+      await pump(t, const NutritionScreen(), values: noSex);
+      expect(find.text('Add your sex to get daily targets.'), findsOneWidget);
+      await t.pumpWidget(const SizedBox());
+
+      final noHeight = {..._profile}..remove('user_height');
+      await pump(t, const NutritionScreen(), values: noHeight);
+      expect(
+          find.text('Add your height to get daily targets.'), findsOneWidget);
+    });
+
     for (final scale in [1.0, 1.3]) {
       testWidgets('SE, text x$scale: no overflow', (t) async {
         final c = await pump(t, const NutritionScreen(),
