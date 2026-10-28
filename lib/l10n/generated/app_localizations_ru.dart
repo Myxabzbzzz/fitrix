@@ -825,7 +825,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String signInCodePrompt(String length, String email) {
-    return 'Введите $length-значный код, который мы отправили на $email';
+    return 'Введите $length-значный код, отправленный на $email';
   }
 
   @override
