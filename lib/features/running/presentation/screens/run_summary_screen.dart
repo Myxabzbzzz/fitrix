@@ -164,9 +164,7 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
                 RunMap(route: details.route),
                 const SizedBox(height: AppSpacing.md),
               ],
-              Wrap(
-                spacing: AppSpacing.md,
-                runSpacing: AppSpacing.md,
+              RunFigureGrid(
                 children: [
                   RunFigure(
                       label: '${l10n.runDistance}, ${l10n.runUnitKm}',
