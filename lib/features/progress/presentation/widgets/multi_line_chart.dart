@@ -1,8 +1,8 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
-import 'package:fitrix/features/workouts/data/models/workout.dart';
 
 /// One line (or a set of dots) on a [MultiLineChart]. Points are
 /// (x in 0..1 across the time span, y in data units).
@@ -113,7 +113,8 @@ class _Painter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
 
-  String _fmt(double v) => formatKg(v);
+  // Axis ticks of any unit: up to one decimal in the app language.
+  String _fmt(double v) => NumberFormat('0.#').format(v);
 
   @override
   void paint(Canvas canvas, Size size) {

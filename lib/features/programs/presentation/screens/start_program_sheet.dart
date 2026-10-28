@@ -1,3 +1,4 @@
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
 import 'package:fitrix/core/time/day_key.dart';
@@ -237,7 +238,7 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
                             const SizedBox(width: AppSpacing.xs),
                             Text(
                                 l10n.programKgReps(
-                                    kgText(weights[i].kg), weights[i].reps),
+                                    formatKg(weights[i].kg), weights[i].reps),
                                 style: AppText.bodyStrong
                                     .copyWith(color: palette.textPrimary)),
                           ],

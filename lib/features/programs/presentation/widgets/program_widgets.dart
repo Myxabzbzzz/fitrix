@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/programs/domain/program_catalog.dart';
-import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 String programLevelLabel(AppLocalizations l10n, String level) =>
@@ -42,9 +41,6 @@ String dayAndMonth(BuildContext context, DateTime d) =>
 String setsReps(ProgramExercise e) => e.repsLow == e.repsHigh
     ? '${e.sets} × ${e.repsHigh}'
     : '${e.sets} × ${e.repsLow}–${e.repsHigh}';
-
-/// kg without a trailing ".0", with the app language's decimal mark.
-String kgText(double kg) => formatKg(kg);
 
 /// A small uppercase label with a dot ("4× / WEEK").
 class ProgramTag extends StatelessWidget {

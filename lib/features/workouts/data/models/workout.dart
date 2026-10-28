@@ -405,19 +405,6 @@ class CompletedWorkout {
       );
 }
 
-/// Formats a duration like the design does: "1h 43m 22s" / "1h 43m".
-String formatDuration(Duration d, {bool withSeconds = true}) {
-  final h = d.inHours;
-  final m = d.inMinutes.remainder(60);
-  final s = d.inSeconds.remainder(60);
-  final parts = <String>[
-    if (h > 0) '${h}h',
-    if (h > 0 || m > 0 || !withSeconds) '${m}m',
-    if (withSeconds) '${s}s',
-  ];
-  return parts.join(' ');
-}
-
 /// Formats a weight without a trailing ".0", with the app language's
 /// decimal mark ("72,5" in Russian, "72.5" in English): FitrixApp keeps
 /// `Intl.defaultLocale` on the app language.
