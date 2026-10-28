@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/features/auth/data/auth_gateway.dart';
@@ -234,7 +235,13 @@ class AppRouter {
           GoRoute(
             path: liveRun,
             name: 'liveRun',
-            builder: (context, state) => const LiveRunScreen(),
+            // A modal: slides up, and slides back down when closed with
+            // its chevron-down.
+            pageBuilder: (context, state) => slideUpPage(
+              context,
+              state,
+              const LiveRunScreen(),
+            ),
           ),
           GoRoute(
             path: '/run/:id',
@@ -623,4 +630,31 @@ class AppRouter {
           ),
         ],
       );
+}
+
+/// A full-screen modal page that slides up from the bottom and back down
+/// when it closes (instant with reduced motion).
+Page<void> slideUpPage(
+    BuildContext context, GoRouterState state, Widget child) {
+  final reduced = Motion.reduced(context);
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    name: state.name,
+    fullscreenDialog: true,
+    transitionDuration: reduced ? Duration.zero : Motion.slow,
+    reverseTransitionDuration: reduced ? Duration.zero : Motion.medium,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(
+        parent: animation,
+        curve: Motion.curve,
+        reverseCurve: Curves.easeInCubic,
+      );
+      return SlideTransition(
+        position:
+            Tween(begin: const Offset(0, 1), end: Offset.zero).animate(curved),
+        child: child,
+      );
+    },
+  );
 }

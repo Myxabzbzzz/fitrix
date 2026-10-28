@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/navigation/circle_reveal.dart';
@@ -181,5 +182,36 @@ void main() {
         matching: find.byType(ClipPath)));
     final path = clip.clipper!.getClip(t.getSize(find.byType(ClipPath)));
     expect(path.contains(const Offset(1, 1)), isTrue);
+  });
+
+  testWidgets('the live screen slides up and closes by sliding down',
+      (t) async {
+    _phone(t);
+    final router = GoRouter(routes: [
+      GoRoute(path: '/', builder: (_, __) => const Text('below')),
+      GoRoute(
+        path: '/live',
+        pageBuilder: (context, state) =>
+            slideUpPage(context, state, const Text('live', key: Key('live'))),
+      ),
+    ]);
+    await t.pumpWidget(MaterialApp.router(routerConfig: router));
+    router.push('/live');
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 120));
+    var at = t.getTopLeft(find.byKey(const Key('live')));
+    expect(at.dx, 0, reason: 'no sideways slide');
+    expect(at.dy, greaterThan(100), reason: 'coming up from below');
+    await t.pumpAndSettle();
+    expect(t.getTopLeft(find.byKey(const Key('live'))).dy, lessThan(100));
+
+    router.pop();
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 120));
+    at = t.getTopLeft(find.byKey(const Key('live')));
+    expect(at.dx, 0);
+    expect(at.dy, greaterThan(100), reason: 'going down');
+    await t.pumpAndSettle();
+    expect(find.byKey(const Key('live')), findsNothing);
   });
 }
