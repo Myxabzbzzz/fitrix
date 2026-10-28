@@ -52,8 +52,25 @@ class ShrinkToFitText extends StatelessWidget {
         if (size >= fontSize * minScale) {
           return oneLine(style.copyWith(fontSize: size));
         }
-        return WordFitText(text,
-            maxLines: maxLines, textAlign: textAlign, style: style);
+        // Wrap at full size, shrinking only a word too wide for a line, and
+        // never below the floor. A single word still too wide at the floor
+        // stays on one line and ends in "…" rather than breaking mid-word.
+        final floor = fontSize * minScale;
+        final wordFit = WordFitText.fitted(context, text, style, box.maxWidth);
+        final wordSize = wordFit.fontSize ?? fontSize;
+        if (wordSize >= floor) {
+          return Text(text,
+              maxLines: maxLines,
+              overflow: TextOverflow.ellipsis,
+              textAlign: textAlign,
+              style: wordFit);
+        }
+        return Text(text,
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
+            textAlign: textAlign,
+            style: style.copyWith(fontSize: floor));
       } finally {
         painter.dispose();
       }

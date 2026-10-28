@@ -21,6 +21,7 @@ import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_sheet.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
 import 'package:fitrix/features/plan/presentation/widgets/add_session_sheet.dart';
+import 'package:fitrix/features/running/presentation/screens/live_run_screen.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -311,6 +312,15 @@ void main() {
           seed: const Seed(onboarded: false, profile: false), auth: true);
       await r.go(AppRouter.signIn);
       expectButtonLabelUnclipped(t, 'Получить код');
+      final google = find.text('Продолжить через Google');
+      await t.ensureVisible(google);
+      await r.settle();
+      final label = t.getRect(google);
+      final button = t.getRect(find
+          .ancestor(of: google, matching: find.byType(OutlinedButton))
+          .first);
+      expect(button.top <= label.top && label.bottom <= button.bottom, isTrue,
+          reason: 'Google label clipped');
     });
 
     testWidgets('edit workout sheet', (t) async {
@@ -466,5 +476,108 @@ void main() {
     final row = t.getRect(find.byType(TitleRow));
     expect(t.getRect(find.byKey(const ValueKey('value'))).right, row.right);
     expect(t.getRect(find.text('Title')).left, row.left);
+  });
+
+  testWidgets('hold-to-finish fill covers the whole button mid-hold',
+      (t) async {
+    await t.pumpWidget(MaterialApp(
+      theme: AppTheme.lightTheme,
+      home: Scaffold(
+        body: Center(
+          child: SizedBox(
+            width: 300,
+            child: HoldToFinish(label: 'Hold to finish', onDone: () {}),
+          ),
+        ),
+      ),
+    ));
+    final button = t.getRect(find.byType(HoldToFinish));
+    final gesture = await t.startGesture(button.center);
+    await t.pump();
+    await t.pump(holdToFinish ~/ 2);
+    final fill = t.getRect(find.descendant(
+        of: find.byType(FractionallySizedBox),
+        matching: find.byType(ColoredBox)));
+    expect(fill.height, button.height);
+    expect(fill.top, button.top);
+    expect(fill.width, greaterThan(0));
+    await gesture.cancel();
+    await t.pumpAndSettle();
+  });
+
+  testWidgets('onboarding chat greets in Russian, stamped by the app clock',
+      (t) async {
+    final r = await pumpTour(t, proRuLight,
+        seed: const Seed(onboarded: false, chats: false));
+    await r.go(AppRouter.chat);
+    expect(find.textContaining('Я Felix'), findsOneWidget);
+    expect(find.textContaining('Hey there'), findsNothing);
+    expect(find.text('Ваш личный ассистент'), findsOneWidget);
+    expect(find.textContaining('20 окт. 2026'), findsOneWidget);
+  });
+
+  group('tile labels at SE ×1.3 keep the 80 % floor and aligned values', () {
+    void expectFloor(WidgetTester t, String label, double base) {
+      final para = t.renderObject<RenderParagraph>(find.text(label).first);
+      expect(para.text.style!.fontSize, greaterThanOrEqualTo(base * 0.8 - 0.01),
+          reason: label);
+    }
+
+    testWidgets('workout summary', (t) async {
+      final r = await pumpTour(t, seRuScaled);
+      final w = WorkoutCatalog.defaults.first;
+      r.container.read(pendingCompletedWorkoutProvider.notifier).state =
+          CompletedWorkout(
+        templateId: w.id,
+        name: w.name,
+        sport: w.sport,
+        startedAt: tourNow.subtract(const Duration(minutes: 70)),
+        finishedAt: tourNow,
+        exercises: w.exercises,
+      );
+      await r.go(AppRouter.workoutComplete);
+      for (final l in ['Время', 'Объём', 'Подходы']) {
+        expectFloor(t, l, 14);
+      }
+      // The last text of each tile in the first row is its value.
+      final row = find.byType(EqualHeightRow).first;
+      final tiles = find.descendant(
+          of: row, matching: find.byType(Container), skipOffstage: false);
+      final tops = <double>{
+        for (final tile in tiles.evaluate())
+          t
+              .getRect(find
+                  .descendant(
+                      of: find.byElementPredicate((e) => e == tile),
+                      matching: find.byType(Text))
+                  .last)
+              .bottom
+              .roundToDouble(),
+      };
+      expect(tops, hasLength(1), reason: 'values on one line');
+      expectNoOverflow(t);
+    });
+
+    testWidgets('program facts', (t) async {
+      final r = await pumpTour(t, seRuScaled);
+      await r.go(AppRouter.program('upper-lower-4'));
+      for (final l in ['Срок', 'В неделю', 'Занятие']) {
+        expectFloor(t, l, 12);
+      }
+      expectNoOverflow(t);
+    });
+
+    testWidgets('exercise numbers keep to their columns', (t) async {
+      final r = await pumpTour(t, seRuScaled);
+      await r.go(AppRouter.exercise('bench-press'));
+      final e1rm = t.getRect(find.byKey(const ValueKey('e1rm-stat')));
+      final value = t.getRect(find
+          .descendant(
+              of: find.byKey(const ValueKey('e1rm-stat')),
+              matching: find.byType(Text))
+          .last);
+      expect(value.right, lessThanOrEqualTo(e1rm.right + 0.5));
+      expectNoOverflow(t);
+    });
   });
 }

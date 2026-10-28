@@ -1193,7 +1193,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get workoutTileDuration => 'Davomiyligi';
+  String get workoutTileDuration => 'Vaqt';
 
   @override
   String get workoutTileVolume => 'Hajm';
@@ -3284,7 +3284,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get programNotFound => 'Bu dastur mavjud emas.';
 
   @override
-  String get programLength => 'Davomiyligi';
+  String get programLength => 'Muddat';
 
   @override
   String get programPerWeekLabel => 'Haftada';

@@ -1237,7 +1237,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get workoutTileDuration => 'Длительность';
+  String get workoutTileDuration => 'Время';
 
   @override
   String get workoutTileVolume => 'Объём';
@@ -3379,7 +3379,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get programNotFound => 'Эта программа недоступна.';
 
   @override
-  String get programLength => 'Длительность';
+  String get programLength => 'Срок';
 
   @override
   String get programPerWeekLabel => 'В неделю';

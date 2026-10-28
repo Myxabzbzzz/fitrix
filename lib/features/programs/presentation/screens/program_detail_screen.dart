@@ -307,6 +307,9 @@ class _Fact extends StatelessWidget {
       decoration:
           BoxDecoration(color: palette.tile, borderRadius: AppRadius.mdAll),
       child: Column(
+        // Values sit on the tile's bottom edge, so they line up across a
+        // row even when one label wraps.
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ShrinkToFitText(label,
