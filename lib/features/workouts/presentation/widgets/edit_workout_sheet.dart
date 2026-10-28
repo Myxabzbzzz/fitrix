@@ -171,7 +171,6 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                 child: SizedBox(
                   width: double.infinity,
-                  height: 48,
                   child: ElevatedButton(
                     onPressed: _save,
                     child: Text(l10n.gymEditSave),

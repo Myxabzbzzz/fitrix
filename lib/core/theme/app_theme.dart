@@ -49,7 +49,11 @@ class AppTheme {
           backgroundColor: p.textPrimary,
           foregroundColor: p.onBubbleUser,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          // At least 48 tall and growing with the label (text size), so
+          // descenders are never clipped by a fixed height.
+          minimumSize: const Size(64, 48),
+          padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.sm, horizontal: AppSpacing.lg),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -152,7 +156,11 @@ class AppTheme {
           backgroundColor: p.textPrimary,
           foregroundColor: p.onBubbleUser,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          // At least 48 tall and growing with the label (text size), so
+          // descenders are never clipped by a fixed height.
+          minimumSize: const Size(64, 48),
+          padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.sm, horizontal: AppSpacing.lg),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),

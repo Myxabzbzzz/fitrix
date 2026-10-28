@@ -85,8 +85,9 @@ class IntroScreen extends StatelessWidget {
   Widget _buildStartButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 54,
       child: ElevatedButton(
+        style: const ButtonStyle(
+            minimumSize: WidgetStatePropertyAll(Size.fromHeight(54))),
         onPressed: () {
           context.go(AppRouter.language);
         },

@@ -113,8 +113,10 @@ class SignInPrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: 54,
+        width: double.infinity,
         child: ElevatedButton(
+          style: const ButtonStyle(
+              minimumSize: WidgetStatePropertyAll(Size.fromHeight(54))),
           onPressed: busy ? null : onPressed,
           // Google / Apple show their progress on their own button.
           child: busy && socialBusy == null

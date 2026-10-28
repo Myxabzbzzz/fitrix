@@ -219,8 +219,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // Continue Button
               SizedBox(
                 width: double.infinity,
-                height: 54,
                 child: ElevatedButton(
+                  style: const ButtonStyle(
+                      minimumSize: WidgetStatePropertyAll(Size.fromHeight(54))),
                   onPressed: _continue,
                   child: Text(l10n.continueButton),
                 ),

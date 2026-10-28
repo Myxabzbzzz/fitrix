@@ -78,6 +78,23 @@ void expectFullLabel(WidgetTester t, String label) {
   }
 }
 
+/// Expects the label [text] of an ElevatedButton to be laid out at its
+/// full line height and drawn inside the button: a fixed button height
+/// clips descenders without reporting an overflow.
+void expectButtonLabelUnclipped(WidgetTester t, String text) {
+  final label = find.text(text).first;
+  final para = t.renderObject<RenderParagraph>(label);
+  final style = para.text.style!;
+  final lineHeight = para.textScaler.scale(style.fontSize!) * style.height!;
+  expect(para.size.height, greaterThanOrEqualTo(lineHeight - 1),
+      reason: '"$text" squeezed by its button');
+  final button = t.getRect(
+      find.ancestor(of: label, matching: find.byType(ElevatedButton)).first);
+  final rect = t.getRect(label);
+  expect(button.top <= rect.top && rect.bottom <= button.bottom, isTrue,
+      reason: '"$text" drawn outside its button');
+}
+
 void main() {
   group('language screen', () {
     testWidgets('scrolls instead of overflowing on SE at text scale 1.3',
@@ -266,6 +283,40 @@ void main() {
       r.container.read(activeWorkoutExpandedProvider.notifier).state = true;
       await r.go(AppRouter.home);
       expectNoOverflow(t);
+    });
+  });
+
+  group('elevated button labels are not clipped at SE ×1.3', () {
+    testWidgets('intro', (t) async {
+      final r = await pumpTour(t, seRuScaled,
+          seed: const Seed(onboarded: false, profile: false));
+      await r.go(AppRouter.intro);
+      expectButtonLabelUnclipped(t, 'Начать путь');
+    });
+
+    testWidgets('onboarding profile', (t) async {
+      final r =
+          await pumpTour(t, seRuScaled, seed: const Seed(onboarded: false));
+      await r.go(AppRouter.profile);
+      await t.scrollUntilVisible(find.text('Продолжить'), 200,
+          scrollable: find.byType(Scrollable).first);
+      await r.settle();
+      expectButtonLabelUnclipped(t, 'Продолжить');
+    });
+
+    testWidgets('sign in', (t) async {
+      final r = await pumpTour(t, seRuScaled,
+          seed: const Seed(onboarded: false, profile: false), auth: true);
+      await r.go(AppRouter.signIn);
+      expectButtonLabelUnclipped(t, 'Получить код');
+    });
+
+    testWidgets('edit workout sheet', (t) async {
+      final r = await pumpTour(t, seRuScaled);
+      await r.go(AppRouter.sportWorkouts(Sport.gym));
+      await t.longPress(find.text('Legs').first);
+      await r.settle();
+      expectButtonLabelUnclipped(t, 'Сохранить');
     });
   });
 }
