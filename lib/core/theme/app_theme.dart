@@ -36,6 +36,13 @@ class AppTheme {
         dragHandleColor: p.buttonMuted,
         dragHandleSize: const Size(36, 4),
       ),
+      // One switch look app-wide: accent when on, muted grey when off.
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStatePropertyAll(p.onAccent),
+        trackColor: WidgetStateProperty.resolveWith((states) =>
+            states.contains(WidgetState.selected) ? p.accent : p.buttonMuted),
+        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+      ),
       drawerTheme: DrawerThemeData(backgroundColor: p.sheetSurface),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -131,6 +138,13 @@ class AppTheme {
                 BorderRadius.vertical(top: Radius.circular(AppRadius.lg))),
         dragHandleColor: p.buttonMuted,
         dragHandleSize: const Size(36, 4),
+      ),
+      // One switch look app-wide: accent when on, muted grey when off.
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStatePropertyAll(p.onAccent),
+        trackColor: WidgetStateProperty.resolveWith((states) =>
+            states.contains(WidgetState.selected) ? p.accent : p.buttonMuted),
+        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
       ),
       drawerTheme: DrawerThemeData(backgroundColor: p.sheetSurface),
       elevatedButtonTheme: ElevatedButtonThemeData(
