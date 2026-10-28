@@ -184,6 +184,9 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
                   ],
                 ),
                 Row(
+                  // The hours sit on the label's baseline.
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
                   children: [
                     Expanded(child: label(l10n.checkinSleep)),
                     Text(l10n.sleepText(Duration(minutes: _sleepMinutes)),
