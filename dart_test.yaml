@@ -1,0 +1,5 @@
+tags:
+  # Screenshot tour (test/tour/tour.dart). Its file name does not end in
+  # _test.dart, so a plain `flutter test` never runs it; run it explicitly:
+  #   flutter test test/tour/tour.dart
+  tour:
