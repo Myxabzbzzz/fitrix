@@ -12,6 +12,10 @@ import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/equal_height_row.dart';
+import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/pill_selector.dart';
+import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/core/widgets/word_fit_text.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_sheet.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
@@ -402,5 +406,41 @@ void main() {
       expect(b.height, greaterThan(48));
       expect(a.height, b.height);
     });
+  });
+
+  testWidgets('pill rows inside a padded page span the full screen width',
+      (t) async {
+    final r = await pumpTour(t, proRuLight);
+    for (final location in [
+      AppRouter.nutritionMicros,
+      AppRouter.programs,
+      AppRouter.nutritionTargets,
+    ]) {
+      await r.go(location);
+      final row =
+          t.getRect(find.byWidgetPredicate((w) => w is PillSelector).first);
+      expect(row.left, 0, reason: location);
+      expect(row.width, proRuLight.size.width, reason: location);
+    }
+  });
+
+  testWidgets('Home menu opens with an edge swipe on Home only', (t) async {
+    final r = await pumpTour(t, proRuLight);
+    await r.go(AppRouter.home);
+    await t.dragFrom(const Offset(2, 400), const Offset(300, 0));
+    await r.settle();
+    expect(find.byType(Drawer), findsOneWidget);
+  });
+
+  testWidgets('root tab title is level with its trailing action', (t) async {
+    final r = await pumpTour(t, proRuLight);
+    await r.go(AppRouter.shop);
+    final title = t.getRect(find.byType(WordFitText).first);
+    final trailing = t.getRect(find
+        .descendant(of: find.byType(ScreenTitle), matching: find.byType(Center))
+        .last);
+    final line =
+        title.top + AppText.headingXL.fontSize! * AppText.headingXL.height! / 2;
+    expect((trailing.center.dy - line).abs(), lessThan(1));
   });
 }

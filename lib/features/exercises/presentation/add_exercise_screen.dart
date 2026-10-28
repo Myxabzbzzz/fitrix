@@ -238,15 +238,14 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.lg),
-                children: [
+                    0, AppSpacing.sm, 0, AppSpacing.lg),
+                children: withPageGutter([
                   ExerciseSearchField(
                     hint: l10n.exercisesSearchShort,
                     onChanged: (v) => setState(() => _query = v),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   PillSelector<MuscleGroup?>(
-                    bleed: AppSpacing.md,
                     items: const [null, ...MuscleGroup.values],
                     selected: _group,
                     labelOf: (g) =>
@@ -290,7 +289,7 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
                   else
                     ExerciseListCard(
                         children: [for (final e in all) row(e, sub(e))]),
-                ],
+                ]),
               ),
             ),
             Padding(

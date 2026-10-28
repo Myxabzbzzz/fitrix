@@ -181,9 +181,8 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
       children: [
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
-            children: [
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, AppSpacing.md),
+            children: withPageGutter([
               Text(food.name,
                   style: AppText.headingL.copyWith(color: palette.textPrimary)),
               if (food.localName != null)
@@ -216,7 +215,6 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
                 ],
               ),
               PillSelector<int>(
-                bleed: AppSpacing.md,
                 items: labels.keys.toList(),
                 selected: grams,
                 labelOf: (g) => labels[g]!,
@@ -316,7 +314,7 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
                   ),
                 ),
               ],
-            ],
+            ]),
           ),
         ),
         Padding(

@@ -60,9 +60,8 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
                 ScreenTitle(l10n.liftTitle),
                 Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.md, 0, AppSpacing.md, AppSpacing.lg),
-                    children: children,
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, AppSpacing.lg),
+                    children: withPageGutter(children),
                   ),
                 ),
               ],
@@ -178,7 +177,6 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
 
     return page([
       PillSelector<String>(
-        bleed: AppSpacing.md,
         items: [for (final l in lifts) l.name],
         selected: current.name,
         labelOf: (n) => n,

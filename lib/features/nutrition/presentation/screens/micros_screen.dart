@@ -129,9 +129,8 @@ class _MicrosScreenState extends ConsumerState<MicrosScreen> {
             MicroStatus.low);
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(
-          AppSpacing.md, 0, AppSpacing.md, AppSpacing.lg),
-      children: [
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, AppSpacing.lg),
+      children: withPageGutter([
         Text(
           l10n.micrTargetsFor(
               sex == Sex.male ? l10n.micrMen : l10n.micrWomen, '$age'),
@@ -139,7 +138,6 @@ class _MicrosScreenState extends ConsumerState<MicrosScreen> {
         ),
         const SizedBox(height: AppSpacing.sm),
         PillSelector<_Period>(
-          bleed: AppSpacing.md,
           items: _Period.values,
           selected: _period,
           labelOf: (p) => switch (p) {
@@ -151,7 +149,6 @@ class _MicrosScreenState extends ConsumerState<MicrosScreen> {
         ),
         const SizedBox(height: AppSpacing.xs),
         PillSelector<MicroFilter>(
-          bleed: AppSpacing.md,
           items: MicroFilter.values,
           selected: _filter,
           labelOf: (f) => switch (f) {
@@ -212,7 +209,7 @@ class _MicrosScreenState extends ConsumerState<MicrosScreen> {
         ],
         const SizedBox(height: AppSpacing.md),
         _InSeason(today: today, locale: locale),
-      ],
+      ]),
     );
   }
 }

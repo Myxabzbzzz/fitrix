@@ -86,9 +86,8 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
             ScreenTitle(l10n.programTitle),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md, 0, AppSpacing.md, AppSpacing.lg),
-                children: [
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, AppSpacing.lg),
+                children: withPageGutter([
                   Text(p.name,
                       style: AppText.displayLarge
                           .copyWith(color: palette.textPrimary)),
@@ -181,7 +180,6 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                   if (p.sessions.length > 1) ...[
                     const SizedBox(height: AppSpacing.xs),
                     PillSelector<int>(
-                      bleed: AppSpacing.md,
                       items: [for (var i = 0; i < p.sessions.length; i++) i],
                       selected: _session,
                       labelOf: (i) => p.sessions[i].name,
@@ -247,7 +245,7 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                       ),
                     ),
                   ],
-                ],
+                ]),
               ),
             ),
             Container(

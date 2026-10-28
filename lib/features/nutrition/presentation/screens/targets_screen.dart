@@ -169,9 +169,9 @@ class _TargetsScreenState extends ConsumerState<TargetsScreen> {
                       ],
                     )
                   : ListView(
-                      padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
-                      children: [
+                      padding:
+                          const EdgeInsets.fromLTRB(0, 0, 0, AppSpacing.md),
+                      children: withPageGutter([
                         Text(l10n.targetsSubtitle,
                             style: AppText.caption
                                 .copyWith(color: palette.textSecondary)),
@@ -181,7 +181,6 @@ class _TargetsScreenState extends ConsumerState<TargetsScreen> {
                                 .copyWith(color: palette.textPrimary)),
                         const SizedBox(height: AppSpacing.xs),
                         PillSelector<Goal>(
-                          bleed: AppSpacing.md,
                           items: Goal.values,
                           selected: _draft.goal,
                           labelOf: (g) => switch (g) {
@@ -285,7 +284,7 @@ class _TargetsScreenState extends ConsumerState<TargetsScreen> {
                             ],
                           ),
                         ),
-                      ],
+                      ]),
                     ),
             ),
             if (t != null)
