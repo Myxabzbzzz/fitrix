@@ -451,6 +451,12 @@ void main() {
       expect(d.kind, ActivityKind.ride);
       expect(d.maxSpeed, 12);
       expect(d.elevationLoss, 70);
+      // The saved ride stays on screen; back goes to Cycling.
+      expect(find.byKey(const ValueKey('run-save')), findsNothing);
+      await t.tap(find.byKey(const ValueKey('run-close')));
+      await t.pumpAndSettle();
+      expect(r.router.routerDelegate.currentConfiguration.uri.path,
+          AppRouter.sportWorkouts(Sport.cycling));
     });
   });
 

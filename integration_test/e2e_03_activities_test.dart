@@ -106,6 +106,10 @@ void main() {
         await scrollTap(t, find.byKey(const ValueKey('runRpe-6')));
         await scrollTap(t, find.byKey(const ValueKey('run-save')));
         await idle(t, const Duration(seconds: 3));
+        // The saved summary stays; back lands on the sport's screen.
+        await Host.shot('saved_summary_6');
+        await tapKey(t, 'run-close');
+        await idle(t, const Duration(seconds: 2));
       });
     }
     if (want('run') || want('runhist')) {
@@ -146,6 +150,10 @@ void main() {
         await scrollTap(t, find.byKey(const ValueKey('runRpe-5')));
         await scrollTap(t, find.byKey(const ValueKey('run-save')));
         await idle(t, const Duration(seconds: 3));
+        // The saved summary stays; back lands on the sport's screen.
+        await Host.shot('saved_summary_5');
+        await tapKey(t, 'run-close');
+        await idle(t, const Duration(seconds: 2));
       });
     }
     if (want('indoor')) {
@@ -208,7 +216,11 @@ void main() {
       await Host.clearLocation();
       await step(t, 'ski_saved', () async {
         final save = find.byKey(const ValueKey('run-save'));
-        if (save.evaluate().isNotEmpty) await scrollTap(t, save);
+        if (save.evaluate().isNotEmpty) {
+          await scrollTap(t, save);
+          await idle(t, const Duration(seconds: 2));
+          await tapKey(t, 'run-close');
+        }
         await idle(t, const Duration(seconds: 2));
       });
     }

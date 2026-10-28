@@ -372,7 +372,34 @@ void main() {
         statusOf(r.container.read(weekPlanProvider).single,
             r.container.read(workoutHistoryProvider), _now),
         SessionStatus.done);
-    expect(r.location, isNot(startsWith('/run/')));
+    // The saved run stays on screen, without Save; back goes to Running.
+    expect(r.location, AppRouter.runSummary(id));
+    expect(find.byKey(const ValueKey('run-save')), findsNothing);
+    await t.tap(find.byKey(const ValueKey('run-close')));
+    await t.pumpAndSettle();
+    expect(r.location, AppRouter.sportWorkouts(Sport.running));
+  });
+
+  testWidgets(
+      'a run reopened from Home lands on Running after Save, like a ride '
+      'lands on Cycling', (t) async {
+    final r = await _rig(t);
+    _addTemplate(r, 'Easy 5K');
+    await _openRunningList(r);
+    await _tapStart(r, 'Easy 5K');
+    // Collapse the live screen and come back from Home (the run bar).
+    r.router.go(AppRouter.home);
+    await t.pumpAndSettle();
+    r.router.push(AppRouter.liveRun);
+    await t.pumpAndSettle();
+    await r.hold(const Duration(milliseconds: 1100));
+
+    await t.tap(find.byKey(const ValueKey('run-save')));
+    await t.pumpAndSettle();
+    await t.tap(find.byKey(const ValueKey('run-close')));
+    await t.pumpAndSettle();
+
+    expect(r.location, AppRouter.sportWorkouts(Sport.running));
   });
 
   testWidgets('leaving the summary without Save keeps the run', (t) async {
