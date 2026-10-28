@@ -27,6 +27,10 @@ class AppPalette {
   /// so they stand off the black page (a scrim does nothing on black).
   final Color sheetSurface;
 
+  /// Chips, rows and cards on a sheet ([tile] would vanish into the dark
+  /// sheet surface).
+  final Color sheetTile;
+
   /// Cells inside the active workout table (white @ 51%)
   final Color tableCell;
 
@@ -91,6 +95,7 @@ class AppPalette {
     required this.chartCard,
     required this.sheet,
     required this.sheetSurface,
+    required this.sheetTile,
     required this.tableCell,
     required this.buttonMuted,
     required this.border,
@@ -123,6 +128,7 @@ class AppPalette {
     chartCard: Color(0xFFEDEDED),
     sheet: Color(0xFFF1F1F1),
     sheetSurface: Color(0xFFFFFFFF),
+    sheetTile: Color(0xFFEEEEEE),
     tableCell: Color(0x82FFFFFF),
     buttonMuted: Color(0xFFD8D8D8),
     border: Color(0xFFE6E6E6),
@@ -155,6 +161,7 @@ class AppPalette {
     chartCard: Color(0xFF1C1C1E),
     sheet: Color(0xFF1C1C1E),
     sheetSurface: Color(0xFF2C2C2E),
+    sheetTile: Color(0xFF3A3A3C),
     tableCell: Color(0x1FFFFFFF),
     buttonMuted: Color(0xFF3A3A3C),
     border: Color(0xFF38383A),

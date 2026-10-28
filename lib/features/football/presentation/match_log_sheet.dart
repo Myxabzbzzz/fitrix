@@ -420,7 +420,7 @@ class _MatchLogSheetState extends ConsumerState<_MatchLogSheet> {
                   decoration: InputDecoration(
                     counterText: '',
                     filled: true,
-                    fillColor: palette.tile,
+                    fillColor: palette.sheetTile,
                     border: OutlineInputBorder(
                       borderRadius: AppRadius.smAll,
                       borderSide: BorderSide.none,
@@ -474,7 +474,7 @@ class LogPill extends StatelessWidget {
     final palette = AppPalette.of(context);
     final fg = selected ? palette.onAccent : palette.textPrimary;
     return Material(
-      color: selected ? palette.accent : palette.tile,
+      color: selected ? palette.accent : palette.sheetTile,
       borderRadius: AppRadius.smAll,
       child: InkWell(
         borderRadius: AppRadius.smAll,
@@ -533,7 +533,7 @@ class LogStepper extends StatelessWidget {
     final palette = AppPalette.of(context);
     Widget button(String name, IconData icon, int next, bool enabled) =>
         Material(
-          color: palette.tile,
+          color: palette.sheetTile,
           borderRadius: AppRadius.smAll,
           child: InkWell(
             key: ValueKey('$keyPrefix-$name'),

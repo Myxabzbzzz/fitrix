@@ -126,7 +126,7 @@ class RpeScale extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: selected == n
                       ? palette.accent
-                      : cellColor ?? palette.tile,
+                      : cellColor ?? palette.sheetTile,
                   borderRadius: AppRadius.smAll,
                 ),
                 child: FittedBox(

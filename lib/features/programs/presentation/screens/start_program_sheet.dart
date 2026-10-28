@@ -219,7 +219,7 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
                 decoration: BoxDecoration(
-                    color: palette.tile, borderRadius: AppRadius.mdAll),
+                    color: palette.sheetTile, borderRadius: AppRadius.mdAll),
                 child: Column(
                   children: [
                     for (var i = 0; i < weights.length; i++) ...[
@@ -315,7 +315,7 @@ class _Chip extends StatelessWidget {
         ? palette.pillSelected
         : danger
             ? palette.danger.withValues(alpha: 0.12)
-            : palette.tile;
+            : palette.sheetTile;
     final fg = selected
         ? palette.onPillSelected
         : danger

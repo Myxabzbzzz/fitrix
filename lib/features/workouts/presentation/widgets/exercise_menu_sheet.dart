@@ -273,7 +273,7 @@ class _RoundButton extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: palette.tile,
+          color: palette.sheetTile,
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -321,7 +321,7 @@ class _MenuRow extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: palette.tile,
+                color: palette.sheetTile,
                 borderRadius: AppRadius.smAll,
               ),
               child: Icon(icon, size: 20, color: color),

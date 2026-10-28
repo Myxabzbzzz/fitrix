@@ -237,7 +237,7 @@ class _IndoorRideSheetState extends ConsumerState<_IndoorRideSheet> {
   InputDecoration _decoration(AppPalette palette) => InputDecoration(
         counterText: '',
         filled: true,
-        fillColor: palette.tile,
+        fillColor: palette.sheetTile,
         border: OutlineInputBorder(
           borderRadius: AppRadius.smAll,
           borderSide: BorderSide.none,

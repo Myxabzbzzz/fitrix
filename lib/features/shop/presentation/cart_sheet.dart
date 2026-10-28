@@ -96,7 +96,7 @@ class CartSheet extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
-                      color: palette.tile, borderRadius: AppRadius.smAll),
+                      color: palette.sheetTile, borderRadius: AppRadius.smAll),
                   child: Row(
                     children: [
                       Expanded(

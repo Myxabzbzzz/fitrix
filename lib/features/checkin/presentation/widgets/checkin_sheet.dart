@@ -367,7 +367,7 @@ class _Segmented<T> extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: values[i] == selected
                         ? palette.pillSelected
-                        : palette.tile,
+                        : palette.sheetTile,
                     borderRadius: AppRadius.smAll,
                   ),
                   child: FittedBox(
