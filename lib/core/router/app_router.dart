@@ -253,8 +253,15 @@ class AppRouter {
             ),
           ),
           StatefulShellRoute(
-            builder: (context, state, navigationShell) => MainShell(
-                navigationShell: navigationShell, location: state.uri.path),
+            // The app cross-fades in over whatever was before it (the end
+            // of onboarding, sign-in); pages pushed above it still move it
+            // the platform's way.
+            pageBuilder: (context, state, navigationShell) => shellPage(
+              context,
+              state,
+              MainShell(
+                  navigationShell: navigationShell, location: state.uri.path),
+            ),
             // Tabs keep their state like an IndexedStack but cross-fade.
             navigatorContainerBuilder: (context, navigationShell, children) =>
                 FadingBranchContainer(
@@ -654,6 +661,36 @@ Page<void> slideUpPage(
         position:
             Tween(begin: const Offset(0, 1), end: Offset.zero).animate(curved),
         child: child,
+      );
+    },
+  );
+}
+
+/// The tab shell's page: fades in when it first appears (over the end of
+/// onboarding, so there is no blank frame and no hard cut), and as the page
+/// under a pushed page it moves like any page of the platform.
+Page<void> shellPage(BuildContext context, GoRouterState state, Widget child) {
+  final reduced = Motion.reduced(context);
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    name: state.name,
+    transitionDuration: reduced ? Duration.zero : Motion.slow,
+    reverseTransitionDuration: reduced ? Duration.zero : Motion.medium,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final route = ModalRoute.of(context);
+      final under = route is PageRoute
+          ? Theme.of(context).pageTransitionsTheme.buildTransitions<void>(
+                route as PageRoute<void>,
+                context,
+                kAlwaysCompleteAnimation,
+                secondaryAnimation,
+                child,
+              )
+          : child;
+      return FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Motion.curve),
+        child: under,
       );
     },
   );

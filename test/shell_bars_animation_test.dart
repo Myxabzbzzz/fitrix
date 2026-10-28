@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +9,7 @@ import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
+import 'package:fitrix/features/transition/presentation/screens/chat_transition_screen.dart';
 import 'package:fitrix/features/shell/presentation/main_shell.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -213,5 +215,65 @@ void main() {
     expect(at.dy, greaterThan(100), reason: 'going down');
     await t.pumpAndSettle();
     expect(find.byKey(const Key('live')), findsNothing);
+  });
+
+  testWidgets(
+      'end of onboarding: Home cross-fades in over the transition screen, '
+      'which stays until then (iOS)', (t) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    _phone(t);
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final session = AppSession(prefs);
+    final router = AppRouter.create(session);
+    await t
+        .pumpWidget(FitrixRoot(prefs: prefs, session: session, router: router));
+    await t.pump();
+    router.go(AppRouter.transition);
+    await t.pump();
+    await t.pump(const Duration(seconds: 1));
+    expect(find.byType(ChatTransitionScreen), findsOneWidget);
+
+    // What "I am ready" does at the end of the white circle.
+    await session.completeOnboarding();
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 120));
+
+    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(ChatTransitionScreen), findsOneWidget,
+        reason: 'stays under Home while it fades in: no blank frame');
+    final fades = t
+        .widgetList<FadeTransition>(find.ancestor(
+            of: find.byType(MainShell), matching: find.byType(FadeTransition)))
+        .map((f) => f.opacity.value)
+        .toList();
+    expect(fades.any((v) => v > 0 && v < 1), isTrue, reason: '$fades');
+    expect(t.getTopLeft(find.byType(MainShell)).dx, 0,
+        reason: 'a cross-fade, not a slide from the side');
+
+    await t.pumpAndSettle();
+    expect(find.byType(ChatTransitionScreen), findsNothing);
+    expect(find.byType(HomeScreen), findsOneWidget);
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+  testWidgets('a page pushed over the app still moves the app the iOS way',
+      (t) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    _phone(t);
+    SharedPreferences.setMockInitialValues({'onboarding_complete': true});
+    final prefs = await SharedPreferences.getInstance();
+    final session = AppSession(prefs);
+    final router = AppRouter.create(session);
+    await t
+        .pumpWidget(FitrixRoot(prefs: prefs, session: session, router: router));
+    await t.pumpAndSettle();
+    router.push(AppRouter.runSummary('nope'));
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 150));
+    expect(t.getTopLeft(find.byType(MainShell)).dx, lessThan(0),
+        reason: 'parallax under the incoming page');
+    await t.pumpAndSettle();
+    debugDefaultTargetPlatformOverride = null;
   });
 }
