@@ -216,6 +216,7 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
                 ],
               ),
               PillSelector<int>(
+                bleed: AppSpacing.md,
                 items: labels.keys.toList(),
                 selected: grams,
                 labelOf: (g) => labels[g]!,

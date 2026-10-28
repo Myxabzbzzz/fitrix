@@ -123,6 +123,7 @@ class _ProgramsScreenState extends ConsumerState<ProgramsScreen> {
                     const SizedBox(height: AppSpacing.sm),
                   ],
                   PillSelector<_Filter>(
+                    bleed: AppSpacing.md,
                     items: _Filter.values,
                     selected: _filter,
                     labelOf: (f) => _filterLabel(l10n, f),

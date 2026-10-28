@@ -115,14 +115,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: PillSelector<_Cat>(
-                items: _Cat.values,
-                selected: _cat,
-                labelOf: (c) => labels[c]!,
-                onSelected: (c) => setState(() => _cat = c),
-              ),
+            PillSelector<_Cat>(
+              items: _Cat.values,
+              selected: _cat,
+              labelOf: (c) => labels[c]!,
+              onSelected: (c) => setState(() => _cat = c),
             ),
             Expanded(
               child: RefreshIndicator(

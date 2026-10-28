@@ -234,6 +234,7 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   PillSelector<MuscleGroup?>(
+                    bleed: AppSpacing.md,
                     items: const [null, ...MuscleGroup.values],
                     selected: _group,
                     labelOf: (g) =>

@@ -180,6 +180,7 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                   if (p.sessions.length > 1) ...[
                     const SizedBox(height: AppSpacing.xs),
                     PillSelector<int>(
+                      bleed: AppSpacing.md,
                       items: [for (var i = 0; i < p.sessions.length; i++) i],
                       selected: _session,
                       labelOf: (i) => p.sessions[i].name,

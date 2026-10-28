@@ -4,11 +4,17 @@ import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 
 /// Horizontally scrolling row of pills (Gym / Fitness / Cycling / ...).
+///
+/// The first pill sits on the page's 16 pt content edge and the row scrolls
+/// out to the screen edge. Inside a list that already has a 16 pt side
+/// padding, pass that padding as [bleed] so the row still reaches the screen
+/// edges instead of being cut off flat at the padding.
 class PillSelector<T> extends StatelessWidget {
   final List<T> items;
   final T selected;
   final String Function(T) labelOf;
   final ValueChanged<T> onSelected;
+  final double bleed;
 
   const PillSelector({
     super.key,
@@ -16,17 +22,18 @@ class PillSelector<T> extends StatelessWidget {
     required this.selected,
     required this.labelOf,
     required this.onSelected,
+    this.bleed = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
 
-    return SizedBox(
+    final list = SizedBox(
       height: 32,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
         itemCount: items.length,
         separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.xs),
         itemBuilder: (context, index) {
@@ -53,6 +60,18 @@ class PillSelector<T> extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+    if (bleed == 0) return list;
+    return LayoutBuilder(
+      builder: (context, box) => SizedBox(
+        height: 32,
+        width: box.maxWidth,
+        child: OverflowBox(
+          minWidth: box.maxWidth + 2 * bleed,
+          maxWidth: box.maxWidth + 2 * bleed,
+          child: list,
+        ),
       ),
     );
   }

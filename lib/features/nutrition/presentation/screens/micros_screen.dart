@@ -139,6 +139,7 @@ class _MicrosScreenState extends ConsumerState<MicrosScreen> {
         ),
         const SizedBox(height: AppSpacing.sm),
         PillSelector<_Period>(
+          bleed: AppSpacing.md,
           items: _Period.values,
           selected: _period,
           labelOf: (p) => switch (p) {
@@ -150,6 +151,7 @@ class _MicrosScreenState extends ConsumerState<MicrosScreen> {
         ),
         const SizedBox(height: AppSpacing.xs),
         PillSelector<MicroFilter>(
+          bleed: AppSpacing.md,
           items: MicroFilter.values,
           selected: _filter,
           labelOf: (f) => switch (f) {

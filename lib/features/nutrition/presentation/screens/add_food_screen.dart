@@ -128,24 +128,18 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: PillSelector<MealSlot>(
-                items: MealSlot.values,
-                selected: _slot,
-                labelOf: (s) => slotLabel(l10n, s),
-                onSelected: (s) => setState(() => _slot = s),
-              ),
+            PillSelector<MealSlot>(
+              items: MealSlot.values,
+              selected: _slot,
+              labelOf: (s) => slotLabel(l10n, s),
+              onSelected: (s) => setState(() => _slot = s),
             ),
             const SizedBox(height: AppSpacing.xs),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: PillSelector<String>(
-                items: _categories,
-                selected: _category,
-                labelOf: (c) => categoryLabel(l10n, c),
-                onSelected: (c) => setState(() => _category = c),
-              ),
+            PillSelector<String>(
+              items: _categories,
+              selected: _category,
+              labelOf: (c) => categoryLabel(l10n, c),
+              onSelected: (c) => setState(() => _category = c),
             ),
             Expanded(
               child: catalog.when(

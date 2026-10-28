@@ -206,14 +206,11 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: PillSelector<String>(
-                items: categories,
-                selected: category,
-                labelOf: (c) => _categoryLabel(l10n, c),
-                onSelected: (c) => setState(() => _category = c),
-              ),
+            PillSelector<String>(
+              items: categories,
+              selected: category,
+              labelOf: (c) => _categoryLabel(l10n, c),
+              onSelected: (c) => setState(() => _category = c),
             ),
             Expanded(
               child: RefreshIndicator(

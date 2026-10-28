@@ -181,6 +181,7 @@ class _TargetsScreenState extends ConsumerState<TargetsScreen> {
                                 .copyWith(color: palette.textPrimary)),
                         const SizedBox(height: AppSpacing.xs),
                         PillSelector<Goal>(
+                          bleed: AppSpacing.md,
                           items: Goal.values,
                           selected: _draft.goal,
                           labelOf: (g) => switch (g) {

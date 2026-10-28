@@ -178,6 +178,7 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
 
     return page([
       PillSelector<String>(
+        bleed: AppSpacing.md,
         items: [for (final l in lifts) l.name],
         selected: current.name,
         labelOf: (n) => n,
