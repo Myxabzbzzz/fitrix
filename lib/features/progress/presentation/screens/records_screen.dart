@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/title_row.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
@@ -76,21 +77,13 @@ class _RecordsScreenState extends ConsumerState<RecordsScreen> {
         rows.add(Padding(
           padding:
               const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.xs),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                    name.isEmpty
-                        ? name
-                        : name[0].toUpperCase() + name.substring(1),
-                    style: AppText.headingS.copyWith(color: p.textPrimary)),
-              ),
-              Flexible(
-                child: Text(l10n.recordsMonthCount(count),
-                    overflow: TextOverflow.ellipsis,
-                    style: AppText.caption.copyWith(color: p.textSecondary)),
-              ),
-            ],
+          child: TitleRow(
+            title: Text(
+                name.isEmpty ? name : name[0].toUpperCase() + name.substring(1),
+                style: AppText.headingS.copyWith(color: p.textPrimary)),
+            trailing: Text(l10n.recordsMonthCount(count),
+                overflow: TextOverflow.ellipsis,
+                style: AppText.caption.copyWith(color: p.textSecondary)),
           ),
         ));
       }

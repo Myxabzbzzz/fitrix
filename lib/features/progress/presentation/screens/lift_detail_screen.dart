@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/title_row.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
@@ -246,20 +247,15 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(children: [
-                      Expanded(
-                        child: Text(l10n.liftStrengthLevel,
-                            style: AppText.headingS
-                                .copyWith(color: p.textPrimary)),
-                      ),
-                      Flexible(
-                        child: Text(strengthLevelLabel(l10n, info.level),
-                            key: const ValueKey('strength-level'),
-                            overflow: TextOverflow.ellipsis,
-                            style:
-                                AppText.bodyStrong.copyWith(color: p.accent)),
-                      ),
-                    ]),
+                    TitleRow(
+                      title: Text(l10n.liftStrengthLevel,
+                          style:
+                              AppText.headingS.copyWith(color: p.textPrimary)),
+                      trailing: Text(strengthLevelLabel(l10n, info.level),
+                          key: const ValueKey('strength-level'),
+                          overflow: TextOverflow.ellipsis,
+                          style: AppText.bodyStrong.copyWith(color: p.accent)),
+                    ),
                     const SizedBox(height: AppSpacing.xs),
                     Row(children: [
                       for (var i = 0; i < strengthLevels.length; i++) ...[
@@ -305,17 +301,13 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
         ),
       ],
       const SizedBox(height: AppSpacing.md),
-      Row(children: [
-        Expanded(
-          child: Text(l10n.liftNextSession,
-              style: AppText.headingS.copyWith(color: p.textPrimary)),
-        ),
-        Flexible(
-          child: Text(l10n.liftReserve,
-              overflow: TextOverflow.ellipsis,
-              style: AppText.caption.copyWith(color: p.textSecondary)),
-        ),
-      ]),
+      TitleRow(
+        title: Text(l10n.liftNextSession,
+            style: AppText.headingS.copyWith(color: p.textPrimary)),
+        trailing: Text(l10n.liftReserve,
+            overflow: TextOverflow.ellipsis,
+            style: AppText.caption.copyWith(color: p.textSecondary)),
+      ),
       const SizedBox(height: AppSpacing.xs),
       ProgressCard(
         child: Column(

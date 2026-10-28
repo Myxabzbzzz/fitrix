@@ -7,6 +7,7 @@ import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/title_row.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
@@ -128,21 +129,15 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
+                            TitleRow(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Text(l10n.progressLoadThisWeek,
-                                      style: AppText.headingS
-                                          .copyWith(color: p.textPrimary)),
-                                ),
-                                Flexible(
-                                  child: Text(l10n.progressLoadNote,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppText.caption
-                                          .copyWith(color: p.textSecondary)),
-                                ),
-                              ],
+                              title: Text(l10n.progressLoadThisWeek,
+                                  style: AppText.headingS
+                                      .copyWith(color: p.textPrimary)),
+                              trailing: Text(l10n.progressLoadNote,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppText.caption
+                                      .copyWith(color: p.textSecondary)),
                             ),
                             gap(AppSpacing.xs),
                             Wrap(
@@ -239,30 +234,23 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(l10n.progressBalance,
-                                        style: AppText.headingS
-                                            .copyWith(color: p.textPrimary)),
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      '${NumberFormat('0.00', locale).format(acwr)} · ${switch (band) {
-                                        AcwrBand.low => l10n.progressBandLow,
-                                        AcwrBand.sweetSpot =>
-                                          l10n.progressBandSweet,
-                                        AcwrBand.risky =>
-                                          l10n.progressBandRisky,
-                                      }}',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppText.bodyStrong.copyWith(
-                                          color: band == AcwrBand.sweetSpot
-                                              ? p.success
-                                              : p.warning),
-                                    ),
-                                  ),
-                                ],
+                              TitleRow(
+                                title: Text(l10n.progressBalance,
+                                    style: AppText.headingS
+                                        .copyWith(color: p.textPrimary)),
+                                trailing: Text(
+                                  '${NumberFormat('0.00', locale).format(acwr)} · ${switch (band) {
+                                    AcwrBand.low => l10n.progressBandLow,
+                                    AcwrBand.sweetSpot =>
+                                      l10n.progressBandSweet,
+                                    AcwrBand.risky => l10n.progressBandRisky,
+                                  }}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppText.bodyStrong.copyWith(
+                                      color: band == AcwrBand.sweetSpot
+                                          ? p.success
+                                          : p.warning),
+                                ),
                               ),
                               gap(AppSpacing.xs),
                               BalanceBar(acwr: acwr),

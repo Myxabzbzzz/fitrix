@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/title_row.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
@@ -58,34 +59,28 @@ class _TargetsScreenState extends ConsumerState<TargetsScreen> {
     Widget row(String title, String sub, String value, {bool big = false}) =>
         Padding(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-          child: Row(
+          child: TitleRow(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title,
-                        style: (big ? AppText.headingM : AppText.bodyStrong)
-                            .copyWith(color: palette.textPrimary)),
-                    if (sub.isNotEmpty)
-                      Text(sub,
-                          style: AppText.caption
-                              .copyWith(color: palette.textSecondary)),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerRight,
-                  child: Text(value,
-                      style: (big ? AppText.headingL : AppText.bodyStrong)
-                          .copyWith(color: palette.textPrimary)),
-                ),
-              ),
-            ],
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: (big ? AppText.headingM : AppText.bodyStrong)
+                        .copyWith(color: palette.textPrimary)),
+                if (sub.isNotEmpty)
+                  Text(sub,
+                      style: AppText.caption
+                          .copyWith(color: palette.textSecondary)),
+              ],
+            ),
+            // Right-aligned so the numbers line up on the card's edge.
+            trailing: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Text(value,
+                  style: (big ? AppText.headingL : AppText.bodyStrong)
+                      .copyWith(color: palette.textPrimary)),
+            ),
           ),
         );
 

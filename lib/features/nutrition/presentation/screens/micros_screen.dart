@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/core/widgets/title_row.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
@@ -247,16 +249,24 @@ class _MicroRow extends StatelessWidget {
         children: [
           Row(
             children: [
-              Flexible(
-                child: Text(microName(l10n, microKey),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppText.bodyStrong
-                        .copyWith(color: palette.textPrimary)),
+              // Name and chip on the left, the amount flush right on
+              // every row.
+              Expanded(
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Text(microName(l10n, microKey),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppText.bodyStrong
+                              .copyWith(color: palette.textPrimary)),
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    Text(chip,
+                        style: AppText.captionStrong.copyWith(color: color)),
+                  ],
+                ),
               ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(chip, style: AppText.captionStrong.copyWith(color: color)),
-              const Spacer(),
               const SizedBox(width: AppSpacing.xs),
               Text(
                 '${microAmount(microKey, intake, locale)} / '
@@ -269,11 +279,18 @@ class _MicroRow extends StatelessWidget {
           const SizedBox(height: AppSpacing.xxs),
           ClipRRect(
             borderRadius: AppRadius.fullAll,
-            child: LinearProgressIndicator(
-              value: target <= 0 ? 0 : (intake / target).clamp(0.0, 1.0),
-              minHeight: 6,
-              color: color,
-              backgroundColor: palette.buttonMuted,
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(
+                  begin: 0,
+                  end: target <= 0 ? 0 : (intake / target).clamp(0.0, 1.0)),
+              duration: Motion.of(context, Motion.slow),
+              curve: Motion.curve,
+              builder: (context, v, _) => LinearProgressIndicator(
+                value: v,
+                minHeight: 6,
+                color: color,
+                backgroundColor: palette.buttonMuted,
+              ),
             ),
           ),
           if (status != MicroStatus.ok)
@@ -332,20 +349,14 @@ class _InSeason extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(l10n.micrInSeason,
-                  style: AppText.headingS.copyWith(color: palette.textPrimary)),
-            ),
-            Flexible(
-              child: Text(
-                l10n.micrUzbekistanMonth(DateFormat.MMMM(locale).format(today)),
-                textAlign: TextAlign.end,
-                style: AppText.caption.copyWith(color: palette.textSecondary),
-              ),
-            ),
-          ],
+        TitleRow(
+          title: Text(l10n.micrInSeason,
+              style: AppText.headingS.copyWith(color: palette.textPrimary)),
+          trailing: Text(
+            l10n.micrUzbekistanMonth(DateFormat.MMMM(locale).format(today)),
+            textAlign: TextAlign.end,
+            style: AppText.caption.copyWith(color: palette.textSecondary),
+          ),
         ),
         const SizedBox(height: AppSpacing.xs),
         SizedBox(
