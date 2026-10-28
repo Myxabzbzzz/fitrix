@@ -8,6 +8,9 @@
   "weight": "Weight",
   "height": "Height",
   "unitKg": "kg",
+  "unitMcg": "mcg",
+  "unitMg": "mg",
+  "unitGrams": "g",
   "signOut": "Sign out",
   "signOutTitle": "Sign out?",
   "signOutLocalBody": "Everything you logged is stored only on this device and will be deleted: profile, workouts, chats, check-ins, plans, food and body weight.",
@@ -379,6 +382,9 @@
       }
     }
   },
+  "coachFirstMessageSport": "Start with {workout}. After that, Felix tailors his advice to what you log.",
+  "@coachFirstMessageSport": {"placeholders": {"workout": {"type": "String"}}},
+  "coachFirstMessageNoPlan": "Log your first workout, and Felix will tailor his advice to it.",
   "gymCoachBackTitle": "Welcome back",
   "gymCoachBackMessage": "Your last workout was {days, plural, one{{days} day} other{{days} days}} ago. A lighter session today gets you back on track.",
   "@gymCoachBackMessage": {

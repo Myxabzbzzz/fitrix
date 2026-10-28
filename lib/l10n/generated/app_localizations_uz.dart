@@ -33,6 +33,15 @@ class AppLocalizationsUz extends AppLocalizations {
   String get unitKg => 'kg';
 
   @override
+  String get unitMcg => 'mkg';
+
+  @override
+  String get unitMg => 'mg';
+
+  @override
+  String get unitGrams => 'g';
+
+  @override
   String get signOut => 'Chiqish';
 
   @override
@@ -572,6 +581,15 @@ class AppLocalizationsUz extends AppLocalizations {
   String gymCoachFirstMessage(String workout) {
     return 'Bugun $workout bilan boshlang. Keyingi safar Felix yozganlaringiz asosida vazn taklif qiladi.';
   }
+
+  @override
+  String coachFirstMessageSport(String workout) {
+    return 'Bugun $workout bilan boshlang. Keyin Felix yozganlaringiz asosida maslahat beradi.';
+  }
+
+  @override
+  String get coachFirstMessageNoPlan =>
+      'Birinchi mashg‘ulotni yozib oling, keyin Felix shunga qarab maslahat beradi.';
 
   @override
   String get gymCoachBackTitle => 'Qaytganingiz bilan';

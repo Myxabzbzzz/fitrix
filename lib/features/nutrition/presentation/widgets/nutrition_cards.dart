@@ -353,7 +353,8 @@ String microAmount(String key, double value, String locale) {
       : NumberFormat.decimalPattern(locale).format(value.round());
 }
 
-String microUnitLabel(String key) {
-  if (key == 'potassium_mg' || key == 'sodium_mg') return 'g';
-  return key.endsWith('_mcg') ? 'mcg' : 'mg';
+/// The unit after a micronutrient amount, in the app language ("мкг").
+String microUnitLabel(AppLocalizations l10n, String key) {
+  if (key == 'potassium_mg' || key == 'sodium_mg') return l10n.unitGrams;
+  return key.endsWith('_mcg') ? l10n.unitMcg : l10n.unitMg;
 }

@@ -273,7 +273,7 @@ class _MicroRow extends StatelessWidget {
               Text(
                 '${microAmount(microKey, intake, locale)} / '
                 '${microAmount(microKey, target, locale)} '
-                '${microUnitLabel(microKey)}',
+                '${microUnitLabel(l10n, microKey)}',
                 style: AppText.caption.copyWith(color: palette.textSecondary),
               ),
             ],

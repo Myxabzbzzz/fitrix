@@ -293,7 +293,7 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
                                   ),
                                   Text(
                                     '${microAmount(r.key, r.amount, locale)} '
-                                    '${microUnitLabel(r.key)} · ${r.pct.round()}%',
+                                    '${microUnitLabel(l10n, r.key)} · ${r.pct.round()}%',
                                     style: AppText.caption
                                         .copyWith(color: palette.textSecondary),
                                   ),

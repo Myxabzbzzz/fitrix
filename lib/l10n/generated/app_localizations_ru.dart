@@ -33,6 +33,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get unitKg => 'кг';
 
   @override
+  String get unitMcg => 'мкг';
+
+  @override
+  String get unitMg => 'мг';
+
+  @override
+  String get unitGrams => 'г';
+
+  @override
   String get signOut => 'Выйти';
 
   @override
@@ -596,6 +605,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String gymCoachFirstMessage(String workout) {
     return 'Начните сегодня ($workout). В следующий раз Felix подскажет веса по вашим записям.';
   }
+
+  @override
+  String coachFirstMessageSport(String workout) {
+    return 'Начните сегодня: $workout. Дальше Felix будет советовать по вашим записям.';
+  }
+
+  @override
+  String get coachFirstMessageNoPlan =>
+      'Запишите первую тренировку, и дальше Felix будет советовать по вашим записям.';
 
   @override
   String get gymCoachBackTitle => 'С возвращением';

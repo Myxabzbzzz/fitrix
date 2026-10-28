@@ -33,6 +33,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get unitKg => 'kg';
 
   @override
+  String get unitMcg => 'µg';
+
+  @override
+  String get unitMg => 'mg';
+
+  @override
+  String get unitGrams => 'g';
+
+  @override
   String get signOut => 'Cerrar sesión';
 
   @override
@@ -582,6 +591,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String gymCoachFirstMessage(String workout) {
     return 'Empieza con $workout. La próxima vez Felix te sugerirá pesos según lo que registres.';
   }
+
+  @override
+  String coachFirstMessageSport(String workout) {
+    return 'Empieza con $workout. Después, Felix te aconsejará según lo que registres.';
+  }
+
+  @override
+  String get coachFirstMessageNoPlan =>
+      'Registra tu primer entrenamiento y Felix te aconsejará a partir de él.';
 
   @override
   String get gymCoachBackTitle => '¡Hola de nuevo!';

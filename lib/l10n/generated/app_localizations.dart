@@ -150,6 +150,24 @@ abstract class AppLocalizations {
   /// **'kg'**
   String get unitKg;
 
+  /// No description provided for @unitMcg.
+  ///
+  /// In en, this message translates to:
+  /// **'mcg'**
+  String get unitMcg;
+
+  /// No description provided for @unitMg.
+  ///
+  /// In en, this message translates to:
+  /// **'mg'**
+  String get unitMg;
+
+  /// No description provided for @unitGrams.
+  ///
+  /// In en, this message translates to:
+  /// **'g'**
+  String get unitGrams;
+
   /// No description provided for @signOut.
   ///
   /// In en, this message translates to:
@@ -1037,6 +1055,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start with {workout}. Next time Felix suggests weights from what you log.'**
   String gymCoachFirstMessage(String workout);
+
+  /// No description provided for @coachFirstMessageSport.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with {workout}. After that, Felix tailors his advice to what you log.'**
+  String coachFirstMessageSport(String workout);
+
+  /// No description provided for @coachFirstMessageNoPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Log your first workout, and Felix will tailor his advice to it.'**
+  String get coachFirstMessageNoPlan;
 
   /// No description provided for @gymCoachBackTitle.
   ///
