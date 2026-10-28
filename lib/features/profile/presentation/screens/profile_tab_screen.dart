@@ -146,13 +146,17 @@ class ProfileTabScreen extends ConsumerWidget {
     final fullName = [profile?.name, profile?.surname]
         .where((s) => s != null && s.isNotEmpty)
         .join(' ');
-    final displayName = fullName.isEmpty ? '@theboss' : fullName;
-    final initial = displayName.characters.first.toUpperCase();
+    final displayName = fullName;
+    final initial =
+        fullName.isEmpty ? null : fullName.characters.first.toUpperCase();
     final streak = currentStreak(
       [for (final w in history) w.finishedAt],
       DateTime.now(),
     );
-    final weight = profile?.weight;
+    // Stored as typed ("77.9" or "77,9"); shown with the app's decimal mark.
+    final rawWeight = profile?.weight;
+    final weightKg = double.tryParse((rawWeight ?? '').replaceAll(',', '.'));
+    final weight = weightKg == null ? rawWeight : formatKg(weightKg);
     final perf = ref.watch(performanceProfileProvider);
 
     String dash(String? v) => v == null || v.isEmpty ? '—' : v;
@@ -328,20 +332,24 @@ class ProfileTabScreen extends ConsumerWidget {
                       color: palette.tile,
                       shape: BoxShape.circle,
                     ),
-                    child: Text(initial,
-                        style: AppText.displayMedium.copyWith(
-                          color: palette.accent,
-                        )),
+                    child: initial == null
+                        ? Icon(Icons.person,
+                            size: 36, color: palette.textSecondary)
+                        : Text(initial,
+                            style: AppText.displayMedium.copyWith(
+                              color: palette.accent,
+                            )),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(displayName,
-                            style: AppText.headingM.copyWith(
-                              color: palette.textPrimary,
-                            )),
+                        if (displayName.isNotEmpty)
+                          Text(displayName,
+                              style: AppText.headingM.copyWith(
+                                color: palette.textPrimary,
+                              )),
                         if (subtitle.isNotEmpty)
                           Text(subtitle,
                               key: const Key('profile-subtitle'),

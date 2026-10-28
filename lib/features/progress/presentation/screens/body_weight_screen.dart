@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:fitrix/core/widgets/sheet_safe_area.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
@@ -343,7 +344,8 @@ class _WeightSheetState extends ConsumerState<_WeightSheet> {
     super.initState();
     final all = ref.read(bodyWeightProvider);
     _controller = TextEditingController(
-        text: all.isEmpty ? '' : NumberFormat('0.#', 'en').format(all.last.kg));
+        // The app language's decimal mark; _save reads either mark.
+        text: all.isEmpty ? '' : formatKg(all.last.kg));
   }
 
   @override

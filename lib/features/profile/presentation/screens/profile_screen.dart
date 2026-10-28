@@ -156,14 +156,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
 
-              const SizedBox(height: AppSpacing.md),
-
-              // Username
-              Text(
-                '@theboss',
-                style: AppText.headingM.copyWith(color: palette.textPrimary),
-              ),
-
               const SizedBox(height: AppSpacing.xl),
 
               // Name Input
