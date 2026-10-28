@@ -80,6 +80,11 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
           // No Home follows: nothing may be left for a later shell to pick up.
           ShellEntrance.handOff = null;
           debugPrint('Could not complete onboarding: $e');
+          // Shrink the circle back so Go can be tapped again.
+          if (!mounted) return;
+          await _whiteCircleController.reverse();
+          // Drops the dismissed circle, which would still take the taps.
+          if (mounted) setState(() {});
           return;
         }
         // Home fades in from the white the circle ended on. Set only now,

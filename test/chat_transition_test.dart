@@ -83,6 +83,15 @@ void main() {
 
       expect(ShellEntrance.handOff, isNull);
       expect(find.text('home'), findsNothing);
+
+      // The circle shrinks back and Go tries again.
+      await tester.pump(const Duration(milliseconds: 900));
+      await tester.tap(
+          find.text(lookupAppLocalizations(const Locale('en')).transitionGo));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 900));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(session.attempts, 2);
     });
   });
 }
@@ -90,7 +99,11 @@ void main() {
 class _FailingSession extends AppSession {
   _FailingSession(super.prefs);
 
+  int attempts = 0;
+
   @override
-  Future<void> completeOnboarding({bool notify = true}) =>
-      Future.error(StateError('prefs write failed'));
+  Future<void> completeOnboarding({bool notify = true}) {
+    attempts++;
+    return Future.error(StateError('prefs write failed'));
+  }
 }
