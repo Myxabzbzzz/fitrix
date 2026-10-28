@@ -40,12 +40,14 @@ class MyWorkoutsScreen extends ConsumerWidget {
     ];
     final history = ref.watch(workoutHistoryProvider);
     final catalog = ref.watch(exerciseCatalogProvider).valueOrNull;
-    final weekAgo = DateTime.now().subtract(const Duration(days: 7));
+    // "This week" as everywhere else: from Monday, by the app clock.
+    final weekStart = weekStartOf(ref.watch(todayProvider));
 
     String caption(Sport sport) => l10n.gymTileCaption(
           templates.where((t) => t.sport == sport).length,
           history
-              .where((w) => w.sport == sport && w.finishedAt.isAfter(weekAgo))
+              .where(
+                  (w) => w.sport == sport && !w.finishedAt.isBefore(weekStart))
               .length,
         );
 
@@ -139,8 +141,9 @@ class MyWorkoutsScreen extends ConsumerWidget {
                       ),
                     ),
                     Padding(
+                      // On the tile label's 16 pt inset.
                       padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.xs, horizontal: AppSpacing.xxs),
+                          vertical: AppSpacing.xs, horizontal: AppSpacing.md),
                       child: Text(
                         caption(sport),
                         style: AppText.caption
