@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
 
@@ -417,6 +418,10 @@ String formatDuration(Duration d, {bool withSeconds = true}) {
   return parts.join(' ');
 }
 
-/// Formats a weight without a trailing ".0".
-String formatKg(double kg) =>
-    kg == kg.roundToDouble() ? kg.toInt().toString() : kg.toStringAsFixed(1);
+/// Formats a weight without a trailing ".0", with the app language's
+/// decimal mark ("72,5" in Russian, "72.5" in English): FitrixApp keeps
+/// `Intl.defaultLocale` on the app language.
+String formatKg(double kg) => NumberFormat('0.#').format(kg);
+
+/// One decimal, always shown ("110,0"), in the app language's format.
+String formatOneDecimal(double v) => NumberFormat('0.0').format(v);

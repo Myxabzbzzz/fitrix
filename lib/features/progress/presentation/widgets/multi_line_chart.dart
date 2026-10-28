@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 
 /// One line (or a set of dots) on a [MultiLineChart]. Points are
 /// (x in 0..1 across the time span, y in data units).
@@ -112,8 +113,7 @@ class _Painter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
 
-  String _fmt(double v) =>
-      v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(1);
+  String _fmt(double v) => formatKg(v);
 
   @override
   void paint(Canvas canvas, Size size) {

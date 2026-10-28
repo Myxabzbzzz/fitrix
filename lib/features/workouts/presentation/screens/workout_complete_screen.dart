@@ -470,7 +470,7 @@ class _ExerciseRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                estimate == null ? '—' : estimate.toStringAsFixed(1),
+                estimate == null ? '—' : formatOneDecimal(estimate),
                 style: AppText.headingS.copyWith(
                   color: palette.textPrimary,
                   fontFeatures: const [FontFeature.tabularFigures()],

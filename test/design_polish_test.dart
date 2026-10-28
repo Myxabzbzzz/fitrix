@@ -217,4 +217,15 @@ void main() {
     await t.pump(const Duration(seconds: 1));
     expect(find.text('12:05'), findsOneWidget);
   });
+
+  testWidgets('live gym weights use the Russian decimal comma', (t) async {
+    final r = await pumpTour(t, proRuLight);
+    r.container
+        .read(activeWorkoutProvider.notifier)
+        .start(WorkoutCatalog.defaults.first);
+    r.container.read(activeWorkoutExpandedProvider.notifier).state = true;
+    await r.go(AppRouter.home);
+    expect(find.textContaining('36,5'), findsWidgets);
+    expect(find.textContaining('36.5'), findsNothing);
+  });
 }
