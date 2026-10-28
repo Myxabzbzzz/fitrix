@@ -54,6 +54,7 @@ Future<Widget> _host(
   List<Map<String, Object>> weighIns = const [],
   double textScale = 1,
   Map<String, Object> extra = const {},
+  Locale? locale,
 }) async {
   SharedPreferences.setMockInitialValues({
     'user_name': 'Alex',
@@ -72,6 +73,7 @@ Future<Widget> _host(
     ],
     child: MaterialApp(
       theme: AppTheme.lightTheme,
+      locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) => MediaQuery(
@@ -303,6 +305,47 @@ void main() {
       expect(text('form-value'), '${pct >= 0 ? '+' : '−'}${pct.abs()}%');
       expect(t.takeException(), isNull);
     });
+
+    testWidgets(
+        'a first workout: no "overreaching" figures, the days still to '
+        'collect instead', (t) async {
+      _se(t);
+      await t.pumpWidget(
+          await _host(const ProgressScreen(), history: [_workout(_today)]));
+      await t.pumpAndSettle();
+      String text(String key) =>
+          t.widget<Text>(find.byKey(ValueKey(key))).data!;
+      final l10n = lookupAppLocalizations(const Locale('en'));
+      expect(text('fitness-value'), '—');
+      expect(text('fatigue-value'), '—');
+      expect(text('form-value'), '—');
+      expect(find.text(l10n.progressCollecting(14)), findsNWidgets(3));
+      await t.scrollUntilVisible(
+          find.byKey(const ValueKey('balance-collecting')), 200,
+          scrollable: find.byType(Scrollable).last);
+      expect(find.byKey(const ValueKey('balance-collecting')), findsOneWidget);
+      expect(find.text(l10n.progressCollecting(28)), findsOneWidget);
+      expect(find.textContaining('6.00'), findsNothing);
+      expect(find.textContaining('500%'), findsNothing);
+      expect(t.takeException(), isNull);
+    });
+
+    for (final scale in [1.0, 1.3]) {
+      testWidgets('a new user\'s Progress fits SE in ru, text x$scale',
+          (t) async {
+        _se(t);
+        await t.pumpWidget(await _host(const ProgressScreen(),
+            history: [_workout(_today)],
+            textScale: scale,
+            locale: const Locale('ru')));
+        await t.pumpAndSettle();
+        expect(find.text('Собираем данные — ещё 14 дн.'), findsWidgets);
+        await t.drag(find.byType(Scrollable).last, const Offset(0, -600));
+        await t.pumpAndSettle();
+        expect(find.text('Собираем данные — ещё 28 дн.'), findsOneWidget);
+        expect(t.takeException(), isNull);
+      });
+    }
 
     for (final scale in [1.0, 1.3]) {
       testWidgets('every screen lays out at SE, text x$scale', (t) async {

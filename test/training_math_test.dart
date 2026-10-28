@@ -79,8 +79,47 @@ void main() {
       final risky = loadSummary([
         for (var i = 0; i < 7; i++)
           DailyLoad(today.subtract(Duration(days: i)), 500),
+        // A first workout long ago, so there is enough history.
+        DailyLoad(today.subtract(const Duration(days: 40)), 10),
       ], today);
       expect(risky.band, AcwrBand.risky);
+    });
+
+    test('a new user is not "overreaching": form waits 14 days, balance 28',
+        () {
+      final firstDay = loadSummary([DailyLoad(today, 600)], today);
+      expect(firstDay.historyDays, 0);
+      expect(firstDay.hasForm, isFalse);
+      expect(firstDay.form, isNull, reason: 'would be -500 %');
+      expect(firstDay.acwr, isNull, reason: 'would be 6.00');
+      expect(firstDay.band, isNull);
+      expect(firstDay.daysToForm, 14);
+      expect(firstDay.daysToBalance, 28);
+
+      final first = today.subtract(const Duration(days: 14));
+      final twoWeeks = loadSummary(
+          [DailyLoad(first, 300), DailyLoad(today, 300)], today);
+      expect(twoWeeks.hasForm, isTrue);
+      expect(twoWeeks.form, isNotNull);
+      expect(twoWeeks.hasBalance, isFalse);
+      expect(twoWeeks.acwr, isNull);
+      expect(twoWeeks.daysToBalance, 14);
+
+      final fourWeeks = loadSummary([
+        DailyLoad(today.subtract(const Duration(days: 28)), 300),
+        DailyLoad(today, 300),
+      ], today);
+      expect(fourWeeks.hasBalance, isTrue);
+      expect(fourWeeks.acwr, isNotNull);
+      expect(fourWeeks.band, isNotNull);
+    });
+
+    test('workouts after the given day do not count as history', () {
+      final s = loadSummary([
+        DailyLoad(today.add(const Duration(days: 3)), 500),
+        DailyLoad(today.subtract(const Duration(days: 2)), 500),
+      ], today);
+      expect(s.historyDays, 2);
     });
 
     test('missing days are zero and outside window ignored', () {
@@ -94,6 +133,8 @@ void main() {
 
     test('empty', () {
       final s = loadSummary([], today);
+      expect(s.historyDays, isNull);
+      expect(s.hasForm, isFalse);
       expect(s.fitness, 0);
       expect(s.fatigue, 0);
       expect(s.form, isNull);

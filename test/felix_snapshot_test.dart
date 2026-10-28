@@ -111,9 +111,19 @@ void main() {
     expect((app['load'] as Map)['last7'], 6 * 86 + 6 * 60);
     expect((app['load'] as Map).containsKey('acwr'), isFalse);
 
+    // Two days of history: no load balance yet, for any topic.
     final recovery = json(AssistantTopic.recovery, history: history);
-    expect((recovery['load'] as Map).containsKey('acwr'), isTrue);
+    expect((recovery['load'] as Map).containsKey('acwr'), isFalse);
+    expect((recovery['load'] as Map).containsKey('band'), isFalse);
     expect((recovery['load'] as Map)['hardDays7'], 0);
+
+    // From 28 days after the first workout recovery gets it.
+    final long = [
+      workout(Sport.gym, DateTime(2026, 9, 22, 18), 'Legs'),
+      ...history,
+    ];
+    final later = json(AssistantTopic.recovery, history: long);
+    expect((later['load'] as Map).containsKey('acwr'), isTrue);
   });
 
   test('next session is of the topic sport; today shows the open session', () {

@@ -4802,4 +4802,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transitionGo => 'I am ready';
+
+  @override
+  String progressCollecting(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Collecting data — $days more days',
+      one: 'Collecting data — 1 more day',
+    );
+    return '$_temp0';
+  }
 }

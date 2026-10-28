@@ -1354,5 +1354,6 @@
   "onbFreqFew": "Varias veces por semana",
   "onbFreqStarting": "Estoy empezando",
   "transitionReady": "Felix está listo.\n¿Y tú?",
-  "transitionGo": "¡Vamos!"
+  "transitionGo": "¡Vamos!",
+  "progressCollecting": "{days, plural, =1{Recopilando datos: falta 1 día} other{Recopilando datos: faltan {days} días}}"
 }

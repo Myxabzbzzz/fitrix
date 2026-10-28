@@ -4894,4 +4894,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get transitionGo => 'Начинаем';
+
+  @override
+  String progressCollecting(int days) {
+    return 'Собираем данные — ещё $days дн.';
+  }
 }

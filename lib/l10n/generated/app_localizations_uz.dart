@@ -4750,4 +4750,9 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get transitionGo => 'Men tayyorman';
+
+  @override
+  String progressCollecting(int days) {
+    return 'Ma’lumot yig‘ilmoqda — yana $days kun';
+  }
 }

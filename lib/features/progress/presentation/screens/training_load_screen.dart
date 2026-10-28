@@ -157,14 +157,25 @@ class _TrainingLoadScreenState extends ConsumerState<TrainingLoadScreen> {
                   const SizedBox(height: AppSpacing.sm),
                   ProgressCard(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (!summary.hasForm && hasLoad)
+                          Padding(
+                            key: const ValueKey('load-collecting'),
+                            padding:
+                                const EdgeInsets.only(bottom: AppSpacing.sm),
+                            child: Text(
+                                l10n.progressCollecting(summary.daysToForm),
+                                style: AppText.bodyStrong
+                                    .copyWith(color: p.textSecondary)),
+                          ),
                         explain(
                             p.accent,
-                            '${l10n.progressFitness} · ${fmt.format(summary.fitness.round())}',
+                            '${l10n.progressFitness} · ${summary.hasForm ? fmt.format(summary.fitness.round()) : '—'}',
                             l10n.loadFitnessExplain),
                         explain(
                             p.warning,
-                            '${l10n.progressFatigue} · ${fmt.format(summary.fatigue.round())}',
+                            '${l10n.progressFatigue} · ${summary.hasForm ? fmt.format(summary.fatigue.round()) : '—'}',
                             l10n.loadFatigueExplain),
                         explain(
                             p.success,

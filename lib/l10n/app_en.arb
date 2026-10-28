@@ -3434,5 +3434,7 @@
   "transitionReady": "Felix is ready.\nAre you?",
   "@transitionReady": {"description": "Typed out on the black screen after the onboarding chat"},
   "transitionGo": "I am ready",
-  "@transitionGo": {"description": "Button on the black screen after the onboarding chat; opens Home"}
+  "@transitionGo": {"description": "Button on the black screen after the onboarding chat; opens Home"},
+  "progressCollecting": "{days, plural, =1{Collecting data — 1 more day} other{Collecting data — {days} more days}}",
+  "@progressCollecting": {"description": "Instead of fitness/fatigue/form or the load balance while there is too little history; days = days still to collect", "placeholders": {"days": {"type": "int"}}}
 }

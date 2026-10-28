@@ -87,6 +87,9 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
 
     final form = summary.form;
     final formInfo = form == null ? null : formLabel(l10n, p, form);
+    // Too little history: one session would read as "overreaching".
+    final collecting =
+        summary.hasForm ? null : l10n.progressCollecting(summary.daysToForm);
     final band = summary.band;
     final acwr = summary.acwr;
 
@@ -180,18 +183,22 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                           Expanded(
                             child: StatTile(
                               label: l10n.progressFitness,
-                              value: fmt.format(summary.fitness.round()),
+                              value: collecting != null
+                                  ? '—'
+                                  : fmt.format(summary.fitness.round()),
                               valueKey: const ValueKey('fitness-value'),
-                              note: l10n.progress42Day,
+                              note: collecting ?? l10n.progress42Day,
                             ),
                           ),
                           const SizedBox(width: AppSpacing.sm),
                           Expanded(
                             child: StatTile(
                               label: l10n.progressFatigue,
-                              value: fmt.format(summary.fatigue.round()),
+                              value: collecting != null
+                                  ? '—'
+                                  : fmt.format(summary.fatigue.round()),
                               valueKey: const ValueKey('fatigue-value'),
-                              note: l10n.progress7Day,
+                              note: collecting ?? l10n.progress7Day,
                             ),
                           ),
                         ],
@@ -206,7 +213,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                               value: form == null ? '—' : signedPercent(form),
                               valueKey: const ValueKey('form-value'),
                               valueColor: formInfo?.color,
-                              note: formInfo?.text ?? '',
+                              note: collecting ?? formInfo?.text ?? '',
                             ),
                           ),
                           const SizedBox(width: AppSpacing.sm),
@@ -226,6 +233,26 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                             key: const ValueKey('estimated-note'),
                             style: AppText.caption
                                 .copyWith(color: p.textSecondary)),
+                      ],
+                      if (!summary.hasBalance) ...[
+                        gap(),
+                        ProgressCard(
+                          key: const ValueKey('balance-collecting'),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(l10n.progressBalance,
+                                  style: AppText.headingS
+                                      .copyWith(color: p.textPrimary)),
+                              gap(AppSpacing.xxs),
+                              Text(
+                                  l10n.progressCollecting(
+                                      summary.daysToBalance),
+                                  style: AppText.caption
+                                      .copyWith(color: p.textSecondary)),
+                            ],
+                          ),
+                        ),
                       ],
                       if (band != null && acwr != null) ...[
                         gap(),

@@ -1354,5 +1354,6 @@
   "onbFreqFew": "Haftasiga bir necha marta",
   "onbFreqStarting": "Endigina boshlayapman",
   "transitionReady": "Felix tayyor.\nSiz-chi?",
-  "transitionGo": "Men tayyorman"
+  "transitionGo": "Men tayyorman",
+  "progressCollecting": "Ma’lumot yig‘ilmoqda — yana {days} kun"
 }

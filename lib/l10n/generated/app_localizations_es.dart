@@ -4824,4 +4824,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get transitionGo => '¡Vamos!';
+
+  @override
+  String progressCollecting(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Recopilando datos: faltan $days días',
+      one: 'Recopilando datos: falta 1 día',
+    );
+    return '$_temp0';
+  }
 }

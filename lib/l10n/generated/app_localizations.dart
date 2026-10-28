@@ -7822,6 +7822,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I am ready'**
   String get transitionGo;
+
+  /// Instead of fitness/fatigue/form or the load balance while there is too little history; days = days still to collect
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Collecting data — 1 more day} other{Collecting data — {days} more days}}'**
+  String progressCollecting(int days);
 }
 
 class _AppLocalizationsDelegate

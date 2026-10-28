@@ -36,27 +36,71 @@ class DailyLoad {
 
 enum AcwrBand { low, sweetSpot, risky }
 
+/// Days since the first workout before fitness, fatigue and form mean
+/// something: with less history one session reads as "overreaching".
+const minDaysForForm = 14;
+
+/// Days since the first workout before the load balance (ACWR) is shown.
+const minDaysForBalance = 28;
+
 class LoadSummary {
+  /// Raw means; show them only when [hasForm].
   final double fitness;
   final double fatigue;
+
+  /// Null until [hasForm] (and while there is no fitness).
   final double? form;
+
+  /// Null until [hasBalance] (and while there is no fitness).
   final double? acwr;
   final AcwrBand? band;
+
+  /// Whole days from the first workout to today (0 on its day); null
+  /// without any workout.
+  final int? historyDays;
+
   const LoadSummary({
     required this.fitness,
     required this.fatigue,
     this.form,
     this.acwr,
     this.band,
+    this.historyDays,
   });
+
+  /// Enough history for fitness, fatigue and form.
+  bool get hasForm => (historyDays ?? -1) >= minDaysForForm;
+
+  /// Enough history for the load balance.
+  bool get hasBalance => (historyDays ?? -1) >= minDaysForBalance;
+
+  /// Days still to collect before [hasForm].
+  int get daysToForm => minDaysForForm - (historyDays ?? 0);
+
+  /// Days still to collect before [hasBalance].
+  int get daysToBalance => minDaysForBalance - (historyDays ?? 0);
 }
 
 /// Fatigue is the mean daily load over 7 days ending [today], fitness over 42.
 /// Days without an entry count as 0; several entries on a day add up.
+/// Form needs [minDaysForForm] days since the first entry, the balance
+/// (ACWR) [minDaysForBalance].
 LoadSummary loadSummary(List<DailyLoad> days, DateTime today) {
   final end = dayOf(today);
   var sum7 = 0;
   var sum42 = 0;
+  DateTime? first;
+  for (final d in days) {
+    final day = dayOf(d.day);
+    if (!day.isAfter(end) && (first == null || day.isBefore(first))) {
+      first = day;
+    }
+  }
+  final historyDays = first == null
+      ? null
+      : DateTime.utc(end.year, end.month, end.day)
+          .difference(DateTime.utc(first.year, first.month, first.day))
+          .inDays;
   for (final d in days) {
     final day = DateTime(d.day.year, d.day.month, d.day.day);
     final ago = DateTime.utc(end.year, end.month, end.day)
@@ -68,20 +112,26 @@ LoadSummary loadSummary(List<DailyLoad> days, DateTime today) {
   }
   final fatigue = sum7 / 7;
   final fitness = sum42 / 42;
-  if (fitness == 0) {
-    return LoadSummary(fitness: fitness, fatigue: fatigue);
+  final hasForm = (historyDays ?? -1) >= minDaysForForm;
+  final hasBalance = (historyDays ?? -1) >= minDaysForBalance;
+  if (fitness == 0 || !hasForm) {
+    return LoadSummary(
+        fitness: fitness, fatigue: fatigue, historyDays: historyDays);
   }
   final acwr = fatigue / fitness;
   return LoadSummary(
     fitness: fitness,
     fatigue: fatigue,
     form: (fitness - fatigue) / fitness,
-    acwr: acwr,
-    band: acwr < 0.8
-        ? AcwrBand.low
-        : acwr > 1.3
-            ? AcwrBand.risky
-            : AcwrBand.sweetSpot,
+    acwr: hasBalance ? acwr : null,
+    band: !hasBalance
+        ? null
+        : acwr < 0.8
+            ? AcwrBand.low
+            : acwr > 1.3
+                ? AcwrBand.risky
+                : AcwrBand.sweetSpot,
+    historyDays: historyDays,
   );
 }
 
