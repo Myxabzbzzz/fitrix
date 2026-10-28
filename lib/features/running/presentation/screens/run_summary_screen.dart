@@ -128,7 +128,8 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
                   key: const ValueKey('run-close'),
                   tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                   onPressed: _close,
-                  icon: Icon(Icons.arrow_back, color: palette.textPrimary),
+                  icon: Icon(Icons.arrow_back_ios_new,
+                      size: 20, color: palette.textPrimary),
                 ),
                 Expanded(
                   child: Text(
@@ -142,11 +143,11 @@ class _RunSummaryScreenState extends ConsumerState<RunSummaryScreen> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 48 + AppSpacing.xs, bottom: AppSpacing.sm),
+              // Under the title text, which starts after the 48 pt button.
+              padding: const EdgeInsets.only(left: 48, bottom: AppSpacing.sm),
               child: Text(
                 [
-                  DateFormat.yMMMMEEEEd(locale)
+                  DateFormat.yMMMEd(locale)
                       .add_Hm()
                       .format(details.startedAt.toLocal()),
                   if (imported != null) imported.source,
