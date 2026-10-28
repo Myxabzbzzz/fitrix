@@ -671,26 +671,75 @@ Page<void> slideUpPage(
 /// under a pushed page it moves like any page of the platform.
 Page<void> shellPage(BuildContext context, GoRouterState state, Widget child) {
   final reduced = Motion.reduced(context);
-  return CustomTransitionPage<void>(
+  return _ShellPage(
     key: state.pageKey,
     name: state.name,
-    transitionDuration: reduced ? Duration.zero : Motion.slow,
-    reverseTransitionDuration: reduced ? Duration.zero : Motion.medium,
+    duration: reduced ? Duration.zero : Motion.slow,
+    reverseDuration: reduced ? Duration.zero : Motion.medium,
     child: child,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final route = ModalRoute.of(context);
-      final under = route is PageRoute
-          ? Theme.of(context).pageTransitionsTheme.buildTransitions<void>(
-                route as PageRoute<void>,
-                context,
-                kAlwaysCompleteAnimation,
-                secondaryAnimation,
-                child,
-              )
-          : child;
-      return ShellEntrance(animation: animation, child: under);
-    },
   );
+}
+
+class _ShellPage extends Page<void> {
+  const _ShellPage({
+    super.key,
+    super.name,
+    required this.duration,
+    required this.reverseDuration,
+    required this.child,
+  });
+
+  final Duration duration;
+  final Duration reverseDuration;
+  final Widget child;
+
+  @override
+  Route<void> createRoute(BuildContext context) => _ShellRoute(this);
+}
+
+class _ShellRoute extends PageRoute<void> {
+  _ShellRoute(_ShellPage page) : super(settings: page);
+
+  _ShellPage get _page => settings as _ShellPage;
+
+  @override
+  Duration get transitionDuration => _page.duration;
+
+  @override
+  Duration get reverseTransitionDuration => _page.reverseDuration;
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Color? get barrierColor => null;
+
+  @override
+  String? get barrierLabel => null;
+
+  /// A full-screen modal above (the live run) covers the app without
+  /// moving it, as with any platform page.
+  @override
+  bool canTransitionTo(TransitionRoute<dynamic> nextRoute) =>
+      nextRoute is PageRoute && !nextRoute.fullscreenDialog;
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+          Animation<double> secondaryAnimation) =>
+      _page.child;
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    final under = Theme.of(context).pageTransitionsTheme.buildTransitions<void>(
+          this,
+          context,
+          kAlwaysCompleteAnimation,
+          secondaryAnimation,
+          child,
+        );
+    return ShellEntrance(animation: animation, child: under);
+  }
 }
 
 /// How the tab shell fades in. Normally with its route. After onboarding

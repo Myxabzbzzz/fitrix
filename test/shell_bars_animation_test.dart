@@ -286,4 +286,40 @@ void main() {
     await t.pumpAndSettle();
     debugDefaultTargetPlatformOverride = null;
   });
+
+  testWidgets('the app stays put under the live screen (a full-screen modal)',
+      (t) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    _phone(t);
+    final router = GoRouter(routes: [
+      GoRoute(
+        path: '/',
+        pageBuilder: (context, state) =>
+            shellPage(context, state, const Text('app', key: Key('app'))),
+      ),
+      GoRoute(
+        path: '/live',
+        pageBuilder: (context, state) =>
+            slideUpPage(context, state, const Text('live')),
+      ),
+      GoRoute(path: '/page', builder: (_, __) => const Text('page')),
+    ]);
+    await t.pumpWidget(MaterialApp.router(routerConfig: router));
+    await t.pumpAndSettle();
+    router.push('/live');
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 150));
+    expect(t.getTopLeft(find.byKey(const Key('app'))).dx, 0);
+    await t.pumpAndSettle();
+    router.pop();
+    await t.pumpAndSettle();
+
+    router.push('/page');
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 150));
+    expect(t.getTopLeft(find.byKey(const Key('app'))).dx, lessThan(0),
+        reason: 'an ordinary page still pushes it aside');
+    await t.pumpAndSettle();
+    debugDefaultTargetPlatformOverride = null;
+  });
 }

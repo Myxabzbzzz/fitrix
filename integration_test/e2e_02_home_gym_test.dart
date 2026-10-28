@@ -128,14 +128,18 @@ void main() {
         final check = find.descendant(
             of: find.byKey(const ValueKey('set-0-0')),
             matching: byTypeName('_CheckButton'));
-        await tap(t, check);
+        // As a finger would: no ensureVisible (it scrolls the row to the
+        // top edge, which looked like the list jumping).
+        await tap(t, check, scroll: false);
         await idle(t, const Duration(seconds: 2));
       });
       await step(t, 'gym_set2_checked', () async {
         final check = find.descendant(
             of: find.byKey(const ValueKey('set-0-1')),
             matching: byTypeName('_CheckButton'));
-        await tap(t, check);
+        // As a finger would: no ensureVisible (it scrolls the row to the
+        // top edge, which looked like the list jumping).
+        await tap(t, check, scroll: false);
         await idle(t, const Duration(seconds: 1));
       });
       await step(t, 'gym_rpe_picker', () async {
