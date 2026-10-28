@@ -127,7 +127,8 @@ class WorkoutsGrid extends ConsumerWidget {
             onDelete: () => _delete(context, ref, workouts[i]),
             child: GestureDetector(
               onLongPress: () => _edit(context, workouts[i]),
-              child: WorkoutCard(
+              child: SizedBox.expand(
+                  child: WorkoutCard(
                 title: workouts[i].name,
                 dayLabel: dayLabel(workouts[i]),
                 badge: felixIds.contains(workouts[i].id)
@@ -140,7 +141,7 @@ class WorkoutsGrid extends ConsumerWidget {
                 onStart: () => onAction(workouts[i]),
                 onEdit: () => _edit(context, workouts[i]),
                 editLabel: '${l10n.workoutEditLabel}, ${workouts[i].name}',
-              ),
+              )),
             ),
           ),
         AddWorkoutCard(onTap: () => _addWorkout(context, ref)),
