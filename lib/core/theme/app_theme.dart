@@ -36,10 +36,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          textStyle: AppText.headingS,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -125,10 +122,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          textStyle: AppText.headingS,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
