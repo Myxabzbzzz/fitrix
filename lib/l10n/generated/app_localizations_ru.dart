@@ -4870,4 +4870,28 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatRetry => 'Повторить';
+
+  @override
+  String get onbSportSkiing => 'Лыжи';
+
+  @override
+  String get onbSportSnowboarding => 'Сноуборд';
+
+  @override
+  String get onbFreqWeekly => 'Раз в неделю или реже';
+
+  @override
+  String get onbFreqDaily => 'Почти каждый день';
+
+  @override
+  String get onbFreqFew => 'Несколько раз в неделю';
+
+  @override
+  String get onbFreqStarting => 'Только начинаю';
+
+  @override
+  String get transitionReady => 'Felix готов.\nА вы?';
+
+  @override
+  String get transitionGo => 'Начинаем';
 }

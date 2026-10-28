@@ -1346,5 +1346,13 @@
   "chatFailedUnreadable": "No se pudo leer la respuesta de Felix",
   "chatFailedSignIn": "Vuelve a iniciar sesión para hablar con Felix",
   "chatFailedTooFast": "Demasiados mensajes: espera un momento y reintenta",
-  "chatRetry": "Reintentar"
+  "chatRetry": "Reintentar",
+  "onbSportSkiing": "Esquí",
+  "onbSportSnowboarding": "Snowboard",
+  "onbFreqWeekly": "Una vez por semana o menos",
+  "onbFreqDaily": "Casi todos los días",
+  "onbFreqFew": "Varias veces por semana",
+  "onbFreqStarting": "Estoy empezando",
+  "transitionReady": "Felix está listo.\n¿Y tú?",
+  "transitionGo": "¡Vamos!"
 }

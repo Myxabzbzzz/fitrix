@@ -4726,4 +4726,28 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get chatRetry => 'Qayta urinish';
+
+  @override
+  String get onbSportSkiing => 'Chang‘i';
+
+  @override
+  String get onbSportSnowboarding => 'Snoubord';
+
+  @override
+  String get onbFreqWeekly => 'Haftasiga bir marta yoki kamroq';
+
+  @override
+  String get onbFreqDaily => 'Deyarli har kuni';
+
+  @override
+  String get onbFreqFew => 'Haftasiga bir necha marta';
+
+  @override
+  String get onbFreqStarting => 'Endigina boshlayapman';
+
+  @override
+  String get transitionReady => 'Felix tayyor.\nSiz-chi?';
+
+  @override
+  String get transitionGo => 'Men tayyorman';
 }

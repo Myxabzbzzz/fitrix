@@ -3422,5 +3422,17 @@
   "chatFailedUnreadable": "Felix’s reply couldn’t be read",
   "chatFailedSignIn": "Sign in again to chat with Felix",
   "chatFailedTooFast": "Too many messages — wait a moment, then retry",
-  "chatRetry": "Retry"
+  "chatRetry": "Retry",
+  "onbSportSkiing": "Skiing",
+  "@onbSportSkiing": {"description": "Onboarding chat quick reply: a sport the user does"},
+  "onbSportSnowboarding": "Snowboarding",
+  "onbFreqWeekly": "Once a week or less",
+  "@onbFreqWeekly": {"description": "Onboarding chat quick reply: how often the user trains"},
+  "onbFreqDaily": "Almost every day",
+  "onbFreqFew": "A few times a week",
+  "onbFreqStarting": "Just starting out",
+  "transitionReady": "Felix is ready.\nAre you?",
+  "@transitionReady": {"description": "Typed out on the black screen after the onboarding chat"},
+  "transitionGo": "I am ready",
+  "@transitionGo": {"description": "Button on the black screen after the onboarding chat; opens Home"}
 }

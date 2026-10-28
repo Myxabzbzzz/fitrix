@@ -4778,4 +4778,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatRetry => 'Retry';
+
+  @override
+  String get onbSportSkiing => 'Skiing';
+
+  @override
+  String get onbSportSnowboarding => 'Snowboarding';
+
+  @override
+  String get onbFreqWeekly => 'Once a week or less';
+
+  @override
+  String get onbFreqDaily => 'Almost every day';
+
+  @override
+  String get onbFreqFew => 'A few times a week';
+
+  @override
+  String get onbFreqStarting => 'Just starting out';
+
+  @override
+  String get transitionReady => 'Felix is ready.\nAre you?';
+
+  @override
+  String get transitionGo => 'I am ready';
 }

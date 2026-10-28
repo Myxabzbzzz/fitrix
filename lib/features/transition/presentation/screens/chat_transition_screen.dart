@@ -7,6 +7,7 @@ import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 class ChatTransitionScreen extends ConsumerStatefulWidget {
   /// Deliberate exception to the palette rule: the onboarding chat's
@@ -26,7 +27,9 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
     with TickerProviderStateMixin {
   late AnimationController _typewriterController;
   String _displayedText = '';
-  static const String _fullText = 'Felix is ready.\nAre you?';
+
+  /// "Felix is ready. Are you?" in the app language, set once it is known.
+  String _fullText = '';
 
   bool _showButton = false;
 
@@ -40,10 +43,7 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
   void initState() {
     super.initState();
 
-    _typewriterController = AnimationController(
-      duration: const Duration(milliseconds: _fullText.length * 70),
-      vsync: this,
-    );
+    _typewriterController = AnimationController(vsync: this);
     _typewriterController.addListener(() {
       final charCount =
           (_typewriterController.value * _fullText.length).floor();
@@ -85,6 +85,16 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) _typewriterController.forward();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_fullText.isEmpty) {
+      _fullText = AppLocalizations.of(context).transitionReady;
+      _typewriterController.duration =
+          Duration(milliseconds: _fullText.length * 70);
+    }
   }
 
   @override
@@ -150,7 +160,7 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
                           borderRadius: AppRadius.lgAll,
                         ),
                         child: Text(
-                          'I am ready',
+                          AppLocalizations.of(context).transitionGo,
                           style: AppText.headingS.copyWith(color: Colors.black),
                         ),
                       ),

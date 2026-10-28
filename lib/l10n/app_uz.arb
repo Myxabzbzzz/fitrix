@@ -1346,5 +1346,13 @@
   "chatFailedUnreadable": "Felix javobini o‘qib bo‘lmadi",
   "chatFailedSignIn": "Felix bilan yozishish uchun qaytadan kiring",
   "chatFailedTooFast": "Xabarlar juda ko‘p — biroz kuting va qayta urining",
-  "chatRetry": "Qayta urinish"
+  "chatRetry": "Qayta urinish",
+  "onbSportSkiing": "Chang‘i",
+  "onbSportSnowboarding": "Snoubord",
+  "onbFreqWeekly": "Haftasiga bir marta yoki kamroq",
+  "onbFreqDaily": "Deyarli har kuni",
+  "onbFreqFew": "Haftasiga bir necha marta",
+  "onbFreqStarting": "Endigina boshlayapman",
+  "transitionReady": "Felix tayyor.\nSiz-chi?",
+  "transitionGo": "Men tayyorman"
 }

@@ -11,6 +11,7 @@ import 'package:fitrix/core/widgets/app_button.dart';
 import 'package:fitrix/features/auth/presentation/providers/auth_provider.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/profile/presentation/providers/profile_provider.dart';
+import 'package:fitrix/features/profile/presentation/widgets/about_me_labels.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/features/transition/presentation/screens/chat_transition_screen.dart';
@@ -23,6 +24,11 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 enum _OnboardingStep { goal, sports, frequency, level, done }
 
+/// A quick reply: [label] in the app language is what the user sends (so
+/// Felix answers in that language); [value] is the stable English answer
+/// kept in the profile.
+typedef _Reply = ({String value, String label});
+
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
 
@@ -34,7 +40,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  List<String> _quickReplies = AppConstants.fitnessGoals;
   bool _showQuickReplies = true;
   final ChatEntranceTracker _entrance = ChatEntranceTracker();
 
@@ -78,7 +83,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
 
   bool _sending = false;
 
-  Future<void> _sendMessage(String content, {bool isQuickReply = false}) async {
+  /// Sends [content]; a quick reply passes its stable [value] for the
+  /// profile, a typed answer is kept as typed.
+  Future<void> _sendMessage(String content,
+      {bool isQuickReply = false, String? value}) async {
     final notifier = ref.read(chatMessagesProvider.notifier);
     final text = content.trim();
     if (text.isEmpty || _sending || !notifier.canSend) return;
@@ -89,7 +97,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       final isAnswer = !text.endsWith('?');
       final answered = _step;
       // Saved before sending so Felix gets the answer with this very message.
-      if (isAnswer) await _saveAnswer(answered, text);
+      if (isAnswer) await _saveAnswer(answered, value ?? text);
       if (!mounted) return;
       final accepted = notifier.startSend(content, isQuickReply: isQuickReply);
       if (accepted && isAnswer) _advance();
@@ -126,36 +134,42 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     }
     setState(() {
       _step = step;
-      _quickReplies = _repliesFor(step);
       _showQuickReplies = step != _OnboardingStep.done;
     });
   }
 
-  static List<String> _repliesFor(_OnboardingStep step) => switch (step) {
-        _OnboardingStep.goal => AppConstants.fitnessGoals,
-        _OnboardingStep.sports => const [
-            'Gym',
-            'Fitness',
-            'Cycling',
-            'Skiing',
-            'Snowboarding',
-            'Football',
-            'Running'
+  static List<_Reply> _repliesFor(
+          _OnboardingStep step, AppLocalizations l10n) =>
+      switch (step) {
+        _OnboardingStep.goal => [
+            for (final goal in AppConstants.fitnessGoals)
+              (value: goal, label: aboutMeGoalLabel(l10n, goal)),
           ],
-        _OnboardingStep.frequency => const [
-            'Once a week or less',
-            'Almost every day',
-            'A few times a week',
-            'Just starting out'
+        _OnboardingStep.sports => [
+            (value: 'Gym', label: l10n.sportGym),
+            (value: 'Fitness', label: l10n.sportFitness),
+            (value: 'Cycling', label: l10n.sportCycling),
+            (value: 'Skiing', label: l10n.onbSportSkiing),
+            (value: 'Snowboarding', label: l10n.onbSportSnowboarding),
+            (value: 'Football', label: l10n.sportFootball),
+            (value: 'Running', label: l10n.sportRunning),
           ],
-        _OnboardingStep.level => const ['Beginner', 'Intermediate', 'Advanced'],
+        _OnboardingStep.frequency => [
+            (value: 'Once a week or less', label: l10n.onbFreqWeekly),
+            (value: 'Almost every day', label: l10n.onbFreqDaily),
+            (value: 'A few times a week', label: l10n.onbFreqFew),
+            (value: 'Just starting out', label: l10n.onbFreqStarting),
+          ],
+        _OnboardingStep.level => [
+            for (final level in const ['Beginner', 'Intermediate', 'Advanced'])
+              (value: level, label: aboutMeLevelLabel(l10n, level)),
+          ],
         _OnboardingStep.done => const [],
       };
 
   /// Keeps the goal, sport and level in the profile (not just in the chat
-  /// history), so every Felix chat knows them. Quick replies are English
-  /// constants, so those are the stable values; typed answers are kept as
-  /// typed.
+  /// history), so every Felix chat knows them. Quick replies keep their
+  /// stable English values; typed answers are kept as typed.
   Future<void> _saveAnswer(_OnboardingStep step, String answer) async {
     final profile = ref.read(profileProvider.notifier);
     switch (step) {
@@ -178,7 +192,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     if (_step == _OnboardingStep.done) return;
     setState(() {
       _step = _OnboardingStep.values[_step.index + 1];
-      _quickReplies = _repliesFor(_step);
       _showQuickReplies = _step != _OnboardingStep.done;
     });
   }
@@ -317,13 +330,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                 children: [
                   _animatedComposerSlot(
                     _showQuickReplies
-                        ? QuickReplyBar(
-                            replies: _quickReplies,
-                            hidden: isReplying,
-                            onTap: (reply) =>
-                                _sendMessage(reply, isQuickReply: true),
-                          )
-                        : _buildStartButton(),
+                        ? _quickReplyBar(isReplying: isReplying)
+                        // Start waits for Felix's last answer to finish.
+                        : isReplying
+                            ? const SizedBox(
+                                key: ValueKey('start-pending'),
+                                width: double.infinity)
+                            : _buildStartButton(),
                   ),
                   // Onboarding is finished once Start shows; typing there
                   // would go nowhere.
@@ -352,6 +365,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               },
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _quickReplyBar({required bool isReplying}) {
+    final replies = _repliesFor(_step, AppLocalizations.of(context));
+    return QuickReplyBar(
+      replies: [for (final r in replies) r.label],
+      hidden: isReplying,
+      onTap: (label) => _sendMessage(
+        label,
+        isQuickReply: true,
+        value: replies.firstWhere((r) => r.label == label).value,
       ),
     );
   }

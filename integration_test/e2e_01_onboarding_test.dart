@@ -77,18 +77,19 @@ void main() {
     });
     await step(t, 'chat_open', () async {
       await tapText(t, L.continueButton);
-      await waitFor(t, find.text('Build muscle and strength'),
+      await waitFor(t, find.text(L.aboutGoalBuild),
           timeout: const Duration(seconds: 60));
     });
 
     await Host.videoStart('02_onboarding_chat');
-    for (final answer in [
-      'Build muscle and strength',
-      'Running',
-      'A few times a week',
-      'Intermediate'
-    ]) {
-      await step(t, 'chat_${answer.split(' ').first}', () async {
+    for (final (i, answer) in [
+      L.aboutGoalBuild,
+      L.sportRunning,
+      L.onbFreqFew,
+      L.programLevelMedium,
+    ].indexed) {
+      await step(t, 'chat_${['goal', 'sport', 'frequency', 'level'][i]}',
+          () async {
         // Quick replies hide while Felix is replying.
         if (!await waitFor(t, find.text(answer),
             timeout: const Duration(seconds: 150))) {
@@ -109,12 +110,12 @@ void main() {
     await Host.videoStart('03_start_circle_transition');
     await step(t, 'transition', () async {
       await tapText(t, L.chatStart);
-      await waitFor(t, find.text('I am ready'),
+      await waitFor(t, find.text(L.transitionGo),
           timeout: const Duration(seconds: 15));
       await idle(t, const Duration(seconds: 4));
     });
     await step(t, 'home_first', () async {
-      await tapText(t, 'I am ready');
+      await tapText(t, L.transitionGo);
       await idle(t, const Duration(seconds: 4));
     });
     await Host.videoStop();

@@ -21,6 +21,10 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 class _FakeApi extends ChatApiService {
   final profiles = <Map<String, Object>?>[];
   final sent = <String>[];
+  final languages = <String?>[];
+
+  /// While set, replies wait for it before finishing.
+  Completer<void>? gate;
 
   @override
   Stream<String> streamMessage(
@@ -36,7 +40,9 @@ class _FakeApi extends ChatApiService {
   }) async* {
     profiles.add(profile);
     sent.add(message);
+    languages.add(language);
     yield 'Sure';
+    await gate?.future;
   }
 }
 
@@ -49,7 +55,7 @@ void main() {
   });
 
   Future<void> pumpChat(WidgetTester tester,
-      {bool reducedMotion = false}) async {
+      {bool reducedMotion = false, Locale? locale}) async {
     tester.view.physicalSize = const Size(375, 667) * 3;
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -65,10 +71,12 @@ void main() {
               api,
               profileRepository: ProfileRepository(),
               greeting: () => const ['Hi, I am Felix'],
+              language: () => locale?.languageCode ?? 'en',
             ))),
       ],
       child: MaterialApp.router(
         routerConfig: router,
+        locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         builder: (context, child) => MediaQuery(
@@ -119,6 +127,51 @@ void main() {
     expect(profile.experience, 'Beginner');
     expect(api.profiles.last!['experience'], 'Beginner');
     expect(api.profiles.last!['sports'], ['Fitness']);
+  });
+
+  testWidgets(
+      'in Russian the replies are Russian, Felix gets them with the app '
+      'language, the profile keeps the stable values', (tester) async {
+    await pumpChat(tester, locale: const Locale('ru'));
+    final ru = lookupAppLocalizations(const Locale('ru'));
+
+    expect(find.widgetWithText(QuickReplyChip, AppConstants.fitnessGoals.first),
+        findsNothing);
+    await tapReply(tester, ru.aboutGoalBuild);
+    await tapReply(tester, ru.sportRunning);
+    await tapReply(tester, ru.onbFreqFew);
+    await tapReply(tester, ru.programLevelMedium);
+
+    expect(api.sent, [
+      ru.aboutGoalBuild,
+      ru.sportRunning,
+      ru.onbFreqFew,
+      ru.programLevelMedium,
+    ]);
+    expect(api.languages, everyElement('ru'));
+    final profile = await ProfileRepository().getProfile();
+    expect(profile!.goal, AppConstants.fitnessGoals.first);
+    expect(profile.sports, ['Running']);
+    expect(profile.experience, 'Intermediate');
+    expect(find.text(ru.chatStart), findsOneWidget);
+  });
+
+  testWidgets('Start waits until Felix has finished his last answer',
+      (tester) async {
+    await pumpChat(tester);
+    await tapReply(tester, AppConstants.fitnessGoals.first);
+    await tapReply(tester, 'Gym');
+    await tapReply(tester, 'Once a week or less');
+    api.gate = Completer<void>();
+    await tester.tap(find.widgetWithText(QuickReplyChip, 'Beginner'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(startKey, findsNothing, reason: 'Felix is still replying');
+
+    api.gate!.complete();
+    await tester.pumpAndSettle();
+    expect(startKey, findsOneWidget);
   });
 
   testWidgets('a typed answer is saved too, other fields stay', (tester) async {

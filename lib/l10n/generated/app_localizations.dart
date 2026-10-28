@@ -7774,6 +7774,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get chatRetry;
+
+  /// Onboarding chat quick reply: a sport the user does
+  ///
+  /// In en, this message translates to:
+  /// **'Skiing'**
+  String get onbSportSkiing;
+
+  /// No description provided for @onbSportSnowboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Snowboarding'**
+  String get onbSportSnowboarding;
+
+  /// Onboarding chat quick reply: how often the user trains
+  ///
+  /// In en, this message translates to:
+  /// **'Once a week or less'**
+  String get onbFreqWeekly;
+
+  /// No description provided for @onbFreqDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost every day'**
+  String get onbFreqDaily;
+
+  /// No description provided for @onbFreqFew.
+  ///
+  /// In en, this message translates to:
+  /// **'A few times a week'**
+  String get onbFreqFew;
+
+  /// No description provided for @onbFreqStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Just starting out'**
+  String get onbFreqStarting;
+
+  /// Typed out on the black screen after the onboarding chat
+  ///
+  /// In en, this message translates to:
+  /// **'Felix is ready.\nAre you?'**
+  String get transitionReady;
+
+  /// Button on the black screen after the onboarding chat; opens Home
+  ///
+  /// In en, this message translates to:
+  /// **'I am ready'**
+  String get transitionGo;
 }
 
 class _AppLocalizationsDelegate

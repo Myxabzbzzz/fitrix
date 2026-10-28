@@ -1346,5 +1346,13 @@
   "chatFailedUnreadable": "Не удалось прочитать ответ Felix",
   "chatFailedSignIn": "Войдите снова, чтобы писать Felix",
   "chatFailedTooFast": "Слишком много сообщений — подождите и повторите",
-  "chatRetry": "Повторить"
+  "chatRetry": "Повторить",
+  "onbSportSkiing": "Лыжи",
+  "onbSportSnowboarding": "Сноуборд",
+  "onbFreqWeekly": "Раз в неделю или реже",
+  "onbFreqDaily": "Почти каждый день",
+  "onbFreqFew": "Несколько раз в неделю",
+  "onbFreqStarting": "Только начинаю",
+  "transitionReady": "Felix готов.\nА вы?",
+  "transitionGo": "Начинаем"
 }
