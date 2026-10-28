@@ -17,6 +17,10 @@ class FeatureTile extends StatefulWidget {
   final double labelSize;
   final String? imageAsset;
 
+  /// Drawn large on the right when the tile has no [imageAsset] (sports
+  /// without 3D art), so every tile in a list carries a picture.
+  final IconData? icon;
+
   /// Fraction of the tile occupied by the illustration (anchored right).
   /// 1 means the illustration fills the tile and the label goes under it.
   final double imageWidthFactor;
@@ -37,6 +41,7 @@ class FeatureTile extends StatefulWidget {
     required this.label,
     this.labelSize = 16,
     this.imageAsset,
+    this.icon,
     this.imageWidthFactor = 0.55,
     this.imageAspect = 1.5,
     this.artInset = 0.2,
@@ -47,6 +52,9 @@ class FeatureTile extends StatefulWidget {
 
   static const double pressedScale = 0.97;
 
+  /// Size of [icon] in a tile [tileHeight] tall.
+  static double iconSize(double tileHeight) => tileHeight * 0.55;
+
   static TextStyle labelStyle(double size) => AppText.displayMedium
       .copyWith(fontSize: size, height: 0.95, letterSpacing: 0.2);
 
@@ -55,10 +63,12 @@ class FeatureTile extends StatefulWidget {
       {required double imageWidthFactor,
       double imageAspect = 1.5,
       double artInset = 0.2,
-      bool hasImage = true}) {
+      bool hasImage = true,
+      bool hasIcon = false}) {
     const padH = AppSpacing.md, padV = AppSpacing.sm;
     if (!hasImage) {
-      return Size(tile.width - 2 * padH, tile.height - 2 * padV);
+      final iconRoom = hasIcon ? iconSize(tile.height) + AppSpacing.md : 0;
+      return Size(tile.width - 2 * padH - iconRoom, tile.height - 2 * padV);
     }
     if (imageWidthFactor >= 1) {
       // Full-tile art, painted "contain" and centred: the label goes in
@@ -151,7 +161,8 @@ class _FeatureTileState extends State<FeatureTile> {
                 imageWidthFactor: widget.imageWidthFactor,
                 imageAspect: widget.imageAspect,
                 artInset: widget.artInset,
-                hasImage: imageAsset != null);
+                hasImage: imageAsset != null,
+                hasIcon: widget.icon != null);
             final label = SizedBox(
               width: area.width,
               child: WordFitText(
@@ -171,6 +182,20 @@ class _FeatureTileState extends State<FeatureTile> {
                         widthFactor: widget.imageWidthFactor,
                         heightFactor: 1,
                         child: Image.asset(imageAsset, fit: BoxFit.contain),
+                      ),
+                    ),
+                  ),
+                if (imageAsset == null && widget.icon != null)
+                  Positioned(
+                    right: AppSpacing.lg,
+                    top: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: Icon(
+                        widget.icon,
+                        key: const ValueKey('feature-tile-icon'),
+                        size: FeatureTile.iconSize(box.maxHeight),
+                        color: palette.textSecondary,
                       ),
                     ),
                   ),

@@ -272,6 +272,9 @@ void main() {
     final tile = find.text('WINTER\nSPORTS');
     await t.scrollUntilVisible(tile, 200,
         scrollable: find.byType(Scrollable).first);
+    // It is the last tile now: built ahead of the viewport, not yet on it.
+    await t.ensureVisible(tile);
+    await t.pumpAndSettle();
     await t.tap(tile);
     await t.pumpAndSettle();
     expect(find.byKey(const ValueKey('ski-start')), findsOneWidget);

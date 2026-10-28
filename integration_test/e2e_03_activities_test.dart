@@ -5,7 +5,6 @@
 // edit -> delete. Skiing: start/finish on a flat route -> empty summary.
 // Football: log a match.
 import 'package:fitrix/features/workouts/data/models/workout.dart';
-import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 import 'package:fitrix/main.dart' as app;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,22 +25,8 @@ Future<void> openSport(WidgetTester t, Sport s) async {
   await scrollTo(t, ftext(L.homeTileWorkouts));
   await tap(t, ftext(L.homeTileWorkouts));
   await idle(t, const Duration(seconds: 2));
-  // My workouts has tiles for gym, fitness, cycling and winter sports only;
-  // running and football are reached through the sport pills.
-  if (s == Sport.running || s == Sport.football) {
-    await scrollTap(t, ftext(Sport.gym.localizedTileLabel(L)));
-    await idle(t, const Duration(seconds: 2));
-    final pill = ftext(s.localizedLabel(L));
-    for (var i = 0; i < 6 && pill.hitTestable().evaluate().isEmpty; i++) {
-      await t.drag(find.text(Sport.fitness.localizedLabel(L)).first,
-          const Offset(-150, 0),
-          warnIfMissed: false);
-      await idle(t, const Duration(milliseconds: 400));
-    }
-    await tap(t, pill, scroll: false);
-  } else {
-    await scrollTap(t, ftext(s.localizedTileLabel(L)));
-  }
+  // My workouts has a tile for every sport.
+  await scrollTap(t, find.byKey(ValueKey('sport-tile-${s.name}')));
   await idle(t, const Duration(seconds: 2));
 }
 

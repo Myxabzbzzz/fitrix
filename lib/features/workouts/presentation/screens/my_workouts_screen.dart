@@ -11,6 +11,8 @@ import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/plan/data/week_plan.dart';
+import 'package:fitrix/features/plan/presentation/widgets/plan_day_section.dart'
+    show sportIcon;
 import 'package:fitrix/features/plan/presentation/providers/week_plan_provider.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -26,7 +28,9 @@ class MyWorkoutsScreen extends ConsumerWidget {
   static const _sports = [
     Sport.gym,
     Sport.fitness,
+    Sport.running,
     Sport.cycling,
+    Sport.football,
     Sport.winterSports,
   ];
 
@@ -63,7 +67,8 @@ class MyWorkoutsScreen extends ConsumerWidget {
           size: AppText.headingL.fontSize!,
           area: FeatureTile.labelArea(Size(tileWidth, _tileHeight),
               imageWidthFactor: _imageFactor,
-              hasImage: sport.imageAsset != null),
+              hasImage: sport.imageAsset != null,
+              hasIcon: sport.imageAsset == null),
         ),
     ]);
 
@@ -145,7 +150,11 @@ class MyWorkoutsScreen extends ConsumerWidget {
                         builder: (tileContext) => FeatureTile(
                           label: sport.localizedTileLabel(l10n),
                           labelSize: tileLabelSize,
+                          key: ValueKey('sport-tile-${sport.name}'),
                           imageAsset: sport.imageAsset,
+                          icon: sport.imageAsset == null
+                              ? sportIcon(sport)
+                              : null,
                           imageWidthFactor: _imageFactor,
                           labelAlignment: Alignment.topLeft,
                           imageAlignment: Alignment.centerRight,
