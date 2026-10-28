@@ -65,7 +65,9 @@ void main() {
             of: find.byKey(const ValueKey('chat-composer')),
             matching: find.byType(TextField));
         if (input.evaluate().isNotEmpty &&
-            t.widget<TextField>(input.first).enabled != false) break;
+            t.widget<TextField>(input.first).enabled != false) {
+          break;
+        }
       }
       await idle(t, const Duration(seconds: 2));
     });

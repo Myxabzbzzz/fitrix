@@ -29,7 +29,9 @@ Future<int> waitReply(WidgetTester t, {int maxSeconds = 180}) async {
     await idle(t, const Duration(seconds: 2));
     final composer = find.byType(ChatComposer);
     if (composer.evaluate().isNotEmpty &&
-        t.widget<ChatComposer>(composer.first).enabled) break;
+        t.widget<ChatComposer>(composer.first).enabled) {
+      break;
+    }
   }
   return DateTime.now().difference(start).inSeconds;
 }

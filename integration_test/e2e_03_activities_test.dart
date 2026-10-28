@@ -164,8 +164,9 @@ void main() {
       });
     }
     if (want('indoor')) {
-      if (!want('ride'))
+      if (!want('ride')) {
         await step(t, 'cycling_screen', () => openSport(t, Sport.cycling));
+      }
       // ---------------- Cycling indoor log, edit, delete
       await step(t, 'indoor_sheet', () async {
         await scrollTap(t, find.byKey(const ValueKey('cy-log')));

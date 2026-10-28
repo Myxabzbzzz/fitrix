@@ -171,8 +171,9 @@ void main() {
         await idle(t, const Duration(seconds: 2));
         // "No sets" or confirm dialogs.
         final finish = find.text(L.workoutFinish);
-        if (finish.evaluate().isNotEmpty)
+        if (finish.evaluate().isNotEmpty) {
           await tap(t, finish.last, scroll: false);
+        }
         await idle(t, const Duration(seconds: 2));
       });
       await step(t, 'gym_complete_rated', () async {
