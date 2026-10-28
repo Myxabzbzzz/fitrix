@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/app_session.dart';
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
@@ -155,5 +156,30 @@ void main() {
       await t.pump();
       expect(find.byKey(ActiveWorkoutSheet.surfaceKey), findsNothing);
     });
+  });
+
+  testWidgets(
+      'circle reveal covers the far top corner before the page is fully '
+      'faded in', (t) async {
+    _phone(t);
+    final controller = AnimationController(
+        vsync: const TestVSync(), duration: const Duration(seconds: 1));
+    addTearDown(controller.dispose);
+    await t.pumpWidget(MaterialApp(
+      home: CircleRevealTransition(
+        animation: controller,
+        // A tile low on the right, like the Today card's Start.
+        origin: const Offset(340, 600),
+        child: const ColoredBox(color: Color(0xFFFFFFFF)),
+      ),
+    ));
+    // When the content has faded in (0.9), the top-left corner is inside.
+    controller.value = 0.85;
+    await t.pump();
+    final clip = t.widget<ClipPath>(find.descendant(
+        of: find.byType(CircleRevealTransition),
+        matching: find.byType(ClipPath)));
+    final path = clip.clipper!.getClip(t.getSize(find.byType(ClipPath)));
+    expect(path.contains(const Offset(1, 1)), isTrue);
   });
 }

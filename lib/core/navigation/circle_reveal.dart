@@ -374,7 +374,11 @@ class CircleRevealTransition extends StatelessWidget {
           animation: animation,
           child: child,
           builder: (context, child) {
-            final r = radius.value * maxRadius;
+            // Overshoots, so even the farthest corner (where the page's
+            // title and back button sit when the tile is low on screen) is
+            // covered well before the end: the page underneath never shows
+            // through there in the last frames.
+            final r = radius.value * maxRadius * overshoot;
             final done = animation.status == AnimationStatus.completed;
             return ClipPath(
               clipper: _CircleClipper(origin, r),
@@ -393,6 +397,9 @@ class CircleRevealTransition extends StatelessWidget {
       },
     );
   }
+
+  /// How far past the farthest corner the circle grows.
+  static const double overshoot = 1.15;
 
   static double _farthestCorner(Offset p, Size size) => [
         p,
