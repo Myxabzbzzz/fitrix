@@ -368,7 +368,6 @@ class ProfileTabScreen extends ConsumerWidget {
                   stat('${history.length}', l10n.profileWorkouts),
                   const SizedBox(width: AppSpacing.sm),
                   stat('$streak', l10n.profileDayStreak),
-                  const SizedBox(width: AppSpacing.sm),
                 ],
               ),
             ),
