@@ -7738,6 +7738,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'So, tell me — what\'s your main goal right now?'**
   String get assistantQuestion;
+
+  /// Under a question Felix couldn't answer (backend unreachable or down)
+  ///
+  /// In en, this message translates to:
+  /// **'Felix is unavailable — check your connection'**
+  String get chatFailedUnavailable;
+
+  /// No description provided for @chatFailedInterrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix didn’t finish replying'**
+  String get chatFailedInterrupted;
+
+  /// No description provided for @chatFailedUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'Felix’s reply couldn’t be read'**
+  String get chatFailedUnreadable;
+
+  /// No description provided for @chatFailedSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in again to chat with Felix'**
+  String get chatFailedSignIn;
+
+  /// No description provided for @chatFailedTooFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many messages — wait a moment, then retry'**
+  String get chatFailedTooFast;
+
+  /// No description provided for @chatRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get chatRetry;
 }
 
 class _AppLocalizationsDelegate

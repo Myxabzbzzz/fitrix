@@ -4758,4 +4758,24 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get assistantQuestion =>
       'So, tell me — what\'s your main goal right now?';
+
+  @override
+  String get chatFailedUnavailable =>
+      'Felix is unavailable — check your connection';
+
+  @override
+  String get chatFailedInterrupted => 'Felix didn’t finish replying';
+
+  @override
+  String get chatFailedUnreadable => 'Felix’s reply couldn’t be read';
+
+  @override
+  String get chatFailedSignIn => 'Sign in again to chat with Felix';
+
+  @override
+  String get chatFailedTooFast =>
+      'Too many messages — wait a moment, then retry';
+
+  @override
+  String get chatRetry => 'Retry';
 }

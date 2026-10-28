@@ -454,12 +454,14 @@ void main() {
           repository
               .streamMessage('x', imagePath: 'chat_photos/big.jpg')
               .toList(),
-          throwsA(isA<ChatException>()));
+          throwsA(isA<ChatException>().having(
+              (e) => e.failure, 'failure', ChatFailure.photoUnavailable)));
       expect(
           repository
               .streamMessage('x', imagePath: 'chat_photos/nope.jpg')
               .toList(),
-          throwsA(isA<ChatException>()));
+          throwsA(isA<ChatException>().having(
+              (e) => e.failure, 'failure', ChatFailure.photoUnavailable)));
     });
 
     test('imagePath is stored locally but never part of the API history', () {

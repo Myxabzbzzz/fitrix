@@ -4,6 +4,28 @@ import 'package:fitrix/features/chat/data/models/chat_action.dart';
 
 enum MessageSender { user, assistant }
 
+/// Why Felix couldn't answer a message. The chat shows it localized next to
+/// the question, with a retry.
+enum ChatFailure {
+  /// The backend can't be reached or can't answer right now.
+  unavailable,
+
+  /// The reply stopped before it was complete (connection lost, app closed).
+  interrupted,
+
+  /// The backend sent something that isn't a reply.
+  unreadable,
+
+  /// The access token was rejected.
+  signInAgain,
+
+  /// Too many messages in a short time.
+  tooFast,
+
+  /// The attached photo is missing or too large.
+  photoUnavailable,
+}
+
 class ChatMessage {
   final String id;
   final String content;
@@ -14,8 +36,12 @@ class ChatMessage {
   /// Assistant reply that is still being streamed in. Not persisted.
   final bool isStreaming;
 
-  /// Assistant reply that failed; tapping it retries. Not persisted.
-  final bool isFailed;
+  /// Why Felix didn't answer this user message; the chat shows it with a
+  /// retry. Not persisted: a stored question with no reply after it is
+  /// marked [ChatFailure.interrupted] when the chat loads.
+  final ChatFailure? failure;
+
+  bool get isFailed => failure != null;
 
   /// Photo the user attached (file in the app's documents dir). Kept on this
   /// device only: not synced and never part of the history sent to Felix.
@@ -39,7 +65,7 @@ class ChatMessage {
     required this.timestamp,
     this.isQuickReply = false,
     this.isStreaming = false,
-    this.isFailed = false,
+    this.failure,
     this.imagePath,
     this.action,
     this.actionApplied = false,
@@ -49,7 +75,8 @@ class ChatMessage {
   ChatMessage copyWith({
     String? content,
     bool? isStreaming,
-    bool? isFailed,
+    ChatFailure? failure,
+    bool clearFailure = false,
     ChatAction? action,
     bool? actionApplied,
     Map<String, num>? appliedResult,
@@ -61,7 +88,7 @@ class ChatMessage {
       timestamp: timestamp,
       isQuickReply: isQuickReply,
       isStreaming: isStreaming ?? this.isStreaming,
-      isFailed: isFailed ?? this.isFailed,
+      failure: clearFailure ? null : failure ?? this.failure,
       imagePath: imagePath,
       action: action ?? this.action,
       actionApplied: actionApplied ?? this.actionApplied,
@@ -108,34 +135,46 @@ class ChatMessage {
     };
   }
 
-  /// Only completed messages are stored; in-flight and failed replies are
-  /// transient UI state.
+  /// Only completed messages are stored; a reply still streaming is
+  /// transient UI state. A question Felix failed to answer is stored as
+  /// asked (the failure itself is not).
   static String encodeMessages(List<ChatMessage> messages) {
     return jsonEncode(
-      messages
-          .where((m) => !m.isStreaming && !m.isFailed)
-          .map((m) => m.toJson())
-          .toList(),
+      messages.where((m) => !m.isStreaming).map((m) => m.toJson()).toList(),
     );
   }
 
   /// The conversation context sent to the backend as `history`: the last
   /// [limit] completed messages of [messages] (oldest first) as
-  /// `{role, content}`. Failed, still-streaming and empty messages are left
-  /// out, since Felix never really said them.
+  /// `{role, content}`. Still-streaming and empty messages are left out,
+  /// since Felix never really said them.
   static List<Map<String, String>> toApiHistory(
     Iterable<ChatMessage> messages, {
     int limit = maxApiHistory,
   }) {
     final turns = [
       for (final m in messages)
-        if (!m.isFailed && !m.isStreaming && m.content.trim().isNotEmpty)
+        if (!m.isStreaming && m.content.trim().isNotEmpty)
           {
             'role': m.sender == MessageSender.user ? 'user' : 'assistant',
             'content': m.content.trim(),
           },
     ];
     return turns.length > limit ? turns.sublist(turns.length - limit) : turns;
+  }
+
+  /// [messages] with a last question that has no reply marked
+  /// [ChatFailure.interrupted] (the app was closed or the account switched
+  /// while Felix replied), so the chat offers a retry. Unchanged when the
+  /// chat ends with Felix, a reply in flight or an already failed question.
+  static List<ChatMessage> markUnanswered(List<ChatMessage> messages) {
+    if (messages.isEmpty) return messages;
+    final last = messages.last;
+    if (last.sender != MessageSender.user || last.isFailed) return messages;
+    return [
+      ...messages.take(messages.length - 1),
+      last.copyWith(failure: ChatFailure.interrupted),
+    ];
   }
 
   /// Matches the backend's cap on history turns.

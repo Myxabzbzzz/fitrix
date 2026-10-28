@@ -35,9 +35,6 @@ class ChatRepository {
   /// What Felix knows about the user's day, read when a message is sent.
   final Map<String, Object> Function()? _context;
 
-  /// Localized "photo is missing or too large" text for the failed bubble.
-  final String Function()? _photoUnavailable;
-
   /// The app clock, for message timestamps.
   final DateTime Function() now;
 
@@ -60,12 +57,10 @@ class ChatRepository {
     SharedPreferences? prefs,
     void Function()? onSaved,
     String Function()? language,
-    String Function()? photoUnavailable,
     Map<String, Object> Function()? context,
     this.now = DateTime.now,
   })  : _profileRepository = profileRepository,
         _language = language,
-        _photoUnavailable = photoUnavailable,
         _context = context,
         _preloadedPrefs = prefs,
         _onSaved = onSaved;
@@ -129,8 +124,7 @@ class ChatRepository {
     if (imagePath != null) {
       final encoded = await encodeChatPhoto(imagePath);
       if (encoded == null) {
-        throw ChatException(
-            _photoUnavailable?.call() ?? photoUnavailableMessage);
+        throw ChatException(ChatFailure.photoUnavailable, imagePath);
       }
       images.add(encoded);
     }
@@ -147,9 +141,6 @@ class ChatRepository {
       onAction: onAction,
     );
   }
-
-  static const photoUnavailableMessage =
-      'The photo is missing or too large to send.';
 
   Map<String, Object>? _loadContext() {
     try {

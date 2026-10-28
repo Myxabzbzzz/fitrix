@@ -34,10 +34,6 @@ final chatApiServiceProvider = Provider<ChatApiService>((ref) {
   );
 });
 
-String _photoUnavailableText(Ref ref) => lookupAppLocalizations(
-      Locale(ref.read(selectedLanguageProvider)),
-    ).chatPhotoUnavailable;
-
 List<String> _topicGreeting(Ref ref, AssistantTopic topic) {
   final l10n = lookupAppLocalizations(
     Locale(ref.read(selectedLanguageProvider)),
@@ -65,7 +61,6 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
     prefs: ref.read(sharedPreferencesProvider),
     onSaved: ref.read(localChangesProvider).notify,
     language: () => ref.read(selectedLanguageProvider),
-    photoUnavailable: () => _photoUnavailableText(ref),
     context: () => ref.read(felixSnapshotProvider(AssistantTopic.app)).toJson(),
     now: ref.read(clockProvider),
   );
@@ -91,7 +86,6 @@ final topicChatMessagesProvider = StateNotifierProvider.family<ChatNotifier,
       prefs: ref.read(sharedPreferencesProvider),
       onSaved: ref.read(localChangesProvider).notify,
       language: () => ref.read(selectedLanguageProvider),
-      photoUnavailable: () => _photoUnavailableText(ref),
       context: () => ref.read(felixSnapshotProvider(topic)).toJson(),
       now: ref.read(clockProvider),
     ),
@@ -113,24 +107,38 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
   /// Sync has just stored [stored] (all completed messages, oldest first)
   /// as this chat's history. Shows it, keeping a reply that is still
-  /// streaming or has failed at the end; an empty history reloads the
-  /// greeting.
+  /// streaming at the end and the failed mark of a question; an empty
+  /// history reloads the greeting.
   void applySynced(List<ChatMessage> stored) {
     if (!mounted) return;
     if (stored.isEmpty) {
       _loadMessages();
       return;
     }
-    final inFlight = (state.valueOrNull ?? const <ChatMessage>[])
-        .where((m) => m.isStreaming || m.isFailed);
-    state = AsyncValue.data([...stored, ...inFlight]);
+    final current = state.valueOrNull ?? const <ChatMessage>[];
+    final failures = {
+      for (final m in current)
+        if (m.failure != null) m.id: m.failure!,
+    };
+    final streaming = current.where((m) => m.isStreaming).toList();
+    final merged = [
+      for (final m in stored)
+        failures.containsKey(m.id) ? m.copyWith(failure: failures[m.id]) : m,
+    ];
+    state = AsyncValue.data(
+      streaming.isEmpty
+          ? ChatMessage.markUnanswered(merged)
+          : [...merged, ...streaming],
+    );
   }
 
   Future<void> _loadMessages() async {
     state = const AsyncValue.loading();
     try {
       final messages = await _repository.getMessages();
-      state = AsyncValue.data(messages);
+      state = AsyncValue.data(
+        _isReplying ? messages : ChatMessage.markUnanswered(messages),
+      );
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
@@ -175,32 +183,38 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       imagePath: imagePath,
     );
 
-    final history = [...messages.where((m) => !m.isFailed), userMessage];
+    // An earlier question left unanswered stays in the chat as asked.
+    final history = [
+      for (final m in messages) m.copyWith(clearFailure: true),
+      userMessage,
+    ];
     return _reply(history, history.length - 1);
   }
 
-  /// Re-asks Felix for the last user message after a failed reply.
+  /// Re-asks Felix the question whose reply failed (the last one).
   Future<void> retry() async {
     final messages = state.valueOrNull;
     if (messages == null || _isReplying) return;
 
-    final history = messages.where((m) => !m.isFailed).toList();
-    final lastUser = history.lastIndexWhere(
-      (m) => m.sender == MessageSender.user,
-    );
-    if (lastUser == -1) return;
-
-    await _reply(history, lastUser);
+    final failed = messages.lastIndexWhere((m) => m.isFailed);
+    if (failed == -1) return;
+    final history = [
+      for (final m in messages.take(failed + 1)) m.copyWith(clearFailure: true),
+    ];
+    await _reply(history, failed);
   }
 
   /// Shows [history] plus a streaming reply to the user message at
-  /// [promptIndex]. Everything before that message is sent as context.
+  /// [promptIndex] (its last message). Everything before that message is
+  /// sent as context. If Felix can't answer, nothing is added: the question
+  /// is marked failed with the reason, and [retry] asks again.
   Future<void> _reply(List<ChatMessage> history, int promptIndex) async {
-    final prompt = history[promptIndex].content;
-    final imagePath = history[promptIndex].imagePath;
+    final promptMessage = history[promptIndex];
+    final prompt = promptMessage.content;
+    final imagePath = promptMessage.imagePath;
     final context = history.sublist(0, promptIndex);
     _isReplying = true;
-    final reply = ChatMessage(
+    var reply = ChatMessage(
       id: _uuid.v4(),
       content: '',
       sender: MessageSender.assistant,
@@ -221,31 +235,61 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       )) {
         if (!mounted) return;
         text.write(delta);
-        _updateReply(reply.id, (m) => m.copyWith(content: text.toString()));
+        reply = reply.copyWith(content: text.toString());
+        _showReply(promptMessage.id, reply);
       }
       if (!mounted) return;
-      _updateReply(
-        reply.id,
-        (m) => m.copyWith(
-          content: text.toString().trim(),
-          isStreaming: false,
-          action: action,
-        ),
+      reply = ChatMessage(
+        id: reply.id,
+        content: text.toString().trim(),
+        sender: MessageSender.assistant,
+        timestamp: reply.timestamp,
+        action: action,
       );
-      await _repository.saveMessages(state.requireValue);
+      if (_showReply(promptMessage.id, reply)) {
+        await _repository.saveMessages(state.requireValue);
+      }
     } catch (e) {
       if (!mounted) return;
-      _updateReply(
-        reply.id,
-        (m) => m.copyWith(
-          content: e is ChatException ? e.message : 'Something went wrong.',
-          isStreaming: false,
-          isFailed: true,
-        ),
-      );
+      final failure = e is ChatException ? e.failure : ChatFailure.unavailable;
+      _fail(promptMessage.id, reply.id, failure);
     } finally {
       _isReplying = false;
     }
+  }
+
+  /// Puts [reply] in the chat right after the question [promptId]: in place
+  /// when it is already shown, else inserted (the chat was reloaded while
+  /// Felix replied, e.g. by a sync). False when the question is gone too.
+  bool _showReply(String promptId, ChatMessage reply) {
+    final messages = state.valueOrNull;
+    if (messages == null) return false;
+    if (messages.any((m) => m.id == reply.id)) {
+      _updateReply(reply.id, (_) => reply);
+      return true;
+    }
+    final prompt = messages.indexWhere((m) => m.id == promptId);
+    if (prompt == -1) return false;
+    state = AsyncValue.data([
+      ...messages.take(prompt),
+      messages[prompt].copyWith(clearFailure: true),
+      reply,
+      ...messages.skip(prompt + 1),
+    ]);
+    return true;
+  }
+
+  /// Drops the reply bubble and marks the question [promptId] failed.
+  void _fail(String promptId, String replyId, ChatFailure failure) {
+    final messages = state.valueOrNull;
+    if (messages == null) return;
+    state = AsyncValue.data([
+      for (final m in messages)
+        if (m.id == promptId)
+          m.copyWith(failure: failure)
+        else if (m.id != replyId)
+          m,
+    ]);
   }
 
   void _updateReply(String id, ChatMessage Function(ChatMessage) update) {

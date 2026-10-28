@@ -36,7 +36,8 @@ void main() {
     expect(
       api.streamMessage('hi', 'c', images: ['QUJD']).toList(),
       throwsA(isA<ChatException>()
-          .having((e) => e.message, 'message', 'Photo too large')),
+          .having((e) => e.failure, 'failure', ChatFailure.photoUnavailable)
+          .having((e) => e.detail, 'detail', contains('Photo too large'))),
     );
   });
 }

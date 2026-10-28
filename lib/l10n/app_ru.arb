@@ -1340,5 +1340,11 @@
   "assistantSubtitle": "Ваш личный ассистент",
   "assistantGreeting": "Привет!\nЯ Felix, ваш персональный ИИ-тренер в FITRIX.",
   "assistantIntro": "Помогу тренироваться с умом, следить за прогрессом и не терять мотивацию.",
-  "assistantQuestion": "Расскажите, какая у вас сейчас главная цель?"
+  "assistantQuestion": "Расскажите, какая у вас сейчас главная цель?",
+  "chatFailedUnavailable": "Felix недоступен — проверьте подключение",
+  "chatFailedInterrupted": "Felix не успел ответить",
+  "chatFailedUnreadable": "Не удалось прочитать ответ Felix",
+  "chatFailedSignIn": "Войдите снова, чтобы писать Felix",
+  "chatFailedTooFast": "Слишком много сообщений — подождите и повторите",
+  "chatRetry": "Повторить"
 }

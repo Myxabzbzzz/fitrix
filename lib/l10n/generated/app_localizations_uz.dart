@@ -4706,4 +4706,24 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get assistantQuestion => 'Ayting-chi, hozir asosiy maqsadingiz nima?';
+
+  @override
+  String get chatFailedUnavailable =>
+      'Felix hozir mavjud emas — internetni tekshiring';
+
+  @override
+  String get chatFailedInterrupted => 'Felix javobni tugatmadi';
+
+  @override
+  String get chatFailedUnreadable => 'Felix javobini o‘qib bo‘lmadi';
+
+  @override
+  String get chatFailedSignIn => 'Felix bilan yozishish uchun qaytadan kiring';
+
+  @override
+  String get chatFailedTooFast =>
+      'Xabarlar juda ko‘p — biroz kuting va qayta urining';
+
+  @override
+  String get chatRetry => 'Qayta urinish';
 }

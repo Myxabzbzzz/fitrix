@@ -3,15 +3,23 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/chat/data/models/chat_action.dart';
+import 'package:fitrix/features/chat/data/models/chat_message.dart';
 
-/// A reply that couldn't be produced; [message] is shown in the chat.
+export 'package:fitrix/features/chat/data/models/chat_message.dart'
+    show ChatFailure;
+
+/// A reply that couldn't be produced, and why.
 class ChatException implements Exception {
-  final String message;
+  final ChatFailure failure;
 
-  ChatException(this.message);
+  /// What went wrong, for logs only (never shown: the chat shows [failure]).
+  final String? detail;
+
+  ChatException(this.failure, [this.detail]);
 
   @override
-  String toString() => message;
+  String toString() =>
+      'ChatException(${failure.name}${detail == null ? '' : ': $detail'})';
 }
 
 class ChatApiService {
@@ -21,10 +29,6 @@ class ChatApiService {
   /// is none. Sent as `Authorization: Bearer <token>`; the backend rejects
   /// chat requests without a valid one (unless its auth is turned off).
   final Future<String?> Function()? _accessToken;
-
-  static const signInAgainMessage = 'Please sign in again to chat with Felix.';
-  static const slowDownMessage =
-      'You\'re sending messages too fast. Please wait a moment and try again.';
 
   ChatApiService({
     String? baseUrl,
@@ -43,10 +47,9 @@ class ChatApiService {
 
   /// Streams Felix's reply as text chunks as soon as the model produces them.
   ///
-  /// If the backend can't be reached at all (not running, wrong address) this
-  /// falls back to a canned offline reply so onboarding still works. Errors
-  /// from a reachable backend (Ollama down, model missing, stream cut off)
-  /// throw [ChatException] so the chat can offer a retry.
+  /// Any failure (backend unreachable, Ollama down, stream cut off, ...)
+  /// throws a [ChatException] so the chat can mark the question and offer a
+  /// retry. Nothing is ever made up in Felix's place.
   ///
   /// Optional context for the backend:
   /// - [topic]: which Felix persona answers ("app", "gym", "running", ...).
@@ -98,16 +101,11 @@ class ChatApiService {
         ),
       );
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionError ||
-          e.type == DioExceptionType.connectionTimeout) {
-        debugPrint(
-          'FITRIX backend unreachable at ${_dio.options.baseUrl} '
-          '(${e.type.name}); using offline reply.',
-        );
-        yield _getMockResponse(message);
-        return;
-      }
-      throw ChatException('Felix is unavailable right now.');
+      debugPrint(
+        'FITRIX backend unreachable at ${_dio.options.baseUrl} '
+        '(${e.type.name}).',
+      );
+      throw ChatException(ChatFailure.unavailable, e.type.name);
     }
 
     final lines = response.data!.stream
@@ -119,11 +117,14 @@ class ChatApiService {
       final body = await lines.join('\n');
       switch (response.statusCode) {
         case 401:
-          throw ChatException(signInAgainMessage);
+          throw ChatException(ChatFailure.signInAgain, body);
+        case 413:
+          // Only a photo makes a request that large.
+          throw ChatException(ChatFailure.photoUnavailable, body);
         case 429:
-          throw ChatException(slowDownMessage);
+          throw ChatException(ChatFailure.tooFast, body);
       }
-      throw ChatException(_serverError(body));
+      throw ChatException(ChatFailure.unavailable, _serverError(body));
     }
 
     var done = false;
@@ -132,7 +133,9 @@ class ChatApiService {
         if (line.trim().isEmpty) continue;
         final data = jsonDecode(line) as Map<String, dynamic>;
         final error = data['error'];
-        if (error != null) throw ChatException(error.toString());
+        if (error != null) {
+          throw ChatException(ChatFailure.unavailable, error.toString());
+        }
         final delta = data['delta'];
         if (delta is String && delta.isNotEmpty) yield delta;
         final action = ChatAction.tryParse(data['action']);
@@ -142,15 +145,13 @@ class ChatApiService {
           break;
         }
       }
-    } on DioException {
-      throw ChatException('Connection lost while Felix was replying.');
-    } on FormatException {
-      throw ChatException('Felix sent an unreadable reply.');
+    } on DioException catch (e) {
+      throw ChatException(ChatFailure.interrupted, e.type.name);
+    } on FormatException catch (e) {
+      throw ChatException(ChatFailure.unreadable, e.message);
     }
 
-    if (!done) {
-      throw ChatException('Connection lost while Felix was replying.');
-    }
+    if (!done) throw ChatException(ChatFailure.interrupted, 'no "done"');
   }
 
   Future<String?> _currentToken() async {
@@ -167,37 +168,13 @@ class ChatApiService {
     }
   }
 
+  /// The backend's own error text, for logs.
   String _serverError(String body) {
     try {
       final data = jsonDecode(body) as Map<String, dynamic>;
-      return (data['message'] ?? data['error'] ?? 'Felix is unavailable.')
-          .toString();
+      return (data['message'] ?? data['error'] ?? body).toString();
     } on FormatException {
-      return 'Felix is unavailable right now.';
-    }
-  }
-
-  String _getMockResponse(String message) {
-    // Offline replies so the onboarding flow works without the backend
-    final lowerMessage = message.toLowerCase();
-
-    if (lowerMessage.contains('muscle') || lowerMessage.contains('strength')) {
-      return 'Nice choice! I like that.\n\nWhich sports or activities do you enjoy (or plan to do)?\nYou can pick more than one 👇';
-    } else if (lowerMessage.contains('endurance') ||
-        lowerMessage.contains('stamina')) {
-      return 'Great goal! Building endurance is key to overall fitness.\n\nWhich sports or activities do you enjoy (or plan to do)?';
-    } else if (lowerMessage.contains('weight') ||
-        lowerMessage.contains('toned')) {
-      return 'Excellent! Let\'s work on getting you toned.\n\nWhich sports or activities do you enjoy (or plan to do)?';
-    } else if (lowerMessage.contains('gym')) {
-      return 'I see you\'ve chosen Gym, Running, and Skiing — nice combo! Let\'s fine-tune your plan a bit.\n\nHow often do you usually hit the gym?';
-    } else if (lowerMessage.contains('week')) {
-      return 'Nice! And how would you describe your experience level?';
-    } else if (lowerMessage.contains('intermediate') ||
-        lowerMessage.contains('beginner')) {
-      return 'Got it. Are you focusing more on strength, muscle growth, fat loss, or just general fitness?';
-    } else {
-      return 'Thanks for sharing! I\'ll help you create a personalized plan based on your goals.';
+      return body;
     }
   }
 }

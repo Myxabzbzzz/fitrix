@@ -44,6 +44,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   bool _animating = false;
   Offset? _buttonCenter;
 
+  /// The chat opened at its newest message already (after a restart).
+  bool _openedAtBottom = false;
+
   @override
   void initState() {
     super.initState();
@@ -245,6 +248,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                 child: messagesAsync.when(
                   data: (messages) {
                     _entrance.sync(messages);
+                    if (!_openedAtBottom) {
+                      _openedAtBottom = true;
+                      jumpChatToBottom(_scrollController);
+                    }
                     return ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(

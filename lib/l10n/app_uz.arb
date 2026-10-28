@@ -1340,5 +1340,11 @@
   "assistantSubtitle": "Shaxsiy yordamchingiz",
   "assistantGreeting": "Salom!\nMen Felix, FITRIXdagi shaxsiy AI murabbiyingizman.",
   "assistantIntro": "Aqlliroq mashq qilish, natijalarni kuzatish va motivatsiyani yo‘qotmaslikka yordam beraman.",
-  "assistantQuestion": "Ayting-chi, hozir asosiy maqsadingiz nima?"
+  "assistantQuestion": "Ayting-chi, hozir asosiy maqsadingiz nima?",
+  "chatFailedUnavailable": "Felix hozir mavjud emas — internetni tekshiring",
+  "chatFailedInterrupted": "Felix javobni tugatmadi",
+  "chatFailedUnreadable": "Felix javobini o‘qib bo‘lmadi",
+  "chatFailedSignIn": "Felix bilan yozishish uchun qaytadan kiring",
+  "chatFailedTooFast": "Xabarlar juda ko‘p — biroz kuting va qayta urining",
+  "chatRetry": "Qayta urinish"
 }

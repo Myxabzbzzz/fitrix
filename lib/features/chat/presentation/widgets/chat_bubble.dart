@@ -37,7 +37,7 @@ class ChatBubble extends StatelessWidget {
 
   final ChatMessage message;
 
-  /// Called when a failed reply is tapped.
+  /// Called when Retry under a failed question is tapped.
   final VoidCallback? onRetry;
 
   /// True for the last message of one author's run: it gets the Felix avatar
@@ -60,8 +60,6 @@ class ChatBubble extends StatelessWidget {
     final Widget content;
     if (message.isStreaming && message.content.isEmpty) {
       content = TypingIndicator(color: textColor);
-    } else if (message.isFailed) {
-      content = ChatFailedContent(message: message.content, color: textColor);
     } else {
       final text = Text(
         message.content,
@@ -81,21 +79,35 @@ class ChatBubble extends StatelessWidget {
             );
     }
 
-    final bubble = GestureDetector(
-      onTap: message.isFailed ? onRetry : null,
-      child: Container(
-        key: const ValueKey('chat-bubble'),
-        constraints: const BoxConstraints(maxWidth: maxWidth),
-        padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-        decoration: BoxDecoration(
-          color: isUser ? palette.bubbleUser : palette.bubble,
-          borderRadius: AppRadius.mdAll,
-          border: message.isFailed ? Border.all(color: palette.danger) : null,
-        ),
-        child: content,
+    final bubble = Container(
+      key: const ValueKey('chat-bubble'),
+      constraints: const BoxConstraints(maxWidth: maxWidth),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+      decoration: BoxDecoration(
+        color: isUser ? palette.bubbleUser : palette.bubble,
+        borderRadius: AppRadius.mdAll,
+        border: message.isFailed ? Border.all(color: palette.danger) : null,
       ),
+      child: content,
     );
+
+    final failure = message.failure;
+    if (failure != null) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [Flexible(child: bubble)],
+            ),
+            ChatFailedRow(failure: failure, onRetry: onRetry),
+          ],
+        ),
+      );
+    }
 
     return Padding(
       padding: EdgeInsets.only(bottom: lastInGroup ? AppSpacing.md : 2),
@@ -118,38 +130,58 @@ class ChatBubble extends StatelessWidget {
   }
 }
 
-/// Body of a failed assistant bubble: the error plus a retry hint.
-class ChatFailedContent extends StatelessWidget {
-  final String message;
-  final Color color;
+/// Localized reason Felix didn't answer.
+String chatFailureText(AppLocalizations l10n, ChatFailure failure) =>
+    switch (failure) {
+      ChatFailure.unavailable => l10n.chatFailedUnavailable,
+      ChatFailure.interrupted => l10n.chatFailedInterrupted,
+      ChatFailure.unreadable => l10n.chatFailedUnreadable,
+      ChatFailure.signInAgain => l10n.chatFailedSignIn,
+      ChatFailure.tooFast => l10n.chatFailedTooFast,
+      ChatFailure.photoUnavailable => l10n.chatPhotoUnavailable,
+    };
 
-  const ChatFailedContent({
-    super.key,
-    required this.message,
-    required this.color,
-  });
+/// Under a question Felix failed to answer: why, and a Retry button.
+class ChatFailedRow extends StatelessWidget {
+  final ChatFailure failure;
+  final VoidCallback? onRetry;
+
+  const ChatFailedRow({super.key, required this.failure, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
-    final danger = AppPalette.of(context).danger;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(message, style: AppText.bodyRegular.copyWith(color: color)),
-        const SizedBox(height: AppSpacing.xxs),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.refresh, size: 16, color: danger),
-            const SizedBox(width: AppSpacing.xxs),
-            Text(
-              AppLocalizations.of(context).chatTapToRetry,
-              style: AppText.captionStrong.copyWith(color: danger),
+    final palette = AppPalette.of(context);
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      key: const ValueKey('chat-failed'),
+      padding: const EdgeInsets.only(top: AppSpacing.xxs),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Icon(Icons.error_outline, size: 16, color: palette.danger),
+          const SizedBox(width: AppSpacing.xxs),
+          Flexible(
+            child: Text(
+              chatFailureText(l10n, failure),
+              textAlign: TextAlign.end,
+              style: AppText.caption.copyWith(color: palette.textSecondary),
             ),
-          ],
-        ),
-      ],
+          ),
+          if (onRetry != null)
+            TextButton.icon(
+              key: const ValueKey('chat-retry'),
+              onPressed: onRetry,
+              style: TextButton.styleFrom(
+                foregroundColor: palette.danger,
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                minimumSize: const Size(0, 44),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              icon: const Icon(Icons.refresh, size: 16),
+              label: Text(l10n.chatRetry, style: AppText.captionStrong),
+            ),
+        ],
+      ),
     );
   }
 }

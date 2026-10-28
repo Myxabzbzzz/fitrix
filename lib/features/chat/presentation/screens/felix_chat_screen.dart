@@ -51,6 +51,9 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
 
   /// Photo picked for the next message (stored path, see photo_service).
   String? _pendingPhoto;
+
+  /// The chat opened at its newest message already.
+  bool _openedAtBottom = false;
   bool _wasListening = false;
 
   @override
@@ -92,6 +95,12 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
     // is when a draft left for this chat can be taken.
     ModalRoute.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) => _takeDraft());
+  }
+
+  @override
+  void didUpdateWidget(FelixChatScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.topic != widget.topic) _openedAtBottom = false;
   }
 
   @override
@@ -235,6 +244,10 @@ class _FelixChatScreenState extends ConsumerState<FelixChatScreen>
                 data: (list) {
                   // Each topic's loaded history shows without animation.
                   _entrance.sync(list, scope: topic);
+                  if (!_openedAtBottom) {
+                    _openedAtBottom = true;
+                    jumpChatToBottom(_scrollController);
+                  }
                   return ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.all(AppSpacing.md),

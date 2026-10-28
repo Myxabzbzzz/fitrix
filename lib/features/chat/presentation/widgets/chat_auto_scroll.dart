@@ -29,3 +29,16 @@ void followChatBottom(
     }
   });
 }
+
+/// Opens a chat at its newest message: jumps to the end once the list has
+/// laid out, again on the next frames while lazily built bubbles change the
+/// list's extent.
+void jumpChatToBottom(ScrollController controller, {int frames = 6}) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (!controller.hasClients) return;
+    final position = controller.position;
+    if (position.pixels >= position.maxScrollExtent) return;
+    controller.jumpTo(position.maxScrollExtent);
+    if (frames > 1) jumpChatToBottom(controller, frames: frames - 1);
+  });
+}

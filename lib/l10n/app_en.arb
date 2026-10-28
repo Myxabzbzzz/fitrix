@@ -3415,5 +3415,12 @@
   "assistantSubtitle": "Your personal assistant",
   "assistantGreeting": "Hey there!\nI'm Felix, your personal AI coach here in Fitrix.",
   "assistantIntro": "I'll help you train smarter, track your progress and stay motivated.",
-  "assistantQuestion": "So, tell me — what's your main goal right now?"
+  "assistantQuestion": "So, tell me — what's your main goal right now?",
+  "chatFailedUnavailable": "Felix is unavailable — check your connection",
+  "@chatFailedUnavailable": {"description": "Under a question Felix couldn't answer (backend unreachable or down)"},
+  "chatFailedInterrupted": "Felix didn’t finish replying",
+  "chatFailedUnreadable": "Felix’s reply couldn’t be read",
+  "chatFailedSignIn": "Sign in again to chat with Felix",
+  "chatFailedTooFast": "Too many messages — wait a moment, then retry",
+  "chatRetry": "Retry"
 }

@@ -92,17 +92,16 @@ void main() {
       expect(chunks, ['Hey', ' there', '!']);
     });
 
-    test('surfaces the backend error message', () async {
+    test('a backend error fails as unavailable, keeping its text for logs',
+        () async {
       backend.handler = FakeBackend.error(502, 'Ollama has no model "x"');
       final api = ChatApiService(baseUrl: backend.baseUrl);
 
       expect(
         api.streamMessage('hi', 'c1').toList(),
-        throwsA(isA<ChatException>().having(
-          (e) => e.message,
-          'message',
-          'Ollama has no model "x"',
-        )),
+        throwsA(isA<ChatException>()
+            .having((e) => e.failure, 'failure', ChatFailure.unavailable)
+            .having((e) => e.detail, 'detail', 'Ollama has no model "x"')),
       );
     });
 
@@ -112,18 +111,32 @@ void main() {
 
       expect(
         api.streamMessage('hi', 'c1').toList(),
-        throwsA(isA<ChatException>()),
+        throwsA(isA<ChatException>()
+            .having((e) => e.failure, 'failure', ChatFailure.interrupted)),
       );
     });
 
-    test('falls back to an offline reply when the backend is down', () async {
+    test('an unreachable backend fails; nothing is made up', () async {
       final port = backend._server.port;
       await backend.stop();
       final api = ChatApiService(baseUrl: 'http://127.0.0.1:$port');
 
-      final chunks = await api.streamMessage('Build muscle', 'c1').toList();
+      expect(
+        api.streamMessage('Build muscle', 'c1').toList(),
+        throwsA(isA<ChatException>()
+            .having((e) => e.failure, 'failure', ChatFailure.unavailable)),
+      );
+    });
 
-      expect(chunks.join(), contains('Nice choice'));
+    test('an unreadable stream line fails as unreadable', () async {
+      backend.handler = (response) async => response.write('not json\n');
+      final api = ChatApiService(baseUrl: backend.baseUrl);
+
+      expect(
+        api.streamMessage('hi', 'c1').toList(),
+        throwsA(isA<ChatException>()
+            .having((e) => e.failure, 'failure', ChatFailure.unreadable)),
+      );
     });
   });
 
@@ -170,12 +183,15 @@ void main() {
       await notifier.sendMessage('Plan my week');
 
       var messages = notifier.state.requireValue;
-      expect(messages, hasLength(3), reason: 'history must not be wiped');
-      expect(messages.last.isFailed, isTrue);
-      expect(messages.last.content, 'Ollama is not running');
+      expect(messages.map((m) => m.content), ['Hi, I am Felix', 'Plan my week'],
+          reason: 'no reply bubble, and history is not wiped');
+      expect(messages.last.sender, MessageSender.user);
+      expect(messages.last.failure, ChatFailure.unavailable);
 
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.getString('chat_history'), isNot(contains('not running')));
+      expect(prefs.getString('chat_history'), contains('Plan my week'),
+          reason: 'the question itself is kept');
 
       backend.handler = FakeBackend.streaming(['Mon: legs']);
       await notifier.retry();
@@ -186,6 +202,108 @@ void main() {
         'Plan my week',
         'Mon: legs',
       ]);
+      expect(messages.any((m) => m.isFailed), isFalse);
+    });
+
+    test('backend down: the question fails, nothing fake is stored', () async {
+      final port = backend._server.port;
+      await backend.stop();
+      final notifier = ChatNotifier(
+        ChatRepository(
+          ChatApiService(baseUrl: 'http://127.0.0.1:$port'),
+          greeting: () => const ['Hi, I am Felix'],
+        ),
+      );
+      await loaded(notifier);
+
+      await notifier.sendMessage('Привет, ты тут?');
+
+      final messages = notifier.state.requireValue;
+      expect(messages.map((m) => m.content),
+          ['Hi, I am Felix', 'Привет, ты тут?']);
+      expect(messages.last.failure, ChatFailure.unavailable);
+      final stored = ChatMessage.decodeMessages(
+          (await SharedPreferences.getInstance()).getString('chat_history')!);
+      expect(
+          stored.map((m) => m.content), ['Hi, I am Felix', 'Привет, ты тут?']);
+      expect(stored.where((m) => m.sender == MessageSender.assistant),
+          hasLength(1),
+          reason: 'only the greeting: no reply was made up');
+    });
+
+    test('a question left without a reply shows as failed after a restart',
+        () async {
+      SharedPreferences.setMockInitialValues({
+        'chat_history': ChatMessage.encodeMessages([
+          ChatMessage(
+              id: 'g',
+              content: 'Hi, I am Felix',
+              sender: MessageSender.assistant,
+              timestamp: DateTime(2026)),
+          ChatMessage(
+              id: 'q',
+              content: 'How do I get faster at 5K?',
+              sender: MessageSender.user,
+              timestamp: DateTime(2026, 1, 1, 0, 1)),
+        ]),
+      });
+      final notifier = notifierFor(backend);
+
+      final messages = await loaded(notifier);
+
+      expect(messages.last.id, 'q');
+      expect(messages.last.failure, ChatFailure.interrupted);
+
+      backend.handler = FakeBackend.streaming(['Intervals once a week.']);
+      await notifier.retry();
+      expect(notifier.state.requireValue.map((m) => m.content), [
+        'Hi, I am Felix',
+        'How do I get faster at 5K?',
+        'Intervals once a week.',
+      ]);
+      expect(notifier.state.requireValue.any((m) => m.isFailed), isFalse);
+    });
+
+    test('a reply that arrives after the chat was reloaded is shown', () async {
+      final release = Completer<void>();
+      backend.handler = (response) async {
+        response.write('${jsonEncode({'delta': 'Easy'})}\n');
+        await response.flush();
+        await release.future;
+        response.write('${jsonEncode({'delta': ' pace.'})}\n');
+        response.write('${jsonEncode({'done': true})}\n');
+      };
+      final notifier = notifierFor(backend);
+      final greeting = await loaded(notifier);
+
+      final sending = notifier.sendMessage('How fast?');
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      final question = notifier.state.requireValue
+          .firstWhere((m) => m.content == 'How fast?');
+      // A sync stores the chat again while Felix is still replying.
+      notifier.applySynced([...greeting, question]);
+      release.complete();
+      await sending;
+
+      expect(notifier.state.requireValue.map((m) => m.content),
+          ['Hi, I am Felix', 'How fast?', 'Easy pace.']);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('chat_history'), contains('Easy pace.'));
+    });
+
+    test('a new message after a failed one keeps the earlier question',
+        () async {
+      backend.handler = FakeBackend.error(503, 'down');
+      final notifier = notifierFor(backend);
+      await loaded(notifier);
+      await notifier.sendMessage('first');
+      backend.handler = FakeBackend.streaming(['ok']);
+
+      await notifier.sendMessage('second');
+
+      final messages = notifier.state.requireValue;
+      expect(messages.map((m) => m.content),
+          ['Hi, I am Felix', 'first', 'second', 'ok']);
       expect(messages.any((m) => m.isFailed), isFalse);
     });
 
@@ -219,7 +337,6 @@ void main() {
       String content,
       MessageSender sender, {
       bool isStreaming = false,
-      bool isFailed = false,
     }) =>
         ChatMessage(
           id: content,
@@ -227,7 +344,6 @@ void main() {
           sender: sender,
           timestamp: DateTime(2026),
           isStreaming: isStreaming,
-          isFailed: isFailed,
         );
 
     Future<List<ChatMessage>> loaded(ChatNotifier notifier) async {
@@ -293,12 +409,10 @@ void main() {
       expect(backend.bodies[1].containsKey('context'), isFalse);
     });
 
-    test('history skips failed, streaming and empty messages', () {
+    test('history skips streaming and empty messages', () {
       final history = ChatMessage.toApiHistory([
         message('Hi, I am Felix', MessageSender.assistant),
         message('Plan my week', MessageSender.user),
-        message('Ollama is not running', MessageSender.assistant,
-            isFailed: true),
         message('Mon: legs', MessageSender.assistant),
         message('  ', MessageSender.user),
         message('Typing...', MessageSender.assistant, isStreaming: true),
@@ -493,11 +607,8 @@ void main() {
 
       expect(
         api.streamMessage('hi', 'c1').toList(),
-        throwsA(isA<ChatException>().having(
-          (e) => e.message,
-          'message',
-          ChatApiService.signInAgainMessage,
-        )),
+        throwsA(isA<ChatException>()
+            .having((e) => e.failure, 'failure', ChatFailure.signInAgain)),
       );
     });
 
@@ -507,11 +618,8 @@ void main() {
 
       expect(
         api.streamMessage('hi', 'c1').toList(),
-        throwsA(isA<ChatException>().having(
-          (e) => e.message,
-          'message',
-          allOf(contains('too fast'), ChatApiService.slowDownMessage),
-        )),
+        throwsA(isA<ChatException>()
+            .having((e) => e.failure, 'failure', ChatFailure.tooFast)),
       );
     });
 
@@ -531,21 +639,8 @@ void main() {
       await notifier.sendMessage('Plan my week');
 
       final last = notifier.state.requireValue.last;
-      expect(last.isFailed, isTrue);
-      expect(last.content, ChatApiService.signInAgainMessage);
-    });
-
-    test('the offline fallback still works with a token', () async {
-      final port = backend._server.port;
-      await backend.stop();
-      final api = ChatApiService(
-        baseUrl: 'http://127.0.0.1:$port',
-        accessToken: () async => 'token',
-      );
-
-      final chunks = await api.streamMessage('Build muscle', 'c1').toList();
-
-      expect(chunks.join(), contains('Nice choice'));
+      expect(last.content, 'Plan my week');
+      expect(last.failure, ChatFailure.signInAgain);
     });
   });
 }

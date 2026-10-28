@@ -4850,4 +4850,24 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get assistantQuestion =>
       'Расскажите, какая у вас сейчас главная цель?';
+
+  @override
+  String get chatFailedUnavailable =>
+      'Felix недоступен — проверьте подключение';
+
+  @override
+  String get chatFailedInterrupted => 'Felix не успел ответить';
+
+  @override
+  String get chatFailedUnreadable => 'Не удалось прочитать ответ Felix';
+
+  @override
+  String get chatFailedSignIn => 'Войдите снова, чтобы писать Felix';
+
+  @override
+  String get chatFailedTooFast =>
+      'Слишком много сообщений — подождите и повторите';
+
+  @override
+  String get chatRetry => 'Повторить';
 }

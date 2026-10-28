@@ -1340,5 +1340,11 @@
   "assistantSubtitle": "Tu asistente personal",
   "assistantGreeting": "¡Hola!\nSoy Felix, tu entrenador personal con IA en FITRIX.",
   "assistantIntro": "Te ayudaré a entrenar mejor, seguir tu progreso y mantener la motivación.",
-  "assistantQuestion": "Cuéntame: ¿cuál es tu objetivo principal ahora?"
+  "assistantQuestion": "Cuéntame: ¿cuál es tu objetivo principal ahora?",
+  "chatFailedUnavailable": "Felix no está disponible: revisa tu conexión",
+  "chatFailedInterrupted": "Felix no terminó de responder",
+  "chatFailedUnreadable": "No se pudo leer la respuesta de Felix",
+  "chatFailedSignIn": "Vuelve a iniciar sesión para hablar con Felix",
+  "chatFailedTooFast": "Demasiados mensajes: espera un momento y reintenta",
+  "chatRetry": "Reintentar"
 }
