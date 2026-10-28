@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -76,16 +77,13 @@ class _AppButtonState extends State<AppButton> {
           Icon(widget.icon, size: base.fontSize, color: fg),
           const SizedBox(width: AppSpacing.xxs),
         ],
-        // A label that doesn't fit shrinks a little instead of losing its
-        // end to an ellipsis ("Завершить трениро…").
+        // A label that doesn't fit shrinks a little (not below 80 %), then
+        // wraps to two lines, instead of losing its end to an ellipsis.
         Flexible(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              widget.label,
-              maxLines: 1,
-              style: base.copyWith(color: fg),
-            ),
+          child: ShrinkToFitText(
+            widget.label,
+            textAlign: TextAlign.center,
+            style: base.copyWith(color: fg),
           ),
         ),
       ],

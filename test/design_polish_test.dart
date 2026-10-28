@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_theme.dart';
+import 'package:fitrix/core/widgets/app_button.dart';
+import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_sheet.dart';
 import 'package:fitrix/features/language/presentation/screens/language_screen.dart';
@@ -61,21 +63,16 @@ Widget localized(Widget child,
       ),
     );
 
-/// Expects the [Text] showing [label] to be drawn whole and at full size:
-/// no ellipsis, and not shrunk by a scale-down FittedBox.
-void expectFullLabel(WidgetTester t, String label) {
+/// Expects the [Text] showing [label] to be drawn whole, on one line and at
+/// full size (16 pt: the large button / chip label), not shrunk or wrapped.
+void expectFullLabel(WidgetTester t, String label, {double size = 16}) {
   final f = find.text(label);
   expect(f, findsWidgets, reason: label);
   final para = t.renderObject<RenderParagraph>(f.first);
   expect(para.didExceedMaxLines, isFalse, reason: '$label is cut short');
-  RenderObject? o = para.parent;
-  while (o != null && o is! RenderFittedBox) {
-    o = o.parent;
-  }
-  if (o is RenderFittedBox) {
-    expect(o.size.width, greaterThanOrEqualTo(para.size.width - 0.5),
-        reason: '$label is shrunk to fit');
-  }
+  expect(para.text.style!.fontSize, size, reason: '$label is shrunk');
+  final line = para.textScaler.scale(size) * para.text.style!.height!;
+  expect(para.size.height, lessThan(line * 1.5), reason: '$label wraps');
 }
 
 /// Expects the label [text] of an ElevatedButton to be laid out at its
@@ -349,5 +346,61 @@ void main() {
         expectNoOverflow(t);
       });
     }
+  });
+
+  group('a label that cannot fit', () {
+    Widget pair(String a, String b, {double width = 400}) => MaterialApp(
+          theme: AppTheme.lightTheme,
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: width,
+                child: EqualHeightRow(spacing: 8, children: [
+                  AppButton(
+                      label: a, size: AppButtonSize.large, onPressed: () {}),
+                  AppButton(
+                      label: b, size: AppButtonSize.large, onPressed: () {}),
+                ]),
+              ),
+            ),
+          ),
+        );
+
+    testWidgets('shrinks no further than 80 %, then wraps', (t) async {
+      await t.pumpWidget(pair('Go', 'Save this plan now'));
+      final para =
+          t.renderObject<RenderParagraph>(find.text('Save this plan now'));
+      expect(para.text.style!.fontSize, greaterThanOrEqualTo(16 * 0.8));
+      expect(para.didExceedMaxLines, isFalse);
+      expectNoOverflow(t);
+    });
+
+    testWidgets('makes its neighbour just as tall', (t) async {
+      await t.pumpWidget(MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: MediaQuery(
+          data: const MediaQueryData(textScaler: TextScaler.linear(1.3)),
+          child: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 240,
+                child: EqualHeightRow(spacing: 8, children: [
+                  AppButton(
+                      label: 'Go', size: AppButtonSize.large, onPressed: () {}),
+                  AppButton(
+                      label: 'Save this plan',
+                      size: AppButtonSize.large,
+                      onPressed: () {}),
+                ]),
+              ),
+            ),
+          ),
+        ),
+      ));
+      final a = t.getSize(find.byType(AppButton).first);
+      final b = t.getSize(find.byType(AppButton).last);
+      expect(b.height, greaterThan(48));
+      expect(a.height, b.height);
+    });
   });
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -176,29 +177,25 @@ class ExerciseDetailScreen extends ConsumerWidget {
                   AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
               child: SafeArea(
                 top: false,
-                child: Row(
+                child: EqualHeightRow(
+                  spacing: AppSpacing.sm,
                   children: [
-                    Expanded(
-                      child: AppButton(
-                        label: l10n.exerciseAskFelix,
-                        style: AppButtonStyle.secondary,
-                        size: AppButtonSize.large,
-                        icon: Icons.chat_bubble_outline,
-                        expand: true,
-                        onPressed: () => askFelix(context, ref,
-                            topic: AssistantTopic.forSport(Sport.gym),
-                            draft: l10n.exerciseAskFelixDraft(info.name)),
-                      ),
+                    AppButton(
+                      label: l10n.exerciseAskFelix,
+                      style: AppButtonStyle.secondary,
+                      size: AppButtonSize.large,
+                      icon: Icons.chat_bubble_outline,
+                      expand: true,
+                      onPressed: () => askFelix(context, ref,
+                          topic: AssistantTopic.forSport(Sport.gym),
+                          draft: l10n.exerciseAskFelixDraft(info.name)),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: AppButton(
-                        label: l10n.exerciseAddToWorkout,
-                        size: AppButtonSize.large,
-                        icon: Icons.add,
-                        expand: true,
-                        onPressed: () => _addToWorkout(context, ref, info),
-                      ),
+                    AppButton(
+                      label: l10n.exerciseAddToWorkout,
+                      size: AppButtonSize.large,
+                      icon: Icons.add,
+                      expand: true,
+                      onPressed: () => _addToWorkout(context, ref, info),
                     ),
                   ],
                 ),

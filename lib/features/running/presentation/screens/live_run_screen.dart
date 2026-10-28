@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -417,7 +418,9 @@ class _HoldToFinishState extends State<HoldToFinish>
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Container(
-              height: 56,
+              // At least 56 tall; a label wrapped to two lines grows it.
+              constraints: const BoxConstraints(minHeight: 56),
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
               color: palette.buttonMuted,
               child: Stack(
                 alignment: Alignment.center,
@@ -438,14 +441,11 @@ class _HoldToFinishState extends State<HoldToFinish>
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        widget.label,
-                        maxLines: 1,
-                        style: AppText.headingS
-                            .copyWith(color: palette.textPrimary),
-                      ),
+                    child: ShrinkToFitText(
+                      widget.label,
+                      textAlign: TextAlign.center,
+                      style:
+                          AppText.headingS.copyWith(color: palette.textPrimary),
                     ),
                   ),
                 ],

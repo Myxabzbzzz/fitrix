@@ -1,3 +1,5 @@
+import 'package:fitrix/core/widgets/equal_height_row.dart';
+import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -101,13 +103,10 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
     final ok = _days.length == p.perWeek;
     final dateText = dayAndMonth(context, start);
 
-    Widget choice(_DateChoice c, String label, {VoidCallback? onTap}) =>
-        Expanded(
-          child: _Chip(
-            label: label,
-            selected: _choice == c,
-            onTap: onTap ?? () => setState(() => _choice = c),
-          ),
+    Widget choice(_DateChoice c, String label, {VoidCallback? onTap}) => _Chip(
+          label: label,
+          selected: _choice == c,
+          onTap: onTap ?? () => setState(() => _choice = c),
         );
 
     return SafeArea(
@@ -140,13 +139,12 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
             Text(l10n.programStartDate,
                 style: AppText.headingS.copyWith(color: palette.textPrimary)),
             const SizedBox(height: AppSpacing.xs),
-            Row(
+            EqualHeightRow(
+              spacing: AppSpacing.xs,
               children: [
                 choice(_DateChoice.today, l10n.programToday),
-                const SizedBox(width: AppSpacing.xs),
                 choice(_DateChoice.nextMonday,
                     dayAndMonth(context, addDays(today, 8 - today.weekday))),
-                const SizedBox(width: AppSpacing.xs),
                 choice(
                     _DateChoice.custom,
                     _custom == null
@@ -336,14 +334,10 @@ class _Chip extends StatelessWidget {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
           decoration: BoxDecoration(color: bg, borderRadius: AppRadius.smAll),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(label,
-                maxLines: 1,
-                textAlign: TextAlign.center,
-                style: (compact ? AppText.bodyStrong : AppText.headingS)
-                    .copyWith(color: fg)),
-          ),
+          child: ShrinkToFitText(label,
+              textAlign: TextAlign.center,
+              style: (compact ? AppText.bodyStrong : AppText.headingS)
+                  .copyWith(color: fg)),
         ),
       ),
     );

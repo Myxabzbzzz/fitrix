@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
+import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -105,13 +107,12 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  Row(
+                  EqualHeightRow(
+                    spacing: AppSpacing.xs,
                     children: [
                       _Fact(
                           l10n.programLength, l10n.programWeeksShort(p.weeks)),
-                      const SizedBox(width: AppSpacing.xs),
                       _Fact(l10n.programPerWeekLabel, '${p.perWeek}×'),
-                      const SizedBox(width: AppSpacing.xs),
                       _Fact(l10n.programSessionLabel,
                           planDuration(l10n, p.sessionMinutes)),
                     ],
@@ -258,35 +259,31 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
               ),
               child: SafeArea(
                 top: false,
-                child: Row(
+                child: EqualHeightRow(
+                  spacing: AppSpacing.xs,
                   children: [
-                    Expanded(
-                      child: AppButton(
-                        label: l10n.programAskFelix,
-                        style: AppButtonStyle.secondary,
-                        size: AppButtonSize.large,
-                        icon: Icons.chat_bubble_outline,
-                        expand: true,
-                        onPressed: () => askFelix(context, ref,
-                            topic: AssistantTopic.forSport(Sport.gym),
-                            draft: l10n.programAskFelixDraft(p.name)),
-                      ),
+                    AppButton(
+                      label: l10n.programAskFelix,
+                      style: AppButtonStyle.secondary,
+                      size: AppButtonSize.large,
+                      icon: Icons.chat_bubble_outline,
+                      expand: true,
+                      onPressed: () => askFelix(context, ref,
+                          topic: AssistantTopic.forSport(Sport.gym),
+                          draft: l10n.programAskFelixDraft(p.name)),
                     ),
-                    const SizedBox(width: AppSpacing.xs),
-                    Expanded(
-                      child: AppButton(
-                        key: const Key('program-start'),
-                        label: l10n.programStart,
-                        size: AppButtonSize.large,
-                        expand: true,
-                        onPressed: () async {
-                          final started =
-                              await showStartProgramSheet(context, p, weekdays);
-                          if (started == true && context.mounted) {
-                            context.go(AppRouter.programsActive);
-                          }
-                        },
-                      ),
+                    AppButton(
+                      key: const Key('program-start'),
+                      label: l10n.programStart,
+                      size: AppButtonSize.large,
+                      expand: true,
+                      onPressed: () async {
+                        final started =
+                            await showStartProgramSheet(context, p, weekdays);
+                        if (started == true && context.mounted) {
+                          context.go(AppRouter.programsActive);
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -307,31 +304,18 @@ class _Fact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        decoration:
-            BoxDecoration(color: palette.tile, borderRadius: AppRadius.mdAll),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(label,
-                  maxLines: 1,
-                  style:
-                      AppText.caption.copyWith(color: palette.textSecondary)),
-            ),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(value,
-                  maxLines: 1,
-                  style: AppText.headingM.copyWith(color: palette.textPrimary)),
-            ),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration:
+          BoxDecoration(color: palette.tile, borderRadius: AppRadius.mdAll),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ShrinkToFitText(label,
+              style: AppText.caption.copyWith(color: palette.textSecondary)),
+          ShrinkToFitText(value,
+              style: AppText.headingM.copyWith(color: palette.textPrimary)),
+        ],
       ),
     );
   }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
+import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -267,25 +269,21 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(
                   AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.md),
-              child: Row(
+              child: EqualHeightRow(
+                spacing: AppSpacing.sm,
                 children: [
-                  Expanded(
-                    child: AppButton(
-                      label: l10n.workoutDiscard,
-                      style: AppButtonStyle.secondary,
-                      size: AppButtonSize.large,
-                      expand: true,
-                      onPressed: _discard,
-                    ),
+                  AppButton(
+                    label: l10n.workoutDiscard,
+                    style: AppButtonStyle.secondary,
+                    size: AppButtonSize.large,
+                    expand: true,
+                    onPressed: _discard,
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: AppButton(
-                      label: l10n.workoutSave,
-                      size: AppButtonSize.large,
-                      expand: true,
-                      onPressed: () => _save(pending),
-                    ),
+                  AppButton(
+                    label: l10n.workoutSave,
+                    size: AppButtonSize.large,
+                    expand: true,
+                    onPressed: () => _save(pending),
                   ),
                 ],
               ),
@@ -310,12 +308,10 @@ class _StatRows extends StatelessWidget {
       children: [
         for (var i = 0; i < tiles.length; i += perRow) ...[
           if (i > 0) const SizedBox(height: AppSpacing.xs),
-          Row(
+          EqualHeightRow(
+            spacing: AppSpacing.xs,
             children: [
-              for (var j = i; j < i + perRow && j < tiles.length; j++) ...[
-                if (j > i) const SizedBox(width: AppSpacing.xs),
-                tiles[j],
-              ],
+              for (var j = i; j < i + perRow && j < tiles.length; j++) tiles[j],
             ],
           ),
         ],
@@ -334,35 +330,27 @@ class _StatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        decoration: BoxDecoration(
-          color: palette.tile,
-          borderRadius: AppRadius.mdAll,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                label,
-                style: AppText.body14.copyWith(color: palette.textSecondary),
-              ),
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: palette.tile,
+        borderRadius: AppRadius.mdAll,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ShrinkToFitText(
+            label,
+            style: AppText.body14.copyWith(color: palette.textSecondary),
+          ),
+          ShrinkToFitText(
+            value,
+            style: AppText.headingL.copyWith(
+              color: accent ? palette.accent : palette.textPrimary,
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                value,
-                style: AppText.headingL.copyWith(
-                  color: accent ? palette.accent : palette.textPrimary,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

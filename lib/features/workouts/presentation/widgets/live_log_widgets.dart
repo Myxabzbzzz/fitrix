@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/text/normalize.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/live_log_exercise_cards.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/live_log_format.dart';
@@ -237,26 +238,22 @@ class _LiveLogState extends ConsumerState<LiveLog> {
           Padding(
             padding: const EdgeInsets.fromLTRB(
                 AppSpacing.md, AppSpacing.xs, AppSpacing.md, AppSpacing.md),
-            child: Row(
+            child: EqualHeightRow(
+              spacing: AppSpacing.sm,
               children: [
-                Expanded(
-                  child: AppButton(
-                    label: l10n.workoutAddExercise,
-                    style: AppButtonStyle.secondary,
-                    size: AppButtonSize.large,
-                    icon: Icons.add,
-                    expand: true,
-                    onPressed: () => openExercisePicker(context, ref),
-                  ),
+                AppButton(
+                  label: l10n.workoutAddExercise,
+                  style: AppButtonStyle.secondary,
+                  size: AppButtonSize.large,
+                  icon: Icons.add,
+                  expand: true,
+                  onPressed: () => openExercisePicker(context, ref),
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: AppButton(
-                    label: l10n.workoutFinishButton,
-                    size: AppButtonSize.large,
-                    expand: true,
-                    onPressed: _finish,
-                  ),
+                AppButton(
+                  label: l10n.workoutFinishButton,
+                  size: AppButtonSize.large,
+                  expand: true,
+                  onPressed: _finish,
                 ),
               ],
             ),
