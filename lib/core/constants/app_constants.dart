@@ -129,23 +129,7 @@ class AppConstants {
   /// Name of the AI fitness coach
   static const String assistantName = 'Felix';
 
-  /// Subtitle shown below Felix's name in chat header
-  static const String assistantSubtitle = 'Your personal assistant';
-
-  /// Initial greeting message from Felix (line 1)
-  /// Displays when chat screen first opens
-  static const String assistantGreeting =
-      'Hey there!\nI\'m Felix, your personal AI coach here in Fitrix.';
-
-  /// Introduction message from Felix (line 2)
-  /// Explains Felix's purpose and capabilities
-  static const String assistantIntro =
-      'I\'ll help you train smarter, track your progress and stay motivated.';
-
-  /// First question from Felix (line 3)
-  /// Prompts user to select their main fitness goal
-  static const String assistantQuestion =
-      'So, tell me — what\'s your main goal right now?';
+  // Felix's greeting and subtitle are in the ARB files (assistant*).
 
   // ==========================================================================
   // FITNESS GOALS (Quick Reply Options)

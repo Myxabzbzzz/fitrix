@@ -152,7 +152,9 @@ void main() {
     expect(tester.getSize(listAvatar), const Size(24, 24));
     final header = find.descendant(of: find.byType(AppBar), matching: avatar);
     expect(tester.getSize(header), const Size(32, 32));
-    expect(find.text(AppConstants.assistantSubtitle), findsOneWidget);
+    expect(
+        find.text(lookupAppLocalizations(const Locale('en')).assistantSubtitle),
+        findsOneWidget);
   });
 
   group('Felix tab', () {

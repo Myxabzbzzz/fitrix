@@ -1844,7 +1844,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get exerciseSimilar => 'Similares';
 
   @override
-  String get exerciseAskFelix => 'Preguntar';
+  String get exerciseAskFelix => 'Preguntar a Felix';
 
   @override
   String exerciseAskFelixDraft(String name) {
@@ -3710,10 +3710,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get felixPlanAddToWorkouts => 'Añadir el plan';
+  String get felixPlanAddToWorkouts => 'A mis entrenamientos';
 
   @override
-  String get felixPlanAddToToday => 'Añadir a hoy';
+  String get felixPlanAddToToday => 'Añadir para hoy';
 
   @override
   String get felixPlansSection => 'De Felix';
@@ -4756,8 +4756,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Continúa donde lo dejaste, guarda lo registrado o descártalo.';
 
   @override
-  String get addExerciseNoWorkoutTitle =>
-      'No hay ningún entrenamiento en curso';
+  String get addExerciseNoWorkoutTitle => 'No hay ningún entrenamiento activo';
 
   @override
   String get addExerciseNoWorkoutBody =>
@@ -4765,4 +4764,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get addExerciseOpenLibrary => 'Biblioteca de ejercicios';
+
+  @override
+  String get assistantSubtitle => 'Tu asistente personal';
+
+  @override
+  String get assistantGreeting =>
+      '¡Hola!\nSoy Felix, tu entrenador personal con IA en FITRIX.';
+
+  @override
+  String get assistantIntro =>
+      'Te ayudaré a entrenar mejor, seguir tu progreso y mantener la motivación.';
+
+  @override
+  String get assistantQuestion =>
+      'Cuéntame: ¿cuál es tu objetivo principal ahora?';
 }

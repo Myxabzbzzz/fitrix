@@ -171,7 +171,7 @@ void main() {
     testWidgets('exercise detail', (t) async {
       final r = await pumpTour(t, proRuLight);
       await r.go(AppRouter.exercise('bench-press'));
-      expectFullLabel(t, 'Спросить');
+      expectFullLabel(t, 'Спросить Felix');
       expectFullLabel(t, 'Добавить');
       expectNoOverflow(t);
     });
@@ -179,7 +179,7 @@ void main() {
     testWidgets('Felix plan card', (t) async {
       final r = await pumpTour(t, proRuLight);
       await r.go(AppRouter.felixChat(AssistantTopic.gym));
-      expectFullLabel(t, 'Добавить план');
+      expectFullLabel(t, 'В мои тренировки');
       expectNoOverflow(t);
     });
   });
@@ -218,7 +218,7 @@ void main() {
       (t) async {
     final r = await pumpTour(t, proRuLight);
     await r.go(AppRouter.addExerciseTo());
-    expect(find.text('Тренировка не идёт'), findsOneWidget);
+    expect(find.text('Нет активной тренировки'), findsOneWidget);
     await r.tapKey('add-exercise-open-library');
     expect(r.router.routerDelegate.currentConfiguration.uri.path,
         AppRouter.exerciseLibrary);

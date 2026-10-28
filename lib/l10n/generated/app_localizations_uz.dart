@@ -880,7 +880,7 @@ class AppLocalizationsUz extends AppLocalizations {
       'Hisoblar hozir mavjud emas. Keyinroq urinib ko‘ring.';
 
   @override
-  String get programLevelBeginner => 'Boshlang‘ich';
+  String get programLevelBeginner => 'Boshlovchi';
 
   @override
   String get programLevelMedium => 'O‘rta';
@@ -1811,7 +1811,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get exerciseSimilar => 'O‘xshash';
 
   @override
-  String get exerciseAskFelix => 'So‘rash';
+  String get exerciseAskFelix => 'Felixdan so‘rash';
 
   @override
   String exerciseAskFelixDraft(String name) {
@@ -3656,7 +3656,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get felixPlanAddToWorkouts => 'Rejani qo‘shish';
+  String get felixPlanAddToWorkouts => 'Mashg‘ulotlarimga';
 
   @override
   String get felixPlanAddToToday => 'Bugunga qo‘shish';
@@ -4567,7 +4567,7 @@ class AppLocalizationsUz extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'chang‘i kuni',
+      other: 'ta chang‘i kuni',
     );
     return '$_temp0';
   }
@@ -4684,7 +4684,7 @@ class AppLocalizationsUz extends AppLocalizations {
       'Qolgan joyidan davom ettiring, yozilganini saqlang yoki bekor qiling.';
 
   @override
-  String get addExerciseNoWorkoutTitle => 'Mashg‘ulot boshlanmagan';
+  String get addExerciseNoWorkoutTitle => 'Faol mashg‘ulot yo‘q';
 
   @override
   String get addExerciseNoWorkoutBody =>
@@ -4692,4 +4692,18 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get addExerciseOpenLibrary => 'Mashqlar kutubxonasi';
+
+  @override
+  String get assistantSubtitle => 'Shaxsiy yordamchingiz';
+
+  @override
+  String get assistantGreeting =>
+      'Salom!\nMen Felix, FITRIXdagi shaxsiy AI murabbiyingizman.';
+
+  @override
+  String get assistantIntro =>
+      'Aqlliroq mashq qilish, natijalarni kuzatish va motivatsiyani yo‘qotmaslikka yordam beraman.';
+
+  @override
+  String get assistantQuestion => 'Ayting-chi, hozir asosiy maqsadingiz nima?';
 }

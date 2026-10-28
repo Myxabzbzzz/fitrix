@@ -229,7 +229,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   style: AppText.headingS.copyWith(color: palette.textPrimary),
                 ),
                 Text(
-                  AppConstants.assistantSubtitle,
+                  AppLocalizations.of(context).assistantSubtitle,
                   style: AppText.caption.copyWith(color: palette.textSecondary),
                 ),
               ],

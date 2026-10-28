@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/session/app_session.dart';
@@ -431,7 +432,7 @@ Map<String, Object> _chatPrefs(TourConfig c) {
         }),
   ];
   final app = [
-    _m(0, AppConstants.assistantGreeting, a),
+    _m(0, lookupAppLocalizations(Locale(c.lang)).assistantGreeting, a),
     _m(
         1,
         ru ? 'Как подключить Apple Health?' : 'How do I connect Apple Health?',

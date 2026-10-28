@@ -7700,7 +7700,7 @@ abstract class AppLocalizations {
   /// Add-exercise page opened without an active workout
   ///
   /// In en, this message translates to:
-  /// **'No workout in progress'**
+  /// **'No active workout'**
   String get addExerciseNoWorkoutTitle;
 
   /// No description provided for @addExerciseNoWorkoutBody.
@@ -7714,6 +7714,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Exercise library'**
   String get addExerciseOpenLibrary;
+
+  /// No description provided for @assistantSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your personal assistant'**
+  String get assistantSubtitle;
+
+  /// No description provided for @assistantGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hey there!\nI\'m Felix, your personal AI coach here in Fitrix.'**
+  String get assistantGreeting;
+
+  /// No description provided for @assistantIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ll help you train smarter, track your progress and stay motivated.'**
+  String get assistantIntro;
+
+  /// No description provided for @assistantQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'So, tell me — what\'s your main goal right now?'**
+  String get assistantQuestion;
 }
 
 class _AppLocalizationsDelegate

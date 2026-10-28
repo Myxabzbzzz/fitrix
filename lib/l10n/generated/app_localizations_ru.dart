@@ -912,7 +912,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Аккаунты сейчас недоступны. Попробуйте позже.';
 
   @override
-  String get programLevelBeginner => 'Начинающий';
+  String get programLevelBeginner => 'Новичок';
 
   @override
   String get programLevelMedium => 'Средний';
@@ -1877,7 +1877,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get exerciseSimilar => 'Похожие';
 
   @override
-  String get exerciseAskFelix => 'Спросить';
+  String get exerciseAskFelix => 'Спросить Felix';
 
   @override
   String exerciseAskFelixDraft(String name) {
@@ -3767,7 +3767,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get felixPlanAddToWorkouts => 'Добавить план';
+  String get felixPlanAddToWorkouts => 'В мои тренировки';
 
   @override
   String get felixPlanAddToToday => 'Добавить на сегодня';
@@ -4827,7 +4827,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Продолжите с того места, где остановились, сохраните записанное или сбросьте.';
 
   @override
-  String get addExerciseNoWorkoutTitle => 'Тренировка не идёт';
+  String get addExerciseNoWorkoutTitle => 'Нет активной тренировки';
 
   @override
   String get addExerciseNoWorkoutBody =>
@@ -4835,4 +4835,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get addExerciseOpenLibrary => 'Библиотека упражнений';
+
+  @override
+  String get assistantSubtitle => 'Ваш личный ассистент';
+
+  @override
+  String get assistantGreeting =>
+      'Привет!\nЯ Felix, ваш персональный ИИ-тренер в FITRIX.';
+
+  @override
+  String get assistantIntro =>
+      'Помогу тренироваться с умом, следить за прогрессом и не терять мотивацию.';
+
+  @override
+  String get assistantQuestion =>
+      'Расскажите, какая у вас сейчас главная цель?';
 }

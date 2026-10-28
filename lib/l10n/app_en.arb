@@ -3408,8 +3408,12 @@
   "rideNotFound": "This ride is no longer here.",
   "skiNotFound": "This ski day is no longer here.",
   "skiUnfinishedLaunchBody": "Pick it up where you left off, save what was recorded, or discard it.",
-  "addExerciseNoWorkoutTitle": "No workout in progress",
+  "addExerciseNoWorkoutTitle": "No active workout",
   "addExerciseNoWorkoutBody": "Start a workout to add exercises to it. Meanwhile you can browse the exercise library.",
   "addExerciseOpenLibrary": "Exercise library",
-  "@addExerciseNoWorkoutTitle": {"description": "Add-exercise page opened without an active workout"}
+  "@addExerciseNoWorkoutTitle": {"description": "Add-exercise page opened without an active workout"},
+  "assistantSubtitle": "Your personal assistant",
+  "assistantGreeting": "Hey there!\nI'm Felix, your personal AI coach here in Fitrix.",
+  "assistantIntro": "I'll help you train smarter, track your progress and stay motivated.",
+  "assistantQuestion": "So, tell me — what's your main goal right now?"
 }

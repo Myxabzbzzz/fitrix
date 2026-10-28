@@ -511,7 +511,7 @@
   "exerciseHowTo": "Cómo hacerlo",
   "exerciseMistakes": "Errores comunes",
   "exerciseSimilar": "Similares",
-  "exerciseAskFelix": "Preguntar",
+  "exerciseAskFelix": "Preguntar a Felix",
   "exerciseAskFelixDraft": "¿Cómo mejoro mi {name}?",
   "exerciseAddToWorkout": "Añadir",
   "exerciseAdded": "Añadido al entrenamiento",
@@ -1038,8 +1038,8 @@
   "chatActionWeightSet": "Actualizar peso a {to} kg",
   "felixPlanBadge": "Plan de Felix",
   "felixPlanTitleCount": "{count, plural, one{{count} entrenamiento} other{{count} entrenamientos}}",
-  "felixPlanAddToWorkouts": "Añadir el plan",
-  "felixPlanAddToToday": "Añadir a hoy",
+  "felixPlanAddToWorkouts": "A mis entrenamientos",
+  "felixPlanAddToToday": "Añadir para hoy",
   "felixPlansSection": "De Felix",
   "felixChatTitle": "Felix · {topic}",
   "felixTopicNutrition": "Nutrición",
@@ -1334,7 +1334,11 @@
   "rideNotFound": "Esta salida ya no está aquí.",
   "skiNotFound": "Este día de esquí ya no está aquí.",
   "skiUnfinishedLaunchBody": "Continúa donde lo dejaste, guarda lo registrado o descártalo.",
-  "addExerciseNoWorkoutTitle": "No hay ningún entrenamiento en curso",
+  "addExerciseNoWorkoutTitle": "No hay ningún entrenamiento activo",
   "addExerciseNoWorkoutBody": "Empieza un entrenamiento para añadirle ejercicios. Mientras tanto puedes ver la biblioteca de ejercicios.",
-  "addExerciseOpenLibrary": "Biblioteca de ejercicios"
+  "addExerciseOpenLibrary": "Biblioteca de ejercicios",
+  "assistantSubtitle": "Tu asistente personal",
+  "assistantGreeting": "¡Hola!\nSoy Felix, tu entrenador personal con IA en FITRIX.",
+  "assistantIntro": "Te ayudaré a entrenar mejor, seguir tu progreso y mantener la motivación.",
+  "assistantQuestion": "Cuéntame: ¿cuál es tu objetivo principal ahora?"
 }

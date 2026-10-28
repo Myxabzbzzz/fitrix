@@ -4735,7 +4735,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Pick it up where you left off, save what was recorded, or discard it.';
 
   @override
-  String get addExerciseNoWorkoutTitle => 'No workout in progress';
+  String get addExerciseNoWorkoutTitle => 'No active workout';
 
   @override
   String get addExerciseNoWorkoutBody =>
@@ -4743,4 +4743,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addExerciseOpenLibrary => 'Exercise library';
+
+  @override
+  String get assistantSubtitle => 'Your personal assistant';
+
+  @override
+  String get assistantGreeting =>
+      'Hey there!\nI\'m Felix, your personal AI coach here in Fitrix.';
+
+  @override
+  String get assistantIntro =>
+      'I\'ll help you train smarter, track your progress and stay motivated.';
+
+  @override
+  String get assistantQuestion =>
+      'So, tell me — what\'s your main goal right now?';
 }

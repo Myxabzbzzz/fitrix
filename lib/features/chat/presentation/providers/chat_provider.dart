@@ -5,7 +5,6 @@ import 'package:uuid/uuid.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/core/sync/local_changes.dart';
-import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/presentation/providers/felix_snapshot_provider.dart';
 import 'package:fitrix/features/chat/presentation/topic_labels.dart';
@@ -39,16 +38,16 @@ String _photoUnavailableText(Ref ref) => lookupAppLocalizations(
     ).chatPhotoUnavailable;
 
 List<String> _topicGreeting(Ref ref, AssistantTopic topic) {
-  if (topic.isApp) {
-    return const [
-      AppConstants.assistantGreeting,
-      AppConstants.assistantIntro,
-      AppConstants.assistantQuestion,
-    ];
-  }
   final l10n = lookupAppLocalizations(
     Locale(ref.read(selectedLanguageProvider)),
   );
+  if (topic.isApp) {
+    return [
+      l10n.assistantGreeting,
+      l10n.assistantIntro,
+      l10n.assistantQuestion,
+    ];
+  }
   return [
     l10n.felixTopicGreeting(topicTitle(l10n, topic)),
     l10n.felixTopicGreetingHint,

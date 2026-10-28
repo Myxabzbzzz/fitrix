@@ -1,6 +1,8 @@
+import 'dart:ui' show Locale;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fitrix/l10n/generated/app_localizations.dart';
 import 'package:fitrix/core/constants/app_constants.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/chat/data/models/chat_action.dart';
@@ -36,11 +38,14 @@ class ChatRepository {
   /// Localized "photo is missing or too large" text for the failed bubble.
   final String Function()? _photoUnavailable;
 
-  static List<String> _appGreeting() => const [
-        AppConstants.assistantGreeting,
-        AppConstants.assistantIntro,
-        AppConstants.assistantQuestion,
-      ];
+  static List<String> _appGreeting() {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    return [
+      l10n.assistantGreeting,
+      l10n.assistantIntro,
+      l10n.assistantQuestion
+    ];
+  }
 
   ChatRepository(
     this._apiService, {

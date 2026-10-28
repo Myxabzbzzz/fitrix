@@ -219,7 +219,7 @@ void main() {
     expect(find.text('Виды спорта'), findsOneWidget);
     await reveal(tester, find.text('Спортзал'));
     expect(find.text('Спортзал'), findsOneWidget);
-    expect(find.text('Начинающий'), findsOneWidget);
+    expect(find.text('Новичок'), findsOneWidget);
   });
 
   testWidgets('no overflow on SE at 1.3x text', (tester) async {
