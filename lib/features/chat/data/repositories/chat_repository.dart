@@ -38,6 +38,9 @@ class ChatRepository {
   /// Localized "photo is missing or too large" text for the failed bubble.
   final String Function()? _photoUnavailable;
 
+  /// The app clock, for message timestamps.
+  final DateTime Function() now;
+
   static List<String> _appGreeting() {
     final l10n = lookupAppLocalizations(const Locale('en'));
     return [
@@ -59,6 +62,7 @@ class ChatRepository {
     String Function()? language,
     String Function()? photoUnavailable,
     Map<String, Object> Function()? context,
+    this.now = DateTime.now,
   })  : _profileRepository = profileRepository,
         _language = language,
         _photoUnavailable = photoUnavailable,
@@ -204,7 +208,7 @@ class ChatRepository {
   }
 
   List<ChatMessage> _getInitialMessages() {
-    final now = DateTime.now();
+    final now = this.now();
     final greeting = this.greeting();
     return [
       // In order and all in the past, so a reply sent right away sorts

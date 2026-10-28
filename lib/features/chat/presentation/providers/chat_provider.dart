@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui' show Locale;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/core/sync/local_changes.dart';
@@ -59,11 +60,14 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
     ref.read(chatApiServiceProvider),
     profileRepository: ref.read(profileRepositoryProvider),
     topic: AssistantTopic.app.apiTopic,
+    // In the app's language, like the topic chats.
+    greeting: () => _topicGreeting(ref, AssistantTopic.app),
     prefs: ref.read(sharedPreferencesProvider),
     onSaved: ref.read(localChangesProvider).notify,
     language: () => ref.read(selectedLanguageProvider),
     photoUnavailable: () => _photoUnavailableText(ref),
     context: () => ref.read(felixSnapshotProvider(AssistantTopic.app)).toJson(),
+    now: ref.read(clockProvider),
   );
 });
 
@@ -89,6 +93,7 @@ final topicChatMessagesProvider = StateNotifierProvider.family<ChatNotifier,
       language: () => ref.read(selectedLanguageProvider),
       photoUnavailable: () => _photoUnavailableText(ref),
       context: () => ref.read(felixSnapshotProvider(topic)).toJson(),
+      now: ref.read(clockProvider),
     ),
   );
 });
@@ -165,7 +170,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       id: _uuid.v4(),
       content: content,
       sender: MessageSender.user,
-      timestamp: DateTime.now(),
+      timestamp: _repository.now(),
       isQuickReply: isQuickReply,
       imagePath: imagePath,
     );
@@ -199,7 +204,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       id: _uuid.v4(),
       content: '',
       sender: MessageSender.assistant,
-      timestamp: DateTime.now(),
+      timestamp: _repository.now(),
       isStreaming: true,
     );
     state = AsyncValue.data([...history, reply]);
