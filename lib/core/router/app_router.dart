@@ -688,10 +688,74 @@ Page<void> shellPage(BuildContext context, GoRouterState state, Widget child) {
                 child,
               )
           : child;
-      return FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Motion.curve),
-        child: under,
-      );
+      return ShellEntrance(animation: animation, child: under);
     },
   );
+}
+
+/// How the tab shell fades in. Normally with its route. After onboarding
+/// it fades in from the colour the onboarding ended on ([handOff]), and
+/// only once its first frame is on screen: that frame is the heaviest of
+/// the app, and a fade started before it would be over before it shows.
+class ShellEntrance extends StatefulWidget {
+  const ShellEntrance(
+      {super.key, required this.animation, required this.child});
+
+  final Animation<double> animation;
+  final Widget child;
+
+  /// Set by the end of onboarding right before Home opens: the colour its
+  /// screen ended on. Taken (and cleared) by the next shell to appear.
+  static Color? handOff;
+
+  @override
+  State<ShellEntrance> createState() => _ShellEntranceState();
+}
+
+class _ShellEntranceState extends State<ShellEntrance>
+    with SingleTickerProviderStateMixin {
+  Color? _underlay;
+  AnimationController? _fade;
+
+  @override
+  void initState() {
+    super.initState();
+    _underlay = ShellEntrance.handOff;
+    ShellEntrance.handOff = null;
+    if (_underlay != null) {
+      final fade =
+          _fade = AnimationController(vsync: this, duration: Motion.slow);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        Motion.reduced(context) ? fade.value = 1 : fade.forward();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _fade?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final fade = _fade;
+    if (fade == null) {
+      return FadeTransition(
+        opacity: CurvedAnimation(parent: widget.animation, curve: Motion.curve),
+        child: widget.child,
+      );
+    }
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ColoredBox(color: _underlay!),
+        FadeTransition(
+          opacity: CurvedAnimation(parent: fade, curve: Motion.curve),
+          child: widget.child,
+        ),
+      ],
+    );
+  }
 }

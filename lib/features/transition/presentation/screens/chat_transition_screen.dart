@@ -73,6 +73,8 @@ class _ChatTransitionScreenState extends ConsumerState<ChatTransitionScreen>
       if (status == AnimationStatus.completed) {
         // Read before completing: that redirects away from this screen.
         final account = ref.read(accountServiceProvider);
+        // Home fades in from the white the circle ended on.
+        ShellEntrance.handOff = ChatTransitionScreen.foreground;
         // From now on the app opens straight to Home.
         await ref.read(appSessionProvider).completeOnboarding();
         // Mark the account as onboarded too (in the background; retried

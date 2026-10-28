@@ -235,8 +235,11 @@ void main() {
     expect(find.byType(ChatTransitionScreen), findsOneWidget);
 
     // What "I am ready" does at the end of the white circle.
+    ShellEntrance.handOff = ChatTransitionScreen.foreground;
     await session.completeOnboarding();
     await t.pump();
+    // Home's first frame is drawn fully transparent; the fade starts after.
+    await t.pump(const Duration(milliseconds: 16));
     await t.pump(const Duration(milliseconds: 120));
 
     expect(find.byType(HomeScreen), findsOneWidget);
@@ -250,6 +253,13 @@ void main() {
     expect(fades.any((v) => v > 0 && v < 1), isTrue, reason: '$fades');
     expect(t.getTopLeft(find.byType(MainShell)).dx, 0,
         reason: 'a cross-fade, not a slide from the side');
+    expect(
+        find.descendant(
+            of: find.byType(ShellEntrance),
+            matching: find.byWidgetPredicate(
+                (w) => w is ColoredBox && w.color == Colors.white)),
+        findsOneWidget,
+        reason: 'fades in from the white the circle ended on');
 
     await t.pumpAndSettle();
     expect(find.byType(ChatTransitionScreen), findsNothing);
