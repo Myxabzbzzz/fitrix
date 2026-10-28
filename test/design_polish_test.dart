@@ -15,6 +15,7 @@ import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/pill_selector.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/core/widgets/title_row.dart';
 import 'package:fitrix/core/widgets/word_fit_text.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/checkin/presentation/widgets/checkin_sheet.dart';
@@ -442,5 +443,28 @@ void main() {
     final line =
         title.top + AppText.headingXL.fontSize! * AppText.headingXL.height! / 2;
     expect((trailing.center.dy - line).abs(), lessThan(1));
+  });
+
+  testWidgets('TitleRow hugs the right edge and works in IntrinsicHeight',
+      (t) async {
+    await t.pumpWidget(const MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: SizedBox(
+            width: 300,
+            child: IntrinsicHeight(
+              child: TitleRow(
+                title: Text('Title'),
+                trailing: Text('39', key: ValueKey('value')),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ));
+    expectNoOverflow(t);
+    final row = t.getRect(find.byType(TitleRow));
+    expect(t.getRect(find.byKey(const ValueKey('value'))).right, row.right);
+    expect(t.getRect(find.text('Title')).left, row.left);
   });
 }
