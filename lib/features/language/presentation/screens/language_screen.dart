@@ -100,6 +100,9 @@ class LanguageScreen extends ConsumerWidget {
                       ),
                     ),
 
+                    // At least a section's gap above Continue on short
+                    // screens, where the Spacer collapses.
+                    const SizedBox(height: AppSpacing.lg),
                     const Spacer(),
 
                     // Continue Button: keeps the highlighted language even if

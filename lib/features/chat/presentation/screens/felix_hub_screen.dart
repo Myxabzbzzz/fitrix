@@ -164,24 +164,16 @@ class _SectionHeader extends StatelessWidget {
         if (action != null)
           // Flush with the right edge like the trailing caption; the tap
           // target stays 44 pt tall.
-          Semantics(
-            button: true,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: onAction,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 44),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: AppSpacing.md),
-                  child: Align(
-                    widthFactor: 1,
-                    child: Text(action!,
-                        style: AppText.body14
-                            .copyWith(color: palette.textPrimary)),
-                  ),
-                ),
-              ),
+          TextButton(
+            onPressed: onAction,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.only(left: AppSpacing.md),
+              minimumSize: const Size(44, 44),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              alignment: Alignment.centerRight,
             ),
+            child: Text(action!,
+                style: AppText.body14.copyWith(color: palette.textPrimary)),
           ),
       ],
     );

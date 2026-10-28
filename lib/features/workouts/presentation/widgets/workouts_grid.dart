@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
@@ -89,12 +90,6 @@ class WorkoutsGrid extends ConsumerWidget {
     final plan = ref.watch(weekPlanProvider);
     final allHistory = ref.watch(workoutHistoryProvider);
     final felixIds = ref.watch(felixTemplateIdsProvider);
-    final hasFelix = workouts.any((w) => felixIds.contains(w.id));
-    // Room for a 2-line title at the user's text size.
-    final cellHeight = 128 +
-        MediaQuery.textScalerOf(context).scale(16) * 2 -
-        32 +
-        (hasFelix ? MediaQuery.textScalerOf(context).scale(12) + 14 : 0);
 
     // Today only for a plan with an open session today; other planned plans
     // show their next day; the rest no day at all.
@@ -112,43 +107,63 @@ class WorkoutsGrid extends ConsumerWidget {
     bool doneToday(WorkoutTemplate t) => history
         .any((w) => w.templateId == t.id && sameDay(w.finishedAt, today));
 
-    return GridView(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: AppSpacing.md,
-        crossAxisSpacing: AppSpacing.md,
-        mainAxisExtent: cellHeight,
-      ),
-      children: [
-        for (var i = 0; i < workouts.length; i++)
-          _SwipeToDelete(
-            key: ValueKey('swipe-${workouts[i].id}'),
-            onDelete: () => _delete(context, ref, workouts[i]),
-            child: GestureDetector(
-              onLongPress: () => _edit(context, workouts[i]),
-              child: SizedBox.expand(
-                  child: WorkoutCard(
-                title: workouts[i].name,
-                dayLabel: dayLabel(workouts[i]),
-                badge: felixIds.contains(workouts[i].id)
-                    ? const FelixPlanBadge()
-                    : null,
-                today: openToday(workouts[i]),
-                done: doneToday(workouts[i]),
-                startLabel: actionLabel,
-                doneLabel: l10n.gymDone,
-                onStart: () => onAction(workouts[i]),
-                onEdit: () => _edit(context, workouts[i]),
-                editLabel: '${l10n.workoutEditLabel}, ${workouts[i].name}',
-              )),
-            ),
+    // Two columns; each row as tall as its tallest card (no fixed cell
+    // height leaving empty space in short cards).
+    final cards = <Widget>[
+      for (var i = 0; i < workouts.length; i++)
+        _SwipeToDelete(
+          key: ValueKey('swipe-${workouts[i].id}'),
+          onDelete: () => _delete(context, ref, workouts[i]),
+          child: GestureDetector(
+            onLongPress: () => _edit(context, workouts[i]),
+            child: _FillHeight(
+                child: WorkoutCard(
+              title: workouts[i].name,
+              dayLabel: dayLabel(workouts[i]),
+              badge: felixIds.contains(workouts[i].id)
+                  ? const FelixPlanBadge()
+                  : null,
+              today: openToday(workouts[i]),
+              done: doneToday(workouts[i]),
+              startLabel: actionLabel,
+              doneLabel: l10n.gymDone,
+              onStart: () => onAction(workouts[i]),
+              onEdit: () => _edit(context, workouts[i]),
+              editLabel: '${l10n.workoutEditLabel}, ${workouts[i].name}',
+            )),
           ),
-        AddWorkoutCard(onTap: () => _addWorkout(context, ref)),
+        ),
+      AddWorkoutCard(onTap: () => _addWorkout(context, ref)),
+    ];
+    return Column(
+      children: [
+        for (var i = 0; i < cards.length; i += 2) ...[
+          if (i > 0) const SizedBox(height: AppSpacing.md),
+          EqualHeightRow(
+            spacing: AppSpacing.md,
+            children: [
+              cards[i],
+              if (i + 1 < cards.length) cards[i + 1] else const SizedBox(),
+            ],
+          ),
+        ],
       ],
     );
   }
+}
+
+/// Fills the height the row gives it (the swipe-to-delete wrapper would
+/// otherwise let the card shrink), and its natural height when measured.
+class _FillHeight extends StatelessWidget {
+  final Widget child;
+  const _FillHeight({required this.child});
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, box) => box.hasBoundedHeight
+            ? SizedBox(height: box.maxHeight, child: child)
+            : child,
+      );
 }
 
 /// Asks for a new workout's name. Owns its text controller so it is only
