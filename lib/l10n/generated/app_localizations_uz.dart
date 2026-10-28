@@ -171,10 +171,24 @@ class AppLocalizationsUz extends AppLocalizations {
   String get profileTitle => 'Profil';
 
   @override
-  String get profileWorkouts => 'mashg‘ulot';
+  String profileWorkouts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'mashg‘ulot',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get profileDayStreak => 'kun ketma-ket';
+  String profileDayStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'kun ketma-ket',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get profileLanguage => 'Til';
@@ -4779,4 +4793,18 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get nutritionMissingAnd => ' va ';
+
+  @override
+  String get checkinTitleAfternoon => 'Kunduzgi tekshiruv';
+
+  @override
+  String get checkinTitleEvening => 'Kechki tekshiruv';
+
+  @override
+  String get planDurationUnderMinute => '<1 daq';
+
+  @override
+  String durationSeconds(int s) {
+    return '$s s';
+  }
 }

@@ -378,17 +378,17 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get profileTitle;
 
-  /// No description provided for @profileWorkouts.
+  /// Under the number on Profile
   ///
   /// In en, this message translates to:
-  /// **'workouts'**
-  String get profileWorkouts;
+  /// **'{count, plural, =1{workout} other{workouts}}'**
+  String profileWorkouts(int count);
 
-  /// No description provided for @profileDayStreak.
+  /// Under the number on Profile
   ///
   /// In en, this message translates to:
-  /// **'day streak'**
-  String get profileDayStreak;
+  /// **'{count, plural, =1{day streak} other{day streak}}'**
+  String profileDayStreak(int count);
 
   /// No description provided for @profileLanguage.
   ///
@@ -7870,6 +7870,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **' and '**
   String get nutritionMissingAnd;
+
+  /// Check-in sheet title from 12:00 to 17:59 (checkinTitle is the morning one)
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon check-in'**
+  String get checkinTitleAfternoon;
+
+  /// Check-in sheet title from 18:00 to 04:59
+  ///
+  /// In en, this message translates to:
+  /// **'Evening check-in'**
+  String get checkinTitleEvening;
+
+  /// A finished session shorter than a minute
+  ///
+  /// In en, this message translates to:
+  /// **'<1 min'**
+  String get planDurationUnderMinute;
+
+  /// A workout shorter than a minute, in seconds
+  ///
+  /// In en, this message translates to:
+  /// **'{s} s'**
+  String durationSeconds(int s);
 }
 
 class _AppLocalizationsDelegate

@@ -69,7 +69,7 @@ extension CheckInText on AppLocalizations {
     if (r.label == ReadinessLabel.ready &&
         c.soreness != Soreness.none &&
         c.sore.isNotEmpty) {
-      return recoveryHintReadySore(areasText(c.sore));
+      return capitalizeSentences(recoveryHintReadySore(areasText(c.sore)));
     }
     return checkinHint(r, c);
   }
@@ -77,3 +77,10 @@ extension CheckInText on AppLocalizations {
   static String _cap(String s) =>
       s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
 }
+
+/// [text] with every sentence starting in upper case (a lower-case word
+/// such as a body area can land at a sentence start in some languages).
+String capitalizeSentences(String text) => text.replaceAllMapped(
+      RegExp(r'(^|[.!?]\s+)(\p{Ll})', unicode: true),
+      (m) => '${m[1]}${m[2]!.toUpperCase()}',
+    );

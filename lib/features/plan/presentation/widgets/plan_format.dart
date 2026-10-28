@@ -7,6 +7,12 @@ import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// "1h 35m", "1h" or "45 min".
+/// How long a finished session took: whole minutes, "<1 min" below one.
+String doneDuration(AppLocalizations l10n, Duration d) =>
+    d < const Duration(minutes: 1)
+        ? l10n.planDurationUnderMinute
+        : planDuration(l10n, d.inMinutes);
+
 String planDuration(AppLocalizations l10n, int minutes) {
   final h = minutes ~/ 60, m = minutes % 60;
   if (h == 0) return l10n.planDurationM(m);

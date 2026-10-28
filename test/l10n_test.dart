@@ -169,6 +169,23 @@ void main() {
     });
   });
 
+  group('Russian unit labels agree with their number', () {
+    final ru = lookupAppLocalizations(const Locale('ru'));
+    test('ski days, descents, rides', () {
+      expect([1, 2, 5, 21].map(ru.skiUnitDays),
+          ['лыжный день', 'лыжных дня', 'лыжных дней', 'лыжный день']);
+      expect([0, 1, 3].map(ru.skiUnitDescents), ['спусков', 'спуск', 'спуска']);
+      expect([1, 2, 7].map(ru.cyclingUnitRides),
+          ['поездка', 'поездки', 'поездок']);
+    });
+    test('profile workouts and streak', () {
+      expect([1, 3, 7].map(ru.profileWorkouts),
+          ['тренировка', 'тренировки', 'тренировок']);
+      expect([1, 2, 5].map(ru.profileDayStreak),
+          ['день подряд', 'дня подряд', 'дней подряд']);
+    });
+  });
+
   group('localized workout copy', () {
     Future<ProviderContainer> pumpRu(WidgetTester tester, Widget home) async {
       tester.view.physicalSize = const Size(1170, 2532);

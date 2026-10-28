@@ -177,10 +177,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileTitle => 'Perfil';
 
   @override
-  String get profileWorkouts => 'entrenamientos';
+  String profileWorkouts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'entrenamientos',
+      one: 'entrenamiento',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get profileDayStreak => 'días seguidos';
+  String profileDayStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'días seguidos',
+      one: 'día seguido',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get profileLanguage => 'Idioma';
@@ -4859,4 +4875,18 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get nutritionMissingAnd => ' y ';
+
+  @override
+  String get checkinTitleAfternoon => 'Chequeo de la tarde';
+
+  @override
+  String get checkinTitleEvening => 'Chequeo de la noche';
+
+  @override
+  String get planDurationUnderMinute => '<1 min';
+
+  @override
+  String durationSeconds(int s) {
+    return '$s s';
+  }
 }

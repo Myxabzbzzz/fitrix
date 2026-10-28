@@ -54,8 +54,8 @@
   "nutritionNotLogged": "Aún sin registrar",
   "nutritionKcal": "{kcal} kcal",
   "profileTitle": "Perfil",
-  "profileWorkouts": "entrenamientos",
-  "profileDayStreak": "días seguidos",
+  "profileWorkouts": "{count, plural, =1{entrenamiento} other{entrenamientos}}",
+  "profileDayStreak": "{count, plural, =1{día seguido} other{días seguidos}}",
   "profileLanguage": "Idioma",
   "profileTheme": "Tema",
   "profileThemeAuto": "Auto",
@@ -1362,5 +1362,9 @@
   "nutritionMissingAge": "tu edad",
   "nutritionMissingWeight": "tu peso",
   "nutritionMissingHeight": "tu altura",
-  "nutritionMissingAnd": " y "
+  "nutritionMissingAnd": " y ",
+  "checkinTitleAfternoon": "Chequeo de la tarde",
+  "checkinTitleEvening": "Chequeo de la noche",
+  "planDurationUnderMinute": "<1 min",
+  "durationSeconds": "{s} s"
 }

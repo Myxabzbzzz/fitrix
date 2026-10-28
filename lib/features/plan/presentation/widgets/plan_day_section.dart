@@ -134,8 +134,7 @@ class _SessionRow extends ConsumerWidget {
     final String meta;
     if (status == SessionStatus.done) {
       final w = completedFor(s, history, plan: daySessions)!;
-      final d =
-          planDuration(l10n, w.finishedAt.difference(w.startedAt).inMinutes);
+      final d = doneDuration(l10n, w.finishedAt.difference(w.startedAt));
       meta = w.sessionRpe == null ? d : l10n.planDoneMeta(d, w.sessionRpe!);
     } else if (template != null) {
       meta = l10n.planExercisesMeta(

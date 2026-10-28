@@ -96,8 +96,10 @@
     }
   },
   "profileTitle": "Profile",
-  "profileWorkouts": "workouts",
-  "profileDayStreak": "day streak",
+  "profileWorkouts": "{count, plural, =1{workout} other{workouts}}",
+  "@profileWorkouts": {"description": "Under the number on Profile", "placeholders": {"count": {"type": "int"}}},
+  "profileDayStreak": "{count, plural, =1{day streak} other{day streak}}",
+  "@profileDayStreak": {"description": "Under the number on Profile", "placeholders": {"count": {"type": "int"}}},
   "profileLanguage": "Language",
   "profileTheme": "Theme",
   "profileThemeAuto": "Auto",
@@ -3445,5 +3447,13 @@
   "nutritionMissingAge": "age",
   "nutritionMissingWeight": "weight",
   "nutritionMissingHeight": "height",
-  "nutritionMissingAnd": " and "
+  "nutritionMissingAnd": " and ",
+  "checkinTitleAfternoon": "Afternoon check-in",
+  "@checkinTitleAfternoon": {"description": "Check-in sheet title from 12:00 to 17:59 (checkinTitle is the morning one)"},
+  "checkinTitleEvening": "Evening check-in",
+  "@checkinTitleEvening": {"description": "Check-in sheet title from 18:00 to 04:59"},
+  "planDurationUnderMinute": "<1 min",
+  "@planDurationUnderMinute": {"description": "A finished session shorter than a minute"},
+  "durationSeconds": "{s} s",
+  "@durationSeconds": {"description": "A workout shorter than a minute, in seconds", "placeholders": {"s": {"type": "int"}}}
 }

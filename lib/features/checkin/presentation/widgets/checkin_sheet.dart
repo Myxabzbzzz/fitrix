@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/time/greeting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -163,7 +164,7 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(l10n.checkinTitle,
+                          Text(checkinTitleAt(l10n, now),
                               style: AppText.headingL
                                   .copyWith(color: palette.textPrimary)),
                           Text(

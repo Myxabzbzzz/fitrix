@@ -54,8 +54,8 @@
   "nutritionNotLogged": "Hali kiritilmagan",
   "nutritionKcal": "{kcal} kkal",
   "profileTitle": "Profil",
-  "profileWorkouts": "mashg‘ulot",
-  "profileDayStreak": "kun ketma-ket",
+  "profileWorkouts": "{count, plural, other{mashg‘ulot}}",
+  "profileDayStreak": "{count, plural, other{kun ketma-ket}}",
   "profileLanguage": "Til",
   "profileTheme": "Mavzu",
   "profileThemeAuto": "Avto",
@@ -1362,5 +1362,9 @@
   "nutritionMissingAge": "yoshingiz",
   "nutritionMissingWeight": "vazningiz",
   "nutritionMissingHeight": "bo‘yingiz",
-  "nutritionMissingAnd": " va "
+  "nutritionMissingAnd": " va ",
+  "checkinTitleAfternoon": "Kunduzgi tekshiruv",
+  "checkinTitleEvening": "Kechki tekshiruv",
+  "planDurationUnderMinute": "<1 daq",
+  "durationSeconds": "{s} s"
 }

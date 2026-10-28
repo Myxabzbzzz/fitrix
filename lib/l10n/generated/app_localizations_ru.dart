@@ -183,10 +183,30 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileTitle => 'Профиль';
 
   @override
-  String get profileWorkouts => 'тренировок';
+  String profileWorkouts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'тренировки',
+      many: 'тренировок',
+      few: 'тренировки',
+      one: 'тренировка',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get profileDayStreak => 'дней подряд';
+  String profileDayStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'дня подряд',
+      many: 'дней подряд',
+      few: 'дня подряд',
+      one: 'день подряд',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get profileLanguage => 'Язык';
@@ -2477,7 +2497,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get nutritionCantFind => 'Не нашли?';
 
   @override
-  String get nutritionCantFindBody => 'Попросите Феликса оценить';
+  String get nutritionCantFindBody => 'Попросите Felix оценить';
 
   @override
   String get foodBaseError => 'Не удалось загрузить базу продуктов.';
@@ -2878,7 +2898,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get progressBalanceRisky => 'Риск';
 
   @override
-  String get progressFelixInsight => 'Совет Феликса';
+  String get progressFelixInsight => 'Совет Felix';
 
   @override
   String get progressInsightLow =>
@@ -3145,7 +3165,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get liftVolume => 'Объём';
 
   @override
-  String get liftFelix => 'Феликс';
+  String get liftFelix => 'Felix';
 
   @override
   String liftPaceUp(String kg) {
@@ -3719,7 +3739,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get chatFoodEstimateNote => '≈ оценка Феликса';
+  String get chatFoodEstimateNote => '≈ оценка Felix';
 
   @override
   String chatFoodTotal(String kcal, String protein) {
@@ -3751,7 +3771,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get felixPlanBadge => 'План Феликса';
+  String get felixPlanBadge => 'План Felix';
 
   @override
   String felixPlanTitleCount(int count) {
@@ -3773,7 +3793,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get felixPlanAddToToday => 'Добавить на сегодня';
 
   @override
-  String get felixPlansSection => 'От Феликса';
+  String get felixPlansSection => 'От Felix';
 
   @override
   String felixChatTitle(String topic) {
@@ -3915,7 +3935,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String felixAskAbout(String topic) {
-    return 'Спросите Феликса: $topic';
+    return 'Спросите Felix: $topic';
   }
 
   @override
@@ -4923,4 +4943,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get nutritionMissingAnd => ' и ';
+
+  @override
+  String get checkinTitleAfternoon => 'Дневной чек-ин';
+
+  @override
+  String get checkinTitleEvening => 'Вечерний чек-ин';
+
+  @override
+  String get planDurationUnderMinute => '<1 мин';
+
+  @override
+  String durationSeconds(int s) {
+    return '$s с';
+  }
 }

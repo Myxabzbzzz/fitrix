@@ -132,8 +132,10 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
     }
 
     final minutes = workout.duration.inMinutes;
-    final duration =
-        '${minutes ~/ 60}:${(minutes % 60).toString().padLeft(2, '0')}';
+    // Under a minute in seconds rather than "0:00".
+    final duration = minutes == 0
+        ? l10n.durationSeconds(workout.duration.inSeconds)
+        : '${minutes ~/ 60}:${(minutes % 60).toString().padLeft(2, '0')}';
 
     return Scaffold(
       backgroundColor: palette.background,
