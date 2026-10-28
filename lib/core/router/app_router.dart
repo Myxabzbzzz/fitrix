@@ -246,8 +246,8 @@ class AppRouter {
             ),
           ),
           StatefulShellRoute(
-            builder: (context, state, navigationShell) =>
-                MainShell(navigationShell: navigationShell),
+            builder: (context, state, navigationShell) => MainShell(
+                navigationShell: navigationShell, location: state.uri.path),
             // Tabs keep their state like an IndexedStack but cross-fade.
             navigatorContainerBuilder: (context, navigationShell, children) =>
                 FadingBranchContainer(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/features/home/presentation/screens/home_screen.dart';
 import 'package:fitrix/features/running/presentation/run_recorder.dart';
@@ -16,7 +17,12 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 class MainShell extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
-  const MainShell({super.key, required this.navigationShell});
+  /// The current location; Home's menu opens with an edge swipe only on
+  /// Home itself (on its sections the swipe means back).
+  final String location;
+
+  const MainShell(
+      {super.key, required this.navigationShell, this.location = ''});
 
   void _onTap(int index) {
     // Tapping the current tab returns to its root (e.g. Home from My workouts).
@@ -39,13 +45,9 @@ class MainShell extends ConsumerWidget {
         hasActiveWorkout ? ActiveWorkoutSheet.collapsedHeight : 0.0;
 
     // Home's menu lives here so it slides over the tab bar.
-    final onHome = navigationShell.currentIndex == 2;
-
     return Scaffold(
-      drawer: onHome ? const HomeDrawer() : null,
-      // Opened from Home's menu button only: an edge swipe on Home's
-      // sections is the swipe back.
-      drawerEnableOpenDragGesture: false,
+      drawer: const HomeDrawer(),
+      drawerEnableOpenDragGesture: location == AppRouter.home,
       body: RunResumePrompt(
         child: Stack(
           children: [
