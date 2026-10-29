@@ -326,7 +326,7 @@ void main() {
     testWidgets('edit workout sheet', (t) async {
       final r = await pumpTour(t, seRuScaled);
       await r.go(AppRouter.sportWorkouts(Sport.gym));
-      await t.longPress(find.text('Legs').first);
+      await t.longPress(find.text('Ноги').first);
       await r.settle();
       expectButtonLabelUnclipped(t, 'Сохранить');
     });
