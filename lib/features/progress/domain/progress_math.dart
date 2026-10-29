@@ -4,6 +4,7 @@ import 'package:fitrix/core/text/normalize.dart';
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart' show weekStartOf;
 import 'package:fitrix/features/progress/data/body_weight_store.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
@@ -24,16 +25,10 @@ List<DailyLoad> dailyLoads(List<CompletedWorkout> history) {
   return [for (final d in days) DailyLoad(d, byDay[d]!)];
 }
 
-/// The Saturday that starts the Sat-Fri week containing [day].
-DateTime weekStart(DateTime day) {
-  final d = dayOf(day);
-  return DateTime(d.year, d.month, d.day - (d.weekday - DateTime.saturday) % 7);
-}
-
-/// Total load of each Sat-Fri week, index 0 = the week containing [today],
+/// Total load of each Monday-Sunday week, index 0 = the week containing [today],
 /// 1 = the week before, and so on.
 List<int> weeklyTotals(List<DailyLoad> days, DateTime today, int weeks) {
-  final start = weekStart(today);
+  final start = weekStartOf(today);
   final totals = List.filled(weeks, 0);
   for (final d in days) {
     final offset = daysBetween(start, d.day);
@@ -186,11 +181,11 @@ List<RecordEntry> recordEntries(List<CompletedWorkout> history) {
   ];
 }
 
-/// Longest run of consecutive Sat-Fri weeks with at least one record.
+/// Longest run of consecutive Monday-Sunday weeks with at least one record.
 int bestRecordStreak(List<RecordEntry> records) {
   final weeks = {
     for (final r in records)
-      daysBetween(DateTime(2000, 1, 1), weekStart(r.record.date)) ~/ 7,
+      daysBetween(DateTime(2000, 1, 1), weekStartOf(r.record.date)) ~/ 7,
   }.toList()
     ..sort();
   var best = 0, run = 0;

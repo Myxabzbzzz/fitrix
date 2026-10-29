@@ -20,6 +20,7 @@ import 'package:fitrix/features/progress/presentation/screens/records_screen.dar
 import 'package:fitrix/features/progress/presentation/screens/training_load_screen.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/nutrition/data/nutrition_targets.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart' show weekStartOf;
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -265,6 +266,40 @@ void main() {
       expect(strengthInfo('bench', 40, 80)?.level, 'beginner');
       expect(strengthInfo('squat', 250, 80)?.level, 'elite');
       expect(strengthInfo('bench', 80, 80, female: true)?.level, 'advanced');
+    });
+
+    test('the Progress week runs Monday to Sunday', () {
+      // 2026-10-18 is a Sunday, 2026-10-12 the Monday before it.
+      expect(weekStartOf(DateTime(2026, 10, 18, 23)), DateTime(2026, 10, 12));
+      expect(weekStartOf(DateTime(2026, 10, 12, 7)), DateTime(2026, 10, 12));
+      expect(weekStartOf(DateTime(2026, 10, 19)), DateTime(2026, 10, 19));
+      final days = dailyLoads([
+        _workout(DateTime(2026, 10, 11)), // Sunday: the week before
+        _workout(DateTime(2026, 10, 12)), // Monday: this week
+        _workout(DateTime(2026, 10, 18)), // Sunday: this week
+      ]);
+      final one = _workout(DateTime(2026, 10, 12)).load;
+      expect(weeklyTotals(days, _today, 2), [2 * one, one]);
+    });
+
+    test('a record streak counts Monday-to-Sunday weeks', () {
+      RecordEntry at(DateTime d) => RecordEntry(
+          PersonalRecord(
+              kind: RecordKind.e1rm,
+              exercise: 'Bench press',
+              value: 100,
+              previous: 95,
+              date: d),
+          Sport.gym);
+      // Sun 11 and Mon 12 are two weeks; Fri 16 and Sat 17 are one.
+      expect(
+          bestRecordStreak(
+              [at(DateTime(2026, 10, 11)), at(DateTime(2026, 10, 12))]),
+          2);
+      expect(
+          bestRecordStreak(
+              [at(DateTime(2026, 10, 16)), at(DateTime(2026, 10, 17))]),
+          1);
     });
 
     test('dailyLoads sums workouts on one local day', () {

@@ -230,11 +230,11 @@ class LegendDot extends StatelessWidget {
   }
 }
 
-/// Sat-Fri bar chart of daily load, coloured by sport.
+/// Monday-Sunday bar chart of daily load, coloured by sport.
 class LoadBarChart extends StatelessWidget {
   final DateTime weekStartDay;
 
-  /// Load per sport for each of the 7 days, Saturday first.
+  /// Load per sport for each of the 7 days, Monday first.
   final List<Map<Sport, int>> days;
   const LoadBarChart(
       {super.key, required this.weekStartDay, required this.days});

@@ -7,6 +7,7 @@ import 'package:fitrix/core/widgets/title_row.dart';
 import 'package:fitrix/core/time/today_provider.dart';
 import 'package:fitrix/core/widgets/coach_card.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart' show weekStartOf;
 import 'package:fitrix/features/progress/domain/progress_math.dart';
 import 'package:fitrix/features/progress/presentation/widgets/multi_line_chart.dart';
 import 'package:fitrix/features/progress/presentation/widgets/progress_widgets.dart';
@@ -71,7 +72,7 @@ class _TrainingLoadScreenState extends ConsumerState<TrainingLoadScreen> {
         ? null
         : previous.fold<int>(0, (a, b) => a + b) / previous.length;
     final maxTotal = totals.fold<int>(1, (a, b) => a > b ? a : b);
-    final start = weekStart(today);
+    final start = weekStartOf(today);
     final aim = nextWeekAim(days, today);
     final form = summary.form;
 

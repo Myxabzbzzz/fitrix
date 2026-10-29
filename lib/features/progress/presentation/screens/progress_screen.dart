@@ -16,6 +16,7 @@ import 'package:fitrix/core/widgets/sync_refresh.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
+import 'package:fitrix/features/plan/data/week_plan.dart' show weekStartOf;
 import 'package:fitrix/features/progress/domain/progress_math.dart';
 import 'package:fitrix/features/progress/presentation/providers/progress_providers.dart';
 import 'package:fitrix/features/progress/presentation/widgets/progress_widgets.dart';
@@ -59,7 +60,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
 
     final days = dailyLoads(history);
     final summary = loadSummary(days, today);
-    final start = weekStart(today);
+    final start = weekStartOf(today);
     final weekTotal = weeklyTotals(days, today, 1).first;
     final usual = usualWeeklyLoad(days, today);
     final weekDays = List.generate(7, (_) => <Sport, int>{});
