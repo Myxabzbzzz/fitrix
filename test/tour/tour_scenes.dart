@@ -1,3 +1,4 @@
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -224,7 +225,8 @@ final tourScenes = <Scene>[
     mainScrollable(r.t)?.position.jumpTo(0);
     await r.settle();
     // A context inside the workout sheet, as the menu button would use.
-    BuildContext inSheet() => r.t.element(find.text('Biceps curl').first);
+    final curl = r.container.read(catalogTextProvider).exercise('Biceps curl');
+    BuildContext inSheet() => r.t.element(find.text(curl).first);
     showExerciseMenuSheet(inSheet(), 0);
     await r.settle();
     await shot(r, 'live_gym_exercise_menu');

@@ -3,6 +3,8 @@
 //
 // Not part of the normal `flutter test` run: the entry file is not named
 // `*_test.dart`, so it is only run when passed explicitly (see tour.dart).
+import 'package:fitrix/core/i18n/catalog_overlay.dart';
+import 'package:fitrix/features/language/presentation/providers/language_provider.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -222,12 +224,18 @@ class Catalogs {
   static FoodCatalog? foods;
   static ProgramCatalog? programs;
   static Map<String, dynamic>? seed;
+  static final overlays = <String, CatalogOverlay>{};
 
   static Future<void> load() async {
     exercises ??= await ExerciseCatalog.load(rootBundle);
     foods ??= await FoodCatalog.load(rootBundle);
     programs ??= await ProgramCatalog.load(rootBundle);
     seed ??= await loadBundledSeed();
+    // Translations too: an asset read started inside the test's fake async
+    // never finishes, which left every screen in English.
+    for (final l in const ['en', 'ru', 'uz', 'es']) {
+      overlays[l] ??= await CatalogOverlay.load(rootBundle, l);
+    }
   }
 }
 
@@ -883,6 +891,9 @@ Future<TourRig> pumpTour(WidgetTester t, TourConfig cfg,
     foodCatalogProvider.overrideWith((ref) async => Catalogs.foods!),
     programCatalogProvider.overrideWith((ref) async => Catalogs.programs!),
     seedLoaderProvider.overrideWithValue(() async => Catalogs.seed!),
+    catalogOverlayLoaderProvider.overrideWith((ref) async =>
+        Catalogs.overlays[ref.watch(selectedLanguageProvider)] ??
+        CatalogOverlay.empty),
     if (auth) authGatewayProvider.overrideWithValue(FakeAuthGateway()),
   ]);
   addTearDown(container.dispose);
