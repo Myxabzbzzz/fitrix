@@ -66,4 +66,18 @@ void main() {
     expect(
         filterExercises(exercises.all, query: "o'tirib", text: t), isNotEmpty);
   });
+
+  test('«Plank (sec)» keeps its seconds hint in ru, uz and es', () async {
+    for (final e in {
+      'ru': 'Планка (сек)',
+      'uz': 'Planka (soniya)',
+      'es': 'Plancha (s)',
+    }.entries) {
+      final t = CatalogText(await realOverlay(e.key), exercises: exercises);
+      expect(t.exercise('Plank (sec)'), e.value, reason: e.key);
+      // The catalog's own name still reads the catalog translation.
+      expect(t.exercise('Plank'), isNot('Plank'), reason: e.key);
+      expect(t.exercise('Plank'), isNot(e.value), reason: e.key);
+    }
+  });
 }

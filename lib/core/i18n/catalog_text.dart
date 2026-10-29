@@ -67,13 +67,21 @@ class CatalogText {
   String exercise(String stored) {
     if (isEnglish) return stored;
     final info = exercises?.byName(stored);
-    if (info != null) {
+    // An alias ("Plank (sec)") may carry more than the catalog name (the
+    // unit), so the workouts' own translation comes first for it.
+    final isCatalogName =
+        info != null && normalizeName(stored) == normalizeName(info.name);
+    if (isCatalogName) {
       final name = exerciseName(info);
       if (name != info.name) return name;
     }
     final direct =
         overlay.text('workout_catalog', ['exerciseNames', stored], '');
     if (direct.isNotEmpty) return direct;
+    if (info != null && !isCatalogName) {
+      final name = exerciseName(info);
+      if (name != info.name) return name;
+    }
     final trimmed = stored.trim();
     if (trimmed != stored) {
       final t = overlay.text('workout_catalog', ['exerciseNames', trimmed], '');
