@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -29,6 +30,7 @@ class ProgramProgressScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final info = ref.watch(activeProgramInfoProvider);
     final loading = ref.watch(programCatalogProvider).isLoading;
+    final text = ref.watch(catalogTextProvider);
 
     if (info == null) {
       return Scaffold(
@@ -86,7 +88,7 @@ class ProgramProgressScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ScreenTitle(
-              p.name,
+              text.programName(p),
               trailing: IconButton(
                 key: const Key('program-open-detail'),
                 tooltip: l10n.programDetailsTooltip,
@@ -212,8 +214,11 @@ class ProgramProgressScreen extends ConsumerWidget {
                       child: CoachCard(
                         eyebrow: l10n.programNextIncrease,
                         title: '',
-                        message: l10n.programNextIncreaseText(inc.sets,
-                            inc.reps, inc.exercise, formatKg(inc.nextKg)),
+                        message: l10n.programNextIncreaseText(
+                            inc.sets,
+                            inc.reps,
+                            text.exercise(inc.exercise),
+                            formatKg(inc.nextKg)),
                         imageAsset: 'assets/images/felix_robot.png',
                         imageWidth: 56,
                         imageHeight: 80,
@@ -299,7 +304,7 @@ class _Tile extends StatelessWidget {
   }
 }
 
-class _SlotRow extends StatelessWidget {
+class _SlotRow extends ConsumerWidget {
   final ProgramSlot slot;
   final DateTime today;
   final bool canStart;
@@ -311,7 +316,7 @@ class _SlotRow extends StatelessWidget {
       required this.onStart});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final due = !slot.session.day.isAfter(today);
@@ -359,7 +364,7 @@ class _SlotRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(slot.session.title,
+                Text(ref.watch(catalogTextProvider).planTitle(slot.session),
                     style:
                         AppText.headingS.copyWith(color: palette.textPrimary)),
                 Text(weekdayName(context, slot.session.day.weekday),
@@ -376,14 +381,15 @@ class _SlotRow extends StatelessWidget {
   }
 }
 
-class _LiftsTable extends StatelessWidget {
+class _LiftsTable extends ConsumerWidget {
   final List<LiftProgress> lifts;
   const _LiftsTable({required this.lifts});
 
   static const double _col = 52;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final names = ref.watch(catalogTextProvider);
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     String n(double? v) => v == null ? '—' : formatKg(v);
@@ -415,7 +421,7 @@ class _LiftsTable extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(l.exercise,
+                  child: Text(names.exercise(l.exercise),
                       style: AppText.headingS
                           .copyWith(color: palette.textPrimary)),
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
 import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
@@ -68,6 +69,8 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
     final clashes = clashingWeekdays(p, nonGym);
     final hardDays = hardNonGymWeekdays(nonGym).toList()..sort();
     final session = p.sessions[_session.clamp(0, p.sessions.length - 1)];
+    final text = ref.watch(catalogTextProvider);
+    final rules = text.programRules(p);
 
     PlannedSession? other(int weekday) {
       for (final s in nonGym) {
@@ -88,11 +91,11 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, AppSpacing.lg),
                 children: withPageGutter([
-                  Text(p.name,
+                  Text(text.programName(p),
                       style: AppText.displayLarge
                           .copyWith(color: palette.textPrimary)),
                   const SizedBox(height: AppSpacing.xxs),
-                  Text(p.author,
+                  Text(text.programAuthor(p),
                       style: AppText.body14
                           .copyWith(color: palette.textSecondary)),
                   const SizedBox(height: AppSpacing.sm),
@@ -117,7 +120,7 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  Text(p.summary,
+                  Text(text.programSummary(p),
                       style: AppText.bodyRegular
                           .copyWith(color: palette.textPrimary)),
                   const SizedBox(height: AppSpacing.md),
@@ -146,8 +149,12 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                             child: _DayTile(
                               day: weekdayName(context, d),
                               label: weekdays.contains(d)
-                                  ? p.sessionAt(weekdays.indexOf(d)).name
-                                  : other(d)?.title ?? l10n.programRest,
+                                  ? text.sessionName(
+                                      p, p.sessionAt(weekdays.indexOf(d)))
+                                  : switch (other(d)) {
+                                      final s? => text.planTitle(s),
+                                      null => l10n.programRest,
+                                    },
                               // Other sports show as their icon: their
                               // titles don't fit a seventh of the width.
                               icon: weekdays.contains(d)
@@ -168,7 +175,7 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(session.name,
+                        child: Text(text.sessionName(p, session),
                             style: AppText.headingM
                                 .copyWith(color: palette.textPrimary)),
                       ),
@@ -182,7 +189,7 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                     PillSelector<int>(
                       items: [for (var i = 0; i < p.sessions.length; i++) i],
                       selected: _session,
-                      labelOf: (i) => p.sessions[i].name,
+                      labelOf: (i) => text.sessionName(p, p.sessions[i]),
                       onSelected: (i) => setState(() => _session = i),
                     ),
                   ],
@@ -196,7 +203,9 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                       children: [
                         for (var i = 0; i < session.exercises.length; i++) ...[
                           if (i > 0) Divider(height: 1, color: palette.border),
-                          _ExerciseRow(session.exercises[i]),
+                          _ExerciseRow(session.exercises[i],
+                              name:
+                                  text.exercise(session.exercises[i].exercise)),
                         ],
                       ],
                     ),
@@ -213,9 +222,9 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        for (var i = 0; i < p.progressionRules.length; i++) ...[
+                        for (var i = 0; i < rules.length; i++) ...[
                           if (i > 0) const SizedBox(height: AppSpacing.sm),
-                          _Rule(p.progressionRules[i]),
+                          _Rule(rules[i]),
                         ],
                       ],
                     ),
@@ -235,7 +244,7 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                               .where((s) =>
                                   s.intensity == Intensity.hard &&
                                   hardDays.contains(s.day.weekday))
-                              .map((s) => s.title)
+                              .map(text.planTitle)
                               .toSet()
                               .join(', '),
                         ),
@@ -268,7 +277,8 @@ class _ProgramDetailScreenState extends ConsumerState<ProgramDetailScreen> {
                       expand: true,
                       onPressed: () => askFelix(context, ref,
                           topic: AssistantTopic.forSport(Sport.gym),
-                          draft: l10n.programAskFelixDraft(p.name)),
+                          draft:
+                              l10n.programAskFelixDraft(text.programName(p))),
                     ),
                     AppButton(
                       key: const Key('program-start'),
@@ -389,7 +399,10 @@ class _DayTile extends StatelessWidget {
 
 class _ExerciseRow extends StatelessWidget {
   final ProgramExercise e;
-  const _ExerciseRow(this.e);
+
+  /// [e]'s exercise in the app language.
+  final String name;
+  const _ExerciseRow(this.e, {required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -400,7 +413,7 @@ class _ExerciseRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(e.exercise,
+            child: Text(name,
                 style: AppText.body14.copyWith(color: palette.textPrimary)),
           ),
           const SizedBox(width: AppSpacing.xs),

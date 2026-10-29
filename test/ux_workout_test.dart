@@ -12,6 +12,8 @@ import 'package:fitrix/features/workouts/presentation/screens/sport_workouts_scr
 import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/edit_workout_sheet.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/core/i18n/catalog_overlay.dart';
+import 'support/catalog_fixtures.dart';
 import 'support/overflow.dart';
 
 Future<ProviderContainer> _container() async {
@@ -216,5 +218,72 @@ void main() {
         expectNoOverflow(tester);
       });
     }
+  });
+
+  group('starter workouts in Russian (catalog overlay)', () {
+    Future<ProviderContainer> ru() async {
+      SharedPreferences.setMockInitialValues({'language': 'ru'});
+      final prefs = await SharedPreferences.getInstance();
+      final c = ProviderContainer(overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        catalogBundleProvider.overrideWithValue(
+            FixtureBundle.locale('ru', {'workout_catalog': ruWorkoutCatalog})),
+      ]);
+      addTearDown(c.dispose);
+      // In the app the overlay is in long before a sheet opens.
+      await c.read(catalogOverlayLoaderProvider.future);
+      return c;
+    }
+
+    WorkoutTemplate legs(ProviderContainer c) =>
+        c.read(workoutTemplatesProvider).firstWhere((t) => t.id == 'gym-legs');
+
+    testWidgets('read translated; saving unchanged keeps the English name',
+        (tester) async {
+      _size(tester, iPhoneSeSize);
+      final c = await ru();
+      await tester.pumpWidget(_app(
+          c, const SportWorkoutsScreen(sport: Sport.gym),
+          locale: const Locale('ru')));
+      await tester.pumpAndSettle();
+      expect(
+          find.byWidgetPredicate((w) => w is WorkoutCard && w.title == 'Ноги'),
+          findsOneWidget);
+
+      await tester.pumpWidget(_app(
+          c, Scaffold(body: EditWorkoutSheet(template: legs(c))),
+          locale: const Locale('ru')));
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(TextField, 'Ноги'), findsOneWidget);
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      expect(legs(c).name, 'Legs');
+      expect(legs(c).exercises.first.name, 'Squat');
+    });
+
+    testWidgets('a renamed starter workout keeps the user\'s name',
+        (tester) async {
+      _size(tester, iPhoneSeSize);
+      final c = await ru();
+      await tester.pumpWidget(_app(
+          c, Scaffold(body: EditWorkoutSheet(template: legs(c))),
+          locale: const Locale('ru')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+          find.widgetWithText(TextField, 'Ноги'), 'Мои ноги');
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      expect(legs(c).name, 'Мои ноги');
+      // Save popped the sheet's only route: start a fresh app.
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(_app(
+          c, const SportWorkoutsScreen(sport: Sport.gym),
+          locale: const Locale('ru')));
+      await tester.pumpAndSettle();
+      expect(
+          find.byWidgetPredicate(
+              (w) => w is WorkoutCard && w.title == 'Мои ноги'),
+          findsOneWidget);
+    });
   });
 }

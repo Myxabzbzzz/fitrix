@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/app_button.dart';
@@ -48,7 +49,11 @@ class CartSheet extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final palette = AppPalette.of(context);
     final cart = ref.watch(cartProvider);
-    final catalog = ref.watch(productsProvider).valueOrNull ?? const [];
+    final text = ref.watch(catalogTextProvider);
+    final catalog = [
+      for (final p in ref.watch(productsProvider).valueOrNull ?? const [])
+        text.product(p),
+    ];
     // Only lines that are still in the catalog are shown and ordered.
     final lines = [
       for (final p in catalog)

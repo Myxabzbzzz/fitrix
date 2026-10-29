@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/widgets/sheet_safe_area.dart';
 import 'package:fitrix/features/checkin/data/checkin_models.dart';
 import 'package:fitrix/features/checkin/presentation/providers/checkin_provider.dart';
@@ -51,7 +52,9 @@ Future<void> startWorkout(
         return AlertDialog(
           title: Text(l10n.gymFinishCurrentTitle),
           content: Text(
-            l10n.gymFinishCurrentBody(active.template.name, template.name),
+            l10n.gymFinishCurrentBody(
+                ref.read(catalogTextProvider).templateName(active.template),
+                ref.read(catalogTextProvider).templateName(template)),
           ),
           actions: [
             TextButton(
@@ -196,8 +199,8 @@ Future<void> _startRun(
   final existing = ref.read(runRecorderProvider);
   if (existing != null) {
     if (existing.templateId != template.id) {
-      final resume =
-          await askUnfinishedRun(context, template.name, existing.kind);
+      final resume = await askUnfinishedRun(context,
+          ref.read(catalogTextProvider).templateName(template), existing.kind);
       if (resume == null || !context.mounted) return;
       if (!resume) {
         if (!await confirmDiscardRun(context, existing.kind) ||

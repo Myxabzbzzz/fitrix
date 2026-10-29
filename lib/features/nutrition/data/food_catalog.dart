@@ -128,21 +128,31 @@ class FoodCatalog {
 
   Food? byId(String id) => _byId[id];
 
-  /// Foods whose name or local name contains [query] (case-insensitive),
-  /// optionally within [category]. Foods whose name starts with the query
-  /// come first.
-  List<Food> search(String query, {String? category}) {
+  /// Foods whose name, local name or name in the app language ([nameOf])
+  /// contains [query] (case-insensitive), optionally within [category].
+  /// Foods whose name starts with the query come first.
+  List<Food> search(String query,
+      {String? category, String Function(Food)? nameOf}) {
     final q = query.trim().toLowerCase();
+    String? shown(Food f) {
+      final n = nameOf?.call(f);
+      return n == null || n == f.name ? null : n.toLowerCase();
+    }
+
     bool matches(Food f) =>
         q.isEmpty ||
         f.name.toLowerCase().contains(q) ||
-        (f.localName?.toLowerCase().contains(q) ?? false);
+        (f.localName?.toLowerCase().contains(q) ?? false) ||
+        (shown(f)?.contains(q) ?? false);
     final found = [
       for (final f in all)
         if ((category == null || f.category == category) && matches(f)) f,
     ];
     if (q.isNotEmpty) {
-      int rank(Food f) => f.name.toLowerCase().startsWith(q) ? 0 : 1;
+      int rank(Food f) => f.name.toLowerCase().startsWith(q) ||
+              (shown(f)?.startsWith(q) ?? false)
+          ? 0
+          : 1;
       found.sort((a, b) => rank(a).compareTo(rank(b)));
     }
     return found;

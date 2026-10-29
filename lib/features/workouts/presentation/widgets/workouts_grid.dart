@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -56,7 +57,8 @@ class WorkoutsGrid extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(
-        content: Text(l10n.workoutDeleted(template.name)),
+        content: Text(l10n.workoutDeleted(
+            ref.read(catalogTextProvider).templateName(template))),
         duration: const Duration(seconds: 4),
         action: SnackBarAction(
           label: l10n.undo,
@@ -90,6 +92,7 @@ class WorkoutsGrid extends ConsumerWidget {
     final plan = ref.watch(weekPlanProvider);
     final allHistory = ref.watch(workoutHistoryProvider);
     final felixIds = ref.watch(felixTemplateIdsProvider);
+    final text = ref.watch(catalogTextProvider);
 
     // Today only for a plan with an open session today; other planned plans
     // show their next day; the rest no day at all.
@@ -118,7 +121,7 @@ class WorkoutsGrid extends ConsumerWidget {
             onLongPress: () => _edit(context, workouts[i]),
             child: _FillHeight(
                 child: WorkoutCard(
-              title: workouts[i].name,
+              title: text.templateName(workouts[i]),
               dayLabel: dayLabel(workouts[i]),
               badge: felixIds.contains(workouts[i].id)
                   ? const FelixPlanBadge()
@@ -129,7 +132,8 @@ class WorkoutsGrid extends ConsumerWidget {
               doneLabel: l10n.gymDone,
               onStart: () => onAction(workouts[i]),
               onEdit: () => _edit(context, workouts[i]),
-              editLabel: '${l10n.workoutEditLabel}, ${workouts[i].name}',
+              editLabel:
+                  '${l10n.workoutEditLabel}, ${text.templateName(workouts[i])}',
             )),
           ),
         ),

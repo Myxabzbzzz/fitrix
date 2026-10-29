@@ -155,8 +155,12 @@ Future<void> _pump(
   tester.view.physicalSize = size * 3;
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
+  SharedPreferences.setMockInitialValues({});
+  final prefs = await SharedPreferences.getInstance();
   await tester.pumpWidget(ProviderScope(
     overrides: [
+      // Place names follow the app language (catalog overlays).
+      sharedPreferencesProvider.overrideWithValue(prefs),
       placesProvider.overrideWith((ref) async => places),
       locationSourceProvider.overrideWithValue(FakeLocation(location)),
       routingServiceProvider.overrideWithValue(routing ?? FakeRouting()),
@@ -276,8 +280,11 @@ void main() {
     tester.view.physicalSize = const Size(390, 844) * 3;
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(ProviderScope(
       overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
         placesProvider.overrideWith((ref) async => _places),
         locationSourceProvider.overrideWithValue(_PendingLocation(loc.future)),
         routingServiceProvider.overrideWithValue(FakeRouting()),
@@ -373,8 +380,11 @@ void main() {
     tester.view.physicalSize = const Size(390, 844) * 3;
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(ProviderScope(
       overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
         placesProvider.overrideWith((ref) async => _places),
         locationSourceProvider.overrideWithValue(FakeLocation(_me)),
         routingServiceProvider.overrideWithValue(FakeRouting()),

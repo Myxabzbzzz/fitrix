@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -87,6 +88,7 @@ class _ExerciseMenuSheetState extends ConsumerState<ExerciseMenuSheet> {
     final notifier = ref.read(activeWorkoutProvider.notifier);
     final catalog = ref.watch(exerciseCatalogProvider).valueOrNull;
     final info = catalog?.byName(exercise.name);
+    final text = ref.watch(catalogTextProvider);
     final similar = info == null || catalog == null
         ? const <ExerciseInfo>[]
         : catalog.similarTo(info);
@@ -101,7 +103,7 @@ class _ExerciseMenuSheetState extends ConsumerState<ExerciseMenuSheet> {
         notifier.setRest(_index, seconds.clamp(_minRest, _maxRest));
 
     final header = [
-      if (info != null) info.pattern,
+      if (info != null) text.pattern(info.pattern),
       l10n.workoutSetCount(working.length),
     ].join(' · ');
 
@@ -115,7 +117,7 @@ class _ExerciseMenuSheetState extends ConsumerState<ExerciseMenuSheet> {
           subtitle: similar.isEmpty
               ? l10n.workoutMenuSwapSub
               : l10n.workoutMenuSimilar(
-                  similar.take(3).map((s) => s.name).join(', ')),
+                  similar.take(3).map(text.exerciseName).join(', ')),
           trailing: const _Chevron(),
           onTap: () {
             final index = _index;
@@ -236,7 +238,7 @@ class _ExerciseMenuSheetState extends ConsumerState<ExerciseMenuSheet> {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            Text(exercise.name,
+            Text(text.exercise(exercise.name),
                 style: AppText.headingL.copyWith(color: palette.textPrimary)),
             Text(header,
                 style: AppText.body14.copyWith(color: palette.textSecondary)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/title_row.dart';
@@ -43,6 +44,7 @@ class _RecordsScreenState extends ConsumerState<RecordsScreen> {
     final fmt = NumberFormat.decimalPattern(locale);
     final today = ref.watch(todayProvider);
     final all = recordEntries(ref.watch(workoutHistoryProvider));
+    final names = ref.watch(catalogTextProvider);
     final present = [
       for (final s in Sport.values)
         if (all.any((r) => r.sport == s)) s,
@@ -89,8 +91,9 @@ class _RecordsScreenState extends ConsumerState<RecordsScreen> {
       }
       final isE1rm = r.kind == RecordKind.e1rm;
       final title = isE1rm
-          ? l10n.recordsE1rm(r.exercise, '${value(r.value)} ${l10n.unitKg}')
-          : l10n.recordsRepsLine(r.value.round(), r.exercise);
+          ? l10n.recordsE1rm(
+              names.exercise(r.exercise), '${value(r.value)} ${l10n.unitKg}')
+          : l10n.recordsRepsLine(r.value.round(), names.exercise(r.exercise));
       final gain = isE1rm
           ? '+${value(r.value - r.previous)} ${l10n.unitKg}'
           : l10n.recordsGainReps((r.value - r.previous).round());

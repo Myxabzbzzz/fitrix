@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -42,7 +43,12 @@ Future<void> showAddSessionSheet(BuildContext context) {
 class _Choice {
   final String key;
   final Sport sport;
+
+  /// What the planned session stores.
   final String title;
+
+  /// What the sheet shows: [title] in the app language.
+  final String label;
   final String subtitle;
   final String? templateId;
   final int minutes;
@@ -53,12 +59,13 @@ class _Choice {
     required this.key,
     required this.sport,
     required this.title,
+    String? label,
     required this.subtitle,
     this.templateId,
     required this.minutes,
     required this.intensity,
     this.felix = false,
-  });
+  }) : label = label ?? title;
 }
 
 class _AddSessionSheet extends ConsumerStatefulWidget {
@@ -79,6 +86,7 @@ class _AddSessionSheetState extends ConsumerState<_AddSessionSheet> {
   List<_Choice> _choices(AppLocalizations l10n) {
     final out = <_Choice>[];
     final felixIds = ref.watch(felixTemplateIdsProvider);
+    final text = ref.watch(catalogTextProvider);
     for (final t in ref.watch(workoutTemplatesProvider)) {
       if (t.sport != _sport) continue;
       final minutes = t.estimatedDuration.inMinutes;
@@ -86,6 +94,7 @@ class _AddSessionSheetState extends ConsumerState<_AddSessionSheet> {
         key: 't:${t.id}',
         sport: t.sport,
         title: t.name,
+        label: text.templateName(t),
         subtitle: l10n.planExercisesMeta(
             t.exercises.length, planDuration(l10n, minutes)),
         templateId: t.id,
@@ -290,7 +299,7 @@ class _AddSessionSheetState extends ConsumerState<_AddSessionSheet> {
             child: AppButton(
               label: choice == null
                   ? l10n.planAddSession
-                  : l10n.planAddButton(choice.title, dayName(day)),
+                  : l10n.planAddButton(choice.label, dayName(day)),
               size: AppButtonSize.large,
               expand: true,
               onPressed: choice == null
@@ -414,7 +423,7 @@ class _ChoiceRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(choice.title,
+                    Text(choice.label,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppText.headingS.copyWith(color: fg)),

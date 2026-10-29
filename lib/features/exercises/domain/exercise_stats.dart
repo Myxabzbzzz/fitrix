@@ -1,3 +1,4 @@
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/domain/training_math.dart';
@@ -5,21 +6,22 @@ import 'package:fitrix/features/workouts/domain/training_math.dart';
 /// Working sets per muscle group per week the user is aiming for.
 const int kWeeklySetsTarget = 14;
 
-/// Exercises matching the filters. [query] matches the name or an alias.
+/// Exercises matching the filters. [query] matches the name or an alias,
+/// in English or in the app language ([text]).
 List<ExerciseInfo> filterExercises(
   Iterable<ExerciseInfo> all, {
   MuscleGroup? group,
   Equipment? equipment,
   String query = '',
+  CatalogText? text,
 }) {
   final q = query.trim().toLowerCase();
+  final t = text ?? CatalogText.english;
   return [
     for (final e in all)
       if ((group == null || e.group == group) &&
           (equipment == null || e.equipment == equipment) &&
-          (q.isEmpty ||
-              e.name.toLowerCase().contains(q) ||
-              e.aliases.any((a) => a.toLowerCase().contains(q))))
+          t.exerciseMatches(e, q))
         e,
   ];
 }

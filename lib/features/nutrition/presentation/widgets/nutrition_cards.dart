@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -215,7 +217,7 @@ class WaterGlass extends StatelessWidget {
 }
 
 /// One meal slot: name, total, an add button and the logged entries.
-class MealSlotCard extends StatelessWidget {
+class MealSlotCard extends ConsumerWidget {
   final MealSlot slot;
   final List<FoodEntry> entries;
   final VoidCallback onAdd;
@@ -230,12 +232,15 @@ class MealSlotCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final fmt =
         NumberFormat.decimalPattern(Localizations.localeOf(context).toString());
     final total = entries.fold<int>(0, (s, e) => s + e.kcal);
+    final text = ref.watch(catalogTextProvider);
+    final foods =
+        text.isEnglish ? null : ref.watch(foodCatalogProvider).valueOrNull;
     return NutritionTile(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md, vertical: AppSpacing.sm),
@@ -284,7 +289,7 @@ class MealSlotCard extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(e.name,
+                  child: Text(text.foodEntryName(e, foods),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: AppText.caption

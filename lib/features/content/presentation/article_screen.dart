@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/widgets/screen_title.dart';
@@ -16,7 +17,9 @@ class ArticleScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final palette = AppPalette.of(context);
     final async = ref.watch(articlesProvider);
-    final article = async.valueOrNull?.where((a) => a.id == id).firstOrNull;
+    final found = async.valueOrNull?.where((a) => a.id == id).firstOrNull;
+    final article =
+        found == null ? null : ref.watch(catalogTextProvider).article(found);
 
     Widget body;
     if (article != null) {

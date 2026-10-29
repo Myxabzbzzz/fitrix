@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
@@ -52,7 +53,10 @@ class SportCoachCard extends ConsumerWidget {
     }
     if (coachPlan == null && !sportPlanned) coachPlan = workouts.firstOrNull;
     final coach = coachMessage(history, today,
-        todayWorkout: coachPlan?.name, localeName: localeName);
+        todayWorkout: coachPlan == null
+            ? null
+            : ref.watch(catalogTextProvider).templateName(coachPlan),
+        localeName: localeName);
     if (coach == null) return const SizedBox.shrink();
     final suggested = coachPlan;
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -357,8 +358,8 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
           title: '',
           message: l10n.nutritionIdeaMessage(
             '${gap.round()}',
-            idea.food.name,
-            '${idea.portion.label} $grams g',
+            ref.watch(catalogTextProvider).foodName(idea.food),
+            '${ref.watch(catalogTextProvider).portion(idea.portion.label)} $grams g',
             '${idea.food.proteinFor(grams).round()}',
           ),
           imageAsset: 'assets/images/felix_avatar.png',

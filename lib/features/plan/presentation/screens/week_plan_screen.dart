@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -416,10 +417,11 @@ class _FelixCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final moved = plan.firstWhere((s) => s.id == suggestion.sessionId);
     final other = plan.firstWhere((s) => s.id == suggestion.otherSessionId);
+    final names = ref.watch(catalogTextProvider);
     final text = l10n.planFelixText(
-      other.title,
+      names.planTitle(other),
       weekdayLong(context, other.day),
-      moved.title,
+      names.planTitle(moved),
       weekdayLong(context, moved.day),
       weekdayLong(context, suggestion.to),
     );
@@ -445,9 +447,9 @@ class _FelixCard extends ConsumerWidget {
           ref,
           topic: AssistantTopic.forSport(Sport.gym),
           draft: l10n.planAskDraft(
-            other.title,
+            names.planTitle(other),
             weekdayLong(context, other.day),
-            moved.title,
+            names.planTitle(moved),
             weekdayLong(context, moved.day),
           ),
         ),

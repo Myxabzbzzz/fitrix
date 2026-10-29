@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -37,7 +38,8 @@ class FelixHubScreen extends ConsumerWidget {
     }
     final parts = [
       switch (plan.kind) {
-        TodayKind.session => l10n.felixHubToday(plan.session!.title),
+        TodayKind.session => l10n.felixHubToday(
+            ref.watch(catalogTextProvider).planTitle(plan.session!)),
         TodayKind.rest => l10n.felixHubRest,
         TodayKind.done => l10n.felixHubDone,
         TodayKind.unplanned => null,

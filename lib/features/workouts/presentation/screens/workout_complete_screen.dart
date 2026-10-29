@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
 import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/router/app_router.dart';
@@ -112,6 +113,7 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
     final active = ref.watch(activeWorkoutProvider);
     final workout = pending.copyWith(sessionRpe: _rpe);
     final records = recordsIn(workout, history);
+    final text = ref.watch(catalogTextProvider);
     final recordNames = {for (final r in records) r.exercise.toLowerCase()};
 
     // First exercise whose suggested weight beats today's best: judged on
@@ -189,7 +191,8 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                         AppText.headingXL.copyWith(color: palette.textPrimary),
                   ),
                   Text(
-                    l10n.workoutCompleteSubtitle(workout.name, records.length),
+                    l10n.workoutCompleteSubtitle(
+                        text.completedTitle(workout), records.length),
                     textAlign: TextAlign.center,
                     style: AppText.bodyStrong
                         .copyWith(color: palette.textSecondary),
@@ -251,6 +254,7 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                         for (var i = 0; i < workout.exercises.length; i++)
                           _ExerciseRow(
                             exercise: workout.exercises[i],
+                            name: text.exercise(workout.exercises[i].name),
                             record: recordNames.contains(
                                 workout.exercises[i].name.toLowerCase()),
                             divider: i > 0,
@@ -262,7 +266,7 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                     const SizedBox(height: AppSpacing.sm),
                     _NextTimeCard(
                       text: l10n.workoutNextTimeBody(
-                          nextTime.name, formatKg(nextTime.kg)),
+                          text.exercise(nextTime.name), formatKg(nextTime.kg)),
                     ),
                   ],
                 ],
@@ -417,11 +421,15 @@ class _RpeCard extends StatelessWidget {
 
 class _ExerciseRow extends StatelessWidget {
   final Exercise exercise;
+
+  /// [exercise]'s name in the app language.
+  final String name;
   final bool record;
   final bool divider;
 
   const _ExerciseRow({
     required this.exercise,
+    required this.name,
     required this.record,
     required this.divider,
   });
@@ -446,7 +454,7 @@ class _ExerciseRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  exercise.name,
+                  name,
                   style: AppText.headingS.copyWith(color: palette.textPrimary),
                 ),
                 if (best != null)

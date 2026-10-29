@@ -23,6 +23,8 @@ import 'package:fitrix/features/nutrition/presentation/screens/nutrition_screen.
 import 'package:fitrix/features/nutrition/presentation/screens/targets_screen.dart';
 import 'package:fitrix/features/profile/data/performance_store.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/core/i18n/catalog_overlay.dart';
+import 'support/catalog_fixtures.dart';
 import 'support/fake_health_source.dart';
 import 'support/overflow.dart';
 
@@ -386,6 +388,7 @@ void main() {
     ProviderContainer? existing,
     int? steps,
     bool connected = true,
+    String? language,
   }) async {
     if (se) {
       tester.view.physicalSize = const Size(375, 667) * 3;
@@ -394,6 +397,7 @@ void main() {
     }
     SharedPreferences.setMockInitialValues({
       ...values,
+      if (language != null) 'language': language,
       if (connected)
         'health_connection_v1': jsonEncode({
           'connected': true,
@@ -414,6 +418,8 @@ void main() {
       sharedPreferencesProvider.overrideWithValue(prefs),
       healthSourceProvider.overrideWithValue(FakeHealthSource()),
       clockProvider.overrideWithValue(() => clock),
+      catalogBundleProvider
+          .overrideWithValue(FixtureBundle.locale('ru', {'foods': ruFoods})),
     ]);
     addTearDown(container.dispose);
     // Asset loading needs real async time.
@@ -442,6 +448,7 @@ void main() {
         ),
         child: MaterialApp.router(
           routerConfig: router,
+          locale: language == null ? null : Locale(language),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
         ),
@@ -653,6 +660,24 @@ void main() {
       expect(day.single.kcal, 721);
     });
 
+    testWidgets('in Russian: found by its Russian name, logged in English',
+        (t) async {
+      final c = await pump(t, const AddFoodScreen(slot: MealSlot.lunch),
+          language: 'ru');
+      await t.enterText(find.byType(TextField), 'приготовленная');
+      await t.pumpAndSettle();
+      final row = find.byKey(const ValueKey('quick-add-chicken_breast'));
+      expect(row, findsWidgets);
+      expect(
+          find.textContaining('Куриная грудка, приготовленная'), findsWidgets);
+      expect(find.textContaining('1 грудка 120'), findsWidgets);
+      expect(find.textContaining('Chicken breast'), findsNothing);
+      await t.tap(row.first);
+      await t.pumpAndSettle();
+      expect(
+          c.read(todayEntriesProvider).single.name, 'Chicken breast, cooked');
+    });
+
     testWidgets('Recent lists foods logged in the last 7 days', (t) async {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
@@ -687,6 +712,17 @@ void main() {
       await t.tap(find.text('Add to dinner · 206 kcal'));
       await t.pumpAndSettle();
       expect(c.read(todayEntriesProvider).single.grams, 100);
+    });
+
+    testWidgets('in Russian: name and portion pills read the overlay',
+        (t) async {
+      await pump(
+          t, const FoodDetailScreen(id: 'chicken_breast', slot: MealSlot.lunch),
+          language: 'ru');
+      expect(find.text('Куриная грудка, приготовленная'), findsOneWidget);
+      expect(find.text('1 грудка'), findsOneWidget);
+      expect(find.text('Chicken breast, cooked'), findsNothing);
+      expectNoOverflow(t);
     });
 
     testWidgets('warns when fat would pass the target', (t) async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -292,13 +293,13 @@ class _EntryCard extends StatelessWidget {
 }
 
 /// A Felix-made plan: its name, sport and the "Felix plan" chip.
-class _FelixPlanRow extends StatelessWidget {
+class _FelixPlanRow extends ConsumerWidget {
   final WorkoutTemplate template;
   final VoidCallback onTap;
   const _FelixPlanRow({required this.template, required this.onTap});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     return Semantics(
@@ -318,7 +319,7 @@ class _FelixPlanRow extends StatelessWidget {
                   children: [
                     const FelixPlanBadge(),
                     const SizedBox(height: AppSpacing.xxs),
-                    Text(template.name,
+                    Text(ref.watch(catalogTextProvider).templateName(template),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppText.headingS

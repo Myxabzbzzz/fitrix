@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -44,6 +45,7 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
     final history = ref.watch(workoutHistoryProvider);
     final catalog = ref.watch(exerciseCatalogProvider).valueOrNull;
     final lifts = liftsIn(history, catalog);
+    final names = ref.watch(catalogTextProvider);
     final female = ref.watch(performanceProfileProvider).sex == Sex.female;
     final weighIns = ref.watch(bodyWeightProvider);
     final bodyKg = weighIns.isNotEmpty
@@ -179,7 +181,7 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
       PillSelector<String>(
         items: [for (final l in lifts) l.name],
         selected: current.name,
-        labelOf: (n) => n,
+        labelOf: names.exercise,
         onSelected: (n) => setState(() => _picked = n),
       ),
       const SizedBox(height: AppSpacing.sm),
@@ -354,7 +356,7 @@ class _LiftDetailScreenState extends ConsumerState<LiftDetailScreen> {
             context,
             ref,
             topic: AssistantTopic.forSport(Sport.gym),
-            draft: l10n.liftAskDraft(current.name,
+            draft: l10n.liftAskDraft(names.exercise(current.name),
                 kgText(context, double.parse(best.e1rm.toStringAsFixed(1)))),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -52,10 +53,13 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
       List<CompletedWorkout> history) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
+    final text = ref.watch(catalogTextProvider);
+    String nameOf(ExerciseInfo e) => text.exerciseName(e);
     final filtered = filterExercises(catalog.all,
-            group: _group, equipment: _equipment, query: _query)
+            group: _group, equipment: _equipment, query: _query, text: text)
         .toList()
-      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      ..sort(
+          (a, b) => nameOf(a).toLowerCase().compareTo(nameOf(b).toLowerCase()));
     final recent = _query.trim().isEmpty
         ? _recent(catalog, history)
             .where((r) => filtered.contains(r.info))
@@ -65,7 +69,7 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
 
     final letters = <String, List<ExerciseInfo>>{};
     for (final e in filtered) {
-      letters.putIfAbsent(e.name[0].toUpperCase(), () => []).add(e);
+      letters.putIfAbsent(nameOf(e)[0].toUpperCase(), () => []).add(e);
     }
 
     return ListView(
@@ -105,8 +109,8 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
               for (final r in recent)
                 ExerciseRow(
                   key: ValueKey('recent-${r.info.id}'),
-                  name: r.info.name,
-                  subtitle: _subtitle(l10n, r.info),
+                  name: nameOf(r.info),
+                  subtitle: _subtitle(l10n, text, r.info),
                   onTap: () => context.push(AppRouter.exercise(r.info.id)),
                   trailing: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -145,8 +149,9 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
               for (final e in entry.value)
                 ExerciseRow(
                   key: ValueKey('exercise-${e.id}'),
-                  name: e.name,
-                  subtitle: '${l10n.muscleGroupName(e.group)} · ${e.pattern}',
+                  name: nameOf(e),
+                  subtitle:
+                      '${l10n.muscleGroupName(e.group)} · ${text.pattern(e.pattern)}',
                   onTap: () => context.push(AppRouter.exercise(e.id)),
                   trailing:
                       Icon(Icons.chevron_right, color: palette.textSecondary),
@@ -175,8 +180,8 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
     );
   }
 
-  String _subtitle(AppLocalizations l10n, ExerciseInfo e) =>
-      '${l10n.equipmentName(e.equipment)} · ${e.primary.join(', ')}';
+  String _subtitle(AppLocalizations l10n, CatalogText text, ExerciseInfo e) =>
+      '${l10n.equipmentName(e.equipment)} · ${e.primary.map(text.muscle).join(', ')}';
 
   /// Exercises from history, most recently done first, with the best set.
   List<_Recent> _recent(

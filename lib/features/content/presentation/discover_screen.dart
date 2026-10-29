@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/supabase/supabase_providers.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -83,9 +84,20 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       ref.watch(programsProvider),
       ref.watch(articlesProvider),
     ].any((a) => a.isLoading && !a.hasValue);
-    final challenges = ref.watch(challengesProvider).valueOrNull ?? const [];
-    final programs = ref.watch(programsProvider).valueOrNull ?? const [];
-    final articles = ref.watch(articlesProvider).valueOrNull ?? const [];
+    // Seed and server rows share ids, so both read in the app language.
+    final text = ref.watch(catalogTextProvider);
+    final challenges = [
+      for (final c in ref.watch(challengesProvider).valueOrNull ?? const [])
+        text.challenge(c),
+    ];
+    final programs = [
+      for (final p in ref.watch(programsProvider).valueOrNull ?? const [])
+        text.program(p),
+    ];
+    final articles = [
+      for (final a in ref.watch(articlesProvider).valueOrNull ?? const [])
+        text.article(a),
+    ];
     final joined = ref.watch(joinedChallengesProvider).valueOrNull ?? const {};
     const pad = EdgeInsets.symmetric(horizontal: AppSpacing.md);
 

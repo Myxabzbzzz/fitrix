@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
@@ -93,6 +94,8 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
     final protein = food.proteinFor(grams);
     final carbs = food.carbsFor(grams);
     final fat = food.fatFor(grams);
+    final text = ref.watch(catalogTextProvider);
+    final name = text.foodName(food);
 
     final targets = ref.watch(targetsProvider);
     final entries = ref.watch(todayEntriesProvider);
@@ -104,7 +107,7 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
 
     // Portion pills: the food's own portions plus 100 g.
     final labels = <int, String>{
-      for (final p in food.portions) p.grams: p.label,
+      for (final p in food.portions) p.grams: text.portion(p.label),
     };
     labels.putIfAbsent(100, () => l10n.nutritionGrams('100'));
 
@@ -183,9 +186,11 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(0, 0, 0, AppSpacing.md),
             children: withPageGutter([
-              Text(food.name,
+              Text(name,
                   style: AppText.headingL.copyWith(color: palette.textPrimary)),
-              if (food.localName != null)
+              // The "uz · ru" names help in English; translated, the title
+              // already reads in the app language.
+              if (food.localName != null && name == food.name)
                 Text(food.localName!,
                     style:
                         AppText.caption.copyWith(color: palette.textSecondary)),
@@ -236,7 +241,7 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
                 const SizedBox(height: AppSpacing.md),
                 NutritionTile(
                   child: _FitsDay(
-                    name: food.name,
+                    name: name,
                     eaten: eatenKcal,
                     adding: kcal,
                     target: targets.kcal,

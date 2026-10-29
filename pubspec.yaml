@@ -59,6 +59,8 @@ flutter:
   assets:
     - assets/images/
     - assets/data/
+    # Catalog translations, <catalog>.<locale>.json (display only).
+    - assets/data/i18n/
 
   fonts:
     - family: Inter

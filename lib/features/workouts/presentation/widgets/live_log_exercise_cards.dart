@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
@@ -13,7 +14,7 @@ import 'package:fitrix/features/workouts/presentation/widgets/live_log_rpe_sheet
 import 'package:fitrix/features/workouts/presentation/widgets/live_log_set_table.dart';
 
 /// Done and upcoming exercises: one row. Tapping opens it.
-class CollapsedExerciseCard extends StatelessWidget {
+class CollapsedExerciseCard extends ConsumerWidget {
   final Exercise exercise;
   final bool done;
   final bool record;
@@ -28,9 +29,10 @@ class CollapsedExerciseCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
+    final text = ref.watch(catalogTextProvider);
     final working = exercise.sets.where((s) => !s.warmup).toList();
     final String subtitle;
     if (done) {
@@ -77,7 +79,7 @@ class CollapsedExerciseCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      exercise.name,
+                      text.exercise(exercise.name),
                       style: AppText.headingS.copyWith(
                         color:
                             done ? palette.textSecondary : palette.textPrimary,
@@ -169,7 +171,7 @@ class CurrentExerciseCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      exercise.name,
+                      ref.watch(catalogTextProvider).exercise(exercise.name),
                       style:
                           AppText.headingM.copyWith(color: palette.textPrimary),
                     ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/time/day_key.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +25,7 @@ import 'package:fitrix/features/health/data/health_source.dart';
 import 'package:fitrix/features/health/domain/health_math.dart';
 import 'package:fitrix/features/health/presentation/providers/health_providers.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
+import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/start_workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -240,7 +242,8 @@ class _Content extends ConsumerWidget {
                           AppText.microStrong.copyWith(color: palette.accent)),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(
-                    _planText(l10n, template.name, shown, applied.isNotEmpty),
+                    _planText(l10n, ref.watch(catalogTextProvider), template,
+                        shown, applied.isNotEmpty),
                     style: AppText.bodyRegular
                         .copyWith(color: palette.textPrimary),
                   ),
@@ -322,9 +325,12 @@ class _Content extends ConsumerWidget {
     }
   }
 
-  String _planText(
-      AppLocalizations l10n, String plan, List<Swap> swaps, bool applied) {
-    final swapsText = swaps.map((s) => '${s.from} → ${s.to}').join(', ');
+  String _planText(AppLocalizations l10n, CatalogText text,
+      WorkoutTemplate template, List<Swap> swaps, bool applied) {
+    final plan = text.templateName(template);
+    final swapsText = swaps
+        .map((s) => '${text.exercise(s.from)} → ${text.exercise(s.to)}')
+        .join(', ');
     final areas = l10n.areasText(checkIn.sore);
     return applied
         ? l10n.recoveryPlanApplied(plan, swapsText, areas)

@@ -1,3 +1,4 @@
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
@@ -88,6 +89,7 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final p = widget.program;
+    final text = ref.watch(catalogTextProvider);
     final today = ref.watch(todayProvider);
     final start = _dateFor(today);
     final nonGym = ref.watch(upcomingNonGymProvider);
@@ -121,7 +123,7 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
             Row(
               children: [
                 Expanded(
-                  child: Text(l10n.programStartTitle(p.name),
+                  child: Text(l10n.programStartTitle(text.programName(p)),
                       style: AppText.headingL
                           .copyWith(color: palette.textPrimary)),
                 ),
@@ -190,8 +192,10 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
             for (final d in hardDays) ...[
               const SizedBox(height: AppSpacing.xs),
               _ClashCard(
-                title: l10n.programClashTitle(weekdayFull(context, d),
-                    nonGym.firstWhere((s) => s.day.weekday == d).title),
+                title: l10n.programClashTitle(
+                    weekdayFull(context, d),
+                    text.planTitle(
+                        nonGym.firstWhere((s) => s.day.weekday == d))),
                 body: _days.contains(d)
                     ? l10n.programClashHit
                     : _days.contains(d == 1 ? 7 : d - 1) ||
@@ -231,7 +235,7 @@ class _StartSheetState extends ConsumerState<_StartSheet> {
                         child: Row(
                           children: [
                             Expanded(
-                              child: Text(weights[i].name,
+                              child: Text(text.exercise(weights[i].name),
                                   style: AppText.body14
                                       .copyWith(color: palette.textPrimary)),
                             ),

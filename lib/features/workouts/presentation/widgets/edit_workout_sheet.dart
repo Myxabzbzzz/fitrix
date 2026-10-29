@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
@@ -17,8 +18,11 @@ class EditWorkoutSheet extends ConsumerStatefulWidget {
 }
 
 class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
+  /// The name as shown: a starter workout's name in the app language.
+  late final String _shownName =
+      ref.read(catalogTextProvider).templateName(widget.template);
   late final TextEditingController _nameController =
-      TextEditingController(text: widget.template.name);
+      TextEditingController(text: _shownName);
   final TextEditingController _exerciseController = TextEditingController();
   late List<Exercise> _exercises = [...widget.template.exercises];
 
@@ -56,7 +60,11 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
     final name = _nameController.text.trim();
     ref.read(workoutTemplatesProvider.notifier).update(
           widget.template.copyWith(
-            name: name.isEmpty ? widget.template.name : name,
+            // Unchanged keeps the stored (English) name, so a starter
+            // workout still follows the app language.
+            name: name.isEmpty || name == _shownName
+                ? widget.template.name
+                : name,
             exercises: _exercises,
           ),
         );
@@ -127,7 +135,7 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
                   return ListTile(
                     key: ValueKey('${exercise.name}-$index'),
                     title: Text(
-                      exercise.name,
+                      ref.watch(catalogTextProvider).exercise(exercise.name),
                       style: TextStyle(color: palette.textPrimary),
                     ),
                     subtitle: Text(

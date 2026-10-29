@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -283,6 +284,7 @@ class _TodayCard extends ConsumerWidget {
     final templates = ref.watch(workoutTemplatesProvider);
     final plan = ref.watch(todayPlanProvider);
     final active = ref.watch(activeWorkoutProvider);
+    final text = ref.watch(catalogTextProvider);
 
     final String title;
     final String meta;
@@ -293,7 +295,7 @@ class _TodayCard extends ConsumerWidget {
       case TodayKind.unplanned:
         if (templates.isEmpty) return const SizedBox.shrink();
         template = templates.first;
-        title = template.name;
+        title = text.templateName(template);
         meta = l10n.homeTodayMeta(
             template.exercises.length, template.estimatedDuration.inMinutes);
       case TodayKind.session:
@@ -301,7 +303,7 @@ class _TodayCard extends ConsumerWidget {
         template =
             templates.where((t) => t.id == session.templateId).firstOrNull;
         if (template == null) planless = session;
-        title = session.title;
+        title = text.planTitle(session);
         meta = template != null
             ? l10n.homeTodayMeta(
                 template.exercises.length, template.estimatedDuration.inMinutes)
@@ -317,7 +319,7 @@ class _TodayCard extends ConsumerWidget {
             ? l10n.homeNothingNext
             : l10n.homeNextSession(
                 upcomingDayLabel(context, ref.watch(todayProvider), next.day),
-                next.title);
+                text.planTitle(next));
     }
     final start = template;
 

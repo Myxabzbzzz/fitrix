@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/navigation/circle_reveal.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -65,6 +66,7 @@ class _ProgramsScreenState extends ConsumerState<ProgramsScreen> {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
+    final text = ref.watch(catalogTextProvider);
     final catalog = ref.watch(programCatalogProvider).valueOrNull;
     final info = ref.watch(activeProgramInfoProvider);
     final profile = ref.watch(profileProvider).valueOrNull;
@@ -113,7 +115,7 @@ class _ProgramsScreenState extends ConsumerState<ProgramsScreen> {
                           ProgramFit.goal => l10n.programsPickedGoalText,
                           ProgramFit.level => l10n.programsPickedLevelText,
                           ProgramFit.none => l10n.programsStartText,
-                        })(picked.name, picked.perWeek,
+                        })(text.programName(picked), picked.perWeek,
                             programLevelLabel(l10n, picked.level)),
                         imageAsset: 'assets/images/felix_robot.png',
                         imageWidth: 56,
@@ -233,6 +235,7 @@ class _ActiveCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
+    final text = ref.watch(catalogTextProvider);
     final today = ref.watch(todayProvider);
     final history = ref.watch(workoutHistoryProvider);
     final slots = programSlots(program, active, history);
@@ -262,14 +265,14 @@ class _ActiveCard extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text(program.name.toUpperCase(),
+          Text(text.programName(program).toUpperCase(),
               style: AppText.displayMedium.copyWith(color: onDark)),
           const SizedBox(height: AppSpacing.xxs),
           Text(
             next == null
                 ? l10n.programsNoneLeft
                 : l10n.programsNext(
-                    next.session.title,
+                    text.planTitle(next.session),
                     weekdayFull(context, next.session.day.weekday),
                     planDuration(l10n, next.session.minutes)),
             style:
@@ -310,15 +313,16 @@ class _ActiveCard extends ConsumerWidget {
   }
 }
 
-class _ProgramCard extends StatelessWidget {
+class _ProgramCard extends ConsumerWidget {
   final TrainingProgram program;
   final bool felixPick;
   const _ProgramCard({required this.program, required this.felixPick});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
+    final text = ref.watch(catalogTextProvider);
     return Builder(
       builder: (cardContext) => Semantics(
         button: true,
@@ -341,11 +345,11 @@ class _ProgramCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(program.name.toUpperCase(),
+                          Text(text.programName(program).toUpperCase(),
                               style: AppText.displayMedium
                                   .copyWith(color: palette.textPrimary)),
                           const SizedBox(height: AppSpacing.xxs),
-                          Text(program.author,
+                          Text(text.programAuthor(program),
                               style: AppText.body14
                                   .copyWith(color: palette.textSecondary)),
                         ],
@@ -376,7 +380,7 @@ class _ProgramCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.xs),
-                Text(program.summary,
+                Text(text.programSummary(program),
                     style: AppText.bodyRegular
                         .copyWith(color: palette.textPrimary)),
                 const SizedBox(height: AppSpacing.xs),

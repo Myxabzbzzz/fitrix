@@ -24,6 +24,8 @@ import 'package:fitrix/features/programs/presentation/screens/programs_screen.da
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/core/i18n/catalog_overlay.dart';
+import 'support/catalog_fixtures.dart';
 import 'support/overflow.dart';
 
 // Wednesday 14 Oct 2026; Monday is 12 Oct.
@@ -419,15 +421,21 @@ void main() {
       Size size = const Size(390, 844),
       double textScale = 1.0,
       ActiveProgram? active,
+      String? language,
     }) async {
       tester.view.physicalSize = size * 3;
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);
-      SharedPreferences.setMockInitialValues({});
+      SharedPreferences.setMockInitialValues(
+          {if (language != null) 'language': language});
       final prefs = await SharedPreferences.getInstance();
       if (active != null) await ProgramStore(prefs).save(active);
       final c = ProviderContainer(overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
+        catalogBundleProvider.overrideWithValue(FixtureBundle.locale('ru', {
+          'training_programs': ruPrograms,
+          'workout_catalog': ruWorkoutCatalog,
+        })),
         clockProvider.overrideWithValue(() => _now),
         exerciseCatalogProvider.overrideWith((ref) async => exercises),
         programCatalogProvider.overrideWith((ref) async => catalog),
@@ -453,10 +461,12 @@ void main() {
         container: c,
         child: MaterialApp.router(
           routerConfig: router,
+          locale: language == null ? null : Locale(language),
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) => MediaQuery(
@@ -576,6 +586,64 @@ void main() {
       await tester.tap(find.byKey(const Key('program-end-confirm')));
       await tester.pumpAndSettle();
       expect(c.read(activeProgramProvider), isNull);
+    });
+
+    testWidgets('detail reads the program in Russian, the plan stays English',
+        (tester) async {
+      final c = await pump(tester, detail,
+          language: 'ru', size: const Size(390, 3000));
+      expect(find.text('Верх / низ 4×'), findsOneWidget);
+      expect(find.text('Шаблон FITRIX'), findsOneWidget);
+      expect(find.textContaining('дважды в неделю'), findsOneWidget);
+      expect(find.text('Двойная прогрессия'), findsOneWidget);
+      expect(find.text('Жим лёжа'), findsOneWidget);
+      expect(find.text('Upper / Lower 4×'), findsNothing);
+      expect(find.text('Bench press'), findsNothing);
+      expect(find.text('Верх тела 1'), findsWidgets);
+      await tester.tap(find.byKey(const Key('program-start')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('start-confirm')));
+      await tester.pumpAndSettle();
+      final templates = c.read(workoutTemplatesProvider);
+      expect(
+          templates.map((t) => t.name), contains('Upper / Lower 4× · Upper 1'));
+      expect(templates.last.exercises.first.name, isNot(contains('Жим')));
+      expect(c.read(weekPlanProvider).map((s) => s.title), contains('Upper 1'));
+    });
+
+    testWidgets('Russian program screens fit SE at text scale 1.3',
+        (tester) async {
+      final active = ActiveProgram(
+          programId: 'upper-lower-4',
+          start: _d(12),
+          weekdays: [1, 2, 4, 5],
+          sessionTemplateIds: const {});
+      for (final loc in [
+        AppRouter.programs,
+        detail,
+        AppRouter.programsActive
+      ]) {
+        await pump(tester, loc,
+            size: iPhoneSeSize,
+            textScale: 1.3,
+            active: active,
+            language: 'ru',
+            plan: [_football('f', 17)],
+            history: [_bench(_d(9))]);
+        expectNoOverflow(tester, reason: loc);
+        await expectNoOverflowWhileScrolling(
+            tester, find.byType(Scrollable).first, -800);
+      }
+      await pump(tester, detail,
+          size: iPhoneSeSize,
+          textScale: 1.3,
+          language: 'ru',
+          plan: [_football('f', 17)],
+          history: [_bench(_d(9))]);
+      expect(find.text('Верх / низ 4×'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('program-start')));
+      await tester.pumpAndSettle();
+      expectNoOverflow(tester);
     });
 
     for (final scale in [1.0, 1.3]) {

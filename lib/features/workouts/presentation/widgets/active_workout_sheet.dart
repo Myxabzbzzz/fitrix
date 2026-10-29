@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -361,7 +362,7 @@ class _KeyboardDoneBar extends StatelessWidget {
   }
 }
 
-class _SheetHeader extends StatelessWidget {
+class _SheetHeader extends ConsumerWidget {
   final ActiveWorkout workout;
 
   /// 0 = collapsed, 1 = expanded; sizes interpolate in between.
@@ -375,7 +376,7 @@ class _SheetHeader extends StatelessWidget {
       ui.lerpDouble(ActiveWorkoutSheet.collapsedHeight, expandedHeight, t)!;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final timerSize = ui.lerpDouble(AppText.micro.fontSize!, 44, t)!;
 
@@ -398,7 +399,7 @@ class _SheetHeader extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              workout.template.name,
+              ref.watch(catalogTextProvider).templateName(workout.template),
               style: AppText.headingS.copyWith(color: palette.textPrimary),
             ),
             ElapsedTimeText(

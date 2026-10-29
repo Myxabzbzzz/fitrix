@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/features/workouts/presentation/sport_l10n.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -187,7 +188,7 @@ class _SessionRow extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(s.title,
+                Text(ref.watch(catalogTextProvider).planTitle(s),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style:

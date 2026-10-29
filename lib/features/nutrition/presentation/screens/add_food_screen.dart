@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -70,7 +71,8 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(
-          content: Text(l10n.nutritionAddedTo(food.name, _slot.name))));
+          content: Text(l10n.nutritionAddedTo(
+              ref.read(catalogTextProvider).foodName(food), _slot.name))));
   }
 
   @override
@@ -160,8 +162,10 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
   Widget _body(BuildContext context, FoodCatalog catalog, DateTime today) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
+    final text = ref.watch(catalogTextProvider);
     final results = catalog.search(_query,
-        category: _category == _allCategories ? null : _category);
+        category: _category == _allCategories ? null : _category,
+        nameOf: text.foodName);
     final recent = [
       for (final id
           in ref.watch(foodLogStoreProvider).recentFoodIds(today, days: 7))
@@ -254,7 +258,7 @@ class _AddFoodScreenState extends ConsumerState<AddFoodScreen> {
   }
 }
 
-class _FoodRow extends StatelessWidget {
+class _FoodRow extends ConsumerWidget {
   final Food food;
   final VoidCallback onOpen;
   final VoidCallback onQuickAdd;
@@ -262,9 +266,11 @@ class _FoodRow extends StatelessWidget {
       {required this.food, required this.onOpen, required this.onQuickAdd});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
+    final text = ref.watch(catalogTextProvider);
+    final name = text.foodName(food);
     final p = food.portions.first;
     return InkWell(
       onTap: onOpen,
@@ -279,7 +285,7 @@ class _FoodRow extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   color: palette.buttonMuted, borderRadius: AppRadius.smAll),
-              child: Text(food.name.substring(0, 1).toUpperCase(),
+              child: Text(name.substring(0, 1).toUpperCase(),
                   style:
                       AppText.headingS.copyWith(color: palette.textSecondary)),
             ),
@@ -290,7 +296,7 @@ class _FoodRow extends StatelessWidget {
                 children: [
                   Text.rich(
                     TextSpan(children: [
-                      TextSpan(text: food.name),
+                      TextSpan(text: name),
                       if (food.uzbek) ...[
                         const TextSpan(text: '  '),
                         WidgetSpan(
@@ -314,7 +320,7 @@ class _FoodRow extends StatelessWidget {
                   ),
                   Text(
                     l10n.nutritionPortionLine(
-                      '${p.label} ${p.grams} g',
+                      '${text.portion(p.label)} ${p.grams} g',
                       '${food.kcalFor(p.grams)}',
                       '${food.proteinFor(p.grams).round()}',
                     ),

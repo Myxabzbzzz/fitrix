@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -219,7 +220,14 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       child: CircularProgressIndicator(color: palette.accent)),
                   error: (_, __) =>
                       _content(context, const [], cardMax, location),
-                  data: (all) => _content(context, all, cardMax, location),
+                  data: (all) => _content(
+                      context,
+                      [
+                        for (final p in all)
+                          ref.watch(catalogTextProvider).place(p),
+                      ],
+                      cardMax,
+                      location),
                 );
               }),
             ),

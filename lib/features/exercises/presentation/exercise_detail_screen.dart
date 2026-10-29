@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
 import 'package:fitrix/core/widgets/equal_height_row.dart';
 import 'package:fitrix/core/felix/ask_felix.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -48,6 +49,7 @@ class ExerciseDetailScreen extends ConsumerWidget {
     final catalog = ref.watch(exerciseCatalogProvider).valueOrNull;
     final info = catalog?.byId(id);
     final history = ref.watch(workoutHistoryProvider);
+    final text = ref.watch(catalogTextProvider);
 
     Widget bar() => Padding(
           padding: const EdgeInsets.fromLTRB(
@@ -79,6 +81,9 @@ class ExerciseDetailScreen extends ConsumerWidget {
 
     final sessions = sessionsOf(info, catalog, history);
     final similar = catalog.similarTo(info);
+    final name = text.exerciseName(info);
+    final steps = text.exerciseSteps(info);
+    final mistakes = text.exerciseMistakes(info);
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -92,7 +97,7 @@ class ExerciseDetailScreen extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(
                     AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.lg),
                 children: [
-                  Text(info.name,
+                  Text(name,
                       style: AppText.headingXL
                           .copyWith(color: palette.textPrimary)),
                   const SizedBox(height: AppSpacing.xs),
@@ -101,20 +106,22 @@ class ExerciseDetailScreen extends ConsumerWidget {
                       runSpacing: AppSpacing.xs,
                       children: [
                         _Tag(l10n.equipmentName(info.equipment)),
-                        _Tag(info.pattern),
+                        _Tag(text.pattern(info.pattern)),
                         if (info.compound) _Tag(l10n.exerciseCompound),
                         _Tag(l10n.levelName(info.level)),
                       ]),
                   const SizedBox(height: AppSpacing.md),
                   _Muscles(
                       label: l10n.exercisePrimary,
-                      muscles: info.primary,
+                      muscles: [for (final m in info.primary) text.muscle(m)],
                       strong: true),
                   if (info.secondary.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.xs),
                     _Muscles(
                         label: l10n.exerciseSecondary,
-                        muscles: info.secondary,
+                        muscles: [
+                          for (final m in info.secondary) text.muscle(m)
+                        ],
                         strong: false),
                   ],
                   const SizedBox(height: AppSpacing.lg),
@@ -125,18 +132,18 @@ class ExerciseDetailScreen extends ConsumerWidget {
                           style: AppText.bodyRegular
                               .copyWith(color: palette.textSecondary))
                       : _Numbers(sessions: sessions),
-                  if (info.steps.isNotEmpty) ...[
+                  if (steps.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.lg),
                     _title(context, l10n.exerciseHowTo),
                     const SizedBox(height: AppSpacing.xs),
-                    for (var i = 0; i < info.steps.length; i++)
-                      _Step(number: i + 1, text: info.steps[i]),
+                    for (var i = 0; i < steps.length; i++)
+                      _Step(number: i + 1, text: steps[i]),
                   ],
-                  if (info.mistakes.isNotEmpty) ...[
+                  if (mistakes.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.lg),
                     _title(context, l10n.exerciseMistakes),
                     const SizedBox(height: AppSpacing.xs),
-                    for (final m in info.mistakes) _Mistake(m),
+                    for (final m in mistakes) _Mistake(m),
                   ],
                   if (similar.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.lg),
@@ -158,7 +165,7 @@ class ExerciseDetailScreen extends ConsumerWidget {
                                 borderRadius: AppRadius.fullAll,
                                 border: Border.all(color: palette.border),
                               ),
-                              child: Text(s.name,
+                              child: Text(text.exerciseName(s),
                                   style: AppText.body14
                                       .copyWith(color: palette.textPrimary)),
                             ),
@@ -189,7 +196,7 @@ class ExerciseDetailScreen extends ConsumerWidget {
                       expand: true,
                       onPressed: () => askFelix(context, ref,
                           topic: AssistantTopic.forSport(Sport.gym),
-                          draft: l10n.exerciseAskFelixDraft(info.name)),
+                          draft: l10n.exerciseAskFelixDraft(name)),
                     ),
                     AppButton(
                       label: l10n.exerciseAddToWorkout,

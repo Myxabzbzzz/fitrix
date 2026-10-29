@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -318,6 +319,7 @@ class _InSeason extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final catalog = ref.watch(foodCatalogProvider).valueOrNull;
     final ids = seasonalFoodIds[today.month] ?? const <String>[];
+    final text = ref.watch(catalogTextProvider);
     final foods = [
       if (catalog != null)
         for (final id in ids)
@@ -367,6 +369,10 @@ class _InSeason extends ConsumerWidget {
             separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.xs),
             itemBuilder: (context, i) {
               final f = foods[i];
+              final name = text.foodName(f);
+              // Translated, the title already reads in the app language.
+              final caption =
+                  name == f.name ? '${local(f)} · ${richest(f)}' : richest(f);
               return Container(
                 width: 148,
                 padding: const EdgeInsets.all(AppSpacing.sm),
@@ -375,12 +381,12 @@ class _InSeason extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(f.name,
+                    Text(name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppText.bodyStrong
                             .copyWith(color: palette.textPrimary)),
-                    Text('${local(f)} · ${richest(f)}',
+                    Text(caption,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppText.caption

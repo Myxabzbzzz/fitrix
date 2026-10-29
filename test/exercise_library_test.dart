@@ -17,6 +17,8 @@ import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
 import 'package:fitrix/features/workouts/presentation/widgets/active_workout_sheet.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
+import 'package:fitrix/core/i18n/catalog_overlay.dart';
+import 'support/catalog_fixtures.dart';
 import 'support/overflow.dart';
 
 late ExerciseCatalog _catalog;
@@ -56,11 +58,15 @@ WorkoutTemplate _template() => WorkoutTemplate(
 Future<ProviderContainer> _container({
   List<CompletedWorkout> history = const [],
   bool active = false,
+  String? language,
 }) async {
-  SharedPreferences.setMockInitialValues({});
+  SharedPreferences.setMockInitialValues(
+      {if (language != null) 'language': language});
   final prefs = await SharedPreferences.getInstance();
   final c = ProviderContainer(overrides: [
     sharedPreferencesProvider.overrideWithValue(prefs),
+    catalogBundleProvider.overrideWithValue(
+        FixtureBundle.locale('ru', {'exercises': ruExercises})),
     exerciseCatalogProvider.overrideWith((ref) async => _catalog),
     todayProvider.overrideWith((ref) => DateTime(2026, 10, 18)),
   ]);
@@ -79,6 +85,7 @@ Future<void> _pump(
   Size size = const Size(390, 6000),
   double textScale = 1,
   Widget? home,
+  Locale? locale,
 }) async {
   tester.view.physicalSize = size * 3;
   tester.view.devicePixelRatio = 3;
@@ -113,6 +120,7 @@ Future<void> _pump(
     container: c,
     child: MaterialApp.router(
       routerConfig: router,
+      locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) => MediaQuery(
@@ -431,6 +439,93 @@ void main() {
         ]);
         await _pump(tester, c, entry.value, size: se, textScale: 1.3);
         expectNoOverflow(tester);
+      });
+    }
+  });
+
+  group('in Russian (catalog overlay)', () {
+    const ru = Locale('ru');
+    const benchRu = 'Жим штанги лёжа на горизонтальной скамье';
+
+    testWidgets('detail shows the name, steps, mistakes, muscles and pattern',
+        (tester) async {
+      final c = await _container(language: 'ru');
+      await _pump(tester, c, '${AppRouter.exerciseLibrary}/bench-press',
+          locale: ru);
+      expect(find.text(benchRu), findsOneWidget);
+      expect(find.text('Bench press'), findsNothing);
+      expect(find.textContaining('Глаза под грифом'), findsOneWidget);
+      expect(find.text('Отбив грифа от груди'), findsOneWidget);
+      expect(find.text('Грудные мышцы'), findsOneWidget);
+      expect(find.text('Передние дельтовидные'), findsOneWidget);
+      expect(find.text('ГОРИЗОНТАЛЬНЫЙ ЖИМ'), findsOneWidget);
+    });
+
+    testWidgets('adding it to a workout stores the English name',
+        (tester) async {
+      final c = await _container(language: 'ru');
+      await _pump(tester, c, '${AppRouter.exerciseLibrary}/bench-press',
+          locale: ru);
+      final l10n = lookupAppLocalizations(ru);
+      await tester.tap(find.text(l10n.exerciseAddToWorkout));
+      await tester.pump();
+      expect(c.read(activeWorkoutProvider)!.exercises.map((e) => e.name),
+          ['Bench press']);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('library lists it in Russian and finds it by a Russian alias',
+        (tester) async {
+      final c = await _container(language: 'ru');
+      await _pump(tester, c, AppRouter.exerciseLibrary, locale: ru);
+      await tester.enterText(find.byType(TextField), 'жим штанги');
+      await tester.pumpAndSettle();
+      expect(_row('bench-press'), findsOneWidget);
+      expect(
+          find.descendant(
+              of: _row('bench-press'), matching: find.text(benchRu)),
+          findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'bench press');
+      await tester.pumpAndSettle();
+      expect(_row('bench-press'), findsOneWidget);
+    });
+
+    testWidgets('the picker finds it by its Russian name', (tester) async {
+      final c = await _container(language: 'ru', active: true);
+      await _pump(tester, c, AppRouter.addExerciseTo(), locale: ru);
+      // The picker opens on the workout's group (back): show every group.
+      await tester.tap(find.text(lookupAppLocalizations(ru).exercisesAll));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'скамье');
+      await tester.pumpAndSettle();
+      expect(_pick('bench-press'), findsOneWidget);
+      await tester.tap(_pick('bench-press'));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('confirm-add')));
+      await tester.pumpAndSettle();
+      expect(c.read(activeWorkoutProvider)!.exercises.last.name, 'Bench press');
+    });
+
+    const se = Size(375, 667);
+    for (final entry in {
+      'library': AppRouter.exerciseLibrary,
+      'detail': '${AppRouter.exerciseLibrary}/bench-press',
+      'add': AppRouter.addExerciseTo(),
+    }.entries) {
+      testWidgets('${entry.key} fits SE at 1.3x text', (tester) async {
+        final c = await _container(language: 'ru', active: true, history: [
+          _past(DateTime(2026, 10, 10), [
+            Exercise(name: 'Bench press', sets: [_done(82.5, 9)]),
+          ]),
+          _past(DateTime(2026, 8, 10), [
+            Exercise(name: 'Bench press', sets: [_done(70, 9)]),
+          ]),
+        ]);
+        await _pump(tester, c, entry.value,
+            size: se, textScale: 1.3, locale: ru);
+        expectNoOverflow(tester);
+        await expectNoOverflowWhileScrolling(
+            tester, find.byType(Scrollable).first, -600);
       });
     }
   });

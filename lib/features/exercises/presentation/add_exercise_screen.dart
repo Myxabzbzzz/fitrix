@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
@@ -91,6 +92,7 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
     final catalog = ref.watch(exerciseCatalogProvider).valueOrNull;
     final history = ref.watch(workoutHistoryProvider);
     final today = ref.watch(todayProvider);
+    final text = ref.watch(catalogTextProvider);
 
     final bar = Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -107,8 +109,10 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
               workout == null
                   ? ''
                   : _replaceIndex(workout) != null
-                      ? l10n.addExerciseSwapTitle(workout.template.name)
-                      : l10n.addExerciseTitle(workout.template.name),
+                      ? l10n.addExerciseSwapTitle(
+                          text.templateName(workout.template))
+                      : l10n.addExerciseTitle(
+                          text.templateName(workout.template)),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -174,9 +178,12 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
       }
     }
 
-    final all = filterExercises(catalog.all, group: _group, query: _query)
+    String nameOf(ExerciseInfo e) => text.exerciseName(e);
+    final all = filterExercises(catalog.all,
+            group: _group, query: _query, text: text)
         .toList()
-      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      ..sort(
+          (a, b) => nameOf(a).toLowerCase().compareTo(nameOf(b).toLowerCase()));
 
     final sets = _group == null
         ? 0
@@ -200,7 +207,7 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
       final on = _selected.contains(e.id);
       return ExerciseRow(
         key: ValueKey('$prefix-${e.id}'),
-        name: e.name,
+        name: nameOf(e),
         subtitle: locked
             ? '${l10n.equipmentName(e.equipment)} · ${l10n.addExerciseInWorkout}'
             : subtitle,
@@ -225,7 +232,7 @@ class _AddExerciseScreenState extends ConsumerState<AddExerciseScreen> {
     }
 
     String sub(ExerciseInfo e) =>
-        '${l10n.equipmentName(e.equipment)} · ${e.pattern}';
+        '${l10n.equipmentName(e.equipment)} · ${text.pattern(e.pattern)}';
 
     final n = _selected.length;
     return Scaffold(
