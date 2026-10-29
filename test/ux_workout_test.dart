@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/widgets/workout_card.dart';
+import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 import 'package:fitrix/features/workouts/presentation/providers/workouts_provider.dart';
@@ -221,11 +223,15 @@ void main() {
   });
 
   group('starter workouts in Russian (catalog overlay)', () {
+    late ExerciseCatalog catalog;
+    setUpAll(() async => catalog = await ExerciseCatalog.load(rootBundle));
+
     Future<ProviderContainer> ru() async {
       SharedPreferences.setMockInitialValues({'language': 'ru'});
       final prefs = await SharedPreferences.getInstance();
       final c = ProviderContainer(overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
+        exerciseCatalogProvider.overrideWith((ref) async => catalog),
         catalogBundleProvider.overrideWithValue(
             FixtureBundle.locale('ru', {'workout_catalog': ruWorkoutCatalog})),
       ]);
@@ -284,6 +290,46 @@ void main() {
           find.byWidgetPredicate(
               (w) => w is WorkoutCard && w.title == 'Мои ноги'),
           findsOneWidget);
+    });
+
+    testWidgets(
+        'a typed exercise that reads like a catalog lift is stored in English',
+        (tester) async {
+      _size(tester, iPhoneSeSize);
+      final c = await ru();
+      await tester.pumpWidget(_app(
+          c, Scaffold(body: EditWorkoutSheet(template: legs(c))),
+          locale: const Locale('ru')));
+      await tester.pumpAndSettle();
+      Future<void> add(String text) async {
+        await tester.enterText(find.byType(TextField).last, text);
+        await tester.tap(find.byIcon(Icons.add));
+        await tester.pumpAndSettle();
+      }
+
+      await add('жим ЛЁЖА');
+      await add('Подъем на носки');
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      final names = [for (final e in legs(c).exercises) e.name];
+      expect(names, contains('Bench press'));
+      expect(names, isNot(contains('жим ЛЁЖА')));
+      // Not a catalog name: stored as typed.
+      expect(names, contains('Подъем на носки'));
+    });
+
+    testWidgets('a renamed starter with its translated name stays English',
+        (tester) async {
+      _size(tester, iPhoneSeSize);
+      final c = await ru();
+      await tester.pumpWidget(_app(
+          c, Scaffold(body: EditWorkoutSheet(template: legs(c))),
+          locale: const Locale('ru')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.widgetWithText(TextField, 'Ноги'), ' ноги ');
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      expect(legs(c).name, 'Legs');
     });
   });
 }

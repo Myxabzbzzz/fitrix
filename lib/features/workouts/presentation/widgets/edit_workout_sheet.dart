@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/i18n/catalog_text.dart';
+import 'package:fitrix/core/text/normalize.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/features/workouts/data/felix_templates_store.dart';
@@ -34,8 +35,11 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
   }
 
   void _addExercise() {
-    final name = _exerciseController.text.trim();
-    if (name.isEmpty) return;
+    final typed = _exerciseController.text.trim();
+    if (typed.isEmpty) return;
+    // Typed like the app-language name of a catalog lift: store the English.
+    final name = ref.read(catalogTextProvider).canonicalExerciseName(typed,
+        known: [for (final e in _exercises) e.name]);
     setState(() {
       _exercises = [
         ..._exercises,
@@ -62,7 +66,7 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
           widget.template.copyWith(
             // Unchanged keeps the stored (English) name, so a starter
             // workout still follows the app language.
-            name: name.isEmpty || name == _shownName
+            name: name.isEmpty || searchFold(name) == searchFold(_shownName)
                 ? widget.template.name
                 : name,
             exercises: _exercises,
@@ -81,6 +85,8 @@ class _EditWorkoutSheetState extends ConsumerState<EditWorkoutSheet> {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
+    // Keeps the catalogs loaded for [_addExercise].
+    ref.watch(catalogTextProvider);
 
     return Padding(
       padding: EdgeInsets.only(

@@ -90,6 +90,24 @@ class CatalogText {
     return stored;
   }
 
+  /// The English name to store for an exercise [typed] by the user: when it
+  /// reads (after [searchFold]) like the app-language name of a catalog
+  /// exercise or of one of [known] (English names already in the workout),
+  /// that English name; else [typed] as it is.
+  String canonicalExerciseName(String typed,
+      {Iterable<String> known = const []}) {
+    if (isEnglish) return typed;
+    final f = searchFold(typed);
+    if (f.isEmpty) return typed;
+    for (final english in [
+      ...known,
+      for (final e in exercises?.all ?? const <ExerciseInfo>[]) e.name,
+    ]) {
+      if (searchFold(exercise(english)) == f) return english;
+    }
+    return typed;
+  }
+
   /// Whether [query] (already lower case and trimmed) finds [e] by its
   /// English name or aliases or by those of the app language.
   bool exerciseMatches(ExerciseInfo e, String query) {
