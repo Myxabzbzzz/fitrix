@@ -51,14 +51,15 @@ void main() {
       final text =
           File('ios/Runner/$lang.lproj/InfoPlist.strings').readAsStringSync();
       return {
-        for (final m in RegExp(r'^"(\w+)" = "((?:[^"\\]|\\.)*)";$',
-                multiLine: true)
-            .allMatches(text))
+        for (final m
+            in RegExp(r'^"(\w+)" = "((?:[^"\\]|\\.)*)";$', multiLine: true)
+                .allMatches(text))
           m.group(1)!: m.group(2)!,
       };
     }
 
-    test('Info.plist asks for location, Health, mic, speech, camera, photos '
+    test(
+        'Info.plist asks for location, Health, mic, speech, camera, photos '
         'and the local network', () {
       expect(
           keys,
@@ -89,9 +90,7 @@ void main() {
         }
         expect(project, contains('path = $lang.lproj/InfoPlist.strings;'));
         expect(
-            RegExp(r'knownRegions = \(([^)]*)\)')
-                .firstMatch(project)!
-                .group(1),
+            RegExp(r'knownRegions = \(([^)]*)\)').firstMatch(project)!.group(1),
             contains('$lang,'));
       });
     }

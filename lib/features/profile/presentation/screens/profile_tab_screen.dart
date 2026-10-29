@@ -373,7 +373,8 @@ class ProfileTabScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               child: Row(
                 children: [
-                  stat('${history.length}', l10n.profileWorkouts(history.length)),
+                  stat('${history.length}',
+                      l10n.profileWorkouts(history.length)),
                   const SizedBox(width: AppSpacing.sm),
                   stat('$streak', l10n.profileDayStreak(streak)),
                 ],

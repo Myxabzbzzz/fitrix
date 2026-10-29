@@ -97,8 +97,8 @@ void main() {
       expect(firstDay.daysToBalance, 28);
 
       final first = today.subtract(const Duration(days: 14));
-      final twoWeeks = loadSummary(
-          [DailyLoad(first, 300), DailyLoad(today, 300)], today);
+      final twoWeeks =
+          loadSummary([DailyLoad(first, 300), DailyLoad(today, 300)], today);
       expect(twoWeeks.hasForm, isTrue);
       expect(twoWeeks.form, isNotNull);
       expect(twoWeeks.hasBalance, isFalse);

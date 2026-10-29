@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/i18n/catalog_overlay.dart';
 import 'package:fitrix/core/text/normalize.dart';
 import 'package:fitrix/features/content/data/models.dart';
+import 'package:fitrix/features/content/providers.dart';
 import 'package:fitrix/features/exercises/data/exercise_catalog.dart';
 import 'package:fitrix/features/nutrition/data/food_catalog.dart';
 import 'package:fitrix/features/nutrition/data/food_log_store.dart';
@@ -16,13 +17,18 @@ import 'package:fitrix/features/workouts/data/workout_catalog.dart';
 /// stored in workouts, plans and history. Every method falls back to the
 /// English it was given; nothing here is ever stored.
 class CatalogText {
-  CatalogText(this.overlay, {this.exercises, this.programs});
+  CatalogText(this.overlay, {this.exercises, this.programs, this.seed});
 
   static final english = CatalogText(CatalogOverlay.empty);
 
   final CatalogOverlay overlay;
   final ExerciseCatalog? exercises;
   final ProgramCatalog? programs;
+
+  /// The bundled seed content (`seed_content.json`). When given, a content
+  /// field reads its translation only while the row's English text equals
+  /// the seed's for that id, so a server edit is not hidden. Null: no check.
+  final Map<String, dynamic>? seed;
 
   bool get isEnglish => overlay.isEmpty;
 
@@ -204,8 +210,18 @@ class CatalogText {
 
   // Seed / cloud content ---------------------------------------------
 
-  String _c(String section, String id, String field, String english) =>
-      _t('seed_content', [section, id, field], english);
+  String _c(String section, String id, String field, String english) {
+    if (isEnglish) return english;
+    final seed = this.seed;
+    if (seed != null) {
+      Object? seedEnglish;
+      for (final r in seed[section] as List? ?? const []) {
+        if (r is Map && r['id'] == id) seedEnglish = r[field];
+      }
+      if (seedEnglish != english) return english;
+    }
+    return overlay.text('seed_content', [section, id, field], english);
+  }
 
   Product product(Product p) => isEnglish
       ? p
@@ -266,6 +282,10 @@ class CatalogText {
         );
 }
 
+/// The bundled seed content, to tell a server edit from the seed's text.
+final bundledSeedProvider = FutureProvider<Map<String, dynamic>>(
+    (ref) => ref.watch(seedLoaderProvider)());
+
 /// [CatalogText] for the app language. English until the overlay and the
 /// catalogs have loaded.
 final catalogTextProvider = Provider<CatalogText>((ref) {
@@ -275,5 +295,7 @@ final catalogTextProvider = Provider<CatalogText>((ref) {
     overlay,
     exercises: ref.watch(exerciseCatalogProvider).valueOrNull,
     programs: ref.watch(programCatalogProvider).valueOrNull,
+    // Until the seed has loaded nothing matches it: English.
+    seed: ref.watch(bundledSeedProvider).valueOrNull ?? const {},
   );
 });

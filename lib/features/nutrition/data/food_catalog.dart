@@ -150,10 +150,10 @@ class FoodCatalog {
         if ((category == null || f.category == category) && matches(f)) f,
     ];
     if (q.isNotEmpty) {
-      int rank(Food f) => searchFold(f.name).startsWith(q) ||
-              (shown(f)?.startsWith(q) ?? false)
-          ? 0
-          : 1;
+      int rank(Food f) =>
+          searchFold(f.name).startsWith(q) || (shown(f)?.startsWith(q) ?? false)
+              ? 0
+              : 1;
       found.sort((a, b) => rank(a).compareTo(rank(b)));
     }
     return found;

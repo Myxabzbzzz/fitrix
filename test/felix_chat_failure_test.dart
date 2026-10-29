@@ -55,8 +55,7 @@ void main() {
 
   Future<void> pump(WidgetTester tester, {List<ChatMessage>? stored}) async {
     SharedPreferences.setMockInitialValues({
-      if (stored != null)
-        _topic.historyKey: ChatMessage.encodeMessages(stored),
+      if (stored != null) _topic.historyKey: ChatMessage.encodeMessages(stored),
     });
     prefs = await SharedPreferences.getInstance();
     tester.view.physicalSize = const Size(375, 667) * 3;
