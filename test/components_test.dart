@@ -118,7 +118,7 @@ void main() {
         eyebrow: 'c',
         title: 't',
         message: 'm',
-        imageAsset: 'assets/images/felix_avatar.png',
+        imageAsset: 'assets/images/felix_robot.png',
         imageWidth: 64,
         imageHeight: 84)));
     final box = find

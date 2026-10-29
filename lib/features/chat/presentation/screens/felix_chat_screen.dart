@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fitrix/core/widgets/felix_avatar.dart';
 import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/features/chat/presentation/widgets/chat_composer.dart';
 import 'package:fitrix/features/language/presentation/providers/language_provider.dart';

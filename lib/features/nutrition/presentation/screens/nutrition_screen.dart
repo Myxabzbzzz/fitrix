@@ -362,8 +362,8 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen> {
             '${ref.watch(catalogTextProvider).portion(idea.portion.label)} $grams g',
             '${idea.food.proteinFor(grams).round()}',
           ),
-          imageAsset: 'assets/images/felix_avatar.png',
-          imageWidth: 56,
+          imageAsset: 'assets/images/felix_robot.png',
+          imageWidth: 54,
           imageHeight: 80,
           primaryLabel: l10n.nutritionAddToDinner,
           onPrimary: () {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fitrix/core/widgets/felix_avatar.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/core/time/today_provider.dart';
@@ -63,10 +64,7 @@ class FelixPlanCard extends ConsumerWidget {
       children: [
         Row(
           children: [
-            ClipOval(
-              child: Image.asset('assets/images/felix_avatar.png',
-                  width: 24, height: 24, fit: BoxFit.cover),
-            ),
+            const FelixAvatar(size: 24),
             const SizedBox(width: AppSpacing.xs),
             Expanded(
               child: Text(l10n.felixPlanBadge.toUpperCase(),

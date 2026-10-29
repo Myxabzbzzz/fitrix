@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/widgets/felix_avatar.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
@@ -28,10 +29,7 @@ class FelixPlanBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ClipOval(
-            child: Image.asset('assets/images/felix_avatar.png',
-                width: 16, height: 16, fit: BoxFit.cover),
-          ),
+          const FelixAvatar(size: 16),
           const SizedBox(width: AppSpacing.xxs),
           Flexible(
             child: Text(l10n.felixPlanBadge,

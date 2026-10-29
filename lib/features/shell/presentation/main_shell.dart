@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fitrix/core/widgets/felix_avatar.dart';
 import 'package:fitrix/core/animation/motion.dart';
 import 'package:fitrix/core/router/app_router.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
@@ -131,16 +132,9 @@ class _TabBar extends StatelessWidget {
                 width: 2,
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(2),
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/images/felix_avatar.png',
-                  width: 24,
-                  height: 24,
-                  fit: BoxFit.cover,
-                ),
-              ),
+            child: const Padding(
+              padding: EdgeInsets.all(2),
+              child: FelixAvatar(size: 24),
             ),
           ),
         ),

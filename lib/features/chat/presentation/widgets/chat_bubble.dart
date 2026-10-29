@@ -1,33 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fitrix/core/widgets/felix_avatar.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/models/chat_message.dart';
 import 'package:fitrix/features/chat/data/services/photo_service.dart';
 import 'package:fitrix/features/chat/presentation/widgets/typing_indicator.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
-
-/// Felix's avatar, shown beside the last bubble of a Felix group (24) and in
-/// the chat header (32).
-class FelixAvatar extends StatelessWidget {
-  final double size;
-
-  const FelixAvatar({super.key, required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipOval(
-      child: Image.asset(
-        'assets/images/felix_avatar.png',
-        key: const ValueKey('felix-avatar'),
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-}
 
 class ChatBubble extends StatelessWidget {
   static const double maxWidth = 247;

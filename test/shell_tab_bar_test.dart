@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
+import 'package:fitrix/core/widgets/felix_avatar.dart';
 import 'package:fitrix/features/shell/presentation/main_shell.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
@@ -98,7 +99,7 @@ void main() {
     final img = find.byWidgetPredicate((w) =>
         w is Image &&
         w.image is AssetImage &&
-        (w.image as AssetImage).assetName == 'assets/images/felix_avatar.png');
+        (w.image as AssetImage).assetName == FelixAvatar.asset);
     expect(img, findsOneWidget);
   });
 
@@ -115,7 +116,7 @@ void main() {
     final avatar = find.byWidgetPredicate((w) =>
         w is Image &&
         w.image is AssetImage &&
-        (w.image as AssetImage).assetName == 'assets/images/felix_avatar.png');
+        (w.image as AssetImage).assetName == FelixAvatar.asset);
     // 28 px outer circle, 24 px image inside the 2 px ring, both states.
     expect(tester.getSize(ring), const Size(28, 28));
     expect(tester.getSize(avatar), const Size(24, 24));
