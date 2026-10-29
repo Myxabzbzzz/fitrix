@@ -1,3 +1,4 @@
+import 'package:fitrix/core/widgets/shrink_to_fit_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -374,9 +375,8 @@ class _ProgramCard extends StatelessWidget {
                           .copyWith(color: palette.textPrimary)),
                 ),
                 const SizedBox(height: AppSpacing.xs),
-                Text(program.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                // Shrinks or wraps between words; never breaks one mid-word.
+                ShrinkToFitText(program.title,
                     style: AppText.displayMedium
                         .copyWith(color: palette.textPrimary)),
                 const Spacer(),

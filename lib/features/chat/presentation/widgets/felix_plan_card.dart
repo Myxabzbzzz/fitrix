@@ -1,3 +1,4 @@
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fitrix/core/widgets/felix_avatar.dart';
@@ -40,6 +41,7 @@ class FelixPlanCard extends ConsumerWidget {
     final palette = AppPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final today = ref.watch(todayProvider);
+    final text = ref.watch(catalogTextProvider);
     final count = action.templates.length;
     final title = count == 1
         ? action.templates.first.name
@@ -97,7 +99,7 @@ class FelixPlanCard extends ConsumerWidget {
                               .copyWith(color: palette.textPrimary)),
                       Text(
                           '${l10n.chatActionWorkoutExercises(t.exercises.length)}'
-                          '${t.exercises.isEmpty ? '' : ' · ${t.exercises.take(3).map((e) => e.name).join(', ')}'}',
+                          '${t.exercises.isEmpty ? '' : ' · ${t.exercises.take(3).map((e) => text.exercise(e.name)).join(', ')}'}',
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: AppText.caption
