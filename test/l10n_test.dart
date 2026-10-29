@@ -175,13 +175,15 @@ void main() {
       final uz = _arb('uz');
       for (final e in uz.entries) {
         if (e.value is! String) continue;
-        expect((e.value as String).toLowerCase(), isNot(contains('yondashuv')),
+        expect((e.value as String).toLowerCase(),
+            isNot(anyOf(contains('yondashuv'), contains('to‘plam'))),
             reason: e.key);
       }
       final l = lookupAppLocalizations(const Locale('uz'));
       expect(l.workoutAddSet, 'Set qo‘shish');
       expect(l.workoutTileSets, 'Setlar');
       expect(l.liftColSet, 'Set');
+      expect(l.programTopSetKg, 'eng yaxshi set, kg');
     });
   });
 

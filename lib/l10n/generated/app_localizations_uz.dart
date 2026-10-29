@@ -3474,7 +3474,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get programMainLifts => 'Asosiy mashqlar';
 
   @override
-  String get programTopSetKg => 'eng yaxshi to‘plam, kg';
+  String get programTopSetKg => 'eng yaxshi set, kg';
 
   @override
   String get programColLift => 'Mashq';
