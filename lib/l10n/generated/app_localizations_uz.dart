@@ -541,12 +541,12 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String workoutSetCount(int n) {
-    return '$n yondashuv';
+    return '$n set';
   }
 
   @override
   String workoutSetDone(int n) {
-    return '$n-yondashuv bajarildi';
+    return '$n-set bajarildi';
   }
 
   @override
@@ -554,7 +554,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get workoutFinishNoSets =>
-      'Birorta yondashuv belgilanmagan, shuning uchun mashg‘ulot saqlanmaydi.';
+      'Birorta set belgilanmagan, shuning uchun mashg‘ulot saqlanmaydi.';
 
   @override
   String get workoutKeepGoing => 'Davom etish';
@@ -571,7 +571,7 @@ class AppLocalizationsUz extends AppLocalizations {
       'Hozircha mashqlar yo‘q. Qo‘shish uchun mashg‘ulot kartasini bosib turing.';
 
   @override
-  String get workoutAddSet => 'Yondashuv qo‘shish';
+  String get workoutAddSet => 'Set qo‘shish';
 
   @override
   String get workoutFinishButton => 'Yakunlash';
@@ -1073,7 +1073,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String workoutLiveCaption(int x, int y, String t) {
-    return '$x / $y-yondashuv · $t ko‘tarildi';
+    return '$x / $y-set · $t ko‘tarildi';
   }
 
   @override
@@ -1113,7 +1113,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String workoutNextSet(int n, String kg, int reps) {
-    return '$n-yondashuv · $kg × $reps';
+    return '$n-set · $kg × $reps';
   }
 
   @override
@@ -1138,11 +1138,11 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get workoutMenuWarmup => 'Isitish yondashuvlarini qo‘shish';
+  String get workoutMenuWarmup => 'Isitish setlarini qo‘shish';
 
   @override
   String workoutMenuWarmupSub(String plan) {
-    return '2 yondashuv: $plan';
+    return '2 set: $plan';
   }
 
   @override
@@ -1158,7 +1158,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get workoutMenuNoteEmpty => 'Eslatma qo‘shish';
 
   @override
-  String get workoutMenuNoteHint => 'Masalan: oxirgi yondashuvda tasma';
+  String get workoutMenuNoteHint => 'Masalan: oxirgi setda tasma';
 
   @override
   String get workoutNoteSave => 'Saqlash';
@@ -1177,14 +1177,14 @@ class AppLocalizationsUz extends AppLocalizations {
   String get workoutRemoveTitle => 'Bu mashqni olib tashlaysizmi?';
 
   @override
-  String get workoutRemoveBody => 'Yozilgan yondashuvlar yo‘qoladi.';
+  String get workoutRemoveBody => 'Yozilgan setlar yo‘qoladi.';
 
   @override
   String get workoutRemoveConfirm => 'Olib tashlash';
 
   @override
   String workoutRpeTitle(int n) {
-    return '$n-yondashuv RPE · qanchalik og‘ir edi?';
+    return '$n-set RPE · qanchalik og‘ir edi?';
   }
 
   @override
@@ -1213,7 +1213,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get workoutTileVolume => 'Hajm';
 
   @override
-  String get workoutTileSets => 'Yondashuvlar';
+  String get workoutTileSets => 'Setlar';
 
   @override
   String get workoutTileRecords => 'Rekordlar';
@@ -1255,11 +1255,11 @@ class AppLocalizationsUz extends AppLocalizations {
   String get workoutExercisesTitle => 'Mashqlar';
 
   @override
-  String get workoutBestSetE1rm => 'eng yaxshi yondashuv · e1RM';
+  String get workoutBestSetE1rm => 'eng yaxshi set · e1RM';
 
   @override
   String workoutBestSet(String value) {
-    return 'Eng yaxshi yondashuv $value';
+    return 'Eng yaxshi set $value';
   }
 
   @override
@@ -1267,7 +1267,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String workoutNextTimeBody(String exercise, String kg) {
-    return '$exercise: barcha yondashuvlar bajarildi. Keyingi safar $kg kg ni sinab ko‘ring.';
+    return '$exercise: barcha setlar bajarildi. Keyingi safar $kg kg ni sinab ko‘ring.';
   }
 
   @override
@@ -1798,7 +1798,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get exerciseYourNumbers => 'Sizning natijalaringiz';
 
   @override
-  String get exerciseBestSet => 'Eng yaxshi yondashuv';
+  String get exerciseBestSet => 'Eng yaxshi set';
 
   @override
   String get exerciseE1rm => 'e1RM';
@@ -1853,7 +1853,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String addExerciseHint(String group, int n, int target) {
-    return '$group: bu hafta $n yondashuv, maqsad — $target.';
+    return '$group: bu hafta $n set, maqsad — $target.';
   }
 
   @override
@@ -2991,19 +2991,19 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String liftSince(String date, String kg, String reps, String since) {
-    return '$since dan beri · eng yaxshi yondashuv $kg × $reps, $date';
+    return '$since dan beri · eng yaxshi set $kg × $reps, $date';
   }
 
   @override
   String liftBestSet(String date, String kg, String reps) {
-    return 'eng yaxshi yondashuv $kg × $reps, $date';
+    return 'eng yaxshi set $kg × $reps, $date';
   }
 
   @override
   String get liftChartE1rm => 'e1RM';
 
   @override
-  String get liftChartTop => 'Eng yaxshi yondashuv vazni';
+  String get liftChartTop => 'Eng yaxshi set vazni';
 
   @override
   String get liftStrengthLevel => 'Kuch darajasi';
@@ -3047,7 +3047,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get liftReserve => '2 takror zaxirada';
 
   @override
-  String get liftColSet => 'Yondashuv';
+  String get liftColSet => 'Set';
 
   @override
   String get liftCol1rm => '%1TM';
@@ -3444,7 +3444,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String programDeloadNote(int w) {
-    return '$w-hafta — yengillashtirilgan hafta: odatdagi yondashuvlarning taxminan yarmini bajaring.';
+    return '$w-hafta — yengillashtirilgan hafta: odatdagi setlarning taxminan yarmini bajaring.';
   }
 
   @override

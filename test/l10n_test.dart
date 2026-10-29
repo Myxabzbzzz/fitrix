@@ -170,6 +170,21 @@ void main() {
     });
   });
 
+  group('uz gym sets', () {
+    test('a set is «set», never the calque «yondashuv»', () {
+      final uz = _arb('uz');
+      for (final e in uz.entries) {
+        if (e.value is! String) continue;
+        expect((e.value as String).toLowerCase(), isNot(contains('yondashuv')),
+            reason: e.key);
+      }
+      final l = lookupAppLocalizations(const Locale('uz'));
+      expect(l.workoutAddSet, 'Set qo‘shish');
+      expect(l.workoutTileSets, 'Setlar');
+      expect(l.liftColSet, 'Set');
+    });
+  });
+
   group('Russian unit labels agree with their number', () {
     final ru = lookupAppLocalizations(const Locale('ru'));
     test('ski days, descents, rides', () {
