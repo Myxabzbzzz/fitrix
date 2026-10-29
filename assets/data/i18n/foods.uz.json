@@ -1,0 +1,312 @@
+{
+  "foods": {
+    "chicken_breast": {
+      "name": "Tovuq ko‘kragi, pishirilgan"
+    },
+    "chicken_thigh": {
+      "name": "Tovuq soni, pishirilgan"
+    },
+    "beef_cooked": {
+      "name": "Mol go‘shti, pishirilgan"
+    },
+    "lamb_cooked": {
+      "name": "Qo‘y go‘shti, pishirilgan"
+    },
+    "turkey_breast": {
+      "name": "Kurka ko‘kragi, pishirilgan"
+    },
+    "salmon": {
+      "name": "Losos, pishirilgan"
+    },
+    "tuna_canned": {
+      "name": "Orkinos konservasi, suvda"
+    },
+    "cod": {
+      "name": "Treska, pishirilgan"
+    },
+    "shrimp": {
+      "name": "Krevetka, pishirilgan"
+    },
+    "egg_boiled": {
+      "name": "Tuxum, qaynatilgan"
+    },
+    "milk": {
+      "name": "Sut, to‘liq yog‘li"
+    },
+    "kefir": {
+      "name": "Kefir"
+    },
+    "yogurt": {
+      "name": "Yogurt, tabiiy"
+    },
+    "greek_yogurt": {
+      "name": "Grek yogurti, tabiiy"
+    },
+    "cottage_cheese": {
+      "name": "Tvorog"
+    },
+    "cheese_hard": {
+      "name": "Qattiq pishloq"
+    },
+    "butter": {
+      "name": "Sariyog‘"
+    },
+    "apple": {
+      "name": "Olma"
+    },
+    "banana": {
+      "name": "Banan"
+    },
+    "orange": {
+      "name": "Apelsin"
+    },
+    "pomegranate": {
+      "name": "Anor"
+    },
+    "grapes": {
+      "name": "Uzum"
+    },
+    "watermelon": {
+      "name": "Tarvuz"
+    },
+    "melon": {
+      "name": "Qovun"
+    },
+    "persimmon": {
+      "name": "Xurmo"
+    },
+    "quince": {
+      "name": "Behi"
+    },
+    "apricot": {
+      "name": "O‘rik"
+    },
+    "apricot_dried": {
+      "name": "Turshak (quritilgan o‘rik)"
+    },
+    "raisins": {
+      "name": "Mayiz"
+    },
+    "dates": {
+      "name": "Xurmo (finik)"
+    },
+    "tomato": {
+      "name": "Pomidor"
+    },
+    "cucumber": {
+      "name": "Bodring"
+    },
+    "carrot": {
+      "name": "Sabzi"
+    },
+    "onion": {
+      "name": "Piyoz"
+    },
+    "potato": {
+      "name": "Kartoshka, qaynatilgan"
+    },
+    "pumpkin": {
+      "name": "Qovoq"
+    },
+    "spinach": {
+      "name": "Ismaloq"
+    },
+    "broccoli": {
+      "name": "Brokkoli"
+    },
+    "bell_pepper": {
+      "name": "Bolgar qalampiri"
+    },
+    "cabbage": {
+      "name": "Karam"
+    },
+    "chickpeas": {
+      "name": "No‘xat, pishirilgan"
+    },
+    "lentils": {
+      "name": "Yasmiq, pishirilgan"
+    },
+    "mung_beans": {
+      "name": "Mosh, pishirilgan"
+    },
+    "rice_cooked": {
+      "name": "Oq guruch, pishirilgan"
+    },
+    "buckwheat": {
+      "name": "Grechka, pishirilgan"
+    },
+    "oatmeal_cooked": {
+      "name": "Suli bo‘tqasi, pishirilgan"
+    },
+    "oats_dry": {
+      "name": "Suli yormasi, quruq"
+    },
+    "pasta_cooked": {
+      "name": "Makaron, pishirilgan"
+    },
+    "bulgur": {
+      "name": "Bulgur, pishirilgan"
+    },
+    "bread_white": {
+      "name": "Oq non"
+    },
+    "bread_whole": {
+      "name": "To‘liq donli non"
+    },
+    "lavash": {
+      "name": "Lavash"
+    },
+    "tea_black": {
+      "name": "Qora choy, shakarsiz"
+    },
+    "coffee_black": {
+      "name": "Qora qahva"
+    },
+    "cola": {
+      "name": "Kola"
+    },
+    "orange_juice": {
+      "name": "Apelsin sharbati"
+    },
+    "whey_shake": {
+      "name": "Zardob proteini (kukun)"
+    },
+    "peanut_butter": {
+      "name": "Yeryong‘oq pastasi"
+    },
+    "walnuts": {
+      "name": "Grek yong‘og‘i"
+    },
+    "almonds": {
+      "name": "Bodom"
+    },
+    "olive_oil": {
+      "name": "Zaytun moyi"
+    },
+    "sunflower_oil": {
+      "name": "Kungaboqar yog‘i"
+    },
+    "honey": {
+      "name": "Asal"
+    },
+    "sugar": {
+      "name": "Shakar"
+    },
+    "dark_chocolate": {
+      "name": "Qora shokolad"
+    },
+    "tashkent_plov": {
+      "name": "Toshkent oshi"
+    },
+    "samarkand_plov": {
+      "name": "Samarqand oshi"
+    },
+    "plov_chickpeas": {
+      "name": "No‘xatli osh"
+    },
+    "chicken_plov": {
+      "name": "Tovuqli osh"
+    },
+    "wedding_plov": {
+      "name": "To‘y oshi"
+    },
+    "achichuk": {
+      "name": "Achchiq-chuchuk salati"
+    },
+    "non": {
+      "name": "Non"
+    },
+    "lagman": {
+      "name": "Lag‘mon"
+    },
+    "manti": {
+      "name": "Manti"
+    },
+    "shurpa": {
+      "name": "Sho‘rva"
+    },
+    "somsa": {
+      "name": "Somsa"
+    },
+    "shashlik_chicken": {
+      "name": "Tovuq kabobi"
+    },
+    "shashlik_beef": {
+      "name": "Mol go‘shti kabobi"
+    },
+    "shashlik_lamb": {
+      "name": "Qo‘y go‘shti kabobi"
+    },
+    "chuchvara": {
+      "name": "Chuchvara"
+    },
+    "dimlama": {
+      "name": "Dimlama"
+    },
+    "mastava": {
+      "name": "Mastava"
+    },
+    "norin": {
+      "name": "Norin"
+    },
+    "qatiq": {
+      "name": "Qatiq"
+    },
+    "suzma": {
+      "name": "Suzma"
+    },
+    "mosh_kichiri": {
+      "name": "Mosh kichiri"
+    },
+    "ayron": {
+      "name": "Ayron"
+    },
+    "shirguruch": {
+      "name": "Shirguruch (sutli guruch)"
+    }
+  },
+  "portions": {
+    "1 breast": "1 ta ko‘krak",
+    "½ breast": "½ ko‘krak",
+    "1 thigh": "1 ta son",
+    "1 portion": "1 porsiya",
+    "small portion": "kichik porsiya",
+    "1 fillet": "1 ta file",
+    "1 can": "1 banka",
+    "½ can": "½ banka",
+    "1 egg": "1 ta tuxum",
+    "2 eggs": "2 ta tuxum",
+    "1 glass": "1 stakan",
+    "½ glass": "½ stakan",
+    "1 cup": "1 piyola",
+    "3 tbsp": "3 osh qoshiq",
+    "1 slice": "1 bo‘lak",
+    "1 tsp": "1 choy qoshiq",
+    "1 tbsp": "1 osh qoshiq",
+    "1 medium": "1 ta o‘rtacha",
+    "1 small": "1 ta kichik",
+    "½ small": "½ ta kichik",
+    "1 bunch": "1 shingil",
+    "3 fruits": "3 ta meva",
+    "1 handful": "1 hovuch",
+    "3 dates": "3 ta xurmo",
+    "1 bowl": "1 kosa",
+    "½ cup": "½ piyola",
+    "1 plate": "1 likopcha",
+    "2 slices": "2 bo‘lak",
+    "1 sheet": "1 varaq",
+    "1 scoop": "1 o‘lchov qoshig‘i",
+    "2 squares": "2 bo‘lakcha",
+    "½ plate": "½ likopcha",
+    "2 plates": "2 likopcha",
+    "½ bowl": "½ kosa",
+    "¼ piece": "¼ dona",
+    "½ piece": "½ dona",
+    "1 piece": "1 dona",
+    "5 pieces": "5 dona",
+    "3 pieces": "3 dona",
+    "2 pieces": "2 dona",
+    "3 skewers": "3 six",
+    "1 skewer": "1 six"
+  }
+}

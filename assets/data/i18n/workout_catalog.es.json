@@ -1,0 +1,61 @@
+{
+  "templates": {
+    "gym-chest-biceps": {
+      "name": "Pecho y bíceps",
+      "focus": "Tren superior"
+    },
+    "gym-back-triceps": {
+      "name": "Espalda y tríceps",
+      "focus": "Tren superior"
+    },
+    "gym-legs": {
+      "name": "Piernas",
+      "focus": "Tren inferior"
+    },
+    "fitness-full-body": {
+      "name": "Cuerpo completo",
+      "focus": "Cuerpo completo"
+    }
+  },
+  "exerciseNames": {
+    "Biceps curl": "Curl de bíceps",
+    "Bench press": "Press de banca",
+    "Incline dumbbell press": "Press inclinado con mancuernas",
+    "Hammer curl": "Curl martillo",
+    "Cable fly": "Aperturas en polea",
+    "Push-ups": "Flexiones",
+    "Concentration curl": "Curl concentrado",
+    "Pull-ups": "Dominadas",
+    "Barbell row": "Remo con barra",
+    "Triceps pushdown": "Extensión de tríceps en polea",
+    "Skull crushers": "Press francés",
+    "Squat": "Sentadilla",
+    "Romanian deadlift": "Peso muerto rumano",
+    "Leg press": "Prensa de piernas",
+    "Calf raise": "Elevación de talones",
+    "Burpees": "Burpees",
+    "Kettlebell swing": "Swing con kettlebell",
+    "Plank (sec)": "Plancha (s)",
+    "Back squat": "Sentadilla trasera",
+    "Lat pulldown": "Jalón al pecho",
+    "Overhead press": "Press militar",
+    "Deadlift": "Peso muerto",
+    "Dumbbell row": "Remo con mancuerna",
+    "Goblet squat": "Sentadilla goblet",
+    "Dumbbell bench press": "Press de banca con mancuernas",
+    "Glute bridge": "Puente de glúteos",
+    "Crunch": "Crunch abdominal",
+    "Dumbbell shoulder press": "Press de hombros con mancuernas",
+    "Walking lunge": "Zancadas caminando",
+    "Bulgarian split squat": "Sentadilla búlgara",
+    "Lateral raise": "Elevaciones laterales",
+    "Seated cable row": "Remo sentado en polea",
+    "Face pull": "Jalón a la cara",
+    "Leg curl": "Curl femoral",
+    "Incline bench": "Press inclinado con barra",
+    "Chest-supported row": "Remo con apoyo en el pecho",
+    "Front squat": "Sentadilla frontal",
+    "Leg extension": "Extensión de cuádriceps",
+    "Hanging leg raise": "Elevación de piernas colgado"
+  }
+}

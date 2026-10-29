@@ -1,0 +1,61 @@
+{
+  "templates": {
+    "gym-chest-biceps": {
+      "name": "Грудь и бицепс",
+      "focus": "Верх тела"
+    },
+    "gym-back-triceps": {
+      "name": "Спина и трицепс",
+      "focus": "Верх тела"
+    },
+    "gym-legs": {
+      "name": "Ноги",
+      "focus": "Низ тела"
+    },
+    "fitness-full-body": {
+      "name": "Всё тело",
+      "focus": "Всё тело"
+    }
+  },
+  "exerciseNames": {
+    "Biceps curl": "Сгибания рук на бицепс",
+    "Bench press": "Жим лёжа",
+    "Incline dumbbell press": "Жим гантелей на наклонной скамье",
+    "Hammer curl": "Молотковые сгибания",
+    "Cable fly": "Сведение рук в кроссовере",
+    "Push-ups": "Отжимания",
+    "Concentration curl": "Концентрированные сгибания",
+    "Pull-ups": "Подтягивания",
+    "Barbell row": "Тяга штанги в наклоне",
+    "Triceps pushdown": "Разгибания рук на трицепс на блоке",
+    "Skull crushers": "Французский жим",
+    "Squat": "Приседания",
+    "Romanian deadlift": "Румынская тяга",
+    "Leg press": "Жим ногами",
+    "Calf raise": "Подъёмы на носки",
+    "Burpees": "Бёрпи",
+    "Kettlebell swing": "Махи гирей",
+    "Plank (sec)": "Планка (сек)",
+    "Back squat": "Приседания со штангой",
+    "Lat pulldown": "Тяга верхнего блока",
+    "Overhead press": "Жим штанги стоя",
+    "Deadlift": "Становая тяга",
+    "Dumbbell row": "Тяга гантели в наклоне",
+    "Goblet squat": "Гоблет-приседания",
+    "Dumbbell bench press": "Жим гантелей лёжа",
+    "Glute bridge": "Ягодичный мостик",
+    "Crunch": "Скручивания",
+    "Dumbbell shoulder press": "Жим гантелей над головой",
+    "Walking lunge": "Выпады в ходьбе",
+    "Bulgarian split squat": "Болгарские выпады",
+    "Lateral raise": "Махи гантелями в стороны",
+    "Seated cable row": "Тяга нижнего блока сидя",
+    "Face pull": "Тяга каната к лицу",
+    "Leg curl": "Сгибания ног в тренажёре",
+    "Incline bench": "Жим лёжа на наклонной скамье",
+    "Chest-supported row": "Тяга с упором грудью",
+    "Front squat": "Фронтальные приседания",
+    "Leg extension": "Разгибания ног в тренажёре",
+    "Hanging leg raise": "Подъём ног в висе"
+  }
+}

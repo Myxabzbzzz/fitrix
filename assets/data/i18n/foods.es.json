@@ -1,0 +1,312 @@
+{
+  "foods": {
+    "chicken_breast": {
+      "name": "Pechuga de pollo, cocida"
+    },
+    "chicken_thigh": {
+      "name": "Muslo de pollo, cocido"
+    },
+    "beef_cooked": {
+      "name": "Carne de vaca, cocida"
+    },
+    "lamb_cooked": {
+      "name": "Cordero, cocido"
+    },
+    "turkey_breast": {
+      "name": "Pechuga de pavo, cocida"
+    },
+    "salmon": {
+      "name": "Salmón, cocido"
+    },
+    "tuna_canned": {
+      "name": "Atún en lata al natural"
+    },
+    "cod": {
+      "name": "Bacalao, cocido"
+    },
+    "shrimp": {
+      "name": "Camarones, cocidos"
+    },
+    "egg_boiled": {
+      "name": "Huevo cocido"
+    },
+    "milk": {
+      "name": "Leche entera"
+    },
+    "kefir": {
+      "name": "Kéfir"
+    },
+    "yogurt": {
+      "name": "Yogur natural"
+    },
+    "greek_yogurt": {
+      "name": "Yogur griego natural"
+    },
+    "cottage_cheese": {
+      "name": "Requesón"
+    },
+    "cheese_hard": {
+      "name": "Queso curado"
+    },
+    "butter": {
+      "name": "Mantequilla"
+    },
+    "apple": {
+      "name": "Manzana"
+    },
+    "banana": {
+      "name": "Plátano"
+    },
+    "orange": {
+      "name": "Naranja"
+    },
+    "pomegranate": {
+      "name": "Granada"
+    },
+    "grapes": {
+      "name": "Uvas"
+    },
+    "watermelon": {
+      "name": "Sandía"
+    },
+    "melon": {
+      "name": "Melón"
+    },
+    "persimmon": {
+      "name": "Caqui"
+    },
+    "quince": {
+      "name": "Membrillo"
+    },
+    "apricot": {
+      "name": "Albaricoque"
+    },
+    "apricot_dried": {
+      "name": "Orejones"
+    },
+    "raisins": {
+      "name": "Pasas"
+    },
+    "dates": {
+      "name": "Dátiles"
+    },
+    "tomato": {
+      "name": "Tomate"
+    },
+    "cucumber": {
+      "name": "Pepino"
+    },
+    "carrot": {
+      "name": "Zanahoria"
+    },
+    "onion": {
+      "name": "Cebolla"
+    },
+    "potato": {
+      "name": "Papa cocida"
+    },
+    "pumpkin": {
+      "name": "Calabaza"
+    },
+    "spinach": {
+      "name": "Espinaca"
+    },
+    "broccoli": {
+      "name": "Brócoli"
+    },
+    "bell_pepper": {
+      "name": "Pimiento"
+    },
+    "cabbage": {
+      "name": "Repollo"
+    },
+    "chickpeas": {
+      "name": "Garbanzos, cocidos"
+    },
+    "lentils": {
+      "name": "Lentejas, cocidas"
+    },
+    "mung_beans": {
+      "name": "Frijol mungo, cocido"
+    },
+    "rice_cooked": {
+      "name": "Arroz blanco, cocido"
+    },
+    "buckwheat": {
+      "name": "Trigo sarraceno, cocido"
+    },
+    "oatmeal_cooked": {
+      "name": "Avena cocida"
+    },
+    "oats_dry": {
+      "name": "Avena en hojuelas, cruda"
+    },
+    "pasta_cooked": {
+      "name": "Pasta, cocida"
+    },
+    "bulgur": {
+      "name": "Bulgur, cocido"
+    },
+    "bread_white": {
+      "name": "Pan blanco"
+    },
+    "bread_whole": {
+      "name": "Pan integral"
+    },
+    "lavash": {
+      "name": "Lavash"
+    },
+    "tea_black": {
+      "name": "Té negro, sin azúcar"
+    },
+    "coffee_black": {
+      "name": "Café solo"
+    },
+    "cola": {
+      "name": "Refresco de cola"
+    },
+    "orange_juice": {
+      "name": "Jugo de naranja"
+    },
+    "whey_shake": {
+      "name": "Proteína de suero en polvo"
+    },
+    "peanut_butter": {
+      "name": "Crema de cacahuate"
+    },
+    "walnuts": {
+      "name": "Nueces"
+    },
+    "almonds": {
+      "name": "Almendras"
+    },
+    "olive_oil": {
+      "name": "Aceite de oliva"
+    },
+    "sunflower_oil": {
+      "name": "Aceite de girasol"
+    },
+    "honey": {
+      "name": "Miel"
+    },
+    "sugar": {
+      "name": "Azúcar"
+    },
+    "dark_chocolate": {
+      "name": "Chocolate negro"
+    },
+    "tashkent_plov": {
+      "name": "Plov de Taskent"
+    },
+    "samarkand_plov": {
+      "name": "Plov de Samarcanda"
+    },
+    "plov_chickpeas": {
+      "name": "Plov con garbanzos"
+    },
+    "chicken_plov": {
+      "name": "Plov de pollo"
+    },
+    "wedding_plov": {
+      "name": "Plov de boda (to‘y oshi)"
+    },
+    "achichuk": {
+      "name": "Ensalada achichuk"
+    },
+    "non": {
+      "name": "Non (pan plano)"
+    },
+    "lagman": {
+      "name": "Lagman"
+    },
+    "manti": {
+      "name": "Manti"
+    },
+    "shurpa": {
+      "name": "Shurpa"
+    },
+    "somsa": {
+      "name": "Somsa"
+    },
+    "shashlik_chicken": {
+      "name": "Shashlik de pollo"
+    },
+    "shashlik_beef": {
+      "name": "Shashlik de vaca"
+    },
+    "shashlik_lamb": {
+      "name": "Shashlik de cordero"
+    },
+    "chuchvara": {
+      "name": "Chuchvara"
+    },
+    "dimlama": {
+      "name": "Dimlama"
+    },
+    "mastava": {
+      "name": "Mastava"
+    },
+    "norin": {
+      "name": "Norin"
+    },
+    "qatiq": {
+      "name": "Qatiq (yogur agrio)"
+    },
+    "suzma": {
+      "name": "Suzma (yogur colado)"
+    },
+    "mosh_kichiri": {
+      "name": "Mosh kichiri"
+    },
+    "ayron": {
+      "name": "Ayron (bebida salada de yogur)"
+    },
+    "shirguruch": {
+      "name": "Arroz con leche (shirguruch)"
+    }
+  },
+  "portions": {
+    "1 breast": "1 pechuga",
+    "½ breast": "½ pechuga",
+    "1 thigh": "1 muslo",
+    "1 portion": "1 porción",
+    "small portion": "porción pequeña",
+    "1 fillet": "1 filete",
+    "1 can": "1 lata",
+    "½ can": "½ lata",
+    "1 egg": "1 huevo",
+    "2 eggs": "2 huevos",
+    "1 glass": "1 vaso",
+    "½ glass": "½ vaso",
+    "1 cup": "1 taza",
+    "3 tbsp": "3 cucharadas",
+    "1 slice": "1 rebanada",
+    "1 tsp": "1 cucharadita",
+    "1 tbsp": "1 cucharada",
+    "1 medium": "1 unidad mediana",
+    "1 small": "1 unidad pequeña",
+    "½ small": "½ unidad pequeña",
+    "1 bunch": "1 racimo",
+    "3 fruits": "3 unidades",
+    "1 handful": "1 puñado",
+    "3 dates": "3 dátiles",
+    "1 bowl": "1 tazón",
+    "½ cup": "½ taza",
+    "1 plate": "1 plato",
+    "2 slices": "2 rebanadas",
+    "1 sheet": "1 hoja",
+    "1 scoop": "1 medida",
+    "2 squares": "2 cuadritos",
+    "½ plate": "½ plato",
+    "2 plates": "2 platos",
+    "½ bowl": "½ tazón",
+    "¼ piece": "¼ pieza",
+    "½ piece": "½ pieza",
+    "1 piece": "1 pieza",
+    "5 pieces": "5 piezas",
+    "3 pieces": "3 piezas",
+    "2 pieces": "2 piezas",
+    "3 skewers": "3 brochetas",
+    "1 skewer": "1 brocheta"
+  }
+}

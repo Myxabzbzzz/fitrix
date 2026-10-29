@@ -1,0 +1,75 @@
+{
+  "gzclp": {
+    "name": "GZCLP",
+    "author": "Cody Lefever",
+    "summary": "Hajm qo‘shilgan chiziqli progressiya va to‘xtab qolganda aniq reja.",
+    "progressionRules": [
+      "Chiziqli progressiya: barcha setlarni bajarayotgan ekansiz, har mashg‘ulotda asosiy mashqqa 2,5 kg qo‘shing.",
+      "To‘xtab qolsangiz: vaznni 10% kamaytiring va qaytadan oshirib boring, so‘ng keyingi takrorlar sxemasiga o‘ting.",
+      "Uch bosqich: avval og‘ir asosiy mashq, keyin yengilroq ikkinchi mashq, so‘ng ko‘p takrorli yordamchi mashqlar."
+    ],
+    "sessions": [
+      "1-kun",
+      "2-kun",
+      "3-kun",
+      "4-kun"
+    ]
+  },
+  "full-body-3": {
+    "name": "Butun tana 3×",
+    "author": "FITRIX shabloni",
+    "summary": "Har bir mushak haftasiga ikki marta, 60 daqiqalik uchta mashg‘ulotda.",
+    "progressionRules": [
+      "Qo‘sh progressiya: har bir setda takrorlar oralig‘ining yuqori chegarasiga yeting, so‘ng vaznni eng kichik qadamga oshiring.",
+      "Ikki takrorni zaxirada qoldiring: yana taxminan ikkita toza takror qila oladigan paytda setni to‘xtating."
+    ],
+    "sessions": [
+      "Butun tana A",
+      "Butun tana B",
+      "Butun tana C"
+    ]
+  },
+  "stronglifts-5x5": {
+    "name": "StrongLifts 5×5",
+    "author": "Mehdi Hadim",
+    "summary": "Beshta mashq, beshtadan besh set, har mashg‘ulotda vazn qo‘shing.",
+    "progressionRules": [
+      "Har mashg‘ulotda vazn qo‘shing: barcha 5 × 5 ni bajargan har bir mashg‘ulotdan keyin shtangaga 2,5 kg qo‘shing.",
+      "Uddalay olmasangiz: shu vaznni takrorlang, uch marta uddalay olmasangiz, uni 10% kamaytiring."
+    ],
+    "sessions": [
+      "Mashg‘ulot A",
+      "Mashg‘ulot B"
+    ]
+  },
+  "ppl-6": {
+    "name": "Itarish / Tortish / Oyoqlar",
+    "author": "FITRIX shabloni",
+    "summary": "Deyarli har kuni shug‘ullana oladiganlar uchun yuqori chastota va hajm.",
+    "progressionRules": [
+      "Qo‘sh progressiya: har bir setda takrorlar oralig‘ining yuqori chegarasiga yeting, so‘ng tananing yuqori qismi mashqlariga 2,5 kg, pastki qismiga 5 kg qo‘shing.",
+      "Avval hajm: mashq to‘xtab qolsa, vazn qo‘shishdan oldin bitta set qo‘shing."
+    ],
+    "sessions": [
+      "Itarish",
+      "Tortish",
+      "Oyoqlar"
+    ]
+  },
+  "upper-lower-4": {
+    "name": "Yuqori / Pastki 4×",
+    "author": "FITRIX shabloni",
+    "summary": "Bir yillik tajribaga ega va har bir mushakni haftasiga ikki marta ishlatmoqchi bo‘lganlar uchun: avval og‘ir bazaviy mashqlar, so‘ng o‘rtacha yordamchi mashqlar.",
+    "progressionRules": [
+      "Qo‘sh progressiya: har bir setda takrorlar oralig‘ining yuqori chegarasiga yeting, so‘ng tananing yuqori qismi mashqlariga 2,5 kg, pastki qismiga 5 kg qo‘shing.",
+      "7-haftada yengillashtirish: mashqlarni o‘zgartirmang, lekin odatdagi setlarning taxminan yarmini bajaring, shunda oxirgi blokdan oldin charchoq kamayadi.",
+      "Hajmni oshiring: 1–6-haftalarda setlarni o‘zingiz qo‘shib boring, har bir mushakka haftasiga taxminan 10 tadan 16 tagacha."
+    ],
+    "sessions": [
+      "Yuqori 1",
+      "Pastki 1",
+      "Yuqori 2",
+      "Pastki 2"
+    ]
+  }
+}

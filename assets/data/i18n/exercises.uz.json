@@ -1,0 +1,1150 @@
+{
+  "exercises": {
+    "bench-press": {
+      "name": "Yotib shtanga ko‘tarish",
+      "steps": [
+        "Ko‘zlar grif ostida. Kuraklarni birlashtirib pastga tushiring, oyoqlar polga mahkam tirangan.",
+        "Grifni pastki nuqtada bilaklar tik turadigan qilib ushlang.",
+        "Grifni nazorat bilan ko‘krakning pastki qismiga tushiring, tekkizing va yuqoriga hamda biroz orqaga itaring.",
+        "Har bir takrorda tanani tarang qilib, nafasni ushlab turing. Dumba skameykadan ko‘tarilmaydi."
+      ],
+      "mistakes": [
+        "Grifni ko‘krakdan sakratib ko‘tarish",
+        "Tirsaklar 90° ga yoyilgan: yelkalarga ortiqcha yuk",
+        "Tosni skameykadan ko‘tarish"
+      ],
+      "aliases": [
+        "Skameykada shtanga ko‘tarish",
+        "Shtanga yotib",
+        "Bench press"
+      ]
+    },
+    "incline-bench": {
+      "name": "Qiya skameykada shtanga ko‘tarish",
+      "steps": [
+        "Skameykani 30 gradusga o‘rnating va oyoqlarni polga tirang.",
+        "Grifni ko‘krakning yuqori qismiga tushiring, tirsaklar gavdaga nisbatan taxminan 45 gradus.",
+        "Qo‘llar yelkalar ustida to‘g‘ri bo‘lguncha yuqoriga itaring."
+      ],
+      "mistakes": [
+        "Skameyka juda tik: mashq yelka mashqiga aylanadi",
+        "Boshni skameykadan ko‘tarish"
+      ],
+      "aliases": [
+        "Qiya skameyka",
+        "Qiya shtanga ko‘tarish"
+      ]
+    },
+    "dumbbell-bench-press": {
+      "name": "Yotib gantel ko‘tarish",
+      "steps": [
+        "Gantellarni sonlarga qo‘yib o‘tiring, so‘ng chalqancha yotib, tizzalar yordamida ularni yuqoriga chiqaring.",
+        "Tirsaklar skameykadan sal pastroq tushguncha tushiring, bilaklar tirsaklar ustida.",
+        "Kuraklarni qisilgan holda ushlab, yuqoriga va biroz ichkariga itaring."
+      ],
+      "mistakes": [
+        "Gantellarning yonlarga ketib qolishi",
+        "Juda chuqur tushib, yelkalarni zo‘riqtirish"
+      ],
+      "aliases": [
+        "Skameykada gantel ko‘tarish",
+        "Gantel bilan yotib ko‘tarish"
+      ]
+    },
+    "incline-dumbbell-press": {
+      "name": "Qiya skameykada gantel ko‘tarish",
+      "steps": [
+        "Skameykani 30 gradusga o‘rnating, gantellar ko‘krak balandligida.",
+        "Qo‘llar to‘g‘ri bo‘lguncha itaring, kaftlar oldinga qaragan.",
+        "Taranglikni yo‘qotmay, chuqur cho‘zilguncha sekin tushiring."
+      ],
+      "mistakes": [
+        "Skameyka juda tik",
+        "Yuqorida gantellarni bir-biriga urish"
+      ],
+      "aliases": [
+        "Qiya gantel ko‘tarish",
+        "Qiya skameykada gantel"
+      ]
+    },
+    "machine-chest-press": {
+      "name": "Trenajyorda ko‘krakdan itarish",
+      "steps": [
+        "O‘rindiqni dastaklar ko‘krak o‘rtasi balandligida bo‘ladigan qilib sozlang.",
+        "Qo‘llar deyarli to‘g‘ri bo‘lguncha oldinga itaring.",
+        "Ko‘krakda cho‘zilish sezilguncha sekin qaytaring."
+      ],
+      "mistakes": [
+        "O‘rindiq juda past yoki juda baland",
+        "Yuqorida tirsaklarni keskin qulflash"
+      ],
+      "aliases": [
+        "Ko‘krak trenajyori",
+        "O‘tirib ko‘krakdan itarish"
+      ]
+    },
+    "push-ups": {
+      "name": "Yerdan itarilish",
+      "steps": [
+        "Qo‘llar yelkadan sal kengroq, tana bir tekis chiziqda.",
+        "Ko‘krak polga deyarli tekkuncha tushing.",
+        "Tosni osiltirmay, yuqoriga qayting."
+      ],
+      "mistakes": [
+        "Tosning polga qarab osilib qolishi",
+        "Yarim amplituda, bosh birinchi tushadi"
+      ],
+      "aliases": [
+        "Otjimaniya",
+        "Qo‘l bukib-yozish",
+        "Polda itarilish"
+      ]
+    },
+    "cable-fly": {
+      "name": "Krossoverda qo‘llarni birlashtirish",
+      "steps": [
+        "Bloklarni ko‘krak balandligiga o‘rnating va bir oyoqni oldinga qo‘yib qadam tashlang.",
+        "Tirsaklarni sal bukib, qo‘llarni ko‘krak oldida birlashtiring.",
+        "Tirsak burchagini o‘zgartirmay, cho‘zilish sezilguncha sekin yoying."
+      ],
+      "mistakes": [
+        "Tirsaklarni itarishdagidek bukib-yozish",
+        "Butun tana bilan troslarga suyanish"
+      ],
+      "aliases": [
+        "Krossover",
+        "Blokda qo‘llarni birlashtirish"
+      ]
+    },
+    "dumbbell-fly": {
+      "name": "Yotib gantel yoyish",
+      "steps": [
+        "Skameykaga yoting, gantellar ko‘krak ustida, tirsaklar sal bukilgan.",
+        "Ko‘krakda cho‘zilish sezilguncha qo‘llarni yoy bo‘ylab keng yoying.",
+        "Ko‘krakni qisib, gantellarni ko‘krak ustida qayta birlashtiring."
+      ],
+      "mistakes": [
+        "Juda og‘ir vazn olib, mashqni itarishga aylantirish",
+        "Qo‘llarni yelka darajasidan pastga tushirish"
+      ],
+      "aliases": [
+        "Razvodka",
+        "Gantel yoyish"
+      ]
+    },
+    "close-grip-bench-press": {
+      "name": "Tor ushlab yotib shtanga ko‘tarish",
+      "steps": [
+        "Grifni yelka kengligidan sal torroq ushlang, kuraklar qisilgan.",
+        "Tirsaklarni qovurg‘alarga yaqin tutib, ko‘krakning pastki qismiga tushiring.",
+        "Tirsaklar to‘liq yozilguncha itaring."
+      ],
+      "mistakes": [
+        "Qo‘llar juda yaqin, bilak bo‘g‘imlari zo‘riqadi",
+        "Tirsaklarni yonga yoyish"
+      ],
+      "aliases": [
+        "Tor ushlab shtanga ko‘tarish",
+        "Tritseps uchun shtanga ko‘tarish"
+      ]
+    },
+    "dips": {
+      "name": "Brusda qo‘l bukib-yozish",
+      "steps": [
+        "To‘g‘ri qo‘llarda bruslarga tayaning, gavda biroz oldinga egilgan.",
+        "Qo‘lning yuqori qismi polga parallel bo‘lguncha tushing.",
+        "To‘g‘ri qo‘llargacha yuqoriga qayting."
+      ],
+      "mistakes": [
+        "Juda chuqur tushib, yelkalarga yuk berish",
+        "Inersiya uchun oyoqlarni silkitish"
+      ],
+      "aliases": [
+        "Brus",
+        "Bruslar",
+        "Dips"
+      ]
+    },
+    "barbell-row": {
+      "name": "Engashib shtanga tortish",
+      "steps": [
+        "Tosdan engashib, gavdani deyarli polga parallel holatga keltiring, orqa tekis.",
+        "Tirsaklarni tanaga yaqin tutib, shtangani pastki qovurg‘alarga torting.",
+        "Orqani bukmasdan, nazorat bilan tushiring."
+      ],
+      "mistakes": [
+        "Vaznni yengillatish uchun har takrorda qaddini rostlash",
+        "Belni bukish"
+      ],
+      "aliases": [
+        "Shtangani belga tortish",
+        "Egilib shtanga tortish"
+      ]
+    },
+    "chest-supported-row": {
+      "name": "Ko‘krakni tayantirib tortish",
+      "steps": [
+        "Qiya skameykaga ko‘krak bilan yoting, har qo‘lda bittadan gantel.",
+        "Kuraklarni qisib, gantellarni tos tomon torting.",
+        "Ko‘krakni ko‘tarmay, to‘liq cho‘zilguncha tushiring."
+      ],
+      "mistakes": [
+        "Yelkalarni quloqlarga qarab ko‘tarish",
+        "Ko‘krakni skameykadan ko‘tarish"
+      ],
+      "aliases": [
+        "Qiya skameykada gantel tortish",
+        "Skameykaga yotib tortish"
+      ]
+    },
+    "dumbbell-row": {
+      "name": "Engashib gantel tortish",
+      "steps": [
+        "Bir qo‘l va tizzani skameykaga tirang, orqa tekis.",
+        "Harakatni tirsak bilan boshlab, gantelni tos tomon torting.",
+        "Qo‘l to‘g‘rilanib, keng orqa mushagi cho‘zilguncha tushiring."
+      ],
+      "mistakes": [
+        "Vaznni silkitish uchun gavdani burish",
+        "Tos o‘rniga ko‘krakka tortish"
+      ],
+      "aliases": [
+        "Bir qo‘lda gantel tortish",
+        "Gantelni belga tortish"
+      ]
+    },
+    "lat-pulldown": {
+      "name": "Yuqori blokni tortish",
+      "steps": [
+        "Grifni yelkadan sal kengroq ushlang va sonlarni valiklar ostiga mahkamlang.",
+        "Tirsaklarni pastga yo‘naltirib, grifni ko‘krakning yuqori qismiga torting.",
+        "Qo‘llar to‘liq yozilguncha sekin qaytaring."
+      ],
+      "mistakes": [
+        "Orqaga ko‘p og‘ib, silkinish",
+        "Grifni bosh orqasiga tortish"
+      ],
+      "aliases": [
+        "Vertikal tortish",
+        "Blokni ko‘krakka tortish",
+        "Verxniy blok"
+      ]
+    },
+    "pull-ups": {
+      "name": "Turnikda tortilish",
+      "steps": [
+        "Yelkadan sal kengroq, to‘g‘ri ushlash bilan turnikka osiling.",
+        "Tirsaklarni pastga yo‘naltirib, iyak turnikdan oshguncha tortiling.",
+        "Nazorat bilan to‘liq osilgan holatga tushing."
+      ],
+      "mistakes": [
+        "Inersiya uchun kipping yoki silkinish",
+        "To‘liq osilishgacha tushmaslik"
+      ],
+      "aliases": [
+        "Turnik",
+        "Tortilish",
+        "Podtyagivaniya"
+      ]
+    },
+    "chin-ups": {
+      "name": "Teskari ushlab tortilish",
+      "steps": [
+        "Yelka kengligida teskari ushlash bilan osiling.",
+        "Tirsaklarni yonlarga yaqin tutib, iyak turnikdan oshguncha tortiling.",
+        "To‘liq osilgan holatga tushing."
+      ],
+      "mistakes": [
+        "Oyoqlarni silkitish",
+        "Orqa bilan tortish o‘rniga yelkalarni qisish"
+      ],
+      "aliases": [
+        "Bitseps uchun tortilish",
+        "Teskari tortilish"
+      ]
+    },
+    "seated-cable-row": {
+      "name": "O‘tirib pastki blokni tortish",
+      "steps": [
+        "Qaddingizni rostlab o‘tiring, tizzalar sal bukilgan, dastak ko‘krak balandligida.",
+        "Kuraklarni qisib, dastakni qoringa torting.",
+        "Orqani bukmasdan, nazorat bilan oldinga cho‘ziling."
+      ],
+      "mistakes": [
+        "Gavdani oldinga-orqaga tebratish",
+        "Yelkalarni qisish"
+      ],
+      "aliases": [
+        "Pastki blok",
+        "Gorizontal tortish",
+        "Blokni belga tortish"
+      ]
+    },
+    "straight-arm-pulldown": {
+      "name": "To‘g‘ri qo‘l bilan blok tortish",
+      "steps": [
+        "Blokka yuzlanib turing, tosdan sal engashing, qo‘llar to‘g‘ri.",
+        "Qo‘llarni deyarli to‘g‘ri tutib, grifni yoy bo‘ylab sonlargacha tushiring.",
+        "Keng orqa mushaklari cho‘zilguncha sekin qaytaring."
+      ],
+      "mistakes": [
+        "Tirsaklarni bukib, tritseps mashqiga aylantirish",
+        "Bel bilan silkinish"
+      ],
+      "aliases": [
+        "Blokda pulover",
+        "To‘g‘ri qo‘lda tortish"
+      ]
+    },
+    "face-pull": {
+      "name": "Arqonni yuzga tortish",
+      "steps": [
+        "Arqonni yuz balandligiga o‘rnating va qo‘llarni cho‘zgan holda orqaga qadam tashlang.",
+        "Tirsaklarni baland va keng tutib, arqonni yuzga torting.",
+        "Kuraklarni qising, so‘ng sekin qaytaring."
+      ],
+      "mistakes": [
+        "Juda past, ko‘krakka tortish",
+        "Og‘ir vaznni siljitish uchun orqaga og‘ish"
+      ],
+      "aliases": [
+        "Yuzga tortish",
+        "Feys pull",
+        "Face pull"
+      ]
+    },
+    "deadlift": {
+      "name": "Yerdan shtanga tortish",
+      "steps": [
+        "Grif oyoq kaftining o‘rtasi ustida bo‘lsin, tizzalardan sal tashqarida ushlang.",
+        "Tanani tarang qiling, grifdagi bo‘shliqni yo‘qoting va polni oyoqlar bilan iting.",
+        "Tos va tizzalarni birga yozib, to‘liq tik turing, so‘ng grifni oyoqlar bo‘ylab tushiring."
+      ],
+      "mistakes": [
+        "Belni bukish",
+        "Shtangani yerdan keskin yulqib olish",
+        "Grifning oyoqlardan uzoqlashishi"
+      ],
+      "aliases": [
+        "Stanovoy",
+        "Stanovaya tyaga",
+        "Klassik tortish"
+      ]
+    },
+    "t-bar-row": {
+      "name": "T-grif tortish",
+      "steps": [
+        "Grifni oyoqlar orasiga olib turing, tosdan engashing, orqa tekis.",
+        "Tirsaklarni yaqin tutib, dastakni ko‘krak tomon torting.",
+        "To‘liq cho‘zilguncha sekin tushiring."
+      ],
+      "mistakes": [
+        "Vaznni tos bilan silkitib ko‘tarish",
+        "Orqaning yuqori qismini bukish"
+      ],
+      "aliases": [
+        "T-shtanga tortish",
+        "T-tyaga"
+      ]
+    },
+    "machine-row": {
+      "name": "Trenajyorda o‘tirib tortish",
+      "steps": [
+        "O‘rindiqni dastaklar ko‘krak balandligida bo‘ladigan qilib sozlang va ko‘krakni tayanchga bosing.",
+        "Kuraklarni qisib, dastaklarni orqaga torting.",
+        "Qo‘llar to‘g‘rilanguncha sekin qaytaring."
+      ],
+      "mistakes": [
+        "Yelkalarni qisish",
+        "Ko‘krakni tayanchdan uzish"
+      ],
+      "aliases": [
+        "Trenajyorda gorizontal tortish",
+        "Richagli tortish"
+      ]
+    },
+    "overhead-press": {
+      "name": "Tik turib shtangani bosh uzra ko‘tarish",
+      "steps": [
+        "Yelkalardan sal tashqarida ushlang, grif ko‘krakning yuqorisida, dumbani qising.",
+        "To‘g‘ri yuqoriga itaring, grif o‘tganda boshni oldinga o‘tkazing.",
+        "Oyoq kaftining o‘rtasi ustida qulflang va ko‘krakka qaytarib tushiring."
+      ],
+      "mistakes": [
+        "Orqaga egilib, mashqni qiya itarishga aylantirish",
+        "Grifni oldinga itarish"
+      ],
+      "aliases": [
+        "Armeyskiy",
+        "Shtangani boshdan yuqoriga ko‘tarish",
+        "Yelka uchun shtanga"
+      ]
+    },
+    "dumbbell-shoulder-press": {
+      "name": "Gantelni bosh uzra ko‘tarish",
+      "steps": [
+        "Orqani suyanchiqqa tirab o‘tiring, gantellar yelka balandligida.",
+        "Qo‘llar yelkalar ustida to‘g‘ri bo‘lguncha itaring.",
+        "Nazorat bilan quloq balandligigacha tushiring."
+      ],
+      "mistakes": [
+        "Belni egib, suyanchiqdan uzish",
+        "Yuqorida gantellarni urishtirish"
+      ],
+      "aliases": [
+        "O‘tirib gantel ko‘tarish",
+        "Yelka uchun gantel"
+      ]
+    },
+    "machine-shoulder-press": {
+      "name": "Trenajyorda bosh uzra itarish",
+      "steps": [
+        "O‘rindiqni dastaklar yelka balandligidan boshlanadigan qilib sozlang.",
+        "Tirsaklarni qulflamasdan yuqoriga itaring.",
+        "Boshlang‘ich holatga sekin tushiring."
+      ],
+      "mistakes": [
+        "O‘rindiq juda past",
+        "Yelkalarni quloqlarga qisish"
+      ],
+      "aliases": [
+        "Yelka trenajyori",
+        "Trenajyorda yelka mashqi"
+      ]
+    },
+    "lateral-raise": {
+      "name": "Gantellarni yonga ko‘tarish",
+      "steps": [
+        "Tik turing, gantellar yonlarda, tirsaklar sal bukilgan.",
+        "Harakatni tirsak bilan boshlab, qo‘llarni yelka balandligigacha yonga ko‘taring.",
+        "Silkinmasdan sekin tushiring."
+      ],
+      "mistakes": [
+        "Vaznni ko‘tarish uchun tanani silkitish",
+        "Kaftlarni tirsaklardan yuqori ko‘tarish"
+      ],
+      "aliases": [
+        "Yonga max",
+        "Deltaga yonga ko‘tarish"
+      ]
+    },
+    "cable-lateral-raise": {
+      "name": "Blokda qo‘lni yonga ko‘tarish",
+      "steps": [
+        "Pastki blokka yonboshingiz bilan turing va dastakni uzoqdagi qo‘l bilan ushlang.",
+        "Qo‘lni yelka balandligigacha yonga ko‘taring.",
+        "Deltadagi taranglikni saqlab, sekin tushiring."
+      ],
+      "mistakes": [
+        "Vaznni yengillatish uchun yonga og‘ish",
+        "Yelkani qisish"
+      ],
+      "aliases": [
+        "Krossoverda yonga max",
+        "Pastki blokda yonga ko‘tarish"
+      ]
+    },
+    "rear-delt-fly": {
+      "name": "Engashib gantel yoyish",
+      "steps": [
+        "Orqani tekis tutib oldinga engashing, gantellar pastga osilgan.",
+        "Tirsaklarni sal bukib, qo‘llarni yonlarga ko‘taring.",
+        "Nazorat bilan sekin tushiring."
+      ],
+      "mistakes": [
+        "Gavda inersiyasidan foydalanish",
+        "Qo‘llar bilan boshlash o‘rniga kuraklarni qisish"
+      ],
+      "aliases": [
+        "Orqa deltaga max",
+        "Engashib yonga ko‘tarish"
+      ]
+    },
+    "front-raise": {
+      "name": "Gantellarni oldinga ko‘tarish",
+      "steps": [
+        "Tik turing, gantellar son oldida.",
+        "Bir yoki ikkala qo‘lni yelka balandligigacha ko‘taring.",
+        "Silkinmasdan sekin tushiring."
+      ],
+      "mistakes": [
+        "Gavdani silkitish",
+        "Yelka balandligidan yuqori ko‘tarish"
+      ],
+      "aliases": [
+        "Oldinga max",
+        "Old deltaga ko‘tarish"
+      ]
+    },
+    "barbell-shrug": {
+      "name": "Shtanga bilan yelka qisish",
+      "steps": [
+        "Shtangani son oldida to‘g‘ri qo‘llarda ushlang.",
+        "Yelkalarni to‘g‘ri yuqoriga, quloqlar tomon ko‘taring.",
+        "To‘xtab turing, so‘ng sekin tushiring."
+      ],
+      "mistakes": [
+        "Yelkalarni aylana bo‘ylab aylantirish",
+        "Ko‘tarish uchun tirsaklarni bukish"
+      ],
+      "aliases": [
+        "Shrag",
+        "Shraglar",
+        "Yelka ko‘tarish"
+      ]
+    },
+    "curl-ez-bar": {
+      "name": "EZ-grif bilan qo‘l bukish",
+      "steps": [
+        "Grifning egik joylaridan ushlang, tirsaklar yonlarda.",
+        "Bitsepsni qisib, bilaklar tik bo‘lguncha ko‘taring.",
+        "To‘liq yozilguncha sekin tushiring."
+      ],
+      "mistakes": [
+        "Ko‘tarish uchun tosni silkitish",
+        "Tirsaklarning oldinga siljishi"
+      ],
+      "aliases": [
+        "EZ-grif",
+        "Shtanga bilan bitseps",
+        "Bitseps uchun shtanga ko‘tarish"
+      ]
+    },
+    "biceps-curl": {
+      "name": "Bitseps uchun qo‘l bukish",
+      "steps": [
+        "Tik turing, gantellar yonlarda, kaftlar oldinga.",
+        "Tirsaklarni qimirlatmay, qo‘llarni buking.",
+        "To‘liq cho‘zilguncha sekin tushiring."
+      ],
+      "mistakes": [
+        "Gavdani silkitish",
+        "Pastda amplitudani qisqartirish"
+      ],
+      "aliases": [
+        "Gantel bilan bitseps",
+        "Bitsepsga gantel ko‘tarish",
+        "Qo‘l bukish"
+      ]
+    },
+    "hammer-curl": {
+      "name": "Bolg‘a usulida qo‘l bukish",
+      "steps": [
+        "Gantellarni kaftlar bir-biriga qaragan holda ushlang.",
+        "Bosh barmoqlar yuqoriga qaragan holda ko‘taring.",
+        "Tirsaklarni yonlarga qisib, sekin tushiring."
+      ],
+      "mistakes": [
+        "Gantellarni silkitib ko‘tarish",
+        "Tirsaklarni oldinga surish"
+      ],
+      "aliases": [
+        "Bolg‘a",
+        "Xammer",
+        "Molotok"
+      ]
+    },
+    "concentration-curl": {
+      "name": "Konsentratsion qo‘l bukish",
+      "steps": [
+        "O‘tiring va tirsakni sonning ichki tomoniga tirang.",
+        "Gantelni yelka tomon ko‘taring.",
+        "To‘liq yozilguncha sekin tushiring."
+      ],
+      "mistakes": [
+        "Vaznni silkitish uchun orqaga og‘ish",
+        "Tirsakni sondan uzish"
+      ],
+      "aliases": [
+        "Songa tirab qo‘l bukish",
+        "Konsentratsion bitseps"
+      ]
+    },
+    "preacher-curl": {
+      "name": "Skott skameykasida qo‘l bukish",
+      "steps": [
+        "Tayanchni qo‘lning yuqori qismi unga tekis yotadigan qilib sozlang.",
+        "Tirsaklarni ko‘tarmasdan qo‘llarni buking.",
+        "To‘liq yozilishdan sal oldin to‘xtab, sekin tushiring."
+      ],
+      "mistakes": [
+        "Pastda tez tashlab yuborish",
+        "Ko‘krakni tayanchdan uzish"
+      ],
+      "aliases": [
+        "Skott skameykasi",
+        "Skott trenajyori",
+        "Parta"
+      ]
+    },
+    "cable-curl": {
+      "name": "Blokda qo‘l bukish",
+      "steps": [
+        "Pastki blokka yuzlanib turing, grif yoki arqon ikki qo‘lda.",
+        "Tirsaklarni yonlarda qotirib, qo‘llarni buking.",
+        "Trosdagi taranglikni saqlab, sekin tushiring."
+      ],
+      "mistakes": [
+        "Bukayotganda orqaga og‘ish",
+        "Tirsaklarning siljishi"
+      ],
+      "aliases": [
+        "Blokda bitseps",
+        "Pastki blokda qo‘l bukish"
+      ]
+    },
+    "triceps-pushdown": {
+      "name": "Blokda tritseps uchun qo‘l yozish",
+      "steps": [
+        "Yuqori blokka yaqin turing, tirsaklar yonlarga qisilgan.",
+        "Qo‘llar to‘g‘ri bo‘lguncha grif yoki arqonni pastga iting.",
+        "Bilaklar paralleldan sal yuqori ko‘tarilguncha qaytaring."
+      ],
+      "mistakes": [
+        "Tana bilan itish uchun grifga engashish",
+        "Tirsaklarni yonga yoyish"
+      ],
+      "aliases": [
+        "Blokda tritseps",
+        "Yuqori blokda qo‘l yozish"
+      ]
+    },
+    "overhead-extension": {
+      "name": "Blokda boshdan yuqoriga qo‘l yozish",
+      "steps": [
+        "Yuqori blokka orqa o‘girib turing va arqonni bosh orqasida ushlang.",
+        "Qo‘llarni to‘g‘ri bo‘lguncha oldinga va yuqoriga yozing.",
+        "Chuqur cho‘zilguncha sekin qaytaring."
+      ],
+      "mistakes": [
+        "Tirsaklarni keng yoyish",
+        "Belni egish"
+      ],
+      "aliases": [
+        "Bosh orqasidan qo‘l yozish",
+        "Tritseps uchun bosh uzra yozish"
+      ]
+    },
+    "skull-crushers": {
+      "name": "Yotib tritseps uchun qo‘l yozish",
+      "steps": [
+        "Skameykaga yoting, EZ-grif ko‘krak ustida.",
+        "Faqat tirsaklarni bukib, grifni peshona tomon tushiring.",
+        "Qo‘lning yuqori qismini qimirlatmay, qayta yozing."
+      ],
+      "mistakes": [
+        "Tirsaklarni keng yoyish",
+        "Qo‘lning yuqori qismini orqaga ketkazish"
+      ],
+      "aliases": [
+        "Fransuzcha",
+        "Fransuzcha tritseps",
+        "Yotib qo‘l yozish"
+      ]
+    },
+    "dumbbell-kickback": {
+      "name": "Engashib gantel bilan qo‘l yozish",
+      "steps": [
+        "Oldinga engashing, qo‘lning yuqori qismi polga parallel.",
+        "Qo‘l to‘g‘ri bo‘lguncha tirsakni yozing.",
+        "Yelkani qimirlatmay, sekin qaytaring."
+      ],
+      "mistakes": [
+        "Qo‘lni silkitish",
+        "Tirsakni pastga tushirib yuborish"
+      ],
+      "aliases": [
+        "Kikbek",
+        "Tritseps kikbek"
+      ]
+    },
+    "back-squat": {
+      "name": "Shtanga bilan o‘tirib-turish",
+      "steps": [
+        "Shtangani orqaning yuqori qismiga qo‘ying, oyoqlar yelka kengligida, oyoq uchlari sal tashqariga.",
+        "Tanani tarang qilib, tos bilan pastga o‘tiring, tizzalar oyoq uchlari yo‘nalishida.",
+        "Butun oyoq kafti bilan itarib, to‘liq tik turing."
+      ],
+      "mistakes": [
+        "Tizzalarning ichkariga qochishi",
+        "Tovonlarning poldan uzilishi",
+        "Pastda belni bukish"
+      ],
+      "aliases": [
+        "O‘tirib-turish",
+        "Prisedaniya",
+        "Prised"
+      ]
+    },
+    "front-squat": {
+      "name": "Shtanga oldinda o‘tirib-turish",
+      "steps": [
+        "Shtangani old deltalarga qo‘ying, tirsaklar baland.",
+        "Gavdani tik tutib, pastga o‘tiring.",
+        "Tirsaklarni butun harakat davomida baland tutib, turing."
+      ],
+      "mistakes": [
+        "Tirsaklar tushib, shtanganing oldinga dumalashi",
+        "Orqaning yuqori qismini bukish"
+      ],
+      "aliases": [
+        "Frontal prised",
+        "Frontal o‘tirib-turish"
+      ]
+    },
+    "leg-press": {
+      "name": "Trenajyorda oyoq bilan itarish",
+      "steps": [
+        "Orqani suyanchiqqa tekis bosib o‘tiring, oyoqlar platformada yelka kengligida.",
+        "Tizzalar taxminan 90 gradusga bukilguncha tushiring.",
+        "Tizzalarni qulflamasdan yuqoriga itaring."
+      ],
+      "mistakes": [
+        "Pastda belning suyanchiqdan uzilishi",
+        "Yuqorida tizzalarni qulflash"
+      ],
+      "aliases": [
+        "Platforma",
+        "Oyoq pressi",
+        "Platformani itarish"
+      ]
+    },
+    "hack-squat": {
+      "name": "Gakk-mashinada o‘tirib-turish",
+      "steps": [
+        "Yelkalarni tayanchlar ostiga qo‘ying, oyoqlar yelka kengligida.",
+        "Sonlar platformaga parallel bo‘lguncha tushing.",
+        "Oyoq kaftining o‘rtasi bilan itarib, turing."
+      ],
+      "mistakes": [
+        "Tovonlarning ko‘tarilishi",
+        "Chuqurlikni qisqartirish"
+      ],
+      "aliases": [
+        "Gakk",
+        "Gakk prised",
+        "Hack squat"
+      ]
+    },
+    "romanian-deadlift": {
+      "name": "Rumincha shtanga tortish",
+      "steps": [
+        "Shtanga sonlar oldida, tizzalar sal bukilgan holda turing.",
+        "Tosni orqaga surib, son orqasida cho‘zilish sezilguncha grifni oyoqlar bo‘ylab tushiring.",
+        "Tosni oldinga itarib, tik turing."
+      ],
+      "mistakes": [
+        "Orqani bukish",
+        "Tizzalarni bukib, o‘tirib-turishga aylantirish"
+      ],
+      "aliases": [
+        "Rumin tortishi",
+        "RDL",
+        "To‘g‘ri oyoqda tortish"
+      ]
+    },
+    "bulgarian-split-squat": {
+      "name": "Bolgarcha hamla",
+      "steps": [
+        "Orqa oyoqni skameykaga qo‘ying, old oyoqni oldinga qo‘ying.",
+        "Old son polga parallel bo‘lguncha to‘g‘ri pastga tushing.",
+        "Old oyoq tovoni bilan itarib, turing."
+      ],
+      "mistakes": [
+        "Old oyoq skameykaga juda yaqin",
+        "Gavdani oldinga kuchli egish"
+      ],
+      "aliases": [
+        "Bolgarskiy vypad",
+        "Bolgarcha o‘tirib-turish",
+        "Split skvat"
+      ]
+    },
+    "walking-lunge": {
+      "name": "Yurib hamla qilish",
+      "steps": [
+        "Gantellarni yonlarda ushlab, oldinga uzun qadam tashlang.",
+        "Orqa tizzani polga qarab tushiring.",
+        "Old oyoq bilan itarib, keyingi hamlaga qadam tashlang."
+      ],
+      "mistakes": [
+        "Qisqa qadamlar: tizza oyoq uchidan oshib ketadi",
+        "Gavdaning oldinga qulashi"
+      ],
+      "aliases": [
+        "Hamla",
+        "Vypad",
+        "Gantel bilan hamla"
+      ]
+    },
+    "step-up": {
+      "name": "Tumbaga chiqish",
+      "steps": [
+        "Bir oyoqni taxminan tizza balandligidagi tumbaga to‘liq qo‘ying.",
+        "O‘sha oyoq tovoni bilan itarib, tumbaga chiqing.",
+        "Shu oyoq bilan sekin tushing."
+      ],
+      "mistakes": [
+        "Orqa oyoq bilan itarib yuborish",
+        "Nazorat uchun tumba juda baland"
+      ],
+      "aliases": [
+        "Step-ap",
+        "Platformaga chiqish"
+      ]
+    },
+    "goblet-squat": {
+      "name": "Goblet o‘tirib-turish",
+      "steps": [
+        "Gantelni ko‘krakka bosib ushlang, tirsaklar pastga qaragan.",
+        "Ko‘krakni ochiq tutib, tizzalar orasiga o‘tiring.",
+        "Butun oyoq kafti bilan itarib, turing."
+      ],
+      "mistakes": [
+        "Tovonlarning ko‘tarilishi",
+        "Ko‘krakning oldinga tushishi"
+      ],
+      "aliases": [
+        "Goblet prised",
+        "Gantel bilan o‘tirib-turish"
+      ]
+    },
+    "leg-extension": {
+      "name": "Trenajyorda oyoq yozish",
+      "steps": [
+        "Valikni to‘piqlardan sal yuqoriga sozlang.",
+        "Oyoqlar to‘g‘ri bo‘lguncha tizzalarni yozing.",
+        "Vaznni tashlab yubormay, sekin tushiring."
+      ],
+      "mistakes": [
+        "Vaznni silkitib ko‘tarish",
+        "Tosni o‘rindiqdan uzish"
+      ],
+      "aliases": [
+        "O‘tirib oyoq yozish",
+        "Kvadritseps trenajyori"
+      ]
+    },
+    "leg-curl": {
+      "name": "Trenajyorda oyoq bukish",
+      "steps": [
+        "Valikni tovonlardan sal yuqoriga, tizzani trenajyor o‘qi bilan bir chiziqqa sozlang.",
+        "Tovonlarni dumba tomon buking.",
+        "To‘liq cho‘zilguncha sekin qaytaring."
+      ],
+      "mistakes": [
+        "Tosni tayanchdan uzish",
+        "Vaznni tez tashlab yuborish"
+      ],
+      "aliases": [
+        "Yotib oyoq bukish",
+        "Son orqasi trenajyori"
+      ]
+    },
+    "calf-raise": {
+      "name": "Oyoq uchida ko‘tarilish",
+      "steps": [
+        "Oyoq panjalarini platforma chetiga qo‘ying.",
+        "Oyoq uchida imkon qadar baland ko‘tarilib, to‘xtang.",
+        "Tovonlarni chuqur cho‘zilguncha tushiring."
+      ],
+      "mistakes": [
+        "Pastdan sakrab ko‘tarilish",
+        "Qisqa amplituda"
+      ],
+      "aliases": [
+        "Boldir",
+        "Boldir mashqi",
+        "Ikra"
+      ]
+    },
+    "hip-thrust": {
+      "name": "Shtanga bilan dumba ko‘prigi",
+      "steps": [
+        "Orqaning yuqori qismini skameykaga tirab o‘tiring, shtanga tos ustida.",
+        "Tovonlar bilan itarib, tosni to‘liq yozing.",
+        "To‘xtang, dumbani qising va nazorat bilan tushiring."
+      ],
+      "mistakes": [
+        "Yuqorida belni haddan tashqari egish",
+        "Oyoqlar tanadan juda uzoqda"
+      ],
+      "aliases": [
+        "Xip trast",
+        "Hip thrust",
+        "Tos ko‘tarish"
+      ]
+    },
+    "glute-bridge": {
+      "name": "Dumba ko‘prigi",
+      "steps": [
+        "Chalqancha yoting, tizzalar bukilgan, oyoq kaftlari polda.",
+        "Tana to‘g‘ri chiziq hosil qilguncha tosni ko‘taring.",
+        "Yuqorida qising va sekin tushiring."
+      ],
+      "mistakes": [
+        "Belni egish",
+        "Oyoq uchlari bilan itarish"
+      ],
+      "aliases": [
+        "Ko‘prik",
+        "Yotib tos ko‘tarish"
+      ]
+    },
+    "sumo-deadlift": {
+      "name": "Sumo uslubida shtanga tortish",
+      "steps": [
+        "Oyoqlarni keng qo‘ying, uchlari tashqariga, tizzalar ichidan ushlang.",
+        "Ko‘krakni baland tutib, polni oyoqlar bilan yonlarga iting.",
+        "Tik turing va oyoqlar bo‘ylab tushiring."
+      ],
+      "mistakes": [
+        "Tosning ko‘krakdan oldin ko‘tarilishi",
+        "Tizzalarning ichkariga qochishi"
+      ],
+      "aliases": [
+        "Sumo",
+        "Sumo tortish"
+      ]
+    },
+    "good-morning": {
+      "name": "Shtanga bilan engashish",
+      "steps": [
+        "Shtangani orqaning yuqori qismiga qo‘ying, tizzalar sal bukilgan.",
+        "Gavda deyarli polga parallel bo‘lguncha tosni orqaga suring.",
+        "Tosni oldinga itarib, tik turing."
+      ],
+      "mistakes": [
+        "Orqani bukish",
+        "Juda erta juda og‘ir vazn olish"
+      ],
+      "aliases": [
+        "Gud morning",
+        "Good morning"
+      ]
+    },
+    "cable-kickback": {
+      "name": "Blokda oyoqni orqaga uzatish",
+      "steps": [
+        "To‘piqqa manjet taqing, blokka yuzlanib, ramadan ushlang.",
+        "Dumbani qisib, oyoqni orqaga uzating.",
+        "Belni egmasdan sekin qaytaring."
+      ],
+      "mistakes": [
+        "Oyoqni silkitish",
+        "Belni egish"
+      ],
+      "aliases": [
+        "Dumba uchun kikbek",
+        "Oyoqni orqaga max"
+      ]
+    },
+    "kettlebell-swing": {
+      "name": "Girya silkitish",
+      "steps": [
+        "Girya ustida turing va uni oyoqlar orasidan orqaga olib boring.",
+        "Girya ko‘krak balandligiga suzib chiqishi uchun tosni keskin oldinga iting.",
+        "Uni tushishiga qo‘yib bering va keyingi takror uchun tosni orqaga suring."
+      ],
+      "mistakes": [
+        "Tosdan engashish o‘rniga o‘tirib olish",
+        "Qo‘llar bilan ko‘tarish"
+      ],
+      "aliases": [
+        "Sving",
+        "Girya svingi"
+      ]
+    },
+    "kettlebell-goblet-squat": {
+      "name": "Girya bilan goblet o‘tirib-turish",
+      "steps": [
+        "Giryani dastasining ikki chetidan ko‘krak oldida ushlang.",
+        "Tizzalar orasiga o‘tiring, tirsaklar tizzalar ichida.",
+        "Ko‘krakni ochiq tutib, turing."
+      ],
+      "mistakes": [
+        "Tovonlarning ko‘tarilishi",
+        "Orqaning yuqori qismini bukish"
+      ],
+      "aliases": [
+        "Girya bilan o‘tirib-turish",
+        "Girya bilan prised"
+      ]
+    },
+    "plank": {
+      "name": "Planka",
+      "steps": [
+        "Bilaklarga tayaning, tirsaklar yelkalar ostida.",
+        "Tana to‘g‘ri chiziq bo‘lishi uchun dumba va qorin mushaklarini qising.",
+        "Bir tekis nafas olib, ushlab turing."
+      ],
+      "mistakes": [
+        "Tosning osilishi yoki yuqoriga ko‘tarilishi",
+        "Nafasni ushlab qolish"
+      ],
+      "aliases": [
+        "Tirsakda planka",
+        "Plank"
+      ]
+    },
+    "side-plank": {
+      "name": "Yon planka",
+      "steps": [
+        "Yonboshlab yoting, tirsak yelka ostida.",
+        "Tana to‘g‘ri chiziq bo‘lishi uchun tosni ko‘taring.",
+        "Ushlab turing, so‘ng tomonni almashtiring."
+      ],
+      "mistakes": [
+        "Tosning tushib ketishi",
+        "Oldinga yoki orqaga ag‘darilish"
+      ],
+      "aliases": [
+        "Yonboshlab planka",
+        "Yon tomonga planka"
+      ]
+    },
+    "crunch": {
+      "name": "Qorin uchun bukilish",
+      "steps": [
+        "Yoting, tizzalar bukilgan, qo‘llar chakkalarda.",
+        "Qovurg‘alarni tos tomon buking.",
+        "Bo‘yinni tortmasdan sekin tushing."
+      ],
+      "mistakes": [
+        "Bo‘yinni tortish",
+        "Inersiyadan foydalanish"
+      ],
+      "aliases": [
+        "Press",
+        "Qorin pressi",
+        "Skruchivaniya"
+      ]
+    },
+    "cable-crunch": {
+      "name": "Blokda qorin uchun bukilish",
+      "steps": [
+        "Yuqori blok ostida tiz cho‘king, arqonni bosh yonida ushlang.",
+        "Tosni qimirlatmay, qovurg‘alarni tos tomon buking.",
+        "Sekin qaytaring."
+      ],
+      "mistakes": [
+        "Qo‘llar bilan tortish",
+        "Tovonlarga o‘tirib olish"
+      ],
+      "aliases": [
+        "Molitva",
+        "Tiz cho‘kib blokda press"
+      ]
+    },
+    "hanging-leg-raise": {
+      "name": "Osilib oyoq ko‘tarish",
+      "steps": [
+        "Turnikka mahkam ushlab osiling, yelkalar tarang.",
+        "Tosni yuqoriga bukib, oyoqlarni birga ko‘taring.",
+        "Silkinmasdan sekin tushiring."
+      ],
+      "mistakes": [
+        "Inersiya uchun silkinish",
+        "Faqat son bukuvchi mushaklar bilan ko‘tarish"
+      ],
+      "aliases": [
+        "Turnikda oyoq ko‘tarish",
+        "Osilib tizza ko‘tarish"
+      ]
+    },
+    "ab-wheel": {
+      "name": "Press g‘ildiragi",
+      "steps": [
+        "Tiz cho‘king, g‘ildirak yelkalar ostida, qovurg‘alar pastga tortilgan.",
+        "Orqani tekis ushlay oladigan darajada oldinga dumalating.",
+        "Qorin mushaklari bilan orqaga qayting."
+      ],
+      "mistakes": [
+        "Belning osilib qolishi",
+        "Juda erta juda uzoqqa dumalash"
+      ],
+      "aliases": [
+        "Rolik",
+        "Press roligi",
+        "G‘ildirak"
+      ]
+    },
+    "russian-twist": {
+      "name": "Rus burilishi",
+      "steps": [
+        "Orqaga og‘ib o‘tiring, tizzalar bukilgan, ko‘krak ochiq.",
+        "Qo‘llarni qovurg‘alar bilan birga harakatlantirib, gavdani har tomonga buring.",
+        "Harakatni sekin va nazorat bilan bajaring."
+      ],
+      "mistakes": [
+        "Faqat qo‘llarni silkitish",
+        "Orqani bukish"
+      ],
+      "aliases": [
+        "Russian twist",
+        "O‘tirib gavdani burish"
+      ]
+    },
+    "burpees": {
+      "name": "Berpi",
+      "steps": [
+        "Tik turgan holatdan qo‘llarni polga qo‘ying va sakrab oyoqlarni orqaga uzating.",
+        "Bir marta yerdan itariling, so‘ng sakrab oyoqlarni qo‘llarga yaqinlashtiring.",
+        "Qo‘llarni boshdan yuqoriga ko‘tarib, yuqoriga sakrang."
+      ],
+      "mistakes": [
+        "Itarilishda tosning osilishi",
+        "Qulflangan tizzalarga qo‘nish"
+      ],
+      "aliases": [
+        "Burpi",
+        "Burpee"
+      ]
+    }
+  },
+  "muscles": {
+    "Chest": "Ko‘krak",
+    "Front delts": "Old deltalar",
+    "Triceps": "Tritseps",
+    "Upper chest": "Ko‘krak yuqorisi",
+    "Core": "Kor mushaklari",
+    "Lats": "Keng orqa mushaklari",
+    "Mid back": "Orqa o‘rtasi",
+    "Biceps": "Bitseps",
+    "Rear delts": "Orqa deltalar",
+    "Lower back": "Bel",
+    "Upper back": "Orqa yuqorisi",
+    "Rotator cuff": "Rotator manjet",
+    "Glutes": "Dumba",
+    "Hamstrings": "Son orqa mushaklari",
+    "Traps": "Trapetsiya",
+    "Forearms": "Bilaklar",
+    "Side delts": "O‘rta deltalar",
+    "Brachialis": "Braxialis",
+    "Quads": "Kvadritseps",
+    "Adductors": "Son ichki mushaklari",
+    "Calves": "Boldir",
+    "Shoulders": "Yelkalar",
+    "Abs": "Qorin pressi",
+    "Obliques": "Qiyshiq qorin mushaklari",
+    "Hip flexors": "Son bukuvchi mushaklar",
+    "Full body": "Butun tana",
+    "Legs": "Oyoqlar"
+  },
+  "patterns": {
+    "Horizontal push": "Gorizontal itarish",
+    "Incline push": "Qiya itarish",
+    "Fly": "Yoyish",
+    "Vertical push": "Vertikal itarish",
+    "Horizontal pull": "Gorizontal tortish",
+    "Vertical pull": "Vertikal tortish",
+    "Hinge": "Tosdan engashish",
+    "Isolation": "Izolyatsiya",
+    "Elbow flexion": "Tirsakni bukish",
+    "Elbow extension": "Tirsakni yozish",
+    "Squat": "O‘tirib-turish",
+    "Lunge": "Hamla",
+    "Core": "Kor",
+    "Conditioning": "Chidamlilik"
+  }
+}

@@ -1,0 +1,312 @@
+{
+  "foods": {
+    "chicken_breast": {
+      "name": "Куриная грудка, готовая"
+    },
+    "chicken_thigh": {
+      "name": "Куриное бедро, готовое"
+    },
+    "beef_cooked": {
+      "name": "Говядина, готовая"
+    },
+    "lamb_cooked": {
+      "name": "Баранина, готовая"
+    },
+    "turkey_breast": {
+      "name": "Грудка индейки, готовая"
+    },
+    "salmon": {
+      "name": "Лосось, готовый"
+    },
+    "tuna_canned": {
+      "name": "Тунец в собственном соку"
+    },
+    "cod": {
+      "name": "Треска, готовая"
+    },
+    "shrimp": {
+      "name": "Креветки, готовые"
+    },
+    "egg_boiled": {
+      "name": "Яйцо варёное"
+    },
+    "milk": {
+      "name": "Молоко цельное"
+    },
+    "kefir": {
+      "name": "Кефир"
+    },
+    "yogurt": {
+      "name": "Йогурт натуральный"
+    },
+    "greek_yogurt": {
+      "name": "Греческий йогурт натуральный"
+    },
+    "cottage_cheese": {
+      "name": "Творог"
+    },
+    "cheese_hard": {
+      "name": "Твёрдый сыр"
+    },
+    "butter": {
+      "name": "Сливочное масло"
+    },
+    "apple": {
+      "name": "Яблоко"
+    },
+    "banana": {
+      "name": "Банан"
+    },
+    "orange": {
+      "name": "Апельсин"
+    },
+    "pomegranate": {
+      "name": "Гранат"
+    },
+    "grapes": {
+      "name": "Виноград"
+    },
+    "watermelon": {
+      "name": "Арбуз"
+    },
+    "melon": {
+      "name": "Дыня"
+    },
+    "persimmon": {
+      "name": "Хурма"
+    },
+    "quince": {
+      "name": "Айва"
+    },
+    "apricot": {
+      "name": "Абрикос"
+    },
+    "apricot_dried": {
+      "name": "Курага"
+    },
+    "raisins": {
+      "name": "Изюм"
+    },
+    "dates": {
+      "name": "Финики"
+    },
+    "tomato": {
+      "name": "Помидор"
+    },
+    "cucumber": {
+      "name": "Огурец"
+    },
+    "carrot": {
+      "name": "Морковь"
+    },
+    "onion": {
+      "name": "Лук"
+    },
+    "potato": {
+      "name": "Картофель варёный"
+    },
+    "pumpkin": {
+      "name": "Тыква"
+    },
+    "spinach": {
+      "name": "Шпинат"
+    },
+    "broccoli": {
+      "name": "Брокколи"
+    },
+    "bell_pepper": {
+      "name": "Болгарский перец"
+    },
+    "cabbage": {
+      "name": "Капуста"
+    },
+    "chickpeas": {
+      "name": "Нут, варёный"
+    },
+    "lentils": {
+      "name": "Чечевица, варёная"
+    },
+    "mung_beans": {
+      "name": "Маш, варёный"
+    },
+    "rice_cooked": {
+      "name": "Рис белый, варёный"
+    },
+    "buckwheat": {
+      "name": "Гречка, варёная"
+    },
+    "oatmeal_cooked": {
+      "name": "Овсяная каша, готовая"
+    },
+    "oats_dry": {
+      "name": "Овсяные хлопья, сухие"
+    },
+    "pasta_cooked": {
+      "name": "Макароны, варёные"
+    },
+    "bulgur": {
+      "name": "Булгур, варёный"
+    },
+    "bread_white": {
+      "name": "Белый хлеб"
+    },
+    "bread_whole": {
+      "name": "Цельнозерновой хлеб"
+    },
+    "lavash": {
+      "name": "Лаваш"
+    },
+    "tea_black": {
+      "name": "Чёрный чай без сахара"
+    },
+    "coffee_black": {
+      "name": "Чёрный кофе"
+    },
+    "cola": {
+      "name": "Кола"
+    },
+    "orange_juice": {
+      "name": "Апельсиновый сок"
+    },
+    "whey_shake": {
+      "name": "Сывороточный протеин"
+    },
+    "peanut_butter": {
+      "name": "Арахисовая паста"
+    },
+    "walnuts": {
+      "name": "Грецкие орехи"
+    },
+    "almonds": {
+      "name": "Миндаль"
+    },
+    "olive_oil": {
+      "name": "Оливковое масло"
+    },
+    "sunflower_oil": {
+      "name": "Подсолнечное масло"
+    },
+    "honey": {
+      "name": "Мёд"
+    },
+    "sugar": {
+      "name": "Сахар"
+    },
+    "dark_chocolate": {
+      "name": "Тёмный шоколад"
+    },
+    "tashkent_plov": {
+      "name": "Ташкентский плов"
+    },
+    "samarkand_plov": {
+      "name": "Самаркандский плов"
+    },
+    "plov_chickpeas": {
+      "name": "Плов с нутом"
+    },
+    "chicken_plov": {
+      "name": "Плов с курицей"
+    },
+    "wedding_plov": {
+      "name": "Свадебный плов"
+    },
+    "achichuk": {
+      "name": "Салат ачичук"
+    },
+    "non": {
+      "name": "Нон (лепёшка)"
+    },
+    "lagman": {
+      "name": "Лагман"
+    },
+    "manti": {
+      "name": "Манты"
+    },
+    "shurpa": {
+      "name": "Шурпа"
+    },
+    "somsa": {
+      "name": "Самса"
+    },
+    "shashlik_chicken": {
+      "name": "Шашлык из курицы"
+    },
+    "shashlik_beef": {
+      "name": "Шашлык из говядины"
+    },
+    "shashlik_lamb": {
+      "name": "Шашлык из баранины"
+    },
+    "chuchvara": {
+      "name": "Чучвара"
+    },
+    "dimlama": {
+      "name": "Димлама"
+    },
+    "mastava": {
+      "name": "Мастава"
+    },
+    "norin": {
+      "name": "Норин"
+    },
+    "qatiq": {
+      "name": "Катык (кислое молоко)"
+    },
+    "suzma": {
+      "name": "Сузьма (процеженный йогурт)"
+    },
+    "mosh_kichiri": {
+      "name": "Мош-кичири"
+    },
+    "ayron": {
+      "name": "Айран (солёный кисломолочный напиток)"
+    },
+    "shirguruch": {
+      "name": "Молочная рисовая каша (ширгуруч)"
+    }
+  },
+  "portions": {
+    "1 breast": "1 грудка",
+    "½ breast": "½ грудки",
+    "1 thigh": "1 бедро",
+    "1 portion": "1 порция",
+    "small portion": "маленькая порция",
+    "1 fillet": "1 филе",
+    "1 can": "1 банка",
+    "½ can": "½ банки",
+    "1 egg": "1 яйцо",
+    "2 eggs": "2 яйца",
+    "1 glass": "1 стакан",
+    "½ glass": "½ стакана",
+    "1 cup": "1 чашка",
+    "3 tbsp": "3 ст. л.",
+    "1 slice": "1 ломтик",
+    "1 tsp": "1 ч. л.",
+    "1 tbsp": "1 ст. л.",
+    "1 medium": "1 шт. (средняя)",
+    "1 small": "1 шт. (маленькая)",
+    "½ small": "½ шт. (маленькой)",
+    "1 bunch": "1 гроздь",
+    "3 fruits": "3 плода",
+    "1 handful": "1 горсть",
+    "3 dates": "3 финика",
+    "1 bowl": "1 миска",
+    "½ cup": "½ чашки",
+    "1 plate": "1 тарелка",
+    "2 slices": "2 ломтика",
+    "1 sheet": "1 лист",
+    "1 scoop": "1 мерная ложка",
+    "2 squares": "2 дольки",
+    "½ plate": "½ тарелки",
+    "2 plates": "2 тарелки",
+    "½ bowl": "½ миски",
+    "¼ piece": "¼ штуки",
+    "½ piece": "½ штуки",
+    "1 piece": "1 штука",
+    "5 pieces": "5 штук",
+    "3 pieces": "3 штуки",
+    "2 pieces": "2 штуки",
+    "3 skewers": "3 шампура",
+    "1 skewer": "1 шампур"
+  }
+}

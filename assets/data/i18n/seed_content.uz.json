@@ -1,0 +1,163 @@
+{
+  "products": {
+    "home-training-set": {
+      "name": "Uyda mashq qilish to‘plami"
+    },
+    "shaker-meal-planner": {
+      "name": "Sheyker va ovqatlanish rejalashtirgichi"
+    },
+    "whey-protein-2-kg": {
+      "name": "Zardob proteini, 2 kg"
+    },
+    "creatine-300-g": {
+      "name": "Kreatin, 300 g"
+    },
+    "starter-box": {
+      "name": "Boshlang‘ich to‘plam"
+    },
+    "fitrix-tee": {
+      "name": "FITRIX futbolkasi"
+    },
+    "resistance-bands": {
+      "name": "Fitnes rezinkalari"
+    },
+    "training-shorts": {
+      "name": "Mashg‘ulot shortisi"
+    }
+  },
+  "programs": {
+    "strength-base": {
+      "title": "Kuch asoslari",
+      "meta": "8 hafta · haftasiga 3×"
+    },
+    "fat-burn": {
+      "title": "Yog‘ yoqish",
+      "meta": "6 hafta · haftasiga 4×"
+    },
+    "ride-100-km": {
+      "title": "Velosipedda 100 km",
+      "meta": "4 hafta · 3 ta sayr"
+    }
+  },
+  "articles": {
+    "why-rest-days-make-you-stronger": {
+      "tag": "Tiklanish",
+      "title": "Nega dam olish kunlari sizni kuchliroq qiladi",
+      "body": "Mashg‘ulot — bu turtki, moslashish esa undan keyin sodir bo‘ladi. Og‘ir vazn ko‘targaningizda yoki jadal yugurganingizda, mushaklarda biroz charchoq va zo‘riqish paydo bo‘ladi. Dam olish paytida tanangiz ularni tiklaydi va avvalgidan biroz kuchliroq bo‘ladi.\n\nKo‘pchilik uchun haftasiga kamida bir-ikki yengil kun yaxshi natija beradi. Agar haftada to‘rt-besh kun jadal mashq qilsangiz, dam olish kunlarini hafta oxiriga yig‘may, butun haftaga taqsimlang.\n\nDam olish jim o‘tirish degani emas. Qisqa sayr, yengil cho‘zilish yoki sekin velosiped haydash sizni harakatda saqlaydi, lekin jiddiy yuklama bermaydi.\n\nUyqu — eng muhim tiklanish vositangiz. Har kuni bir vaqtda uxlashga yotishga va imkon bo‘lsa, yetti-to‘qqiz soat uxlashga harakat qiling.\n\nKo‘proq dam kerakligini bildiruvchi belgilarga e’tibor bering: mashg‘ulotlar odatdagidan ancha og‘ir tuyulsa, uyqu yomonlashsa yoki bir necha kun davomida motivatsiya bo‘lmasa. Bir kunni yengil o‘tkazing, keyin holatingizni qayta baholang."
+    },
+    "how-much-protein-you-actually-need": {
+      "tag": "Ovqatlanish",
+      "title": "Sizga aslida qancha oqsil kerak",
+      "body": "Oqsil tanaga mushaklarni tiklash va o‘stirishda yordam beradi. Faol kattalarning ko‘pchiligiga kuniga tana vaznining har kilogrammiga taxminan 1,4–2,0 gramm oqsil yetarli.\n\n70 kg vaznli odam uchun bu kuniga taxminan 100–140 gramm degani. Agar endigina boshlayotgan bo‘lsangiz, pastki chegara ham bemalol yetadi.\n\nOqsilni kun davomida taqsimlang. Har birida 25–40 grammdan oqsil bo‘lgan uch-to‘rt mahal ovqat kechki ovqatdagi bitta katta porsiyadan osonroq.\n\nAvvalo oddiy ovqat: tuxum, tovuq, baliq, sut mahsulotlari, loviya, yasmiq va tofu — hammasi mos keladi. Protein kukuni — qulaylik, majburiyat emas.\n\nAgar buyrak kasalligingiz yoki sog‘lig‘ingiz bilan bog‘liq boshqa muammolar bo‘lsa, oqsil iste’molini oshirishdan oldin shifokor bilan maslahatlashing."
+    },
+    "bench-press-5-mistakes-that-stall-progress": {
+      "tag": "Texnika",
+      "title": "Yotib shtanga ko‘tarish: rivojlanishni to‘xtatadigan 5 xato",
+      "body": "Yotib shtanga ko‘tarish oddiy ko‘rinadi, lekin mayda xatolar kuchingizni kamaytiradi va yelkalarga zo‘riqish beradi. Mana tuzatish kerak bo‘lgan beshta xato.\n\nBirinchisi — bo‘sh holatda joylashish. Kuraklarni orqaga va pastga torting, oyoqlaringizni polga mahkam qo‘ying va orqangizning yuqori qismini skameykaga zich bosib turing.\n\nIkkinchisi — tirsaklarni to‘g‘ri yon tomonlarga yoyish. Ularni tanaga nisbatan taxminan 45–70 daraja burchakda tuting, shunda grif ko‘krakning pastki qismi ustidan harakatlanadi.\n\nUchinchisi — grifni ko‘krakdan sakratib ko‘tarish. Uni nazorat ostida tushiring, ko‘krakka yengil tegizing va yana yuqoriga itaring.\n\nTo‘rtinchisi — vaznni juda tez oshirish. Vaznni kichik qadamlar bilan oshiring va har bir takrorni toza bajaring. Beshinchisi — razminka setlarini o‘tkazib yuborish: ish vazningizdan oldin ikki-uchta yengilroq set bajaring."
+    }
+  },
+  "challenges": {
+    "steps-7": {
+      "title": "7 kunlik qadamlar chellenji",
+      "description": "Qo‘shilgan kuningizdan boshlab 7 kun ketma-ket kuniga 10 000 qadam yuring.",
+      "daily_target": "Kuniga 10 000 qadam"
+    }
+  },
+  "places": {
+    "proform-gym": {
+      "name": "Proform Gym",
+      "type": "Sport zali"
+    },
+    "centris": {
+      "name": "Centris",
+      "type": "Fitnes klub"
+    },
+    "inside-fit": {
+      "name": "Inside Fit",
+      "type": "Fitnes klub",
+      "hours": "Du–Ju 07:00–23:00, Sh 08:00–21:00"
+    },
+    "world-gym": {
+      "name": "World Gym",
+      "type": "Sport zali"
+    },
+    "chekhov-light-sport-club": {
+      "name": "Chekhov Light Sport Club",
+      "type": "Fitnes klub"
+    },
+    "chekhov-yulduz": {
+      "name": "Chekhov “Yulduz”",
+      "type": "Fitnes klub"
+    },
+    "befit": {
+      "name": "BEFIT",
+      "type": "Fitnes klub"
+    },
+    "amir-timur-square": {
+      "name": "Amir Temur xiyoboni",
+      "type": "Park",
+      "hours": "Kecha-kunduz ochiq"
+    },
+    "central-park": {
+      "name": "Markaziy park",
+      "type": "Park",
+      "hours": "Har kuni 10:00–22:00"
+    },
+    "babur-eco-park": {
+      "name": "Bobur eko-parki",
+      "type": "Park"
+    },
+    "outdoor-workout-area": {
+      "name": "Ochiq havodagi mashq maydonchasi",
+      "type": "Turniklar",
+      "hours": "Har kuni 06:00–23:00"
+    },
+    "gogol-alley": {
+      "name": "Gogol xiyoboni",
+      "type": "Xiyobon",
+      "hours": "Kecha-kunduz ochiq"
+    },
+    "navruz-park": {
+      "name": "Navro‘z bog‘i",
+      "type": "Park"
+    },
+    "yakub-kolas-park": {
+      "name": "Yakub Kolas bog‘i",
+      "type": "Park"
+    },
+    "anhor-canal-run": {
+      "name": "Anhor bo‘ylab yugurish",
+      "type": "Yugurish yo‘nalishi",
+      "note": "Yo‘nalish Anhor kanali sohili bo‘ylab o‘tadi"
+    },
+    "pakhtakor-central-stadium": {
+      "name": "Paxtakor markaziy stadioni",
+      "type": "Stadion"
+    },
+    "athletics-federation-track": {
+      "name": "Yengil atletika federatsiyasi yo‘lkasi",
+      "type": "Yugurish yo‘lkasi"
+    },
+    "running-track": {
+      "name": "Yugurish yo‘lkasi",
+      "type": "Yugurish yo‘lkasi"
+    },
+    "yoshlik-sports-complex": {
+      "name": "Yoshlik sport majmuasi",
+      "type": "Sport majmuasi"
+    },
+    "volna-uz": {
+      "name": "Volna.uz",
+      "type": "Sport klubi"
+    },
+    "olympic-reserve-aquatics-school": {
+      "name": "Suv sport turlari bo‘yicha olimpiya zaxiralari maktabi",
+      "type": "Suzish maktabi"
+    },
+    "more-water-park": {
+      "name": "More akvaparki",
+      "type": "Akvapark",
+      "hours": "Har kuni 09:00–22:00"
+    }
+  }
+}

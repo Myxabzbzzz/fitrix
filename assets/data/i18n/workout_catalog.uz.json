@@ -1,0 +1,61 @@
+{
+  "templates": {
+    "gym-chest-biceps": {
+      "name": "Ko‘krak va bitseps",
+      "focus": "Tananing yuqori qismi"
+    },
+    "gym-back-triceps": {
+      "name": "Orqa va tritseps",
+      "focus": "Tananing yuqori qismi"
+    },
+    "gym-legs": {
+      "name": "Oyoqlar",
+      "focus": "Tananing pastki qismi"
+    },
+    "fitness-full-body": {
+      "name": "Butun tana",
+      "focus": "Butun tana"
+    }
+  },
+  "exerciseNames": {
+    "Biceps curl": "Bitseps uchun qo‘l bukish",
+    "Bench press": "Yotib shtanga ko‘tarish",
+    "Incline dumbbell press": "Qiya skameykada gantel ko‘tarish",
+    "Hammer curl": "Bolg‘a usulida qo‘l bukish",
+    "Cable fly": "Krossoverda qo‘llarni birlashtirish",
+    "Push-ups": "Yerdan itarilish",
+    "Concentration curl": "Konsentratsion qo‘l bukish",
+    "Pull-ups": "Turnikda tortilish",
+    "Barbell row": "Engashib shtanga tortish",
+    "Triceps pushdown": "Blokda tritseps uchun qo‘l yozish",
+    "Skull crushers": "Yotib tritseps uchun qo‘l yozish",
+    "Squat": "O‘tirib-turish",
+    "Romanian deadlift": "Rumincha shtanga tortish",
+    "Leg press": "Trenajyorda oyoq bilan itarish",
+    "Calf raise": "Oyoq uchida ko‘tarilish",
+    "Burpees": "Berpi",
+    "Kettlebell swing": "Girya silkitish",
+    "Plank (sec)": "Planka (soniya)",
+    "Back squat": "Shtanga bilan o‘tirib-turish",
+    "Lat pulldown": "Yuqori blokni tortish",
+    "Overhead press": "Tik turib shtangani bosh uzra ko‘tarish",
+    "Deadlift": "Yerdan shtanga tortish",
+    "Dumbbell row": "Engashib gantel tortish",
+    "Goblet squat": "Goblet o‘tirib-turish",
+    "Dumbbell bench press": "Yotib gantel ko‘tarish",
+    "Glute bridge": "Dumba ko‘prigi",
+    "Crunch": "Qorin uchun bukilish",
+    "Dumbbell shoulder press": "Gantelni bosh uzra ko‘tarish",
+    "Walking lunge": "Yurib hamla qilish",
+    "Bulgarian split squat": "Bolgarcha hamla",
+    "Lateral raise": "Gantellarni yonga ko‘tarish",
+    "Seated cable row": "O‘tirib pastki blokni tortish",
+    "Face pull": "Arqonni yuzga tortish",
+    "Leg curl": "Trenajyorda oyoq bukish",
+    "Incline bench": "Qiya skameykada shtanga ko‘tarish",
+    "Chest-supported row": "Ko‘krakni tayantirib tortish",
+    "Front squat": "Shtanga oldinda o‘tirib-turish",
+    "Leg extension": "Trenajyorda oyoq yozish",
+    "Hanging leg raise": "Osilib oyoq ko‘tarish"
+  }
+}

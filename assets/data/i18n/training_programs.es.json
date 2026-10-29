@@ -1,0 +1,75 @@
+{
+  "gzclp": {
+    "name": "GZCLP",
+    "author": "Cody Lefever",
+    "summary": "Progresión lineal con volumen incorporado y un plan claro para los estancamientos.",
+    "progressionRules": [
+      "Progresión lineal: añade 2,5 kg al ejercicio principal en cada sesión mientras completes todas las series.",
+      "Si te estancas: baja el peso un 10% y vuelve a subirlo; luego pasa al siguiente esquema de repeticiones.",
+      "Tres niveles: primero el ejercicio principal pesado, luego un segundo ejercicio más ligero y después accesorios de muchas repeticiones."
+    ],
+    "sessions": [
+      "Día 1",
+      "Día 2",
+      "Día 3",
+      "Día 4"
+    ]
+  },
+  "full-body-3": {
+    "name": "Cuerpo completo 3×",
+    "author": "Plantilla FITRIX",
+    "summary": "Cada músculo dos veces por semana en tres sesiones de 60 minutos.",
+    "progressionRules": [
+      "Doble progresión: llega al tope del rango de repeticiones en todas las series y luego sube el incremento de peso más pequeño.",
+      "Deja dos repeticiones en reserva: termina la serie cuando podrías hacer unas dos repeticiones limpias más."
+    ],
+    "sessions": [
+      "Cuerpo completo A",
+      "Cuerpo completo B",
+      "Cuerpo completo C"
+    ]
+  },
+  "stronglifts-5x5": {
+    "name": "StrongLifts 5×5",
+    "author": "Mehdi Hadim",
+    "summary": "Cinco ejercicios, cinco series de cinco, más peso en cada sesión.",
+    "progressionRules": [
+      "Sube peso en cada sesión: pon 2,5 kg más en la barra después de cada sesión en la que completes todo el 5 × 5.",
+      "Si fallas: repite el peso y, tras tres fallos, bájalo un 10%."
+    ],
+    "sessions": [
+      "Entrenamiento A",
+      "Entrenamiento B"
+    ]
+  },
+  "ppl-6": {
+    "name": "Empuje / Tirón / Piernas",
+    "author": "Plantilla FITRIX",
+    "summary": "Alta frecuencia y volumen para quienes pueden entrenar casi todos los días.",
+    "progressionRules": [
+      "Doble progresión: llega al tope del rango de repeticiones en todas las series y luego añade 2,5 kg en tren superior o 5 kg en tren inferior.",
+      "Primero volumen: cuando un ejercicio se estanque, añade una serie antes de subir peso."
+    ],
+    "sessions": [
+      "Empuje",
+      "Tirón",
+      "Piernas"
+    ]
+  },
+  "upper-lower-4": {
+    "name": "Superior / Inferior 4×",
+    "author": "Plantilla FITRIX",
+    "summary": "Para quienes llevan un año entrenando y quieren trabajar cada músculo dos veces por semana: primero básicos pesados, luego accesorios moderados.",
+    "progressionRules": [
+      "Doble progresión: llega al tope del rango de repeticiones en todas las series y luego añade 2,5 kg en tren superior o 5 kg en tren inferior.",
+      "Descarga en la semana 7: mantén los mismos ejercicios, pero haz más o menos la mitad de tus series habituales para que la fatiga baje antes del último bloque.",
+      "Aumenta el volumen: de la semana 1 a la 6, añade series por tu cuenta, de unas 10 a 16 por músculo a la semana."
+    ],
+    "sessions": [
+      "Superior 1",
+      "Inferior 1",
+      "Superior 2",
+      "Inferior 2"
+    ]
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "products": {
+    "home-training-set": {
+      "name": "Set de entrenamiento en casa"
+    },
+    "shaker-meal-planner": {
+      "name": "Shaker y planificador de comidas"
+    },
+    "whey-protein-2-kg": {
+      "name": "Proteína de suero, 2 kg"
+    },
+    "creatine-300-g": {
+      "name": "Creatina, 300 g"
+    },
+    "starter-box": {
+      "name": "Caja de inicio"
+    },
+    "fitrix-tee": {
+      "name": "Camiseta FITRIX"
+    },
+    "resistance-bands": {
+      "name": "Bandas elásticas"
+    },
+    "training-shorts": {
+      "name": "Shorts de entrenamiento"
+    }
+  },
+  "programs": {
+    "strength-base": {
+      "title": "Base de fuerza",
+      "meta": "8 semanas · 3× por semana"
+    },
+    "fat-burn": {
+      "title": "Quema de grasa",
+      "meta": "6 semanas · 4× por semana"
+    },
+    "ride-100-km": {
+      "title": "Pedalea 100 km",
+      "meta": "4 semanas · 3 salidas"
+    }
+  },
+  "articles": {
+    "why-rest-days-make-you-stronger": {
+      "tag": "Recuperación",
+      "title": "Por qué los días de descanso te hacen más fuerte",
+      "body": "El entrenamiento es el estímulo, pero la adaptación ocurre después. Cuando levantas pesas o corres con intensidad, generas un poco de fatiga y estrés muscular. Tu cuerpo lo repara durante el descanso y vuelve un poco más capaz.\n\nA la mayoría de las personas les va bien tener al menos uno o dos días más suaves a la semana. Si entrenas fuerte cuatro o cinco días, reparte los días de descanso en lugar de acumularlos al final de la semana.\n\nDescansar no significa quedarte quieto. Una caminata corta, estiramientos suaves o un paseo tranquilo en bici te mantienen en movimiento sin añadir carga real.\n\nEl sueño es la mayor herramienta de recuperación que tienes. Intenta acostarte siempre a la misma hora y dormir de siete a nueve horas cuando puedas.\n\nPresta atención a las señales de que necesitas más descanso: entrenamientos que se sienten mucho más duros de lo normal, dormir mal o falta de motivación durante varios días. Tómate un día suave y luego vuelve a evaluar."
+    },
+    "how-much-protein-you-actually-need": {
+      "tag": "Nutrición",
+      "title": "Cuánta proteína necesitas realmente",
+      "body": "La proteína ayuda a tu cuerpo a reparar y desarrollar músculo. A la mayoría de los adultos activos les va bien consumir entre 1,4 y 2,0 gramos por kilogramo de peso corporal al día.\n\nPara una persona de 70 kg, eso son unos 100 a 140 gramos al día. Si estás empezando, el extremo inferior es más que suficiente.\n\nRepártela a lo largo del día. Tres o cuatro comidas con 25 a 40 gramos cada una es más fácil que una porción enorme en la cena.\n\nPrimero, la comida: huevos, pollo, pescado, lácteos, frijoles, lentejas y tofu funcionan bien. Un suplemento en polvo es una comodidad, no una obligación.\n\nSi tienes alguna enfermedad renal o cualquier problema de salud, consulta con un médico antes de aumentar tu consumo de proteína."
+    },
+    "bench-press-5-mistakes-that-stall-progress": {
+      "tag": "Técnica",
+      "title": "Press de banca: 5 errores que frenan tu progreso",
+      "body": "El press de banca parece sencillo, pero los pequeños errores te restan fuerza y cargan los hombros. Aquí tienes cinco que corregir.\n\nPrimero, una colocación floja. Lleva las escápulas hacia atrás y hacia abajo, mantén los pies firmes en el suelo y la parte alta de la espalda bien pegada al banco.\n\nSegundo, abrir los codos totalmente hacia los lados. Busca un ángulo de unos 45 a 70 grados respecto al torso, para que la barra pase sobre la parte baja del pecho.\n\nTercero, rebotar la barra en el pecho. Bájala con control, toca ligeramente y vuelve a empujar hacia arriba.\n\nCuarto, subir el peso demasiado rápido. Aumenta en pasos pequeños y haz cada repetición limpia. Quinto, saltarte las series de calentamiento: haz dos o tres series más ligeras antes de tu peso de trabajo."
+    }
+  },
+  "challenges": {
+    "steps-7": {
+      "title": "Reto de pasos de 7 días",
+      "description": "Camina 10.000 pasos al día durante 7 días seguidos, a partir del día en que te unas.",
+      "daily_target": "10.000 pasos al día"
+    }
+  },
+  "places": {
+    "proform-gym": {
+      "name": "Proform Gym",
+      "type": "Gimnasio"
+    },
+    "centris": {
+      "name": "Centris",
+      "type": "Club de fitness"
+    },
+    "inside-fit": {
+      "name": "Inside Fit",
+      "type": "Club de fitness",
+      "hours": "Lun–Vie 07:00–23:00, Sáb 08:00–21:00"
+    },
+    "world-gym": {
+      "name": "World Gym",
+      "type": "Gimnasio"
+    },
+    "chekhov-light-sport-club": {
+      "name": "Chekhov Light Sport Club",
+      "type": "Club de fitness"
+    },
+    "chekhov-yulduz": {
+      "name": "Chekhov “Yulduz”",
+      "type": "Club de fitness"
+    },
+    "befit": {
+      "name": "BEFIT",
+      "type": "Club de fitness"
+    },
+    "amir-timur-square": {
+      "name": "Plaza Amir Timur",
+      "type": "Parque",
+      "hours": "Abierto 24/7"
+    },
+    "central-park": {
+      "name": "Parque Central",
+      "type": "Parque",
+      "hours": "Todos los días 10:00–22:00"
+    },
+    "babur-eco-park": {
+      "name": "Ecoparque Babur",
+      "type": "Parque"
+    },
+    "outdoor-workout-area": {
+      "name": "Zona de ejercicio al aire libre",
+      "type": "Barras de calistenia",
+      "hours": "Todos los días 06:00–23:00"
+    },
+    "gogol-alley": {
+      "name": "Paseo Gógol",
+      "type": "Paseo",
+      "hours": "Abierto 24/7"
+    },
+    "navruz-park": {
+      "name": "Parque Navruz",
+      "type": "Parque"
+    },
+    "yakub-kolas-park": {
+      "name": "Parque Yakub Kolas",
+      "type": "Parque"
+    },
+    "anhor-canal-run": {
+      "name": "Carrera junto al canal Anhor",
+      "type": "Ruta para correr",
+      "note": "La ruta sigue la orilla del canal Anhor"
+    },
+    "pakhtakor-central-stadium": {
+      "name": "Estadio Central Pakhtakor",
+      "type": "Estadio"
+    },
+    "athletics-federation-track": {
+      "name": "Pista de la Federación de Atletismo",
+      "type": "Pista de atletismo"
+    },
+    "running-track": {
+      "name": "Pista de atletismo",
+      "type": "Pista de atletismo"
+    },
+    "yoshlik-sports-complex": {
+      "name": "Complejo deportivo Yoshlik",
+      "type": "Complejo deportivo"
+    },
+    "volna-uz": {
+      "name": "Volna.uz",
+      "type": "Club deportivo"
+    },
+    "olympic-reserve-aquatics-school": {
+      "name": "Escuela de Reserva Olímpica de Deportes Acuáticos",
+      "type": "Escuela de natación"
+    },
+    "more-water-park": {
+      "name": "Parque acuático More",
+      "type": "Parque acuático",
+      "hours": "Todos los días 09:00–22:00"
+    }
+  }
+}
