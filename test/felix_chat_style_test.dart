@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fitrix/core/session/session_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
@@ -162,8 +163,10 @@ void main() {
       tester.view.physicalSize = const Size(375, 667) * 3;
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);
+      final prefs = await SharedPreferences.getInstance();
       await tester.pumpWidget(ProviderScope(
         overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
           chatMessagesProvider
               .overrideWith((ref) => ChatNotifier(ChatRepository(
                     api,

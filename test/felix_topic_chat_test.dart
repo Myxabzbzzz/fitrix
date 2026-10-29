@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fitrix/core/i18n/catalog_overlay.dart';
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/session/session_providers.dart';
 import 'package:fitrix/features/chat/data/felix_snapshot.dart';
 import 'package:fitrix/features/chat/data/models/assistant_topic.dart';
@@ -18,6 +20,7 @@ import 'package:fitrix/features/plan/data/week_plan.dart';
 import 'package:fitrix/features/workouts/data/models/workout.dart';
 import 'package:fitrix/l10n/generated/app_localizations.dart';
 
+import 'support/catalog_fixtures.dart';
 import 'support/overflow.dart';
 
 class _FakeApi extends ChatApiService {
@@ -68,6 +71,7 @@ void main() {
     Locale locale = const Locale('en'),
     double textScale = 1,
     Size size = const Size(375, 667),
+    List<Override> extra = const [],
   }) async {
     tester.view.physicalSize = size * 3;
     tester.view.devicePixelRatio = 3;
@@ -79,6 +83,7 @@ void main() {
         sharedPreferencesProvider.overrideWithValue(prefs),
         chatApiServiceProvider.overrideWithValue(api),
         felixSnapshotProvider.overrideWith((ref, t) => snapshot),
+        ...extra,
       ],
       child: MaterialApp(
         locale: locale,
@@ -92,6 +97,51 @@ void main() {
   }
 
   final chipRow = find.byKey(const ValueKey('felix-context-chips'));
+
+  testWidgets('chips read the workout names in the app language',
+      (tester) async {
+    final overlay = await CatalogOverlay.load(
+        FixtureBundle.locale('ru', {
+          'workout_catalog': {
+            'templates': {
+              'gym-legs': {'name': 'Ноги', 'focus': 'Низ тела'},
+            },
+          },
+        }),
+        'ru');
+    final started = DateTime(2026, 10, 19, 18);
+    await pump(
+      tester,
+      AssistantTopic.recovery,
+      FelixSnapshot(
+        today: _day,
+        todayKind: TodayKind.session,
+        todaySession: PlannedSession(
+          id: 's2',
+          day: _day,
+          sport: Sport.gym,
+          title: 'Legs',
+          templateId: 'gym-legs',
+          minutes: 60,
+          intensity: Intensity.normal,
+        ),
+        lastWorkout: CompletedWorkout(
+          templateId: 'gym-legs',
+          name: 'Legs',
+          sport: Sport.gym,
+          startedAt: started,
+          finishedAt: started.add(const Duration(hours: 1)),
+          exercises: const [],
+        ),
+      ),
+      locale: const Locale('ru'),
+      extra: [catalogTextProvider.overrideWithValue(CatalogText(overlay))],
+    );
+    expect(find.descendant(of: chipRow, matching: find.text('Сегодня: Ноги')),
+        findsOneWidget);
+    expect(find.descendant(of: chipRow, matching: find.text('Последняя: Ноги')),
+        findsOneWidget);
+  });
 
   testWidgets('recovery chat: chips, what Felix sees, prompts, hint',
       (tester) async {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import 'package:fitrix/core/i18n/catalog_text.dart';
 import 'package:fitrix/core/theme/app_palette.dart';
 import 'package:fitrix/core/theme/app_tokens.dart';
 import 'package:fitrix/features/chat/data/felix_snapshot.dart';
@@ -10,14 +12,14 @@ import 'package:fitrix/l10n/generated/app_localizations.dart';
 
 /// Up to three display-only chips with the numbers Felix has for this chat.
 /// Nothing is shown when there is nothing to show.
-class FelixContextChips extends StatelessWidget {
+class FelixContextChips extends ConsumerWidget {
   final FelixSnapshot snapshot;
   final AssistantTopic topic;
 
   const FelixContextChips(
       {super.key, required this.snapshot, required this.topic});
 
-  List<String> _labels(AppLocalizations l10n) {
+  List<String> _labels(AppLocalizations l10n, CatalogText text) {
     final number = NumberFormat.decimalPattern(l10n.localeName);
     if (topic == AssistantTopic.nutrition) {
       final eaten = snapshot.eaten;
@@ -36,16 +38,17 @@ class FelixContextChips extends StatelessWidget {
     return [
       if (readiness != null) l10n.felixChipReadiness(readiness.score),
       if (session != null)
-        l10n.felixChipToday(session.title)
+        l10n.felixChipToday(text.planTitle(session))
       else if (snapshot.todayKind == TodayKind.rest)
         l10n.felixChipRest,
-      if (last != null) l10n.felixChipLast(last.name),
+      if (last != null) l10n.felixChipLast(text.completedTitle(last)),
     ];
   }
 
   @override
-  Widget build(BuildContext context) {
-    final labels = _labels(AppLocalizations.of(context));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final labels =
+        _labels(AppLocalizations.of(context), ref.watch(catalogTextProvider));
     if (labels.isEmpty) return const SizedBox.shrink();
     final palette = AppPalette.of(context);
     final width = MediaQuery.sizeOf(context).width;
