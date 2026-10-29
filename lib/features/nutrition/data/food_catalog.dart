@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:fitrix/core/text/normalize.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum MealSlot {
@@ -133,23 +134,23 @@ class FoodCatalog {
   /// Foods whose name starts with the query come first.
   List<Food> search(String query,
       {String? category, String Function(Food)? nameOf}) {
-    final q = query.trim().toLowerCase();
+    final q = searchFold(query);
     String? shown(Food f) {
       final n = nameOf?.call(f);
-      return n == null || n == f.name ? null : n.toLowerCase();
+      return n == null || n == f.name ? null : searchFold(n);
     }
 
     bool matches(Food f) =>
         q.isEmpty ||
-        f.name.toLowerCase().contains(q) ||
-        (f.localName?.toLowerCase().contains(q) ?? false) ||
+        searchFold(f.name).contains(q) ||
+        (f.localName != null && searchFold(f.localName!).contains(q)) ||
         (shown(f)?.contains(q) ?? false);
     final found = [
       for (final f in all)
         if ((category == null || f.category == category) && matches(f)) f,
     ];
     if (q.isNotEmpty) {
-      int rank(Food f) => f.name.toLowerCase().startsWith(q) ||
+      int rank(Food f) => searchFold(f.name).startsWith(q) ||
               (shown(f)?.startsWith(q) ?? false)
           ? 0
           : 1;

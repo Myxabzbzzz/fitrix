@@ -79,8 +79,9 @@ class CatalogText {
   /// Whether [query] (already lower case and trimmed) finds [e] by its
   /// English name or aliases or by those of the app language.
   bool exerciseMatches(ExerciseInfo e, String query) {
-    if (query.isEmpty) return true;
-    bool has(String s) => normalizeName(s).contains(query);
+    final q = searchFold(query);
+    if (q.isEmpty) return true;
+    bool has(String s) => searchFold(s).contains(q);
     return has(e.name) ||
         e.aliases.any(has) ||
         (!isEnglish && (has(exerciseName(e)) || exerciseAliases(e).any(has)));

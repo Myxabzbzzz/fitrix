@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:fitrix/core/i18n/catalog_text.dart';
+import 'package:fitrix/core/text/normalize.dart';
 import 'package:fitrix/core/widgets/sheet_safe_area.dart';
 import 'package:fitrix/core/widgets/app_snack.dart';
 import 'package:fitrix/core/animation/motion.dart';
@@ -151,7 +152,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     final source = async.valueOrNull ?? const <Product>[];
     final text = ref.watch(catalogTextProvider);
     // English names stay searchable next to the app language's.
-    final english = {for (final p in source) p.id: p.name.toLowerCase()};
+    final english = {for (final p in source) p.id: searchFold(p.name)};
     final products = [for (final p in source) text.product(p)];
     ref.watch(currentUserProvider); // keep the auth state loaded
     final cart = ref.watch(cartProvider);
@@ -168,12 +169,12 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
       for (final c in {for (final p in products) p.category}) c,
     ];
     final category = categories.contains(_category) ? _category : _all;
-    final query = _search.text.trim().toLowerCase();
+    final query = searchFold(_search.text);
     final items = [
       for (final p in products)
         if ((category == _all || p.category == category) &&
             (query.isEmpty ||
-                p.name.toLowerCase().contains(query) ||
+                searchFold(p.name).contains(query) ||
                 (english[p.id]?.contains(query) ?? false)))
           p,
     ];
